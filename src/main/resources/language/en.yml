@@ -1,0 +1,161 @@
+generic:
+  arenabuilder:
+    success:
+      aborted: "&c[ArenaBuilder] Creazione arena interrotta"
+      started: "&a[ArenaBuilder] Creazione arena iniziata"
+    error:
+      invalid_type: "&c[ArenaBuilder] &6%type% &cnon è un minigame valido"
+      invalid_id: "&c[ArenaBuilder] &6%id% &cnon è id valido"
+      already_used_id: "&c[ArenaBuilder] L'id &6%id% &cè già in uso"
+      arguments_amount: "&c[ArenaBuilder] /%label% create <type> <id>"
+      create_already_started: "&c[ArenaBuilder] Hai già creato l'arena ora devi impostarne i valori"
+      abort_not_created: "&c[ArenaBuilder] Non stai impostando nessuna arena al momento"
+      pre_create_invalid_action: "&c[ArenaBuilder] /%label% create <type> <id>"
+skywars:
+  game:
+    assign_team: "&a[SkyWars] Ti è stato assegnato il team &e%color%"
+    collectingplayers_cooldown_bar: "&6SkyWars: Giocatori &e%current_players%&6/&e%max_players% &6inizia in &e%cooldown% &6s"
+    collectingplayers_no_cooldown_bar: "&6SkyWars: Giocatori &e%current_players%&6/&e%max_players%"
+    prestart_cooldown_bar: "&6SkyWars: La partità comincerà in &e%cooldown% &6s Seleziona un kit!"
+    end_cooldown_bar: "&6Sarai riportato indietro in &e%cooldown% &6s!"
+    game_start: "&a[SkyWars] Partita iniziata"
+    game_end: "&a[SkyWars] Partita terminata"
+    spectator_cannot_go_outside_arena_bar: "&cNon puoi uscire dall'arena"
+  arenabuilder:
+    error:
+      unselected_area: "&c[ArenaBuilder] Devi selezionare l'area con worldedit"
+      unknown_action: "&c[ArenaBuilder] Azione non valida"
+      outside_area: "&c[ArenaBuilder] Devi selezionare un punto all'interno dell'arena"
+      invalid_color: "&c[ArenaBuilder] Colore non valido"
+    success:
+      select_area: "&a[ArenaBuilder] Hai selezionato l'area dell'arena (&e%world% %x1%:%x2% %y1%:%y2% %z1%:%z2%&a)"
+      override_team_spawn: "&a[ArenaBuilder] Hai cambiato lo spawn per il team &e%color%"
+      set_team_spawn: "&a[ArenaBuilder] Hai impostato lo spawn per il team &e%color%"
+      next: "&a[ArenaBuilder] Sei avanzato alla fase successiva"
+      set_spectators_spawn: "&a[ArenaBuilder] Hai impostato lo spawn per gli spettatori"
+      override_spectators_spawn: "&a[ArenaBuilder] Hai cambiato lo spawn per gli spettatori"
+      completed: "&a[ArenaBuilder] Schematic salvata, Arena Creata"
+    actionbar:
+      phase1: "&6/arenabuilder selectarea"
+      phase2: "&6/arenabuilder setteamspawn <color>"
+      phase3: "&6/arenabuilder setteamspawn <color> &f| &6/arenabuilder next"
+      phase4: "&6/arenabuilder setspectatorspawn"
+      phase5: "&6/arenabuilder setspectatorspawn &f| &6/arenabuilder next"
+  option_gui_title: "&9SkyWars Options"
+minigame:
+  create:
+    error:
+      arguments_amount: "&c[GameEditor] /%label% create <type> <arena> <option> <id>"
+      invalid_type: "&c[GameEditor] invalid game type &6%type%"
+      invalid_arena_name: "&c[GameEditor] invalid game type &6%arena%"
+      invalid_arena_type: "&c[GameEditor] &6%arena% &cis not a valid arena for &6%type%"
+      invalid_option_name: "&c[GameEditor] invalid game type &6%option%"
+      invalid_option_type: "&c[GameEditor] &6%option% &cis not a valid option for &6%type%"
+      invalid_id_name: "&c[GameEditor] invalid id &6%id%"
+      already_used_id: "&c[GameEditor] Id &6%id% &cis already used"
+  help:
+    create_text: "&9/%label% create &b<type> <arena> <option> <id>"
+    create_hover:
+    - "&6Create a new Game with given arena and option"
+    edit_text: "&9/%label% edit &b<id>"
+    edit_hover:
+      - "&6Edit an existing game"
+    list_text: "&9/%label% list"
+    list_hover:
+      - "&6Shows info about games"
+minikit:
+  help:
+    create_text: "&9/%label% create &b<id>"
+    create_hover:
+      - "&6Create a new Kit"
+    update_text: "&9/%label% update &b<id>"
+    update_hover:
+      - "&6Update an existing Kit"
+    delete_text: "&9/%label% delete &b<id>"
+    delete_hover:
+      - "&6Delete an existing Kit"
+    apply_text: "&9/%label% apply &b<id> [player]"
+    apply_text_console: "&9/%label% apply &b<id> <player>"
+    apply_hover:
+      - "&6Load an existing Kit on player"
+    list_text: "&9/%label% list"
+    list_hover:
+      - "&6Shows all the Kits"
+  success:
+    create: "&a[MiniKit] Hai creato il kit &e%id%"
+    apply: "&a[MiniKit] caricato il kit &e%id% &asu &e%player%"
+    update: "&a[MiniKit] Hai aggiornato il kit &e%id%"
+    delete: "&a[MiniKit] Hai eliminato il kit &e%id%"
+    list_color_1: "&b"
+    list_color_2: "&9"
+    list_text: "%kit%"
+    list_hover: "&6Clicca per caricare"
+    list_suggest: "/%label% load %id% %player%"
+    list_no_kits: "&a[MiniKit] Non ci sono kit salvati"
+  error:
+    create_arguments_amount: "&c[MiniKit] /%label% create <id>"
+    already_used_id: "&c[MiniKit] L'id &6%id% &cè già in uso"
+    apply_arguments_amount: "&c[MiniKit] /%label% apply <id> [player]"
+    apply_target_offline: "&c[MiniKit] il giocatore &6%player% &cè offline"
+    apply_target_required: "&c[MiniKit] /%label% apply <id> <player>"
+    unexisting_id: "&c[MiniKit] Il kit &6%id% &cnon è presente"
+    update_arguments_amount: "&c[MiniKit] /%label% update <id>"
+    delete_arguments_amount: "&c[MiniKit] /%label% delete <id>"
+
+minioption:
+  error:
+    invalid_type: "&c[MiniOption] &6%type% &cnon è un minigame valido"
+    invalid_id: "&c[MiniOption] &6%id% &cnon è id valido"
+    already_used_id: "&c[MiniOption] L'id &6%id% &cè già in uso"
+    create_arguments_amount: "&c[MiniOption] /%label% create <type> <id>"
+    edit_arguments_amount: "&c[MiniOption] /%label% edit <id>"
+    create_already_started: "&c[MiniOption] Hai già creato l'arena ora devi impostarne i valori"
+    abort_not_created: "&c[MiniOption] Non stai impostando nessuna arena al momento"
+    pre_create_invalid_action: "&c[MiniOption] /%label% create <type> <id>"
+    unexisting_id: "&c[MiniOption] L'id &6%id% &cnon è presente"
+  buttons:
+    allowspectators:
+      - "&6Are players allowed to spectate?"
+      - "&9Current value: &e%value%"
+      - ""
+      - "&9[&fClick&9] &fAny &9-> &fToggle"
+    teammaxplayers:
+      - "&6Max players on each team"
+      - "&9Current value: &e%value%"
+    collectingplayersphasecooldownmax:
+      - "&6How many seconds after the minimal"
+      - "&6 requirements are meet to start pre-game?"
+      - "&9Current value: &e%value%"
+      - ""
+      - "&7This time is (usually) required to allow"
+      - "&7 player to join the game before it start"
+    prestartphasecooldownmax:
+      - "&6How many seconds to start game?"
+      - "&9Current value: &e%value%"
+      - ""
+      - "&7This time is (usually) required to select a kit"
+    endphasecooldownmax:
+      - "&6How many seconds to celebrate victory?"
+      - "&9Current value: &e%value%"
+      - ""
+      - "&7This time is (usually) used to celebrate winners"
+  help:
+    create_text: "&9/%label% create &b<type> <id>"
+    create_hover:
+      - "&6Create a new Option for give type"
+    edit_text: "&9/%label% edit &b<id>"
+    edit_hover:
+      - "&6Edit an existing option"
+    list_text: "&9/%label% list"
+    list_hover:
+      - "&6Shows info about options"
+fastjoin:
+  error:
+    no_available_game: "&c[FastJoin] Non ci sono partite disponibili"
+    no_available_game_of_type: "&c[FastJoin] Non ci sono partite disponibili per &6%type%"
+    arguments_amount: "&c[FastJoin] /%label% [type]"
+    already_inside_a_game: "&c[FastJoin] Sei già all'interno di un gioco"
+leave:
+  error:
+    not_inside_game: "&c[Leave] Non sei in una partita"
+

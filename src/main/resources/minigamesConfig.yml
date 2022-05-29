@@ -1,0 +1,6 @@
+global:
+  defaultWorld: "events"
+  spawn: "" #location
+  lobby: "" #location
+SkyWars:
+  lobby: "" #location
