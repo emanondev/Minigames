@@ -29,6 +29,7 @@ public final class Minigames extends CorePlugin {
 
     @Override
     public void reload() {
+        KitManager.get().reload();
         ArenaManager.get().reload();
         OptionManager.get().reload();
         GameManager.get().reload();
@@ -64,6 +65,7 @@ public final class Minigames extends CorePlugin {
         ConfigurationSerialization.registerClass(BlockLocation3D.class);
         ConfigurationSerialization.registerClass(BlockLocationOffset3D.class);
         ConfigurationSerialization.registerClass(LocationOffset3D.class);
+        ConfigurationSerialization.registerClass(Kit.class);
 
         //Commands
     }

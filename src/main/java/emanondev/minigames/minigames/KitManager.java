@@ -34,7 +34,7 @@ public class KitManager {
         return Minigames.get().getConfig("kits" + File.separator + fileName);
     }
 
-    private final Map<String, PlayerSnapshot> kits = new HashMap<>();
+    private final Map<String, Kit> kits = new HashMap<>();
     private final HashMap<String, YMLConfig> kitsFile = new HashMap<>();
 
     public boolean existKit(String id) {
@@ -45,7 +45,7 @@ public class KitManager {
         kits.get(id.toLowerCase()).apply(player);
     }
 
-    public Set<String> getKitsId() {
+    public @NotNull Set<String> getKitsId() {
         return Collections.unmodifiableSet(kits.keySet());
     }
 
@@ -61,7 +61,7 @@ public class KitManager {
                     for (String key : config.getKeys(false)) {
                         try {
                             Object value = config.get(key);
-                            if (value instanceof PlayerSnapshot kit)
+                            if (value instanceof Kit kit)
                                 loadKit(key, kit, config);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -72,9 +72,12 @@ public class KitManager {
     }
 
 
-    private void loadKit(@NotNull String id, @NotNull PlayerSnapshot kit, @NotNull YMLConfig config) {
+    private void loadKit(@NotNull String id, @NotNull Kit kit, @NotNull YMLConfig config) {
         if (!UtilsString.isLowcasedValidID(id) || kits.containsKey(id))
             throw new IllegalStateException();
+        if (kit.isRegistered())
+            throw new IllegalStateException();
+        kit.setRegistered(id);
         kits.put(id, kit);
         kitsFile.put(id, config);
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Loaded Kit &e" + id);
@@ -86,11 +89,13 @@ public class KitManager {
         updateKit(id,snap);
     }
 
-    private void updateKit(@NotNull String id, @NotNull PlayerSnapshot kit) {
+    private void updateKit(@NotNull String id, @NotNull PlayerSnapshot snap) {
         id = id.toLowerCase();
         if (!UtilsString.isLowcasedValidID(id) || !kits.containsKey(id))
             throw new IllegalStateException();
         YMLConfig config = kitsFile.get(id);
+        Kit kit = kits.get(id);
+        kit.updateSnapshot(snap);
         config.set(id, kit);
         config.save();
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated Kit &e" + id);
@@ -102,7 +107,7 @@ public class KitManager {
         YMLConfig config = kitsFile.get(id);
         config.set(id, null);
         config.save();
-        kits.remove(id);
+        kits.remove(id).setUnregister();
         kitsFile.remove(id);
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated Kit &e" + id);
     }
@@ -113,16 +118,18 @@ public class KitManager {
         createKit(id, snap, getKitConfig(creator.getName()));
     }
 
-    private void createKit(@NotNull String id, @NotNull PlayerSnapshot kit, @NotNull OfflinePlayer creator) {
-        createKit(id, kit, getKitConfig(creator.getName()));
+    private void createKit(@NotNull String id, @NotNull PlayerSnapshot snap, @NotNull OfflinePlayer creator) {
+        createKit(id, snap, getKitConfig(creator.getName()));
     }
 
-    private void createKit(@NotNull String id, @NotNull PlayerSnapshot kit, @NotNull YMLConfig config) {
+    private void createKit(@NotNull String id, @NotNull PlayerSnapshot snap, @NotNull YMLConfig config) {
         id = id.toLowerCase();
         if (!UtilsString.isLowcasedValidID(id) || kits.containsKey(id))
             throw new IllegalStateException();
+        Kit kit = Kit.fromPlayerSnapshot(snap);
         kitsFile.put(id, config);
         kits.put(id, kit);
+        config.set(id,kit);
         config.save();
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Saved Kit &e" + id);
     }

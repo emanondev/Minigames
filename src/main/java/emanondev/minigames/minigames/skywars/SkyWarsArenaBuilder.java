@@ -213,11 +213,17 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
                 p.spawnParticle(Particle.COMPOSTER, min.getX(), max.getY() + 1, i, 1);
                 p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, max.getY() + 1, i, 1);
             }
-            spawnLocations.forEach((k, v) ->
-                    p.spawnParticle(Particle.REDSTONE, min.getX() + v.x, min.getY() + v.y + 0.1D, min.getZ() + v.z, 1, k.getColor()));
-
-            if (spectatorsOffset!=null)
-                p.spawnParticle(Particle.FIREWORKS_SPARK,min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y + 0.1D, min.getZ() + spectatorsOffset.z, 1);
+            for (int i = 0; i < 8; i++) {
+                double xOffset = min.getX() + 0.4 * Math.sin(i * Math.PI / 4);
+                double zOffset = min.getZ() + 0.4 * Math.cos(i * Math.PI / 4);
+                double yOffset = min.getY() + 0.05D;
+                spawnLocations.forEach((k, v) ->
+                        p.spawnParticle(Particle.REDSTONE, v.x + xOffset, v.y + yOffset,
+                                v.z + zOffset, 1, new Particle.DustOptions(k.getColor(),1F)));
+                if (spectatorsOffset != null)
+                    p.spawnParticle(Particle.WAX_ON, spectatorsOffset.x + xOffset,
+                            spectatorsOffset.y + yOffset, spectatorsOffset.z + zOffset, 1);
+            }
         }
     }
 }

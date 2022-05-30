@@ -1,6 +1,7 @@
 package emanondev.minigames.minigames.skywars;
 
 import emanondev.core.MessageBuilder;
+import emanondev.core.PlayerSnapshot;
 import emanondev.core.UtilsInventory;
 import emanondev.minigames.minigames.MinigameTypes;
 import emanondev.minigames.minigames.Minigames;
@@ -190,6 +191,11 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     public void teleportToStartLocation(@NotNull Player player) {
         player.teleport(getArena().getSpawnOffset(getTeam(player).getColor())
                 .add(getGameLocation()));
+        PlayerSnapshot snap = new PlayerSnapshot();
+        for (PlayerSnapshot.FieldType type: PlayerSnapshot.FieldType.values())
+            if (type!= PlayerSnapshot.FieldType.LOCATION)
+            snap.setDefault(type);
+        snap.apply(player);
     }
 
     @Override

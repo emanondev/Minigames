@@ -4,8 +4,11 @@ import emanondev.core.CoreCommand;
 import emanondev.core.MessageBuilder;
 import emanondev.core.PermissionBuilder;
 import emanondev.core.PlayerSnapshot;
+import emanondev.minigames.minigames.GameManager;
 import emanondev.minigames.minigames.KitManager;
+import emanondev.minigames.minigames.MinigameTypes;
 import emanondev.minigames.minigames.Minigames;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +19,7 @@ import java.util.*;
 
 public class MiniKitCommand extends CoreCommand {
     public MiniKitCommand() {
-        super("MinigameKitEditor", Minigames.get(), PermissionBuilder.ofCommand(Minigames.get(), "MinigameKitEditor").buildAndRegister(Minigames.get()),
+        super("Minikit", Minigames.get(), PermissionBuilder.ofCommand(Minigames.get(), "Minikit").buildAndRegister(Minigames.get()),
                 "set minigame available kits");
     }
 
@@ -32,6 +35,13 @@ public class MiniKitCommand extends CoreCommand {
             case "update" -> update(sender,label,args);
             case "list" -> list(sender,label,args);
             case "apply" -> apply(sender,label,args);
+            case "test" -> {
+                PlayerSnapshot snap = new PlayerSnapshot((Player) sender);
+                snap.apply((Player) sender);
+                GameManager.get().getSection(MinigameTypes.SKYWARS).set("default_kit",snap);
+                GameManager.get().getSection(MinigameTypes.SKYWARS).save();
+                Minigames.get().logTetraStar(ChatColor.DARK_RED,"exco "+snap.getExtraContents().size());
+            }
             default -> onHelp(sender,label,args);
         }
     }
@@ -94,13 +104,13 @@ public class MiniKitCommand extends CoreCommand {
                 .send();
     }
     private void create(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)){
+            this.playerOnlyNotify(sender);
+            return;
+        }
         if (args.length!=2) {
             new MessageBuilder(Minigames.get(), sender)
                     .addTextTranslation("minikit.error.create_arguments_amount", "","%label%",label).send();
-            return;
-        }
-        if (!(sender instanceof Player player)){
-            this.playerOnlyNotify(sender);
             return;
         }
         if (KitManager.get().existKit(args[1])){
@@ -152,12 +162,12 @@ public class MiniKitCommand extends CoreCommand {
         }
         if (!KitManager.get().existKit(args[1])){
             new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.unexisting_id", "","%kit%",args[1].toLowerCase()).send();
+                    .addTextTranslation("minikit.error.unexisting_id", "","%id%",args[1].toLowerCase()).send();
             return;
         }
         KitManager.get().updateKit(args[1],player);
         new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minikit.success.update", "","%kit%",args[1].toLowerCase()).send();
+                .addTextTranslation("minikit.success.update", "","%id%",args[1].toLowerCase()).send();
     }
     //delete <id>
     private void delete(CommandSender sender, String label, String[] args) {
@@ -168,12 +178,12 @@ public class MiniKitCommand extends CoreCommand {
         }
         if (!KitManager.get().existKit(args[1])){
             new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.unexisting_id", "","%kit%",args[1].toLowerCase()).send();
+                    .addTextTranslation("minikit.error.unexisting_id", "","%id%",args[1].toLowerCase()).send();
             return;
         }
         KitManager.get().deleteKit(args[1]);
         new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minikit.success.delete", "","%kit%",args[1].toLowerCase()).send();
+                .addTextTranslation("minikit.success.delete", "","%id%",args[1].toLowerCase()).send();
     }
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @Nullable Location location) {
