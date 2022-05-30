@@ -1,6 +1,185 @@
 global:
-  defaultWorld: "events"
-  spawn: "" #location
-  lobby: "" #location
-SkyWars:
-  lobby: "" #location
+  defaultWorld: events
+  defaultSpectatorSnapshot:
+    ==: emanondev.core.PlayerSnapshot
+    armor:
+      - null
+      - null
+      - null
+      - null
+    extraContents:
+      - null
+    inventory:
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+    enderChest:
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+    level: 0
+    experience: 0.0
+    effects: []
+    foodLevel: 20
+    exhaustion: 3.6585906
+    saturation: 0.0
+    health: 20.0
+    absorbition: 0.0
+    allowFlight: true
+    god: true
+    gameMode: !!org.bukkit.GameMode {}
+    flySpeed: 0.1
+    fireTicks: -20
+    remainingAir: 300
+    walkSpeed: 0.2
+    flying: true
+    invisible: true
+skywars:
+  defaultPlayerSnapshot:
+    ==: emanondev.core.PlayerSnapshot
+    armor:
+      - null
+      - null
+      - null
+      - null
+    extraContents:
+      - null
+    inventory:
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+    enderChest:
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+      - null
+    level: 0
+    experience: 0.0
+    effects: []
+    foodLevel: 20
+    exhaustion: 3.6585906
+    saturation: 0.0
+    health: 20.0
+    absorbition: 0.0
+    allowFlight: false
+    god: false
+    gameMode: !!org.bukkit.GameMode {}
+    flySpeed: 0.1
+    fireTicks: -20
+    remainingAir: 300
+    walkSpeed: 0.2
+    flying: false
+    invisible: false
