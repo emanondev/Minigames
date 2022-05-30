@@ -56,7 +56,7 @@ minigame:
   help:
     create_text: "&9/%label% create &b<type> <arena> <option> <id>"
     create_hover:
-    - "&6Create a new Game with given arena and option"
+      - "&6Create a new Game with given arena and option"
     edit_text: "&9/%label% edit &b<id>"
     edit_hover:
       - "&6Edit an existing game"
@@ -101,6 +101,21 @@ minikit:
     unexisting_id: "&c[MiniKit] Il kit &6%id% &cnon è presente"
     update_arguments_amount: "&c[MiniKit] /%label% update <id>"
     delete_arguments_amount: "&c[MiniKit] /%label% delete <id>"
+minifiller:
+  error:
+    invalid_id: "&c[MiniFiller] &6%id% &cnon è id valido"
+    already_used_id: "&c[MiniFiller] L'id &6%id% &cè già in uso"
+    create_arguments_amount: "&c[MiniFiller] /%label% create <id>"
+    addall_arguments_amount: "&c[MiniFiller] /%label% addall <id> <weight>"
+    create_already_started: "&c[MiniFiller] Hai già creato il filler ora devi impostarne i valori"
+    unexisting_id: "&c[MiniFiller] L'id &6%id% &cnon è presente"
+    invalid_weight: "&c[MiniFiller] Il peso &6&weight% &cnon è id valido"
+    invalid_target: "&c[MiniFiller] Avvicinati e punta ad un blocco"
+    invalid_block: "&c[MiniFiller] Il blocco dev'essere un contenitore"
+    empty_container: "&c[MiniFiller] Il blocco non contiene oggetti"
+  success:
+    create: "&a[MiniFiller] Creato il filler &e%id%"
+    addall: "&a[MiniFiller] Aggiunti &e%items% &aoggetti al filler &e%id% &acon peso &e%weight%"
 
 minioption:
   error:
@@ -109,8 +124,6 @@ minioption:
     already_used_id: "&c[MiniOption] L'id &6%id% &cè già in uso"
     create_arguments_amount: "&c[MiniOption] /%label% create <type> <id>"
     edit_arguments_amount: "&c[MiniOption] /%label% edit <id>"
-    create_already_started: "&c[MiniOption] Hai già creato l'arena ora devi impostarne i valori"
-    abort_not_created: "&c[MiniOption] Non stai impostando nessuna arena al momento"
     pre_create_invalid_action: "&c[MiniOption] /%label% create <type> <id>"
     unexisting_id: "&c[MiniOption] L'id &6%id% &cnon è presente"
   buttons:
@@ -158,4 +171,6 @@ fastjoin:
 leave:
   error:
     not_inside_game: "&c[Leave] Non sei in una partita"
+  success:
+    message: "&a[Leave] Hai abbandonato la partita"
 

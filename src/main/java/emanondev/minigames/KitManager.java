@@ -86,7 +86,7 @@ public class KitManager {
     public void updateKit(@NotNull String id, @NotNull Player updater) {
         PlayerSnapshot snap = new PlayerSnapshot();
         snap.loadFrom(updater, PlayerSnapshot.FieldType.INVENTORY, PlayerSnapshot.FieldType.ARMOR);
-        updateKit(id,snap);
+        updateKit(id, snap);
     }
 
     private void updateKit(@NotNull String id, @NotNull PlayerSnapshot snap) {
@@ -100,6 +100,7 @@ public class KitManager {
         config.save();
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated Kit &e" + id);
     }
+
     public void deleteKit(@NotNull String id) {
         id = id.toLowerCase();
         if (!kits.containsKey(id))
@@ -129,7 +130,7 @@ public class KitManager {
         Kit kit = Kit.fromPlayerSnapshot(snap);
         kitsFile.put(id, config);
         kits.put(id, kit);
-        config.set(id,kit);
+        config.set(id, kit);
         config.save();
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Saved Kit &e" + id);
     }

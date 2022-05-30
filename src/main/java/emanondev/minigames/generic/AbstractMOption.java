@@ -24,22 +24,24 @@ public abstract class AbstractMOption implements MOption {
     private int preStartPhaseCooldownMax = 6;
 
     public AbstractMOption(@NotNull Map<String, Object> map) {
-        collectingPlayersPhaseCooldownMax = (int) map.getOrDefault("collectingplayersphasecooldownmax",45);
-        endPhaseCooldownMax = (int) map.getOrDefault("endphasecooldownmax",10);
-        preStartPhaseCooldownMax = (int) map.getOrDefault("prestartphasecooldownmax",10);
+        collectingPlayersPhaseCooldownMax = (int) map.getOrDefault("collectingplayersphasecooldownmax", 45);
+        endPhaseCooldownMax = (int) map.getOrDefault("endphasecooldownmax", 10);
+        preStartPhaseCooldownMax = (int) map.getOrDefault("prestartphasecooldownmax", 10);
         allowSpectators = (boolean) map.getOrDefault("allowSpectators", true);
     }
 
     @Override
-    public int getCollectingPlayersPhaseCooldownMax(){
+    public int getCollectingPlayersPhaseCooldownMax() {
         return collectingPlayersPhaseCooldownMax;
     }
+
     @Override
-    public int getEndPhaseCooldownMax(){
+    public int getEndPhaseCooldownMax() {
         return endPhaseCooldownMax;
     }
+
     @Override
-    public int getPreStartPhaseCooldownMax(){
+    public int getPreStartPhaseCooldownMax() {
         return preStartPhaseCooldownMax;
     }
 
@@ -49,7 +51,7 @@ public abstract class AbstractMOption implements MOption {
         return id != null;
     }
 
-    public void setRegistered(String id) {
+    public void setRegistered(@NotNull String id) {
         if (!UtilsString.isLowcasedValidID(id))
             throw new IllegalStateException();
         this.id = id;
@@ -67,25 +69,25 @@ public abstract class AbstractMOption implements MOption {
     @Override
     public Map<String, Object> serialize() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        map.put("collectingplayersphasecooldownmax",collectingPlayersPhaseCooldownMax);
-        map.put("endphasecooldownmax",endPhaseCooldownMax);
-        map.put("prestartphasecooldownmax",preStartPhaseCooldownMax);
+        map.put("collectingplayersphasecooldownmax", collectingPlayersPhaseCooldownMax);
+        map.put("endphasecooldownmax", endPhaseCooldownMax);
+        map.put("prestartphasecooldownmax", preStartPhaseCooldownMax);
         map.put("allowSpectators", allowSpectators);
         return map;
     }
 
     @Override
-    public boolean allowSpectators(){
+    public boolean allowSpectators() {
         return allowSpectators;
     }
 
-    protected void fillEditor(@NotNull PagedMapGui gui){
+    protected void fillEditor(@NotNull PagedMapGui gui) {
         gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> collectingPlayersPhaseCooldownMax
                 , (v) -> {
             collectingPlayersPhaseCooldownMax = Math.max(1, Math.min(32, v));
             OptionManager.get().save(AbstractMOption.this);
         },
-                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1,Math.min(101,collectingPlayersPhaseCooldownMax))).build(),
+                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1, Math.min(101, collectingPlayersPhaseCooldownMax))).build(),
                 () -> Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
                         "minioption.buttons.collectingplayersphasecooldownmax", new ArrayList<>()), null
         ));
@@ -94,7 +96,7 @@ public abstract class AbstractMOption implements MOption {
             endPhaseCooldownMax = Math.max(1, Math.min(32, v));
             OptionManager.get().save(AbstractMOption.this);
         },
-                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1,Math.min(101,endPhaseCooldownMax))).build(),
+                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1, Math.min(101, endPhaseCooldownMax))).build(),
                 () -> Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
                         "minioption.buttons.endphasecooldownmax", new ArrayList<>()), null
         ));
@@ -103,7 +105,7 @@ public abstract class AbstractMOption implements MOption {
             preStartPhaseCooldownMax = Math.max(1, Math.min(32, v));
             OptionManager.get().save(AbstractMOption.this);
         },
-                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1,Math.min(101,preStartPhaseCooldownMax))).build(),
+                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1, Math.min(101, preStartPhaseCooldownMax))).build(),
                 () -> Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
                         "minioption.buttons.prestartphasecooldownmax", new ArrayList<>()), null
         ));

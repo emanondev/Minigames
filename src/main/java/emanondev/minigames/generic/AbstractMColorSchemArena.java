@@ -1,12 +1,10 @@
 package emanondev.minigames.generic;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.math.BlockVector3;
 import emanondev.core.UtilsString;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.LocationOffset3D;
-import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -32,11 +30,10 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
     }
 
     private Clipboard schematicCache;
-    private BoundingBox boxCache;
 
     @Override
     public Clipboard getSchematic() {
-        if (schematicCache !=null)
+        if (schematicCache != null)
             return schematicCache;
         File file = new File(Minigames.get().getDataFolder(), "schematics" + File.separatorChar + schematicName);
         if (!file.isFile())
@@ -61,7 +58,7 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
         return id != null;
     }
 
-    public void setRegistered(String id) {
+    public void setRegistered(@NotNull String id) {
         if (!UtilsString.isLowcasedValidID(id))
             throw new IllegalStateException();
         this.id = id;
@@ -75,6 +72,7 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
         id = null;
     }
 
+    @Override
     public LocationOffset3D getSpectatorsOffset() {
         return spectatorsOffset;
     }

@@ -2,6 +2,7 @@ package emanondev.minigames.generic;
 
 import emanondev.core.UtilsMessages;
 import emanondev.minigames.Minigames;
+import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -21,7 +22,7 @@ public class GameListener implements Listener {
 
     private final MGame game;
 
-    public GameListener(MGame game){
+    public GameListener(MGame game) {
         this.game = game;
     }
 
@@ -192,9 +193,12 @@ public class GameListener implements Listener {
             new IllegalStateException("moved to null").printStackTrace();
             return;
         }
+
         if (!game.containsLocation(event.getTo())) {
+            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + game.getId() + " move outside arena");
             game.onPlayingPlayerMoveOutsideArena(event);
-            event.setCancelled(true); //TODO should be fine
+            //event.setCancelled(true); //TODO should be fine
+            return;
         }
 
         game.onPlayingPlayerMove(event);

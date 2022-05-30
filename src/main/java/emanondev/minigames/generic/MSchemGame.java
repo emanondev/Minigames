@@ -1,7 +1,6 @@
 package emanondev.minigames.generic;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.math.BlockVector3;
 import emanondev.core.util.WorldEditUtility;
 import org.bukkit.Location;
 import org.bukkit.util.BoundingBox;

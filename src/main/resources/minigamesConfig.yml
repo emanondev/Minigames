@@ -76,7 +76,7 @@ global:
       - null
     level: 0
     experience: 0.0
-    effects: []
+    effects: [ ]
     foodLevel: 20
     exhaustion: 3.6585906
     saturation: 0.0
@@ -84,13 +84,13 @@ global:
     absorbition: 0.0
     allowFlight: true
     god: true
-    gameMode: !!org.bukkit.GameMode {}
     flySpeed: 0.1
     fireTicks: -20
     remainingAir: 300
     walkSpeed: 0.2
     flying: true
     invisible: true
+    gamemode: ADVENTURE
 skywars:
   defaultPlayerSnapshot:
     ==: emanondev.core.PlayerSnapshot
@@ -168,7 +168,7 @@ skywars:
       - null
     level: 0
     experience: 0.0
-    effects: []
+    effects: [ ]
     foodLevel: 20
     exhaustion: 3.6585906
     saturation: 0.0
@@ -176,10 +176,10 @@ skywars:
     absorbition: 0.0
     allowFlight: false
     god: false
-    gameMode: !!org.bukkit.GameMode {}
     flySpeed: 0.1
     fireTicks: -20
     remainingAir: 300
     walkSpeed: 0.2
     flying: false
     invisible: false
+    gamemode: SURVIVAL

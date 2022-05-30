@@ -1,11 +1,11 @@
 package emanondev.minigames.generic;
 
+import emanondev.core.PlayerSnapshot;
 import emanondev.core.UtilsString;
 import emanondev.core.YMLSection;
 import emanondev.minigames.GameManager;
-import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -33,12 +33,18 @@ public abstract class MType<A extends MArena, O extends MOption> {
         return type;
     }
 
-    public @Nullable Location getLobbyLocation() {
+    public void applyDefaultPlayerSnapshot(@NotNull Player player) {
+        PlayerSnapshot snap = getSection().get("defaultPlayerSnapshot", null, PlayerSnapshot.class);
+        if (snap != null)
+            snap.apply(player);
+    }
+
+    /*public @Nullable Location getLobbyLocation() {
         Location loc = section.getLocation("lobby", null);
         if (loc != null)
             return loc;
         return GameManager.get().getGlobalLobby();
-    }
+    }*/
 
     public <T extends MArena> boolean matchType(@NotNull T arena) {
         return arenaClazz.isInstance(arena);

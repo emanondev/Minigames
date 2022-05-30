@@ -2,7 +2,6 @@ package emanondev.minigames;
 
 import emanondev.core.CorePlugin;
 import emanondev.minigames.commands.*;
-import emanondev.minigames.minigames.commands.*;
 import emanondev.minigames.locations.BlockLocation2D;
 import emanondev.minigames.locations.BlockLocation3D;
 import emanondev.minigames.locations.BlockLocationOffset3D;
@@ -30,6 +29,7 @@ public final class Minigames extends CorePlugin {
 
     @Override
     public void reload() {
+        FillerManager.get().reload();
         KitManager.get().reload();
         ArenaManager.get().reload();
         OptionManager.get().reload();
@@ -40,6 +40,7 @@ public final class Minigames extends CorePlugin {
     public void enable() {
         registerConfigurationSerializables();
         new KitManager();
+        new FillerManager();
         new ArenaManager();
         new OptionManager();
 

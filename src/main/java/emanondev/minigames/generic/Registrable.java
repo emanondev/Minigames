@@ -1,5 +1,7 @@
 package emanondev.minigames.generic;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface Registrable {
 
     boolean isRegistered();
@@ -9,7 +11,7 @@ public interface Registrable {
      *
      * @param id
      */
-    void setRegistered(String id);
+    void setRegistered(@NotNull String id);
 
     String getId();
 

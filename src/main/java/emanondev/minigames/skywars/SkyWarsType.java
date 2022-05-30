@@ -2,9 +2,9 @@ package emanondev.minigames.skywars;
 
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.OptionManager;
-import emanondev.minigames.generic.MType;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MOption;
+import emanondev.minigames.generic.MType;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
 

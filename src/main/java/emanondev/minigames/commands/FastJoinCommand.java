@@ -12,6 +12,7 @@ import emanondev.minigames.generic.MType;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,8 @@ import java.util.List;
 public class FastJoinCommand extends CoreCommand {
 
     public FastJoinCommand() {
-        super("fastjoin", Minigames.get(), PermissionBuilder.ofCommand(Minigames.get(), "fastjoin").buildAndRegister(Minigames.get()), "fast join a game");
+        super("fastjoin", Minigames.get(), PermissionBuilder.ofCommand(Minigames.get(), "fastjoin")
+                .setAccess(PermissionDefault.TRUE).buildAndRegister(Minigames.get()), "fast join a game");
     }
 
     @Override
@@ -31,7 +33,7 @@ public class FastJoinCommand extends CoreCommand {
             this.playerOnlyNotify(sender);
             return;
         }
-        if (GameManager.get().getGame(p)!=null){
+        if (GameManager.get().getGame(p) != null) {
             new MessageBuilder(Minigames.get(), p)
                     .addTextTranslation("fastjoin.error.already_inside_a_game", "").send();
             return;
@@ -45,9 +47,9 @@ public class FastJoinCommand extends CoreCommand {
                     default -> false;
                 });
                 Collections.shuffle(available);
-                available.sort((m1, m2) -> (int) (1000 * ((double) m2.getCollectedPlayers().size() / m2.getMaxPlayers()-(double) m1.getCollectedPlayers().size() / m1.getMaxPlayers())));
+                available.sort((m1, m2) -> (int) (1000 * ((double) m2.getCollectedPlayers().size() / m2.getMaxPlayers() - (double) m1.getCollectedPlayers().size() / m1.getMaxPlayers())));
 
-                if (GameManager.get().joinGameAsPlayer(p,available))
+                if (GameManager.get().joinGameAsPlayer(p, available))
                     return;
 
                 new MessageBuilder(Minigames.get(), p)
@@ -69,7 +71,7 @@ public class FastJoinCommand extends CoreCommand {
                 Collections.shuffle(available);
                 available.sort((m1, m2) -> (100 * (m2.getCollectedPlayers().size() / m2.getMaxPlayers() - m1.getCollectedPlayers().size() / m1.getMaxPlayers())));
 
-                if (GameManager.get().joinGameAsPlayer(p,available))
+                if (GameManager.get().joinGameAsPlayer(p, available))
                     return;
 
                 new MessageBuilder(Minigames.get(), p)

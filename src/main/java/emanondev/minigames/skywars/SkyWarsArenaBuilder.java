@@ -195,7 +195,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
         if (phase > 1) {
             Vector min = getArea().getMin();
             Vector max = getArea().getMax();
-            for (int i = min.getBlockX(); i <= max.getBlockX(); i++) { //TODO solo un lato viene visualizzato (?) non era quello y
+            for (int i = min.getBlockX(); i <= max.getBlockX(); i++) {
                 p.spawnParticle(Particle.COMPOSTER, i, min.getY(), min.getZ(), 1);
                 p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, min.getZ(), 1);
                 p.spawnParticle(Particle.COMPOSTER, i, min.getY(), max.getZ() + 1, 1);
@@ -219,7 +219,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
                 double yOffset = min.getY() + 0.05D;
                 spawnLocations.forEach((k, v) ->
                         p.spawnParticle(Particle.REDSTONE, v.x + xOffset, v.y + yOffset,
-                                v.z + zOffset, 1, new Particle.DustOptions(k.getColor(),1F)));
+                                v.z + zOffset, 1, new Particle.DustOptions(k.getColor(), 1F)));
                 if (spectatorsOffset != null)
                     p.spawnParticle(Particle.WAX_ON, spectatorsOffset.x + xOffset,
                             spectatorsOffset.y + yOffset, spectatorsOffset.z + zOffset, 1);

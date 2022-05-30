@@ -5,14 +5,16 @@ import emanondev.core.MessageBuilder;
 import emanondev.core.PermissionBuilder;
 import emanondev.core.UtilsString;
 import emanondev.minigames.*;
-import emanondev.minigames.generic.MType;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MGame;
 import emanondev.minigames.generic.MOption;
+import emanondev.minigames.generic.MType;
+import emanondev.minigames.skywars.SkyWarsGame;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,15 +30,15 @@ public class MiniGameCommand extends CoreCommand {
 
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (args.length==0){
-            onHelp(sender,label,args);
+        if (args.length == 0) {
+            onHelp(sender, label, args);
             return;
         }
         switch (args[0].toLowerCase()) {
             case "create" -> create(sender, label, args);
             case "edit" -> edit(sender, label, args);
             case "list" -> list(sender, label, args);
-            default -> onHelp(sender,label,args);
+            default -> onHelp(sender, label, args);
         }
     }
 
@@ -46,26 +48,29 @@ public class MiniGameCommand extends CoreCommand {
                         "%label%", label)
                 .addHoverTranslation("minigame.help.create_hover", (List<String>) null,
                         "%label%", label)
-                .addSuggestCommand("/%label% create ","%label%", label)
+                .addSuggestCommand("/%label% create ", "%label%", label)
                 .addText("\n")
                 .addTextTranslation("minigame.help.edit_text", "",
                         "%label%", label)
                 .addHoverTranslation("minigame.help.edit_hover", (List<String>) null,
                         "%label%", label)
-                .addSuggestCommand("/%label% edit ","%label%", label)
+                .addSuggestCommand("/%label% edit ", "%label%", label)
                 .addText("\n")
                 .addTextTranslation("minigame.help.list_text", "",
                         "%label%", label)
                 .addHoverTranslation("minigame.help.list_hover", (List<String>) null,
                         "%label%", label)
-                .addSuggestCommand("/%label% list","%label%", label)
+                .addSuggestCommand("/%label% list", "%label%", label)
                 .send();
     }
 
     private void list(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(ChatColor.GOLD +"Incomplete command"); //TODO
-        for (MGame game : GameManager.get().getGames().values()){
-            sender.sendMessage(game.getId()+" ("+game.getMinigameType().getType()+") Fase "+game.getPhase()+" Arena "+game.getArena().getId()+" Opzione "+game.getOption().getId());
+        sender.sendMessage(ChatColor.GOLD + "Incomplete command"); //TODO
+        for (MGame game : GameManager.get().getGames().values()) {
+            BoundingBox bb = ((SkyWarsGame) game).getBoundingBox();
+            sender.sendMessage(game.getId() + " (" + game.getMinigameType().getType() + ") Fase " + game.getPhase() + " Arena " + game.getArena().getId() + " Opzione " + game.getOption().getId());
+            sender.sendMessage(game.getId() + " Area: " + bb.getMinX() + ":" + bb.getMaxX() + "  " + bb.getMinZ() + ":" + bb.getMaxZ());
+            sender.sendMessage(game.getId() + " PP: " + game.getPlayingPlayers().size() + " SP: " + game.getSpectators().size() + " CP: " + game.getCollectedPlayers().size());
         }
     }
 
@@ -132,7 +137,7 @@ public class MiniGameCommand extends CoreCommand {
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("create", "edit","list"));
+            case 1 -> this.complete(args[0], List.of("create", "edit", "list"));
             case 2 -> switch (args[0].toLowerCase()) {
                 case "create" -> this.complete(args[1], MinigameTypes.get().getTypesId());
                 case "edit" -> this.complete(args[1], GameManager.get().getGames().keySet());

@@ -2,10 +2,7 @@ package emanondev.minigames;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
-import emanondev.core.PlayerSnapshot;
-import emanondev.core.UtilsString;
-import emanondev.core.YMLConfig;
-import emanondev.core.YMLSection;
+import emanondev.core.*;
 import emanondev.minigames.generic.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
@@ -13,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +89,7 @@ public class GameManager implements Listener {
         for (MGame game : games.values()) {
             new BukkitRunnable() {
                 public void run() {
-                    game.gameInizialize();
+                    game.gameInitialize();
                 }
             }.runTaskLater(Minigames.get(), counter);
             counter += 5;
@@ -204,84 +202,80 @@ public class GameManager implements Listener {
         return games.get(id.toLowerCase());
     }
 
-    public @Nullable MGame getGame(@NotNull Player player){
+    public @Nullable MGame getGame(@NotNull Player player) {
         return playerGames.get(player);
-
-        /*for (MGame game:games.values()){
-            if (game.isCollectedPlayer(player)|| game.isSpectator(player) || game.isPlayingPlayer(player))
-                return game;
-        }
-        return null;*/
     }
 
-    private final HashMap<Player,MGame> playerGames = new HashMap<>();
-    private final HashMap<Player,PlayerSnapshot> playerSnapshots = new HashMap<>();
+    private final HashMap<Player, MGame> playerGames = new HashMap<>();
+    private final HashMap<Player, PlayerSnapshot> playerSnapshots = new HashMap<>();
 
 
-    public boolean joinGameAsPlayer(Player player, List<MGame> gameList){
+    public boolean joinGameAsPlayer(Player player, List<MGame> gameList) {
         MGame gameOld = getGame(player);
 
-        if (gameOld!=null)
+        if (gameOld != null)
             gameOld.onQuitGame(player);
-        if (gameOld==null) {
-            playerSnapshots.put(player,new PlayerSnapshot(player));
+        if (gameOld == null) {
+            playerSnapshots.put(player, new PlayerSnapshot(player));
         }
-        for (MGame game:gameList)
-            if (game.joinGameAsPlayer(player)){
-                Minigames.get().logTetraStar(ChatColor.DARK_RED,"D user &e"+player.getName()+"&f joined game &e"+game.getId());
-                playerGames.put(player,game);
+        for (MGame game : gameList)
+            if (game.joinGameAsPlayer(player)) {
+                Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
+                playerGames.put(player, game);
                 return true;
             }
-        if (gameOld!=null) {
+        if (gameOld != null) {
             playerSnapshots.remove(player).apply(player);
         }
         return false;
     }
 
-    public boolean joinGameAsPlayer(Player player, MGame game){
+    public boolean joinGameAsPlayer(Player player, MGame game) {
         MGame gameOld = getGame(player);
 
-        if (gameOld!=null)
+        if (gameOld != null)
             gameOld.onQuitGame(player);
-        if (gameOld==null) {
-            playerSnapshots.put(player,new PlayerSnapshot(player));
+        if (gameOld == null) {
+            playerSnapshots.put(player, new PlayerSnapshot(player));
         }
-        if (game.joinGameAsPlayer(player)){
-            Minigames.get().logTetraStar(ChatColor.DARK_RED,"D user &e"+player.getName()+"&f joined game &e"+game.getId());
-            playerGames.put(player,game);
+        if (game.joinGameAsPlayer(player)) {
+            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
+            playerGames.put(player, game);
             return true;
         }
-        if (gameOld!=null) {
+        if (gameOld != null) {
             playerSnapshots.remove(player).apply(player);
         }
         return false;
     }
-    public boolean joinGameAsSpectator(Player player, MGame game){
+
+    public boolean joinGameAsSpectator(Player player, MGame game) {
         MGame gameOld = getGame(player);
 
-        if (gameOld!=null)
+        if (gameOld != null)
             gameOld.onQuitGame(player);
-        if (gameOld==null) {
-            playerSnapshots.put(player,new PlayerSnapshot(player));
+        if (gameOld == null) {
+            playerSnapshots.put(player, new PlayerSnapshot(player));
         }
-        if (game.joinGameAsSpectator(player)){
-            Minigames.get().logTetraStar(ChatColor.DARK_RED,"D user &e"+player.getName()+"&f joined game (as specatator) &e"+game.getId());
-            playerGames.put(player,game);
+        if (game.joinGameAsSpectator(player)) {
+            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game (as specatator) &e" + game.getId());
+            playerGames.put(player, game);
             return true;
         }
-        if (gameOld!=null) {
+        if (gameOld != null) {
             playerSnapshots.remove(player).apply(player);
         }
         return false;
     }
-    public void quitGame(Player player){
+
+    public void quitGame(Player player) {
         MGame game = getGame(player);
-        if (game==null)
+        if (game == null)
             return;
         game.onQuitGame(player);
         playerGames.remove(player);
         playerSnapshots.remove(player).apply(player);
-        Minigames.get().logTetraStar(ChatColor.DARK_RED,"D user &e"+player.getName()+"&f quitted game &e"+game.getId());
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());
     }
 
     @EventHandler
@@ -291,8 +285,16 @@ public class GameManager implements Listener {
 
 
     public void applySpectatorSnapShot(Player player) {
-        PlayerSnapshot snap = getGlobalSection().get("defaultSpectatorSnapshot",null,PlayerSnapshot.class);
-        if (snap!=null)
+        PlayerSnapshot snap = getGlobalSection().get("defaultSpectatorSnapshot", null, PlayerSnapshot.class);
+        if (snap != null)
             snap.apply(player);
+    }
+
+    public ItemStack getKitSelectorItem(Player target) {
+        return getGlobalSection().getGuiItem("kit_selector_item", new ItemBuilder(Material.CHEST).build()).build();
+    }
+
+    public ItemStack getGameLeaveItem(Player target) {
+        return getGlobalSection().getGuiItem("kit_selector_item", new ItemBuilder(Material.IRON_BARS).build()).build();
     }
 }

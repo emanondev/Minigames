@@ -1,7 +1,6 @@
 package emanondev.minigames.skywars;
 
 import emanondev.core.MessageBuilder;
-import emanondev.core.PlayerSnapshot;
 import emanondev.core.UtilsInventory;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
@@ -18,10 +17,14 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -37,27 +40,29 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     @Override
     public void gamePreStart() {
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gamePREPreStart");
-        for (Player p : new HashSet<>(this.getCollectedPlayers()))
+        for (Player p : new HashSet<>(this.getCollectedPlayers())) {
             addPlayingPlayer(p);
+            getMinigameType().applyDefaultPlayerSnapshot(p);
+            //TODO select kit & leave
+            p.getInventory().setHeldItemSlot(4);
+            p.getInventory().setItem(EquipmentSlot.HAND, new ItemStack(Material.CHEST));//GameManager.get().getKitSelectorItem(p));
+            p.getInventory().setItem(8, new ItemStack(Material.IRON_BARS));//GameManager.get().getGameLeaveItem(p));
+        }
+        //TODO eventually combine teams
 
         ignoredChest.clear();
         filledChests.clear();
-        //TODO items to select kit
-        super.gamePreStart();
-    }
 
-    @Override
-    protected void onPlayingPlayerAdded(Player player){
-        teleportToStartLocation(player);
+        super.gamePreStart();
     }
 
     /**
      * Assign a party to user or throw an exception
      */
     public void assignTeam(Player p) {//TODO choose how to fill with options
-        if (getTeam(p)!=null)
+        if (getTeam(p) != null)
             return;
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " assigning team to "+p.getName());
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " assigning team to " + p.getName());
         List<SkyWarsTeam> teams = new ArrayList<>(getTeams());
         teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
         for (SkyWarsTeam team : teams)
@@ -106,44 +111,56 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             else if (evt.getDamager() instanceof TNTPrimed tnt && tnt.getSource() instanceof Player terrorist)
                 damager = terrorist;
         }
-        onFakePlayingPlayerDeath(event.getPlayer(),damager);
+        onFakePlayingPlayerDeath(event.getPlayer(), damager);
     }
 
     @Override
     public void onPlayingPlayerBlockBreak(@NotNull BlockBreakEvent event) {
         if (getPhase() == Phase.PRE_START)
             event.setCancelled(true);
-        if (event.getBlock().getType()==Material.CHEST){
-            if (filledChests.contains(event.getBlock())||ignoredChest.contains(event.getBlock()))
+        if (event.getBlock().getType() == Material.CHEST) {
+            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest break");
+
+            if (filledChests.contains(event.getBlock()) || ignoredChest.contains(event.getBlock()))
                 return;
             if (!(event.getBlock().getState() instanceof Chest cHolder))
                 return;
             onFillChest(cHolder.getBlockInventory());
-            if (cHolder.update(false,false))
-                Minigames.get().logTetraStar(ChatColor.DARK_RED,"D updated broken chest debug");
+            if (cHolder.update(false, false))
+                Minigames.get().logTetraStar(ChatColor.DARK_RED, "D updated broken chest debug");
         }
     }
 
     @EventHandler(ignoreCancelled = true)
-    private void event(InventoryOpenEvent event){
+    private void event(InventoryOpenEvent event) {
         if (!(event.getPlayer() instanceof Player p))
             return;
         if (!isPlayingPlayer(p))
             return;
-        if (getPhase()!=Phase.PLAYING)
+        if (getPhase() != Phase.PLAYING)
             return;
-        if (event.getInventory().getType()!= InventoryType.CHEST)
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv");
+
+        if (event.getInventory().getType() != InventoryType.CHEST)
             return;
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv A");
         if (!(event.getInventory().getHolder() instanceof Chest cHolder))
             return;
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv B");
         Block b = cHolder.getBlock();
-        if (filledChests.contains(b)||ignoredChest.contains(b))
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv fill " + filledChests.contains(b) + " ignored " + ignoredChest.contains(b));
+
+        if (filledChests.contains(b) || ignoredChest.contains(b))
             return;
+        filledChests.add(b);
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv C");
         onFillChest(event.getInventory());
     }
 
     protected void onFillChest(Inventory inventory) {
-        inventory.setItem(inventory.getSize()/2,new ItemStack(Material.POPPY));
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest filling");
+
+        inventory.setItem(inventory.getSize() / 2, new ItemStack(Material.POPPY));
         //TODO fill chests
     }
 
@@ -151,8 +168,10 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     public void onPlayingPlayerBlockPlace(@NotNull BlockPlaceEvent event) {
         if (getPhase() == Phase.PRE_START)
             event.setCancelled(true);
-        if (event.getBlock().getType() == Material.CHEST)
+        if (event.getBlock().getType() == Material.CHEST) {
+            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest ignoring");
             ignoredChest.add(event.getBlock());
+        }
     }
 
 
@@ -182,11 +201,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     public void teleportToStartLocation(@NotNull Player player) {
         player.teleport(getArena().getSpawnOffset(getTeam(player).getColor())
                 .add(getGameLocation()));
-        PlayerSnapshot snap = new PlayerSnapshot();
-        for (PlayerSnapshot.FieldType type: PlayerSnapshot.FieldType.values())
-            if (type!= PlayerSnapshot.FieldType.LOCATION)
-            snap.setDefault(type);
-        snap.apply(player);
     }
 
     @Override
@@ -219,14 +233,14 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 if (!UtilsInventory.isAirOrNull(item))
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
-        removePlayingPlayer(player);
+        switchToSpectator(player);
         if (killer != null) {
             //TODO add points
         }
     }
 
-    protected void checkGameEnd(){
-        if (getPhase()!=Phase.PLAYING)
+    protected void checkGameEnd() {
+        if (getPhase() != Phase.PLAYING)
             return;
         //TODO check win conditions
         int alive = 0;
@@ -247,31 +261,5 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         this.gameEnd();
     }
 
-    @Override
-    public void onPlayingPlayerDamaged(@NotNull EntityDamageEvent event, @NotNull Player p) {
-        if (getPhase() != Phase.PLAYING)
-            event.setCancelled(true);
-    }
-
-
-    /**
-     * Handle any player interaction with entities inside arena
-     */
-    public void onPlayingPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (getPhase() == Phase.PRE_START)
-            event.setCancelled(true);
-    }
-
-    /**
-     * Handle any player interaction inside arena
-     */
-    public void onPlayingPlayerInteract(PlayerInteractEvent event) {
-        if (getPhase() == Phase.PRE_START)
-            event.setCancelled(true);
-        if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CHEST && !filledChests.contains(event.getClickedBlock()) && !ignoredChest.contains(event.getClickedBlock())) {
-            filledChests.add(event.getClickedBlock());
-            //TODO fill chest
-        }
-    }
 
 }

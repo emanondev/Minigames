@@ -1,13 +1,18 @@
 package emanondev.minigames.generic;
 
-import emanondev.core.*;
+import emanondev.core.MessageBuilder;
+import emanondev.core.SoundInfo;
+import emanondev.core.UtilsMessages;
+import emanondev.core.UtilsString;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.GameManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -66,7 +71,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             this.gameAbort();
         this.loc = loc;
         if (!wasStopped)
-            this.gameInizialize();
+            this.gameInitialize();
     }
 
     @Override
@@ -79,7 +84,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     }
 
     @Override
-    public void gameInizialize() {
+    public void gameInitialize() {
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameInizialize");
         if (phase != Phase.STOPPED)
             throw new IllegalStateException();
@@ -200,9 +205,12 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameStart");
         if (phase != Phase.PLAYING)
             throw new IllegalStateException();
-        for (Player p : getPlayingPlayers())
+        for (Player p : getPlayingPlayers()) {
             new MessageBuilder(Minigames.get(), p)
                     .addTextTranslation("skywars.game.game_start", "").send();
+            getMinigameType().applyDefaultPlayerSnapshot(p); //TODO again()
+        }
+        //TODO apply kits
         //TODO notify game started?
     }
 
@@ -230,22 +238,22 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         //TODO celebrate?
 
         if (endCountdown >= 1)
-        for (Player p : getPlayingPlayers()) {
-            Firework fire = (Firework) p.getLocation().getWorld().spawnEntity(p.getLocation().add(Math.random() * 6 - 3, 2, Math.random() * 6 - 3), EntityType.FIREWORK);
-            FireworkMeta meta = fire.getFireworkMeta();
-            meta.addEffect(FireworkEffect.builder().withColor(
-                    Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))
-                    ,
-                    Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))
-            ).build());
-            fire.setFireworkMeta(meta);
-            Bukkit.getScheduler().runTaskLater(Minigames.get(), () -> fire.detonate(), 2L);
-            String[] args = new String[]{"%cooldown%", String.valueOf(prestartCountdown)};
-            UtilsMessages.sendActionbar(p, Minigames.get().getLanguageConfig(p)
-                    .loadMessage(getMinigameType().getType() + ".game.end_cooldown_bar", "",
-                            args));
+            for (Player p : getPlayingPlayers()) {
+                Firework fire = (Firework) p.getLocation().getWorld().spawnEntity(p.getLocation().add(Math.random() * 6 - 3, 2, Math.random() * 6 - 3), EntityType.FIREWORK);
+                FireworkMeta meta = fire.getFireworkMeta();
+                meta.addEffect(FireworkEffect.builder().withColor(
+                        Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))
+                        ,
+                        Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))
+                ).build());
+                fire.setFireworkMeta(meta);
+                Bukkit.getScheduler().runTaskLater(Minigames.get(), () -> fire.detonate(), 2L);
+                String[] args = new String[]{"%cooldown%", String.valueOf(prestartCountdown)};
+                UtilsMessages.sendActionbar(p, Minigames.get().getLanguageConfig(p)
+                        .loadMessage(getMinigameType().getType() + ".game.end_cooldown_bar", "",
+                                args));
 
-        }
+            }
         if (endCountdown == -1)
             endCountdown = getOption().getEndPhaseCooldownMax();
         else
@@ -259,9 +267,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void gameClose() {
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameClose");
-        for (Player spectator:new HashSet<>(getSpectators())) //bad
+        for (Player spectator : new HashSet<>(getSpectators())) //bad
             GameManager.get().quitGame(spectator);
-        for (Player player:new HashSet<>(getPlayingPlayers())) //bad
+        for (Player player : new HashSet<>(getPlayingPlayers())) //bad
             GameManager.get().quitGame(player);
         phase = Phase.RESTART;
         timer.cancel();
@@ -272,11 +280,11 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void gameAbort() {
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameAbort");
-        for (Player spectator:new HashSet<>(getSpectators())) //bad
+        for (Player spectator : new HashSet<>(getSpectators())) //bad
             GameManager.get().quitGame(spectator);
-        for (Player player:new HashSet<>(getPlayingPlayers())) //bad
+        for (Player player : new HashSet<>(getPlayingPlayers())) //bad
             GameManager.get().quitGame(player);
-        for (Player player:new HashSet<>(getCollectedPlayers())) //bad
+        for (Player player : new HashSet<>(getCollectedPlayers())) //bad
             GameManager.get().quitGame(player);
         if (phase == Phase.STOPPED)
             return;
@@ -365,10 +373,10 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private final Set<Player> spectators = new HashSet<>();
 
     @NotNull
-    public final boolean switchToSpectator(@NotNull Player player){
+    public final boolean switchToSpectator(@NotNull Player player) {
         if (!isPlayingPlayer(player))
             return false;
-        if (canSwitchToSpectator(player)&&!isSpectator(player)){
+        if (canSwitchToSpectator(player) && !isSpectator(player)) {
             onQuitGame(player);
             spectators.add(player);
             onSpectatorAdded(player);
@@ -385,7 +393,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (isPlayingPlayer(player)) {
             return switchToSpectator(player);
         }
-        if (canAddSpectator(player)&&!isSpectator(player)){
+        if (canAddSpectator(player) && !isSpectator(player)) {
             spectators.add(player);
             onSpectatorAdded(player);
             return true;
@@ -395,7 +403,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public final boolean removeSpectator(@NotNull Player player) {
-        if (spectators.remove(player)){
+        if (spectators.remove(player)) {
             onSpectatorRemoved(player);
             return true;
         }
@@ -416,7 +424,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public boolean addPlayingPlayer(@NotNull Player player) {
-        if (canAddPlayingPlayer(player)&&playing.add(player)){
+        if (canAddPlayingPlayer(player) && playing.add(player)) {
             collectedPlayers.remove(player);
             assignTeam(player);
             onPlayingPlayerAdded(player);
@@ -474,7 +482,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return id != null;
     }
 
-    public final void setRegistered(String id) {
+    public final void setRegistered(@NotNull String id) {
         if (!UtilsString.isLowcasedValidID(id))
             throw new IllegalStateException();
         this.id = id;
@@ -522,13 +530,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     public abstract void onFakePlayingPlayerDeath(@NotNull Player dead, @Nullable Player killer);
 
     /**
-     * called when a playing player damage someone
-     *  @param event
-     * @param p
-     */
-    public abstract void onPlayingPlayerDamaged(@NotNull EntityDamageEvent event, @NotNull Player p);
-
-    /**
      * called when a playing player heals
      *
      * @param event
@@ -562,16 +563,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         event.setCancelled(true);
     }
 
-    /**
-     * Handle any player interaction with entities inside arena
-     */
-    public abstract void onPlayingPlayerInteractEntity(PlayerInteractEntityEvent event);
-
-    /**
-     * Handle any player interaction inside arena
-     */
-    public abstract void onPlayingPlayerInteract(PlayerInteractEvent event);
-
 
     protected boolean canAddSpectator(Player player) {
         return switch (getPhase()) {
@@ -582,7 +573,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     protected void onSpectatorAdded(Player player) {
         GameManager.get().applySpectatorSnapShot(player);
-
     }
 
     protected void onSpectatorRemoved(Player player) {
@@ -613,19 +603,11 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     public void onPlayingPlayerMove(PlayerMoveEvent event) {
         if (getPhase() == Phase.PRE_START && event.getFrom().distanceSquared(event.getTo()) > 0) {
             event.setCancelled(true);
-            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " onMove PRESTART " + event.getPlayer().getName() + " distance (sqrt)" + event.getFrom().distanceSquared(event.getTo()));
         }
     }
 
 
     public abstract void onPlayingPlayerTeleport(PlayerTeleportEvent event);
-
-    /**
-     * note: the player is always removed from the game after this call
-     */
-    public void onPlayingPlayerQuitGame(Player p){
-        onQuitGame(p);
-    }
 
 
     public void onPlayingPlayerPickupItem(EntityPickupItemEvent event, Player p) {
@@ -642,4 +624,27 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (getPhase() == Phase.PRE_START)
             event.setCancelled(true);
     }
+
+    public void onPlayingPlayerDamaged(@NotNull EntityDamageEvent event, @NotNull Player p) {
+        if (getPhase() != Phase.PLAYING)
+            event.setCancelled(true);
+    }
+
+
+    /**
+     * Handle any player interaction with entities inside arena
+     */
+    public void onPlayingPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (getPhase() == Phase.PRE_START)
+            event.setCancelled(true);
+    }
+
+    /**
+     * Handle any player interaction inside arena
+     */
+    public void onPlayingPlayerInteract(PlayerInteractEvent event) {
+        if (getPhase() == Phase.PRE_START)
+            event.setCancelled(true);
+    }
+
 }

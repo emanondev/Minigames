@@ -58,11 +58,6 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     int getMaxPlayers();
 
-    @Nullable
-    default Location getLobbyLocation() {
-        return getMinigameType().getLobbyLocation();
-    }
-
     @NotNull MType<A, O> getMinigameType();
 
     boolean canSwitchToSpectator(Player player);
@@ -114,7 +109,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      * <p>
      * also do anything which should be done when the game start for the first time and do not need to be done on game restart
      */
-    void gameInizialize();
+    void gameInitialize();
 
     /**
      * reset any variables which needs to be cleared on game restart
@@ -239,7 +234,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
             return;
         }
         switch (getPhase()) {
-            case PLAYING, PRE_START,END -> {
+            case PLAYING, PRE_START, END -> {
                 if (!isPlayingPlayer(player)) {
                     return;
                 }

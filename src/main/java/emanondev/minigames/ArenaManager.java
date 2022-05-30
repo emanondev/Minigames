@@ -191,7 +191,7 @@ public class ArenaManager {
         builders.get(who.getUniqueId()).handleCommand(who, args);
     }
 
-    public List<String> onArenaBuilderComplete(@NotNull Player who, @NotNull String label,@NotNull String[] args) {
+    public List<String> onArenaBuilderComplete(@NotNull Player who, @NotNull String label, @NotNull String[] args) {
         if (!builders.containsKey(who.getUniqueId()))
             return switch (args.length) {
                 case 1 -> UtilsCommand.complete(args[0], List.of("create"));

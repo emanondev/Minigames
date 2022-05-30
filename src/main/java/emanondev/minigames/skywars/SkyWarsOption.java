@@ -1,14 +1,12 @@
 package emanondev.minigames.skywars;
 
 import emanondev.core.ItemBuilder;
-import emanondev.core.gui.FButton;
 import emanondev.core.gui.NumberEditorFButton;
 import emanondev.core.gui.PagedMapGui;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.AbstractMOption;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +46,7 @@ public class SkyWarsOption extends AbstractMOption {
         gui.open(who);
     }
 
-    protected void fillEditor(PagedMapGui gui){
+    protected void fillEditor(PagedMapGui gui) {
         super.fillEditor(gui);
         gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> perTeamMaxPlayers
                 , (v) -> {
@@ -62,7 +60,7 @@ public class SkyWarsOption extends AbstractMOption {
     }
 
     @Override
-    public PagedMapGui craftEditor(Player target){
+    public PagedMapGui craftEditor(Player target) {
         return new PagedMapGui(Minigames.get().getLanguageConfig(target).loadMessage(
                 "skywars.option_gui_title", ""), 6, target, null, Minigames.get());
     }

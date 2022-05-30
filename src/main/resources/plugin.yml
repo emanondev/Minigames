@@ -1,5 +1,5 @@
 name: Minigames
 version: '${project.version}'
-main: emanondev.minigames.minigames.Minigames
+main: emanondev.minigames.Minigames
 api-version: 1.18
 depend: [ DeepCore ]
