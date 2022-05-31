@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collections;
@@ -37,13 +38,17 @@ public class KitManager {
     private final Map<String, Kit> kits = new HashMap<>();
     private final HashMap<String, YMLConfig> kitsFile = new HashMap<>();
 
-    public boolean existKit(String id) {
+    public @Nullable Kit getKit(@NotNull String id) {
+        return kits.get(id.toLowerCase());
+    }
+
+    /*public boolean existKit(String id) {
         return kits.get(id.toLowerCase()) != null;
     }
 
     public void applyKit(String id, Player player) {
         kits.get(id.toLowerCase()).apply(player);
-    }
+    }*/
 
     public @NotNull Set<String> getKitsId() {
         return Collections.unmodifiableSet(kits.keySet());
@@ -130,8 +135,13 @@ public class KitManager {
         Kit kit = Kit.fromPlayerSnapshot(snap);
         kitsFile.put(id, config);
         kits.put(id, kit);
+        kit.setRegistered(id);
         config.set(id, kit);
         config.save();
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Saved Kit &e" + id);
+    }
+
+    public Map<String, Kit> getKits() {
+        return Collections.unmodifiableMap(kits);
     }
 }

@@ -1,11 +1,20 @@
 package emanondev.minigames.generic;
 
+import emanondev.core.ItemBuilder;
 import emanondev.core.RandomItemContainer;
 import emanondev.core.UtilsString;
+import emanondev.core.gui.FButton;
+import emanondev.core.gui.Gui;
+import emanondev.core.gui.PagedListGui;
 import emanondev.minigames.FillerManager;
+import emanondev.minigames.Minigames;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,6 +46,72 @@ public class ChestFiller implements MFiller {
         this.items.addItems(items, weight);
         if (isRegistered())
             FillerManager.get().save(this);
+    }
+
+    @Override
+    public @NotNull Gui editorGui(@NotNull Player player, @Nullable Gui previousGui) {
+        //TODO edit the core
+        final boolean[] showItem = {true};
+
+        PagedListGui<Integer> gui = new PagedListGui<>(getId(), 6, player, previousGui, Minigames.get(), false, 1) {
+
+            @Override
+            public PagedListGui<Integer>.ContainerButton getContainer(Integer integer) {
+                return new ContainerButton(integer) {
+
+                    @Override
+                    public boolean onClick(@NotNull InventoryClickEvent inventoryClickEvent) {
+                        return false;
+                    }
+
+                    @Override
+                    public @Nullable ItemStack getItem() {
+                        if (showItem[0])
+                            try {
+                                return items.getItems().get(getValue());
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        try {
+                            return new ItemBuilder(items.getItems().get(getValue()))
+                                    .setDescription(
+                                            Minigames.get().getLanguageConfig(getTargetPlayer())
+                                                    .loadMultiMessage("minifiller.buttons.object_info", new ArrayList<>(), true,
+                                                            "%weight%", String.valueOf(items.getWeights().get(getValue())),
+                                                            "%multiplier%", UtilsString.formatOptional2Digit(((double) amountMin + amountMax) / 2),
+                                                            "%multiplier-chance%", UtilsString.formatForced2Digit(((double) amountMin + amountMax) / 2 * (double) items.getWeights().get(getValue()) * 100 / items.getFullWeight()),
+                                                            "%chance%", UtilsString.formatForced2Digit((double) items.getWeights().get(getValue()) * 100 / items.getFullWeight()))
+                                    ).setGuiProperty().build();
+                        } catch (Exception e) {
+                            return null;
+                        }
+                    }
+                };
+            }
+        };
+        for (int i = 0; i < items.getItems().size(); i++)
+            gui.addElement(i);
+        gui.setControlGuiButton(4, new FButton(gui, () -> new ItemBuilder(Material.PAPER).build(),//TODO switch desc
+                (event -> {
+                    showItem[0] = !showItem[0];
+                    return true;
+                })));
+        return gui;
+    }
+
+    @Override
+    public int getMinElements() {
+        return amountMin;
+    }
+
+    @Override
+    public int getMaxElements() {
+        return amountMax;
+    }
+
+    @Override
+    public int getElementsAmount() {
+        return items.getItems().size();
     }
 
 
@@ -86,6 +161,7 @@ public class ChestFiller implements MFiller {
             }
             subMap.get(String.valueOf(weightList.get(i))).add(itemList.get(i));
         }
+        map.put("items", subMap);
         return map;
     }
 }

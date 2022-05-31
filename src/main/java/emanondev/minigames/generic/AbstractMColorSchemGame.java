@@ -74,13 +74,13 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         isSquared = box.getWidthX() == box.getWidthZ() || Math.max(box.getWidthX(), box.getWidthZ()) < 10;
 
         double margin = 0.25;
-        double size = Math.max(box.getWidthX(), box.getWidthZ()) / 2 - 2 * margin; //sightly smaller
+        double size = Math.max(box.getWidthX(), box.getWidthZ()) - 2 * margin; //sightly smaller
         if (!isSquared) {
             for (int i = 0; i < 4; i++) {
                 WorldBorder wb = Bukkit.createWorldBorder();
                 wb.setWarningDistance(3);
                 wb.setSize(size);
-                wb.setCenter((i < 2 ? box.getMinX() : box.getMaxX()) + size + margin, (i % 2 == 0 ? box.getMinZ() : box.getMaxZ()) + size + margin);
+                wb.setCenter((i < 2 ? box.getMinX() : box.getMaxX()) + size/2 + margin, (i % 2 == 0 ? box.getMinZ() : box.getMaxZ()) + size/2 + margin);
                 borders.add(wb);
                 cacheArea.add(new BoundingBox(i < 2 ? box.getMinX() : box.getMaxX()
                         , Integer.MIN_VALUE, i % 2 == 0 ? box.getMinZ() : box.getMaxZ()
@@ -91,13 +91,15 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             WorldBorder wb = Bukkit.createWorldBorder();
             wb.setWarningDistance(3);
             wb.setSize(size);
-            wb.setCenter(box.getCenterX() + size, box.getCenterZ() + size);
+            wb.setCenter(box.getCenterX() + size/2, box.getCenterZ() + size/2);
             spectatorBorder = wb;
         } else {
+
             WorldBorder wb = Bukkit.createWorldBorder();
             wb.setWarningDistance(3);
             wb.setSize(size);
-            wb.setCenter(box.getMinX() + size, box.getMinZ() + size);
+            wb.setCenter(box.getMinX() + size/2, box.getMinZ() + size/2);
+            borders.add(wb);
             spectatorBorder = wb;
         }
     }
@@ -195,4 +197,16 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         player.setWorldBorder(player.getWorld().getWorldBorder());
     }
 
+    @Override
+    public void gameAbort() {
+        switch (getPhase()){
+            case PRE_START,PLAYING,END -> {
+                for (Player player : getPlayingPlayers())
+                    player.setWorldBorder(player.getWorld().getWorldBorder());
+                for (Player player : getSpectators())
+                    player.setWorldBorder(player.getWorld().getWorldBorder());
+            }
+        }
+        super.gameAbort();
+    }
 }

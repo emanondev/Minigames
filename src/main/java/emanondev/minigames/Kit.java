@@ -15,9 +15,11 @@ import java.util.Map;
 public class Kit implements ConfigurationSerializable, Registrable {
 
     private final PlayerSnapshot snap;
+    private int price;
 
     public Kit(@NotNull Map<String, Object> map) {
         this.snap = (PlayerSnapshot) map.get("snap");
+        this.price = Math.max(0, (int) map.getOrDefault("price", 0));
     }
 
     public static @NotNull Kit fromPlayerSnapshot(@NotNull PlayerSnapshot snap) {
@@ -51,7 +53,7 @@ public class Kit implements ConfigurationSerializable, Registrable {
     public Map<String, Object> serialize() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("snap", this.snap);
-
+        map.put("price", this.price);
         return map;
     }
 
@@ -76,4 +78,7 @@ public class Kit implements ConfigurationSerializable, Registrable {
     }
 
 
+    public int getPrice() {
+        return price;
+    }
 }

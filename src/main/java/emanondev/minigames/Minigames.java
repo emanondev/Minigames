@@ -2,6 +2,7 @@ package emanondev.minigames;
 
 import emanondev.core.CorePlugin;
 import emanondev.minigames.commands.*;
+import emanondev.minigames.generic.ChestFiller;
 import emanondev.minigames.locations.BlockLocation2D;
 import emanondev.minigames.locations.BlockLocation3D;
 import emanondev.minigames.locations.BlockLocationOffset3D;
@@ -48,11 +49,14 @@ public final class Minigames extends CorePlugin {
 
         new MinigameTypes();
 
+        KitManager.get().reload();
+        FillerManager.get().reload();
         ArenaManager.get().reload();
         OptionManager.get().reload();
         GameManager.get().reload();
 
         this.registerCommand(new MiniKitCommand());
+        this.registerCommand(new MiniFillerCommand());
         this.registerCommand(new MiniChestFillerCommand());
         this.registerCommand(new ArenaBuilderCommand());
         this.registerCommand(new MiniOptionCommand());
@@ -68,6 +72,7 @@ public final class Minigames extends CorePlugin {
         ConfigurationSerialization.registerClass(BlockLocationOffset3D.class);
         ConfigurationSerialization.registerClass(LocationOffset3D.class);
         ConfigurationSerialization.registerClass(Kit.class);
+        ConfigurationSerialization.registerClass(ChestFiller.class);
 
         //Commands
     }

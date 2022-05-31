@@ -1,11 +1,14 @@
 package emanondev.minigames.skywars;
 
+import emanondev.core.ItemBuilder;
 import emanondev.core.MessageBuilder;
 import emanondev.core.UtilsInventory;
-import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.Minigames;
+import emanondev.core.VaultEconomyHandler;
+import emanondev.core.gui.PagedListFGui;
+import emanondev.minigames.*;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
+import emanondev.minigames.generic.MFiller;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -23,6 +26,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -36,17 +40,18 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     private final HashSet<Block> ignoredChest = new HashSet<>();
     private final HashSet<Block> filledChests = new HashSet<>();
+    private final HashMap<Player, String> kitPreference = new HashMap<>();
 
     @Override
     public void gamePreStart() {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gamePREPreStart");
+        //Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gamePREPreStart");
         for (Player p : new HashSet<>(this.getCollectedPlayers())) {
             addPlayingPlayer(p);
             getMinigameType().applyDefaultPlayerSnapshot(p);
-            //TODO select kit & leave
             p.getInventory().setHeldItemSlot(4);
-            p.getInventory().setItem(EquipmentSlot.HAND, new ItemStack(Material.CHEST));//GameManager.get().getKitSelectorItem(p));
-            p.getInventory().setItem(8, new ItemStack(Material.IRON_BARS));//GameManager.get().getGameLeaveItem(p));
+            if (getOption().getKits().size() > 0) //only if you can choose a kit
+                p.getInventory().setItem(EquipmentSlot.HAND, GameManager.get().getKitSelectorItem(p));
+            p.getInventory().setItem(8, GameManager.get().getGameLeaveItem(p));
         }
         //TODO eventually combine teams
 
@@ -54,6 +59,30 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         filledChests.clear();
 
         super.gamePreStart();
+    }
+
+    @Override
+    public void gameStart() {
+        super.gameStart();
+        VaultEconomyHandler ecoHandler = new VaultEconomyHandler();
+        for (Player player : getPlayingPlayers()) {
+            if (kitPreference.containsKey(player)) {
+                Kit kit = KitManager.get().getKit(kitPreference.get(player));
+                if (kit == null) {
+                    //TODO apply default kit
+                } else {
+                    if (kit.getPrice() > 0 && ecoHandler.removeMoney(player, kit.getPrice())) {
+                        kit.apply(player);
+                    } else {
+                        //TODO not enough money
+                        //TODO apply default kit
+                    }
+                }
+            } else {
+                //TODO apply default kit
+            }
+            player.closeInventory();
+        }
     }
 
     /**
@@ -119,8 +148,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         if (getPhase() == Phase.PRE_START)
             event.setCancelled(true);
         if (event.getBlock().getType() == Material.CHEST) {
-            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest break");
-
             if (filledChests.contains(event.getBlock()) || ignoredChest.contains(event.getBlock()))
                 return;
             if (!(event.getBlock().getState() instanceof Chest cHolder))
@@ -139,29 +166,23 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             return;
         if (getPhase() != Phase.PLAYING)
             return;
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv");
 
         if (event.getInventory().getType() != InventoryType.CHEST)
             return;
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv A");
         if (!(event.getInventory().getHolder() instanceof Chest cHolder))
             return;
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv B");
         Block b = cHolder.getBlock();
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv fill " + filledChests.contains(b) + " ignored " + ignoredChest.contains(b));
 
         if (filledChests.contains(b) || ignoredChest.contains(b))
             return;
         filledChests.add(b);
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest openinv C");
         onFillChest(event.getInventory());
     }
 
     protected void onFillChest(Inventory inventory) {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest filling");
-
-        inventory.setItem(inventory.getSize() / 2, new ItemStack(Material.POPPY));
-        //TODO fill chests
+        MFiller filler = getOption().getFiller();
+        if (filler != null)
+            filler.fillInventory(inventory);
     }
 
     @Override
@@ -169,7 +190,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         if (getPhase() == Phase.PRE_START)
             event.setCancelled(true);
         if (event.getBlock().getType() == Material.CHEST) {
-            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " fillchest ignoring");
             ignoredChest.add(event.getBlock());
         }
     }
@@ -261,5 +281,29 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         this.gameEnd();
     }
 
+    @Override
+    public void onPlayingPlayerInteract(PlayerInteractEvent event) {
+        super.onPlayingPlayerInteract(event);
+        if (getPhase() != Phase.PRE_START)
+            return;
+        if (event.getPlayer().getInventory().getHeldItemSlot() != 4)
+            return;
+        List<Kit> kits = getOption().getKits();
+        if (kits.size() == 0) //only if you can choose a kit
+            return;
+        new PagedListFGui<Kit>(Minigames.get().getLanguageConfig(event.getPlayer())
+                .loadString("generic.gui.kitselector_title", "")
+                , 3, event.getPlayer(), null, Minigames.get(),
+                false,
+                (evt, kit) -> {
 
+                    return true;
+                }, (kit) ->
+                new ItemBuilder(Material.IRON_CHESTPLATE).setDescription(
+                        Minigames.get().getLanguageConfig(event.getPlayer())
+                                .loadMultiMessage("generic.gui.kitselector_description"
+                                        , new ArrayList<>(), "%id%", kit.getId(), "%price%", "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice()))
+                ).setGuiProperty().build()).open(event.getPlayer());
+
+    }
 }

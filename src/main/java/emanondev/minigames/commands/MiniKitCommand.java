@@ -4,10 +4,7 @@ import emanondev.core.CoreCommand;
 import emanondev.core.MessageBuilder;
 import emanondev.core.PermissionBuilder;
 import emanondev.core.PlayerSnapshot;
-import emanondev.minigames.GameManager;
-import emanondev.minigames.KitManager;
-import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.Minigames;
+import emanondev.minigames.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -115,7 +112,7 @@ public class MiniKitCommand extends CoreCommand {
                     .addTextTranslation("minikit.error.create_arguments_amount", "", "%label%", label).send();
             return;
         }
-        if (KitManager.get().existKit(args[1])) {
+        if (KitManager.get().getKit(args[1]) != null) {
             new MessageBuilder(Minigames.get(), sender)
                     .addTextTranslation("minikit.error.already_used_id", "", "%id%", args[1].toLowerCase()).send();
             return;
@@ -143,12 +140,13 @@ public class MiniKitCommand extends CoreCommand {
                     .addTextTranslation("minikit.error.apply_target_required", "", "%id%", args[1].toLowerCase()).send();
             return;
         }
-        if (!KitManager.get().existKit(args[1])) {
+        Kit kit = KitManager.get().getKit(args[1]);
+        if (kit == null) {
             new MessageBuilder(Minigames.get(), sender)
                     .addTextTranslation("minikit.error.unexisting_id", "", "%id%", args[1].toLowerCase()).send();
             return;
         }
-        KitManager.get().applyKit(args[1], target);
+        kit.apply(target);
         new MessageBuilder(Minigames.get(), sender)
                 .addTextTranslation("minikit.success.apply", "", "%id%", args[1].toLowerCase()
                         , "%player%", target.getName()).send();
@@ -164,12 +162,13 @@ public class MiniKitCommand extends CoreCommand {
             this.playerOnlyNotify(sender);
             return;
         }
-        if (!KitManager.get().existKit(args[1])) {
+        Kit kit = KitManager.get().getKit(args[1]);
+        if (kit == null) {
             new MessageBuilder(Minigames.get(), sender)
                     .addTextTranslation("minikit.error.unexisting_id", "", "%id%", args[1].toLowerCase()).send();
             return;
         }
-        KitManager.get().updateKit(args[1], player);
+        kit.updateSnapshot(new PlayerSnapshot(player)); //not optimized
         new MessageBuilder(Minigames.get(), sender)
                 .addTextTranslation("minikit.success.update", "", "%id%", args[1].toLowerCase()).send();
     }
@@ -181,7 +180,7 @@ public class MiniKitCommand extends CoreCommand {
                     .addTextTranslation("minikit.error.delete_arguments_amount", "").send();
             return;
         }
-        if (!KitManager.get().existKit(args[1])) {
+        if (KitManager.get().getKit(args[1]) == null) {
             new MessageBuilder(Minigames.get(), sender)
                     .addTextTranslation("minikit.error.unexisting_id", "", "%id%", args[1].toLowerCase()).send();
             return;
@@ -194,9 +193,9 @@ public class MiniKitCommand extends CoreCommand {
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("create", "update", "delete", "load", "list"));
+            case 1 -> this.complete(args[0], List.of("create", "update", "delete", "apply", "list"));
             case 2 -> switch (args[0].toLowerCase()) {
-                case "update", "delete", "load" -> this.complete(args[1], KitManager.get().getKitsId());
+                case "update", "delete", "apply" -> this.complete(args[1], KitManager.get().getKitsId());
                 default -> Collections.emptyList();
             };
             case 3 -> switch (args[0].toLowerCase()) {

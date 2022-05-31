@@ -17,10 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameManager implements Listener {
 
@@ -291,10 +288,14 @@ public class GameManager implements Listener {
     }
 
     public ItemStack getKitSelectorItem(Player target) {
-        return getGlobalSection().getGuiItem("kit_selector_item", new ItemBuilder(Material.CHEST).build()).build();
+        return getGlobalSection().getGuiItem("kitselector_item", new ItemStack(Material.CHEST))
+                .setDescription(Minigames.get().getLanguageConfig(target).loadMultiMessage(
+                        "generic.gui.kitselector_item_description",new ArrayList<>())).build();
     }
 
     public ItemStack getGameLeaveItem(Player target) {
-        return getGlobalSection().getGuiItem("kit_selector_item", new ItemBuilder(Material.IRON_BARS).build()).build();
+        return getGlobalSection().getGuiItem("gameleave_item",  new ItemStack(Material.IRON_BARS))
+                .setDescription(Minigames.get().getLanguageConfig(target).loadMultiMessage(
+                        "generic.gui.gameleave_item_description",new ArrayList<>())).build();
     }
 }

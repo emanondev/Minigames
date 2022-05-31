@@ -1,4 +1,11 @@
 generic:
+  gui:
+    kitselector_title: "&"
+    kit_description:
+    kitselector_item_description:
+      - "&aScegli il Kit"
+    gameleave_item_description:
+      - "&cAbbandona la partita"
   arenabuilder:
     success:
       aborted: "&c[ArenaBuilder] Creazione arena interrotta"
@@ -113,10 +120,14 @@ minifiller:
     invalid_target: "&c[MiniFiller] Avvicinati e punta ad un blocco"
     invalid_block: "&c[MiniFiller] Il blocco dev'essere un contenitore"
     empty_container: "&c[MiniFiller] Il blocco non contiene oggetti"
+    show_arguments_amount: "&c[MiniFiller] /%label% show <id>"
   success:
     create: "&a[MiniFiller] Creato il filler &e%id%"
-    addall: "&a[MiniFiller] Aggiunti &e%items% &aoggetti al filler &e%id% &acon peso &e%weight%"
-
+    addall: "&a[MiniFiller] Aggiunti &e%amount% &aoggetti al filler &e%id% &acon peso &e%weight%"
+  buttons:
+    object_info:
+      - "&6Peso &e%weight%"
+      - "&7Probabilità &e%chance%&7% (x%multiplier% ≈ &e%multiplier-chance%&7%)"
 minioption:
   error:
     invalid_type: "&c[MiniOption] &6%type% &cnon è un minigame valido"
@@ -127,6 +138,35 @@ minioption:
     pre_create_invalid_action: "&c[MiniOption] /%label% create <type> <id>"
     unexisting_id: "&c[MiniOption] L'id &6%id% &cnon è presente"
   buttons:
+    kitselector:
+      - "&6Seleziona kit"
+      - "&9Kit abilitati:"
+      - "&e%selected%"
+      - "&7I kit abilitati possono essere selezionati"
+      - "&7 dai giocatori prima della partita"
+      - "&9[&fClick&9] &fAny &9-> &fCambia/Imposta"
+    kitdescription:
+      - "&6Riempitore &e%id%"
+      - "&9Prezzo: &e%price%"
+      - ""
+      - "&7Serve a riempire le casse nell'arena"
+      - "&7Puoi vedere il contenuto con /minikit load %id%"
+      - "&9[&fClick&9] &fAny &9-> &fSeleziona"
+    fillerselector:
+      - "&6Riempitore &e%id%"
+      - "&9Genera fra &e%min% &9e &e%max% &9oggetti"
+      - "&9Contiene &e%size%&9 oggetti salvati"
+      - ""
+      - "&7Serve a riempire le casse nell'arena"
+      - "&9[&fClick&9] &fAny &9-> &fCambia/Imposta"
+    fillerdescription:
+      - "&6Riempitore &e%id%"
+      - "&9Genera fra &e%min% &9e &e%max% &9oggetti"
+      - "&9Contiene &e%size%&9 oggetti salvati"
+      - ""
+      - "&7Serve a riempire le casse nell'arena"
+      - "&7Puoi vedere il contenuto con /minifiller show %id%"
+      - "&9[&fClick&9] &fAny &9-> &fSeleziona"
     allowspectators:
       - "&6Are players allowed to spectate?"
       - "&9Current value: &e%value%"
