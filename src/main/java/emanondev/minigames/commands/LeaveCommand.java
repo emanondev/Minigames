@@ -1,9 +1,9 @@
 package emanondev.minigames.commands;
 
 import emanondev.core.CoreCommand;
-import emanondev.core.MessageBuilder;
 import emanondev.core.PermissionBuilder;
 import emanondev.minigames.GameManager;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MGame;
 import org.bukkit.Location;
@@ -25,19 +25,17 @@ public class LeaveCommand extends CoreCommand {
 
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player p)) {
+        if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
-        MGame game = GameManager.get().getGame(p);
+        MGame game = GameManager.get().getGame(player);
         if (game == null) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("leave.error.not_inside_game", "").send();
+            MessageUtil.sendMessage(player, "leave.error.not_inside_game");
             return;
         }
-        GameManager.get().quitGame(p);
-        new MessageBuilder(Minigames.get(), p)
-                .addTextTranslation("leave.success.message", "").send();
+        GameManager.get().quitGame(player);
+        MessageUtil.sendMessage(player, "leave.success.message");
 
     }
 

@@ -5,6 +5,7 @@ import emanondev.core.MessageBuilder;
 import emanondev.core.UtilsCommand;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.SchematicArenaBuilder;
 import emanondev.minigames.locations.LocationOffset3D;
@@ -28,98 +29,85 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
         super(user, id);
     }
 
-    @Override
-    public @Nullable String getCurrentActionMessage() {
+    @Override @Nullable
+    public String getCurrentActionMessage() {
         return Minigames.get().getLanguageConfig(getPlayer()).getString("skywars.arenabuilder.actionbar.phase" + phase);
     }
 
     @Override
     public void handleCommand(@NotNull Player player, @NotNull String[] args) {
         if (args.length == 0) {
-            new MessageBuilder(Minigames.get(), player)
-                    .addTextTranslation("skywars.arenabuilder.error.unknown_action", "").send();
+            MessageUtil.sendMessage( player,"skywars.arenabuilder.error.unknown_action");
             return;
         }
         switch (phase) {
             case 1 -> {
                 if (!args[0].equalsIgnoreCase("selectarea")) {
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation("skywars.arenabuilder.error.unknown_action", "").send();
+                    MessageUtil.sendMessage( player,"skywars.arenabuilder.error.unknown_action");
                     return;
                 }
                 try {
                     setArea(player);
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation("skywars.arenabuilder.success.select_area", "",
+                    MessageUtil.sendMessage( player,"skywars.arenabuilder.success.select_area",
                                     "%world%", getWorld().getName(),
                                     "%x1%", String.valueOf((int) getArea().getMinX()),
                                     "%x2%", String.valueOf((int) getArea().getMaxX()),
                                     "%y1%", String.valueOf((int) getArea().getMinY()),
                                     "%y2%", String.valueOf((int) getArea().getMaxY()),
                                     "%z1%", String.valueOf((int) getArea().getMinZ()),
-                                    "%z2%", String.valueOf((int) getArea().getMaxZ())).send();
+                                    "%z2%", String.valueOf((int) getArea().getMaxZ()));
 
                     phase++;
                 } catch (IncompleteRegionException e) {
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation("skywars.arenabuilder.error.unselected_area", "").send();
+                    MessageUtil.sendMessage( player,"skywars.arenabuilder.error.unselected_area");
                 }
             }
             case 2, 3 -> {
                 if (spawnLocations.size() >= 2 && args[0].equalsIgnoreCase("next")) {
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation("skywars.arenabuilder.success.next", "").send();
+                    MessageUtil.sendMessage( player,"skywars.arenabuilder.success.next");
                     phase++;
                     return;
                 }
                 if (!args[0].equalsIgnoreCase("setteamspawn")) {
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation("skywars.arenabuilder.error.unknown_action", "").send();
+                    MessageUtil.sendMessage( player,"skywars.arenabuilder.error.unknown_action");
                     return;
                 }
                 try {
                     DyeColor color = DyeColor.valueOf(args[1].toUpperCase());
                     if (!this.isInside(player.getLocation())) {
-                        new MessageBuilder(Minigames.get(), player)
-                                .addTextTranslation("skywars.arenabuilder.error.outside_area", "").send();
+                        MessageUtil.sendMessage( player,"skywars.arenabuilder.error.outside_area");
                         return;
                     }
                     LocationOffset3D loc = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
                     boolean override = spawnLocations.containsKey(color);
                     spawnLocations.put(color, loc);
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation(override ? "skywars.arenabuilder.success.override_team_spawn"
-                                    : "skywars.arenabuilder.success.set_team_spawn", "", "%color%", color.name()).send();
+                    MessageUtil.sendMessage( player,override ? "skywars.arenabuilder.success.override_team_spawn"
+                                    : "skywars.arenabuilder.success.set_team_spawn", "%color%", color.name());
                     if (phase == 2 && spawnLocations.size() >= 2)
                         phase++;
                 } catch (Exception e) {
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation("skywars.arenabuilder.error.invalid_color", "").send();
+                    MessageUtil.sendMessage( player,"skywars.arenabuilder.error.invalid_color");
                 }
             }
             case 4, 5 -> {
                 if (spectatorsOffset != null && args[0].equalsIgnoreCase("next")) {
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation("skywars.arenabuilder.success.completed", "").send();
+                    MessageUtil.sendMessage( player,"skywars.arenabuilder.success.completed");
                     ArenaManager.get().onArenaBuilderCompletedArena(this);
                     return;
                 }
                 if (!args[0].equalsIgnoreCase("setspectatorspawn")) {
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation("skywars.arenabuilder.error.unknown_action", "").send();
+                    MessageUtil.sendMessage( player,"skywars.arenabuilder.error.unknown_action");
                     return;
                 }
                 try {
                     if (!this.isInside(player.getLocation())) {
-                        new MessageBuilder(Minigames.get(), player)
-                                .addTextTranslation("skywars.arenabuilder.error.outside_area", "").send();
+                        MessageUtil.sendMessage( player,"skywars.arenabuilder.error.outside_area");
                         return;
                     }
                     boolean override = spectatorsOffset != null;
                     spectatorsOffset = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
-                    new MessageBuilder(Minigames.get(), player)
-                            .addTextTranslation(override ? "skywars.arenabuilder.success.override_spectators_spawn"
-                                    : "skywars.arenabuilder.success.set_spectators_spawn", "").send();
+                    MessageUtil.sendMessage( player,override ? "skywars.arenabuilder.success.override_spectators_spawn"
+                                    : "skywars.arenabuilder.success.set_spectators_spawn");
                     if (phase == 4)
                         phase++;
                 } catch (Exception e) {

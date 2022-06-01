@@ -101,9 +101,16 @@ public class KitManager {
         YMLConfig config = kitsFile.get(id);
         Kit kit = kits.get(id);
         kit.updateSnapshot(snap);
-        config.set(id, kit);
+        save(kit);
+    }
+
+    public void save(@NotNull Kit kit) {
+        if (!kit.isRegistered() || !kits.containsKey(kit.getId()))
+            throw new IllegalStateException();
+        YMLConfig config = kitsFile.get(kit.getId());
+        config.set(kit.getId(), kit);
         config.save();
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated Kit &e" + id);
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Saved Kit &e" + kit.getId());
     }
 
     public void deleteKit(@NotNull String id) {
@@ -136,9 +143,7 @@ public class KitManager {
         kitsFile.put(id, config);
         kits.put(id, kit);
         kit.setRegistered(id);
-        config.set(id, kit);
-        config.save();
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Saved Kit &e" + id);
+        save(kit);
     }
 
     public Map<String, Kit> getKits() {

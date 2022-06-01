@@ -42,6 +42,7 @@ public class Kit implements ConfigurationSerializable, Registrable {
         this.snap.setInventory(inv);
         this.snap.setArmor(armor);
         this.snap.setExtraContents(extra);
+        KitManager.get().save(this);
     }
 
     public void apply(Player player) {

@@ -5,8 +5,11 @@ import emanondev.core.RandomItemContainer;
 import emanondev.core.UtilsString;
 import emanondev.core.gui.FButton;
 import emanondev.core.gui.Gui;
+import emanondev.core.gui.NumberEditorFButton;
 import emanondev.core.gui.PagedListGui;
+import emanondev.minigames.Configurations;
 import emanondev.minigames.FillerManager;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,11 +26,11 @@ import java.util.Map;
 
 public class ChestFiller implements MFiller {
 
-    private static final int MAX_FAILS = 3;
+    // private static final int MAX_FAILS = 3;
 
     private final RandomItemContainer<ItemStack> items = new RandomItemContainer<>();
     private int amountMin;
-    private int amountMax;
+    private int amountMax = 3;
 
     public ChestFiller() {
         this(new LinkedHashMap<>());
@@ -35,11 +38,20 @@ public class ChestFiller implements MFiller {
 
     public ChestFiller(@NotNull Map<String, Object> map) {
         Map<String, Object> subMap = (Map<String, Object>) map.get("items");
-        amountMin = Math.max(0, (int) map.getOrDefault("minAmount", 3));
-        amountMax = Math.max(amountMin, Math.max(1, (int) map.getOrDefault("maxAmount", 3)));
+        setAmountMin((int) map.getOrDefault("minAmount", 3));
+        setAmountMax((int) map.getOrDefault("maxAmount", 3));
         if (subMap == null)
             return;
         subMap.forEach((key, v) -> items.addItems((List<ItemStack>) v, Integer.parseInt(key)));
+    }
+
+    public void setAmountMin(int value) {
+        amountMin = Math.max(0, value);
+        amountMax = Math.max(amountMax, amountMin);
+    }
+
+    public void setAmountMax(int value) {
+        amountMax = Math.max(amountMin, Math.max(1, value));
     }
 
     public void addItems(@NotNull List<ItemStack> items, int weight) {
@@ -75,12 +87,11 @@ public class ChestFiller implements MFiller {
                         try {
                             return new ItemBuilder(items.getItems().get(getValue()))
                                     .setDescription(
-                                            Minigames.get().getLanguageConfig(getTargetPlayer())
-                                                    .loadMultiMessage("minifiller.buttons.object_info", new ArrayList<>(), true,
-                                                            "%weight%", String.valueOf(items.getWeights().get(getValue())),
-                                                            "%multiplier%", UtilsString.formatOptional2Digit(((double) amountMin + amountMax) / 2),
-                                                            "%multiplier-chance%", UtilsString.formatForced2Digit(((double) amountMin + amountMax) / 2 * (double) items.getWeights().get(getValue()) * 100 / items.getFullWeight()),
-                                                            "%chance%", UtilsString.formatForced2Digit((double) items.getWeights().get(getValue()) * 100 / items.getFullWeight()))
+                                            MessageUtil.getMultiMessage(getTargetPlayer(), "minifiller.buttons.object_info",
+                                                    "%weight%", String.valueOf(items.getWeights().get(getValue())),
+                                                    "%multiplier%", UtilsString.formatOptional2Digit(((double) amountMin + amountMax) / 2),
+                                                    "%multiplier-chance%", UtilsString.formatForced2Digit(((double) amountMin + amountMax) / 2 * (double) items.getWeights().get(getValue()) * 100 / items.getFullWeight()),
+                                                    "%chance%", UtilsString.formatForced2Digit((double) items.getWeights().get(getValue()) * 100 / items.getFullWeight()))
                                     ).setGuiProperty().build();
                         } catch (Exception e) {
                             return null;
@@ -91,11 +102,18 @@ public class ChestFiller implements MFiller {
         };
         for (int i = 0; i < items.getItems().size(); i++)
             gui.addElement(i);
-        gui.setControlGuiButton(4, new FButton(gui, () -> new ItemBuilder(Material.PAPER).build(),//TODO switch desc
+        gui.setControlGuiButton(4, new FButton(gui, () ->
+                Configurations.getFillerToggleViewItem(gui.getTargetPlayer()),
                 (event -> {
                     showItem[0] = !showItem[0];
                     return true;
                 })));
+        gui.setControlGuiButton(2, new NumberEditorFButton<>(gui, 1, 1, 10, () -> amountMin,
+                (val) -> setAmountMin(val), null,
+                () -> MessageUtil.getMultiMessage(player,"minifiller.gui.amountmin_desc")));
+        gui.setControlGuiButton(3, new NumberEditorFButton<>(gui, 1, 1, 10, () -> amountMax,
+                (val) -> setAmountMax(val), null,
+                () -> MessageUtil.getMultiMessage(player,"minifiller.gui.amountmax_desc")));
         return gui;
     }
 
@@ -117,12 +135,10 @@ public class ChestFiller implements MFiller {
 
     @Override
     public void fillInventory(@NotNull Inventory inv) {
-        //int failedAttemps = 0;
         int itemAttemps = amountMin + ((amountMax == amountMin) ? 0 : (int) (Math.random() * (amountMax - amountMin + 1)));
-        for (int i = 0; i < itemAttemps && i < inv.getSize(); i++) {
-            int slot = (int) (Math.random() * inv.getSize());//may override some previusly added items...
-            inv.setItem(slot, items.getItem());
-        }
+        for (int i = 0; i < itemAttemps && i < inv.getSize(); i++)
+            inv.setItem(i, items.getItem());
+        //TODO flush ?
     }
 
 
@@ -150,8 +166,8 @@ public class ChestFiller implements MFiller {
     @Override
     public Map<String, Object> serialize() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        map.put("minAmount", 3);
-        map.put("maxAmount", 3);
+        map.put("minAmount", amountMin);
+        map.put("maxAmount", amountMax);
         List<ItemStack> itemList = items.getItems();
         List<Integer> weightList = items.getWeights();
         LinkedHashMap<String, List<ItemStack>> subMap = new LinkedHashMap<>();

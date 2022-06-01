@@ -34,7 +34,7 @@ public class SkyWarsOption extends AbstractMOption {
         super(map);
         perTeamMaxPlayers = Math.max(1, (int) map.getOrDefault("maxPlayersPerTeam", 1));
         fillerId = (String) map.get("fillerId");
-        kits.addAll((List<String>) map.getOrDefault(map.get("kits"), Collections.emptyList()));
+        kits.addAll((List<String>) map.getOrDefault("kits", Collections.emptyList()));
     }
 
     @NotNull

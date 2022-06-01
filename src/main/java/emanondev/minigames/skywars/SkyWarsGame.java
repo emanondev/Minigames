@@ -14,6 +14,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
@@ -28,7 +29,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -44,14 +44,16 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     @Override
     public void gamePreStart() {
-        //Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gamePREPreStart");
-        for (Player p : new HashSet<>(this.getCollectedPlayers())) {
+        //MessageUtil.debug(  getId() + " gamePREPreStart");
+        List<Player> list = new ArrayList<>(this.getCollectedPlayers());
+        Collections.shuffle(list);
+        for (Player p : list) {
             addPlayingPlayer(p);
-            getMinigameType().applyDefaultPlayerSnapshot(p);
-            p.getInventory().setHeldItemSlot(4);
+            Configurations.applyGamePreStartSnapshot(p);
+            //p.getInventory().setHeldItemSlot(4);
             if (getOption().getKits().size() > 0) //only if you can choose a kit
-                p.getInventory().setItem(EquipmentSlot.HAND, GameManager.get().getKitSelectorItem(p));
-            p.getInventory().setItem(8, GameManager.get().getGameLeaveItem(p));
+                p.getInventory().setItem(4, Configurations.getKitSelectorItem(p));
+            p.getInventory().setItem(8, Configurations.getGameLeaveItem(p));
         }
         //TODO eventually combine teams
 
@@ -71,7 +73,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 if (kit == null) {
                     //TODO apply default kit
                 } else {
-                    if (kit.getPrice() > 0 && ecoHandler.removeMoney(player, kit.getPrice())) {
+                    if (kit.getPrice() == 0 || ecoHandler.removeMoney(player, kit.getPrice())) {
                         kit.apply(player);
                     } else {
                         //TODO not enough money
@@ -88,16 +90,15 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     /**
      * Assign a party to user or throw an exception
      */
-    public void assignTeam(Player p) {//TODO choose how to fill with options
-        if (getTeam(p) != null)
+    public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
+        if (getTeam(player) != null)
             return;
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " assigning team to " + p.getName());
+        MessageUtil.debug(getId() + " assigning team to " + player.getName());
         List<SkyWarsTeam> teams = new ArrayList<>(getTeams());
         teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
         for (SkyWarsTeam team : teams)
-            if (team.addUser(p)) {
-                new MessageBuilder(Minigames.get(), p)
-                        .addTextTranslation("skywars.game.assign_team", "", "%color%", team.getColor().name()).send();
+            if (team.addUser(player)) {
+                MessageUtil.sendMessage( player,"skywars.game.assign_team",  "%color%", team.getColor().name());
                 return;
             }
         throw new IllegalStateException("unable to add user to a party");
@@ -106,10 +107,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     @Override
     public boolean canSwitchToSpectator(Player player) {
         return true;
-    }
-
-    @Override
-    public void onPlayingPlayerPvpDamage(EntityDamageByEntityEvent event, Player p, Player damager) {
     }
 
     @Override
@@ -291,19 +288,33 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         List<Kit> kits = getOption().getKits();
         if (kits.size() == 0) //only if you can choose a kit
             return;
-        new PagedListFGui<Kit>(Minigames.get().getLanguageConfig(event.getPlayer())
-                .loadString("generic.gui.kitselector_title", "")
+        PagedListFGui<Kit> gui = new PagedListFGui<>(
+                MessageUtil.getMessage( event.getPlayer(),"generic.gui.kitselector_title")
                 , 3, event.getPlayer(), null, Minigames.get(),
                 false,
                 (evt, kit) -> {
-
+                    if (kit.getId().equals(kitPreference.get(event.getPlayer())))
+                        kitPreference.remove(event.getPlayer());
+                    else
+                        kitPreference.put(event.getPlayer(), kit.getId());
                     return true;
-                }, (kit) ->
-                new ItemBuilder(Material.IRON_CHESTPLATE).setDescription(
-                        Minigames.get().getLanguageConfig(event.getPlayer())
-                                .loadMultiMessage("generic.gui.kitselector_description"
-                                        , new ArrayList<>(), "%id%", kit.getId(), "%price%", "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice()))
-                ).setGuiProperty().build()).open(event.getPlayer());
+                }, (kit) -> new ItemBuilder(Material.IRON_CHESTPLATE).setDescription(//TODO
+                Minigames.get().getLanguageConfig(event.getPlayer())
 
+                        .loadMultiMessage("generic.gui.kitselector_description"
+                                , new ArrayList<>(), "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice()))
+        ).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                kit.getId()
+                        .equals(kitPreference.get(event.getPlayer())) ? 1 : 0).setGuiProperty().build());
+        gui.addElements(kits);
+        gui.updateInventory();
+        gui.open(event.getPlayer());
+
+    }
+
+    @Override
+    public void gameRestart() {
+        kitPreference.clear();
+        super.gameRestart();
     }
 }

@@ -5,14 +5,14 @@ import emanondev.core.UtilsString;
 import emanondev.core.gui.FButton;
 import emanondev.core.gui.NumberEditorFButton;
 import emanondev.core.gui.PagedMapGui;
-import emanondev.minigames.Minigames;
+import emanondev.minigames.Configurations;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.OptionManager;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -87,33 +87,26 @@ public abstract class AbstractMOption implements MOption {
             collectingPlayersPhaseCooldownMax = Math.max(1, Math.min(32, v));
             OptionManager.get().save(AbstractMOption.this);
         },
-                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1, Math.min(101, collectingPlayersPhaseCooldownMax))).build(),
-                () -> Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
-                        "minioption.buttons.collectingplayersphasecooldownmax", new ArrayList<>()), null
+                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, collectingPlayersPhaseCooldownMax))).build(),
+                () -> MessageUtil.getMultiMessage(gui.getTargetPlayer(), "minioption.buttons.collectingplayersphasecooldownmax"), null
         ));
-        gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> endPhaseCooldownMax
-                , (v) -> {
+        gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> endPhaseCooldownMax, (v) -> {
             endPhaseCooldownMax = Math.max(1, Math.min(32, v));
             OptionManager.get().save(AbstractMOption.this);
         },
-                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1, Math.min(101, endPhaseCooldownMax))).build(),
-                () -> Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
-                        "minioption.buttons.endphasecooldownmax", new ArrayList<>()), null
+                () -> Configurations.getEndPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, endPhaseCooldownMax))).build(),
+                () -> MessageUtil.getMultiMessage(gui.getTargetPlayer(), "minioption.buttons.endphasecooldownmax"), null
         ));
         gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> preStartPhaseCooldownMax
                 , (v) -> {
             preStartPhaseCooldownMax = Math.max(1, Math.min(32, v));
             OptionManager.get().save(AbstractMOption.this);
         },
-                () -> new ItemBuilder(Material.CLOCK).setGuiProperty().setAmount(Math.max(1, Math.min(101, preStartPhaseCooldownMax))).build(),
-                () -> Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
-                        "minioption.buttons.prestartphasecooldownmax", new ArrayList<>()), null
+                () -> Configurations.getPreStartPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, preStartPhaseCooldownMax))).build(),
+                () -> MessageUtil.getMultiMessage(gui.getTargetPlayer(), "minioption.buttons.prestartphasecooldownmax"), null
         ));
-        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.VEX_SPAWN_EGG).addEnchantment(Enchantment.DURABILITY, allowSpectators ? 1 : 0).setGuiProperty().setDescription(
-                Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
-                        "minioption.buttons.allowspectators", new ArrayList<>()), true
-                , "%value%", String.valueOf(allowSpectators)
-        ).build(), (event) -> {
+        gui.addButton(new FButton(gui, () -> Configurations.getOptionAllowSpectatorItem(gui.getTargetPlayer(), "%value%", String.valueOf(allowSpectators))
+                .addEnchantment(Enchantment.DURABILITY, allowSpectators ? 1 : 0).build(), (event) -> {
             allowSpectators = !allowSpectators;
             OptionManager.get().save(AbstractMOption.this);
             return true;

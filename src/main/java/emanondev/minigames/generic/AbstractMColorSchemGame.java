@@ -1,6 +1,7 @@
 package emanondev.minigames.generic;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import emanondev.minigames.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -22,6 +23,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     private final WorldBorder spectatorBorder;
     private final List<BoundingBox> cacheArea = new ArrayList<>();
     private final HashMap<Player, Integer> bordersId = new HashMap<>();
+    private final BoundingBox hiddenBorderArea;
 
     private int getClosestBorder(Vector loc) {
         BoundingBox box = getBoundingBox();
@@ -40,15 +42,25 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
 
     private void sendUpdateBorder(Player p) {
         Integer id = bordersId.get(p);
+        if (hiddenBorderArea.contains(p.getLocation().toVector()))
+            if (id == null)
+                return;
+            else {
+                p.setWorldBorder(null);
+                bordersId.remove(p);
+                return;
+            }
         if (id == null) {
             if (isSquared) {
                 bordersId.put(p, 0);
                 p.setWorldBorder(borders.get(0));
+                MessageUtil.debug(getId() + " aggiornato box per " + p.getName());
                 return;
             }
             int closest = getClosestBorder(p.getLocation().toVector());
             bordersId.put(p, closest);
             p.setWorldBorder(borders.get(closest));
+            MessageUtil.debug(getId() + " aggiornato box per " + p.getName());
             return;
         }
         if (isSquared)
@@ -58,6 +70,8 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             return;
         bordersId.put(p, closest);
         p.setWorldBorder(borders.get(closest));
+        MessageUtil.debug(getId() + " aggiornato box per " + p.getName());
+
         return;
     }
 
@@ -78,30 +92,34 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         if (!isSquared) {
             for (int i = 0; i < 4; i++) {
                 WorldBorder wb = Bukkit.createWorldBorder();
-                wb.setWarningDistance(3);
+                wb.setWarningDistance(2);
                 wb.setSize(size);
-                wb.setCenter((i < 2 ? box.getMinX() : box.getMaxX()) + size/2 + margin, (i % 2 == 0 ? box.getMinZ() : box.getMaxZ()) + size/2 + margin);
+                wb.setCenter((i < 2 ? box.getMinX() : box.getMaxX()) + size / 2 + margin, (i % 2 == 0 ? box.getMinZ() : box.getMaxZ()) + size / 2 + margin);
                 borders.add(wb);
                 cacheArea.add(new BoundingBox(i < 2 ? box.getMinX() : box.getMaxX()
                         , Integer.MIN_VALUE, i % 2 == 0 ? box.getMinZ() : box.getMaxZ()
                         , i >= 2 ? box.getMinX() : box.getMaxX()
                         , Integer.MAX_VALUE
                         , i % 2 != 0 ? box.getMinZ() : box.getMaxZ()));
+                MessageUtil.debug(getId() + " box " + wb.getCenter().getX() + " " + wb.getCenter().getZ() + " size " + wb.getSize());
+
             }
             WorldBorder wb = Bukkit.createWorldBorder();
-            wb.setWarningDistance(3);
+            wb.setWarningDistance(2);
             wb.setSize(size);
-            wb.setCenter(box.getCenterX() + size/2, box.getCenterZ() + size/2);
+            wb.setCenter(box.getCenterX() + size / 2, box.getCenterZ() + size / 2);
             spectatorBorder = wb;
         } else {
-
             WorldBorder wb = Bukkit.createWorldBorder();
-            wb.setWarningDistance(3);
+            wb.setWarningDistance(2);
             wb.setSize(size);
-            wb.setCenter(box.getMinX() + size/2, box.getMinZ() + size/2);
+            wb.setCenter(box.getMinX() + size / 2, box.getMinZ() + size / 2);
             borders.add(wb);
             spectatorBorder = wb;
+            MessageUtil.debug(getId() + " box " + wb.getCenter().getX() + " " + wb.getCenter().getZ() + " size " + wb.getSize());
         }
+
+        hiddenBorderArea = box.clone().expand(-6, 999, -6);
     }
 
     @Override
@@ -131,7 +149,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         if (boxCache == null) {
             BlockVector3 dim = getSchematic().getDimensions();
             boxCache = new BoundingBox(getGameLocation().x, getGameLocation().y, getGameLocation().z,
-                    getGameLocation().x + dim.getX() + 1, getGameLocation().y + dim.getY() + 1, getGameLocation().z + dim.getZ() + 1);
+                    getGameLocation().x + dim.getX(), getGameLocation().y + dim.getY(), getGameLocation().z + dim.getZ());
         }
         return boxCache.clone();
     }
@@ -170,37 +188,39 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     }
 
     public void onPlayingPlayerMove(PlayerMoveEvent event) {
+
+        super.onPlayingPlayerMove(event);
         sendUpdateBorder(event.getPlayer());
     }
 
-    public void onPlayingPlayerAdded(Player player) {
+    public void onPlayingPlayerAdded(@NotNull Player player) {
         teleportToStartLocation(player);
         sendUpdateBorder(player);
     }
 
     protected abstract void onPlayingPlayerFallOutsideArena(PlayerMoveEvent event);
 
-    protected void onSpectatorAdded(Player player) {
+    protected void onSpectatorAdded(@NotNull Player player) {
         super.onSpectatorAdded(player);
         player.teleport(getArena().getSpectatorsOffset().add(getGameLocation()));
         sendSpectatorBorder(player);
     }
 
 
-    protected void onSpectatorRemoved(Player player) {
+    protected void onSpectatorRemoved(@NotNull Player player) {
         super.onSpectatorRemoved(player);
         player.teleport(getArena().getSpectatorsOffset().add(getGameLocation()));
         player.setWorldBorder(player.getWorld().getWorldBorder());
     }
 
-    protected void onPlayingPlayerRemoved(Player player) {
+    protected void onPlayingPlayerRemoved(@NotNull Player player) {
         player.setWorldBorder(player.getWorld().getWorldBorder());
     }
 
     @Override
     public void gameAbort() {
-        switch (getPhase()){
-            case PRE_START,PLAYING,END -> {
+        switch (getPhase()) {
+            case PRE_START, PLAYING, END -> {
                 for (Player player : getPlayingPlayers())
                     player.setWorldBorder(player.getWorld().getWorldBorder());
                 for (Player player : getSpectators())

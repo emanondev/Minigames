@@ -21,7 +21,8 @@ public interface MTeam {
 
     int getUsersAmount();
 
-    @NotNull Set<UUID> getUsers();
+    @NotNull
+    Set<UUID> getUsers();
 
     void clear();
 }

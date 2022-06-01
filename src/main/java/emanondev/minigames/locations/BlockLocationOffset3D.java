@@ -13,14 +13,14 @@ public class BlockLocationOffset3D implements ConfigurationSerializable {
     public final int y;
     public final int z;
 
-
     public BlockLocationOffset3D(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public @NotNull Location add(@NotNull BlockLocation3D bLoc) {
+    @NotNull
+    public Location add(@NotNull BlockLocation3D bLoc) {
         return new Location(bLoc.getWorld(), bLoc.x + x, bLoc.y + y, bLoc.z + z);
     }
 
@@ -29,7 +29,6 @@ public class BlockLocationOffset3D implements ConfigurationSerializable {
         this.y = (int) map.get("y");
         this.z = (int) map.get("z");
     }
-
 
     @NotNull
     @Override
@@ -41,14 +40,15 @@ public class BlockLocationOffset3D implements ConfigurationSerializable {
         return map;
     }
 
-
-    public static @NotNull BlockLocationOffset3D fromString(@NotNull String from) {
+    @NotNull
+    public static BlockLocationOffset3D fromString(@NotNull String from) {
         String[] args = from.split(":");
         return new BlockLocationOffset3D(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
     }
 
     @Override
-    public @NotNull String toString() {
+    @NotNull
+    public String toString() {
         return x + ":" + y + ":" + z;
     }
 }

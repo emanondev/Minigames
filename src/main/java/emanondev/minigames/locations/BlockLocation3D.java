@@ -20,16 +20,15 @@ public class BlockLocation3D extends BlockLocation2D {
         this.y = y;
     }
 
+    @NotNull
     public Location toLocation() {
         return new Location(getWorld(), x, y, z);
     }
-
 
     private BlockLocation3D(@NotNull Map<String, Object> map) {
         super(map);
         this.y = (int) map.get("y");
     }
-
 
     @NotNull
     @Override
@@ -39,14 +38,15 @@ public class BlockLocation3D extends BlockLocation2D {
         return map;
     }
 
-
-    public static @NotNull BlockLocation3D fromString(@NotNull String from) {
+    @NotNull
+    public static BlockLocation3D fromString(@NotNull String from) {
         String[] args = from.split(":");
         return new BlockLocation3D(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
     }
 
     @Override
-    public @NotNull String toString() {
+    @NotNull
+    public String toString() {
         return worldName + ":" + x + ":" + y + ":" + z;
     }
 }

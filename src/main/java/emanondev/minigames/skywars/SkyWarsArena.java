@@ -9,7 +9,6 @@ import java.util.*;
 
 public class SkyWarsArena extends AbstractMColorSchemArena {
 
-
     /*
      * teams:
      *   <color>: //at least 2
@@ -39,11 +38,13 @@ public class SkyWarsArena extends AbstractMColorSchemArena {
         return map;
     }
 
-    public @NotNull Set<DyeColor> getColors() {
+    @NotNull
+    public Set<DyeColor> getColors() {
         return Collections.unmodifiableSet(spawnLocations.keySet());
     }
 
-    public @NotNull LocationOffset3D getSpawnOffset(DyeColor color) {
+    @NotNull
+    public LocationOffset3D getSpawnOffset(@NotNull DyeColor color) {
         if (!spawnLocations.containsKey(color))
             throw new NullPointerException();
         return spawnLocations.get(color);

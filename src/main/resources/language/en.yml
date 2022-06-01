@@ -1,7 +1,16 @@
+items:
+  kit_selector:
+    - "&aScegli il Kit"
+  game_leave:
+    - "&cAbbandona la partita"
 generic:
+  game:
+    game_interrupted: "&c[Game] Partita interrotta"
   gui:
-    kitselector_title: "&"
-    kit_description:
+    kitselector_title: "&eScegli il Kit"
+    kitselector_description:
+      - "&6Kit &e%id%"
+      - "&9Prezzo: &e%price%"
     kitselector_item_description:
       - "&aScegli il Kit"
     gameleave_item_description:
@@ -52,14 +61,14 @@ skywars:
 minigame:
   create:
     error:
-      arguments_amount: "&c[GameEditor] /%label% create <type> <arena> <option> <id>"
-      invalid_type: "&c[GameEditor] invalid game type &6%type%"
-      invalid_arena_name: "&c[GameEditor] invalid game type &6%arena%"
-      invalid_arena_type: "&c[GameEditor] &6%arena% &cis not a valid arena for &6%type%"
-      invalid_option_name: "&c[GameEditor] invalid game type &6%option%"
-      invalid_option_type: "&c[GameEditor] &6%option% &cis not a valid option for &6%type%"
-      invalid_id_name: "&c[GameEditor] invalid id &6%id%"
-      already_used_id: "&c[GameEditor] Id &6%id% &cis already used"
+      arguments_amount: "&c[MiniGame] /%label% create <type> <arena> <option> <id>"
+      invalid_type: "&c[MiniGame] invalid game type &6%type%"
+      invalid_arena_name: "&c[MiniGame] invalid game type &6%arena%"
+      invalid_arena_type: "&c[MiniGame] &6%arena% &cis not a valid arena for &6%type%"
+      invalid_option_name: "&c[MiniGame] invalid game type &6%option%"
+      invalid_option_type: "&c[MiniGame] &6%option% &cis not a valid option for &6%type%"
+      invalid_id_name: "&c[MiniGame] invalid id &6%id%"
+      already_used_id: "&c[MiniGame] Id &6%id% &cis already used"
   help:
     create_text: "&9/%label% create &b<type> <arena> <option> <id>"
     create_hover:
@@ -95,7 +104,7 @@ minikit:
     delete: "&a[MiniKit] Hai eliminato il kit &e%id%"
     list_color_1: "&b"
     list_color_2: "&9"
-    list_text: "%kit%"
+    list_text: "%id% "
     list_hover: "&6Clicca per caricare"
     list_suggest: "/%label% load %id% %player%"
     list_no_kits: "&a[MiniKit] Non ci sono kit salvati"
@@ -128,6 +137,18 @@ minifiller:
     object_info:
       - "&6Peso &e%weight%"
       - "&7Probabilità &e%chance%&7% (x%multiplier% ≈ &e%multiplier-chance%&7%)"
+    object_info_toggler:
+      - "&6Mostra oggetti/informazioni"
+      - "&7Cambia la visualizzazione degli oggetti sopra"
+      - "&7Clicca per cambiare"
+    amountmin_desc:
+      - "&6Oggetti minimi &e%value%"
+      - "&7Quanti oggetti tenterà di mettere"
+      - "&7 nell'inventario al minimo"
+    amountmin_max:
+      - "&6Oggetti massimi &e%value%"
+      - "&7Quanti oggetti tenterà di mettere"
+      - "&7 nell'inventario al massimo"
 minioption:
   error:
     invalid_type: "&c[MiniOption] &6%type% &cnon è un minigame valido"

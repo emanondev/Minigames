@@ -1,8 +1,8 @@
 package emanondev.minigames.generic;
 
 import emanondev.core.UtilsMessages;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
-import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -96,6 +96,10 @@ public class GameListener implements Listener {
             return;
         Player damager = null;
         if (event instanceof EntityDamageByEntityEvent evt) {
+            if (evt.getDamager() instanceof Player && game.isSpectator((Player) evt.getDamager())) {
+                event.setCancelled(true);
+                return;
+            }
             if (evt.getDamager() instanceof Player)
                 damager = (Player) evt.getDamager();
             else if (evt.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter)
@@ -195,7 +199,7 @@ public class GameListener implements Listener {
         }
 
         if (!game.containsLocation(event.getTo())) {
-            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + game.getId() + " move outside arena");
+            MessageUtil.debug(game.getId() + " move outside arena");
             game.onPlayingPlayerMoveOutsideArena(event);
             //event.setCancelled(true); //TODO should be fine
             return;

@@ -2,6 +2,7 @@ package emanondev.minigames.commands;
 
 import emanondev.core.*;
 import emanondev.minigames.FillerManager;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.ChestFiller;
 import emanondev.minigames.generic.MFiller;
@@ -51,33 +52,29 @@ public class MiniFillerCommand extends CoreCommand {
     }
 
     //create <id>
-    private void create(Player p, String label, String[] args) {
+    private void create(Player player, String label, String[] args) {
         if (args.length != 2) {
             //arguments
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.create_arguments_amount", "",
-                            "%label%", label).send();
+            MessageUtil.sendMessage(player, "minifiller.error.create_arguments_amount",
+                    "%label%", label);
             return;
         }
         String id = args[1].toLowerCase();
         if (!UtilsString.isLowcasedValidID(id)) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.invalid_id", "",
-                            "%id%", args[1]).send();
+            MessageUtil.sendMessage(player, "minifiller.error.invalid_id",
+                    "%id%", args[1]);
             return;
         }
         if (FillerManager.get().getFiller(id) != null) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.already_used_id", "",
-                            "%id%", args[1]).send();
+            MessageUtil.sendMessage(player, "minifiller.error.already_used_id",
+                    "%id%", args[1]);
             return;
         }
         ChestFiller filler = new ChestFiller();
-        FillerManager.get().registerFiller(id, filler, p);
+        FillerManager.get().registerFiller(id, filler, player);
         FillerManager.get().save(filler);
-        new MessageBuilder(Minigames.get(), p)
-                .addTextTranslation("minifiller.success.create", "",
-                        "%id%", id).send();
+        MessageUtil.sendMessage(player, "minifiller.success.create",
+                "%id%", id);
     }
 
     private void clear(Player p, String label, String[] args) {
@@ -86,69 +83,63 @@ public class MiniFillerCommand extends CoreCommand {
     }
 
     //addall <id> <weight>
-    private void addall(Player p, String label, String[] args) {
+    private void addall(Player player, String label, String[] args) {
         if (args.length != 3) {
             //arguments
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.addall_arguments_amount", "",
-                            "%label%", label).send();
+            MessageUtil.sendMessage(player, "minifiller.error.addall_arguments_amount",
+                    "%label%", label);
             return;
         }
         String id = args[1].toLowerCase();
         MFiller filler = FillerManager.get().getFiller(id);
         if (filler == null) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.unexisting_id", "",
-                            "%id%", args[1]).send();
+            MessageUtil.sendMessage(player, "minifiller.error.unexisting_id",
+                    "%id%", args[1]);
             return;
         }
         int weight;
         try {
             weight = Integer.parseInt(args[2]);
             if (weight <= 0) {
-                new MessageBuilder(Minigames.get(), p)
-                        .addTextTranslation("minifiller.error.invalid_weight", "",
-                                "%weight%", args[2]).send();
+                MessageUtil.sendMessage(player, "minifiller.error.invalid_weight",
+                        "%weight%", args[2]);
                 return;
             }
         } catch (NumberFormatException e) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.invalid_weight", "",
-                            "%weight%", args[2]).send();
+            MessageUtil.sendMessage(player, "minifiller.error.invalid_weight",
+                    "%weight%", args[2]);
             return;
         }
 
-        Block b = p.getTargetBlockExact(10);
+        Block b = player.getTargetBlockExact(10);
         if (b == null) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.invalid_target", "",
-                            "%weight%", args[2]).send();
+            MessageUtil.sendMessage(player, "minifiller.error.invalid_target",
+                    "%weight%", args[2]);
             return;
         }
         for (double i = b.getX(); i <= b.getX() + 1; i += 0.2) {
-            p.spawnParticle(Particle.COMPOSTER, i, b.getY(), b.getZ(), 1);
-            p.spawnParticle(Particle.COMPOSTER, i, b.getY() + 1, b.getZ(), 1);
-            p.spawnParticle(Particle.COMPOSTER, i, b.getY(), b.getZ() + 1, 1);
-            p.spawnParticle(Particle.COMPOSTER, i, b.getY() + 1, b.getZ() + 1, 1);
+            player.spawnParticle(Particle.COMPOSTER, i, b.getY(), b.getZ(), 1);
+            player.spawnParticle(Particle.COMPOSTER, i, b.getY() + 1, b.getZ(), 1);
+            player.spawnParticle(Particle.COMPOSTER, i, b.getY(), b.getZ() + 1, 1);
+            player.spawnParticle(Particle.COMPOSTER, i, b.getY() + 1, b.getZ() + 1, 1);
         }
         for (double i = b.getY(); i <= b.getY() + 1; i += 0.2) {
-            p.spawnParticle(Particle.COMPOSTER, b.getX(), i, b.getZ(), 1);
-            p.spawnParticle(Particle.COMPOSTER, b.getX() + 1, i, b.getZ(), 1);
-            p.spawnParticle(Particle.COMPOSTER, b.getX(), i, b.getZ() + 1, 1);
-            p.spawnParticle(Particle.COMPOSTER, b.getX() + 1, i, b.getZ() + 1, 1);
+            player.spawnParticle(Particle.COMPOSTER, b.getX(), i, b.getZ(), 1);
+            player.spawnParticle(Particle.COMPOSTER, b.getX() + 1, i, b.getZ(), 1);
+            player.spawnParticle(Particle.COMPOSTER, b.getX(), i, b.getZ() + 1, 1);
+            player.spawnParticle(Particle.COMPOSTER, b.getX() + 1, i, b.getZ() + 1, 1);
         }
         for (double i = b.getZ(); i <= b.getZ() + 1; i += 0.2) {
-            p.spawnParticle(Particle.COMPOSTER, b.getX(), b.getY(), i, 1);
-            p.spawnParticle(Particle.COMPOSTER, b.getX() + 1, b.getY(), i, 1);
-            p.spawnParticle(Particle.COMPOSTER, b.getX(), b.getY() + 1, i, 1);
-            p.spawnParticle(Particle.COMPOSTER, b.getX() + 1, b.getY() + 1, i, 1);
+            player.spawnParticle(Particle.COMPOSTER, b.getX(), b.getY(), i, 1);
+            player.spawnParticle(Particle.COMPOSTER, b.getX() + 1, b.getY(), i, 1);
+            player.spawnParticle(Particle.COMPOSTER, b.getX(), b.getY() + 1, i, 1);
+            player.spawnParticle(Particle.COMPOSTER, b.getX() + 1, b.getY() + 1, i, 1);
         }
 
         BlockState state = b.getState();
         if (!(state instanceof Container container)) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.invalid_block", "",
-                            "%weight%", args[2]).send();
+            MessageUtil.sendMessage(player, "minifiller.error.invalid_block",
+                    "%weight%", args[2]);
             return;
         }
         ItemStack[] contents = container.getInventory().getStorageContents();
@@ -157,36 +148,32 @@ public class MiniFillerCommand extends CoreCommand {
             if (!UtilsInventory.isAirOrNull(item))
                 contentsList.add(item);
         if (contentsList.isEmpty()) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.empty_container", "",
-                            "%weight%", args[2]).send();
+            MessageUtil.sendMessage(player, "minifiller.error.empty_container",
+                    "%weight%", args[2]);
             return;
         }
         filler.addItems(contentsList, weight);
-        new MessageBuilder(Minigames.get(), p)
-                .addTextTranslation("minifiller.success.addall", "",
-                        "%weight%", args[2], "%id%", id, "%amount%", String.valueOf(contentsList.size())).send();
+        MessageUtil.sendMessage(player, "minifiller.success.addall",
+                "%weight%", args[2], "%id%", id, "%amount%", String.valueOf(contentsList.size()));
         return;
     }
 
     //show <id>
-    private void show(Player p, String label, String[] args) {
+    private void show(Player player, String label, String[] args) {
         if (args.length != 2) {
             //arguments
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.show_arguments_amount", "",
-                            "%label%", label).send();
+            MessageUtil.sendMessage(player, "minifiller.error.show_arguments_amount",
+                    "%label%", label);
             return;
         }
         String id = args[1].toLowerCase();
         MFiller filler = FillerManager.get().getFiller(id);
         if (filler == null) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("minifiller.error.unexisting_id", "",
-                            "%id%", args[1]).send();
+            MessageUtil.sendMessage(player, "minifiller.error.unexisting_id",
+                    "%id%", args[1]);
             return;
         }
-        filler.editorGui(p, null).open(p);
+        filler.editorGui(player, null).open(player);
     }
 
     private void list(Player p, String label, String[] args) {

@@ -16,7 +16,8 @@ public interface MFiller extends Registrable, ConfigurationSerializable {
 
     void addItems(@NotNull List<ItemStack> items, @Range(from = 1L, to = Integer.MAX_VALUE) int weight);
 
-    @NotNull Gui editorGui(@NotNull Player player, @Nullable Gui previousGui);
+    @NotNull
+    Gui editorGui(@NotNull Player player, @Nullable Gui previousGui);
 
     int getMinElements();
 

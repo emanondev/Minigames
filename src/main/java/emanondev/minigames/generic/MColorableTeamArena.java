@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public interface MColorableTeamArena {
+public interface MColorableTeamArena extends MArena {
 
     @NotNull
     Set<DyeColor> getColors();

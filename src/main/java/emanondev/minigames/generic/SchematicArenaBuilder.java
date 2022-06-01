@@ -33,7 +33,7 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
         return null;
     }
 
-    protected void setArea(Player player) throws IncompleteRegionException {
+    protected void setArea(@NotNull Player player) throws IncompleteRegionException {
         world = player.getWorld();
         Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
                 .getSelection(BukkitAdapter.adapt(world));

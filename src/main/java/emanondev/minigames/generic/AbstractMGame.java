@@ -4,10 +4,7 @@ import emanondev.core.MessageBuilder;
 import emanondev.core.SoundInfo;
 import emanondev.core.UtilsMessages;
 import emanondev.core.UtilsString;
-import emanondev.minigames.ArenaManager;
-import emanondev.minigames.GameManager;
-import emanondev.minigames.Minigames;
-import emanondev.minigames.OptionManager;
+import emanondev.minigames.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
@@ -85,7 +82,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gameInitialize() {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameInizialize");
+        MessageUtil.debug(getId() + " gameInizialize");
         if (phase != Phase.STOPPED)
             throw new IllegalStateException();
 
@@ -95,7 +92,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gameRestart() {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameRestart");
+        MessageUtil.debug(getId() + " gameRestart");
         if (phase != Phase.RESTART)
             throw new IllegalStateException();
 
@@ -171,7 +168,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gamePreStart() {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gamePreStart");
+        MessageUtil.debug(getId() + " gamePreStart");
         if (phase != Phase.PRE_START)
             throw new IllegalStateException();
         prestartCountdown = getOption().getPreStartPhaseCooldownMax();
@@ -193,6 +190,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (prestartCountdown <= 0) {
             if (!gameCanStart()) { //some idiot disconnected
                 this.gameAbort();
+                this.gameRestart();
                 return;
             }
             phase = Phase.PLAYING;
@@ -202,7 +200,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gameStart() {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameStart");
+        MessageUtil.debug(getId() + " gameStart");
         if (phase != Phase.PLAYING)
             throw new IllegalStateException();
         for (Player p : getPlayingPlayers()) {
@@ -216,13 +214,13 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gamePlayingTimer() {
-        //Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gamePlayingTimer");
+        //MessageUtil.debug(  getId() + " gamePlayingTimer");
         //TODO cooldown force end
     }
 
     @Override
     public void gameEnd() {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameEnd");
+        MessageUtil.debug(getId() + " gameEnd");
         if (this.phase != Phase.PLAYING)
             throw new IllegalStateException();
         for (Player p : getPlayingPlayers())
@@ -234,7 +232,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gameEndTimer() {
-        //Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameEndTimer");
+        //MessageUtil.debug(  getId() + " gameEndTimer");
         //TODO celebrate?
 
         if (endCountdown >= 1)
@@ -247,7 +245,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                         Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))
                 ).build());
                 fire.setFireworkMeta(meta);
-                Bukkit.getScheduler().runTaskLater(Minigames.get(), () -> fire.detonate(), 2L);
+                Bukkit.getScheduler().runTaskLater(Minigames.get(), fire::detonate, 2L);
                 String[] args = new String[]{"%cooldown%", String.valueOf(prestartCountdown)};
                 UtilsMessages.sendActionbar(p, Minigames.get().getLanguageConfig(p)
                         .loadMessage(getMinigameType().getType() + ".game.end_cooldown_bar", "",
@@ -266,7 +264,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gameClose() {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameClose");
+        MessageUtil.debug(getId() + " gameClose");
         for (Player spectator : new HashSet<>(getSpectators())) //bad
             GameManager.get().quitGame(spectator);
         for (Player player : new HashSet<>(getPlayingPlayers())) //bad
@@ -279,13 +277,19 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gameAbort() {
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " gameAbort");
-        for (Player spectator : new HashSet<>(getSpectators())) //bad
+        MessageUtil.debug(getId() + " gameAbort");
+        for (Player spectator : new HashSet<>(getSpectators())) { //bad
             GameManager.get().quitGame(spectator);
-        for (Player player : new HashSet<>(getPlayingPlayers())) //bad
+            MessageUtil.sendMessage(spectator, "generic.game.game_interrupted");
+        }
+        for (Player player : new HashSet<>(getPlayingPlayers())) {//bad
             GameManager.get().quitGame(player);
-        for (Player player : new HashSet<>(getCollectedPlayers())) //bad
+            MessageUtil.sendMessage(player, "generic.game.game_interrupted");
+        }
+        for (Player player : new HashSet<>(getCollectedPlayers())) { //bad
             GameManager.get().quitGame(player);
+            MessageUtil.sendMessage(player, "generic.game.game_interrupted");
+        }
         if (phase == Phase.STOPPED)
             return;
         phase = Phase.STOPPED;
@@ -303,14 +307,14 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 Minigames.get().registerListener(this);
                 Minigames.get().registerListener(gameListener);
                 registered = !registered;
-                Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " registered listener");
+                MessageUtil.debug(getId() + " registered listener");
             }
         } else {
             if (registered) {
                 Minigames.get().unregisterListener(this);
                 Minigames.get().unregisterListener(gameListener);
                 registered = !registered;
-                Minigames.get().logTetraStar(ChatColor.DARK_RED, "D " + getId() + " UNregistered listener");
+                MessageUtil.debug(getId() + " UNregistered listener");
             }
         }
     }
@@ -496,7 +500,12 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         id = null;
     }
 
-    public abstract void onPlayingPlayerPvpDamage(EntityDamageByEntityEvent event, Player p, Player damager);
+    public void onPlayingPlayerPvpDamage(EntityDamageByEntityEvent event, Player p, Player damager) {
+        if (p.equals(damager))
+            return;
+        if (event.getDamager() instanceof Player && getTeam(p).equals(getTeam(damager)))
+            event.setCancelled(true);
+    }
 
     public abstract void onPlayingPlayerDamaging(EntityDamageByEntityEvent event, Player damager);
 
@@ -571,19 +580,19 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         };
     }
 
-    protected void onSpectatorAdded(Player player) {
-        GameManager.get().applySpectatorSnapShot(player);
+    protected void onSpectatorAdded(@NotNull Player player) {
+        Configurations.applyGameSpectatorSnapshot(player);
     }
 
-    protected void onSpectatorRemoved(Player player) {
+    protected void onSpectatorRemoved(@NotNull Player player) {
         //TODO
     }
 
-    protected void onPlayingPlayerRemoved(Player player) {
+    protected void onPlayingPlayerRemoved(@NotNull Player player) {
         //TODO
     }
 
-    protected void onPlayingPlayerAdded(Player player) {
+    protected void onPlayingPlayerAdded(@NotNull Player player) {
         //TODO
     }
 

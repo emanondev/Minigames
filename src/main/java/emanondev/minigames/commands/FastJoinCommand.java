@@ -1,10 +1,10 @@
 package emanondev.minigames.commands;
 
 import emanondev.core.CoreCommand;
-import emanondev.core.MessageBuilder;
 import emanondev.core.PermissionBuilder;
 import emanondev.core.UtilsCommand;
 import emanondev.minigames.GameManager;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MGame;
@@ -29,13 +29,12 @@ public class FastJoinCommand extends CoreCommand {
 
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player p)) {
+        if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
-        if (GameManager.get().getGame(p) != null) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("fastjoin.error.already_inside_a_game", "").send();
+        if (GameManager.get().getGame(player) != null) {
+            MessageUtil.sendMessage(player, "fastjoin.error.already_inside_a_game");
             return;
         }
 
@@ -49,21 +48,18 @@ public class FastJoinCommand extends CoreCommand {
                 Collections.shuffle(available);
                 available.sort((m1, m2) -> (int) (1000 * ((double) m2.getCollectedPlayers().size() / m2.getMaxPlayers() - (double) m1.getCollectedPlayers().size() / m1.getMaxPlayers())));
 
-                if (GameManager.get().joinGameAsPlayer(p, available))
+                if (GameManager.get().joinGameAsPlayer(player, available))
                     return;
 
-                new MessageBuilder(Minigames.get(), p)
-                        .addTextTranslation("fastjoin.error.no_available_game", "").send();
+                MessageUtil.sendMessage(player, "fastjoin.error.no_available_game");
             }
             case 1 -> {
                 MType type = MinigameTypes.get().getType(args[0]);
                 if (type == null) {
-                    new MessageBuilder(Minigames.get(), p)
-                            .addTextTranslation("fastjoin.error.invalid_type", ""
-                                    , "%type%", args[0]).send();
+                    MessageUtil.sendMessage(player, "fastjoin.error.invalid_type", "%type%", args[0]);
                     return;
                 }
-                List<MGame> available = new ArrayList<>(GameManager.get().getPreMadeGameInstances(type).values());
+                List<MGame> available = new ArrayList<MGame>(GameManager.get().getPreMadeGameInstances(type).values());
                 available.removeIf((m) -> switch (m.getPhase()) {
                     case STOPPED, END, RESTART -> true;
                     default -> false;
@@ -71,18 +67,12 @@ public class FastJoinCommand extends CoreCommand {
                 Collections.shuffle(available);
                 available.sort((m1, m2) -> (100 * (m2.getCollectedPlayers().size() / m2.getMaxPlayers() - m1.getCollectedPlayers().size() / m1.getMaxPlayers())));
 
-                if (GameManager.get().joinGameAsPlayer(p, available))
+                if (GameManager.get().joinGameAsPlayer(player, available))
                     return;
 
-                new MessageBuilder(Minigames.get(), p)
-                        .addTextTranslation("fastjoin.error.no_available_game_of_type", ""
-                                , "%type%", type.getType()).send();
+                MessageUtil.sendMessage(player, "fastjoin.error.no_available_game_of_type", "%type%", type.getType());
             }
-            default -> {
-                new MessageBuilder(Minigames.get(), p)
-                        .addTextTranslation("fastjoin.error.arguments_amount", ""
-                                , "%label%", label).send();
-            }
+            default -> MessageUtil.sendMessage(player, "fastjoin.error.arguments_amount", "%label%", label);
 
         }
     }
@@ -90,7 +80,7 @@ public class FastJoinCommand extends CoreCommand {
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> UtilsCommand.complete(args[0], MinigameTypes.get().getTypes(), (m) -> m.getType(), (m) -> true);
+            case 1 -> UtilsCommand.complete(args[0], MinigameTypes.get().getTypes(), MType::getType, (m) -> true);
             default -> Collections.emptyList();
         };
     }

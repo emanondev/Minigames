@@ -1,6 +1,7 @@
 package emanondev.minigames.commands;
 
 import emanondev.core.*;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
@@ -46,84 +47,70 @@ public class MiniOptionCommand extends CoreCommand {
     }
 
     private void edit(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player who)) {
+        if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
         if (args.length != 2) {
             //arguments
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minioption.error.edit_arguments_amount", "",
-                            "%label%", label).send();
+            MessageUtil.sendMessage(player, "minioption.error.edit_arguments_amount",
+                    "%label%", label);
             return;
         }
         String id = args[1].toLowerCase();
         MOption options = OptionManager.get().getOption(id);
         if (options == null) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minioption.error.unexisting_id", "",
-                            "%id%", args[1]).send();
+            MessageUtil.sendMessage(player, "minioption.error.unexisting_id",
+                    "%id%", args[1]);
             return;
         }
-        options.openEditor(who);
+        options.openEditor(player);
     }
 
     private void create(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player who)) {
+        if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
         if (args.length != 3) {
             //arguments
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minioption.error.create_arguments_amount", "",
-                            "%label%", label).send();
+            MessageUtil.sendMessage(player, "minioption.error.create_arguments_amount", "%label%", label);
             return;
         }
         MType type = MinigameTypes.get().getType(args[1]);
         if (type == null) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minioption.error.invalid_type", "",
-                            "%type%", args[1]).send();
+            MessageUtil.sendMessage(player, "minioption.error.invalid_type", "%type%", args[1]);
             return;
         }
         String id = args[2].toLowerCase();
         if (!UtilsString.isLowcasedValidID(id)) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minioption.error.invalid_id", "",
-                            "%id%", args[2]).send();
+            MessageUtil.sendMessage(player, "minioption.error.invalid_id", "%id%", args[2]);
             return;
         }
         if (OptionManager.get().getOption(id) != null) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minioption.error.already_used_id", "",
-                            "%id%", args[2]).send();
+            MessageUtil.sendMessage(player, "minioption.error.already_used_id", "%id%", args[2]);
             return;
         }
         MOption option = type.createDefaultOptions();
-        OptionManager.get().registerOption(id, option, who);
+        OptionManager.get().registerOption(id, option, player);
         OptionManager.get().save(option);
-        option.openEditor(who);
+        option.openEditor(player);
     }
 
     private void onHelp(CommandSender sender, String label, String[] args) {
         new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minioption.help.create_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minioption.help.create_hover", (List<String>) null,
-                        "%label%", label)
+                .addText(MessageUtil.getMessage(sender, "minioption.help.create_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minioption.help.create_hover", "%label%", label))
                 .addSuggestCommand("/%label% create ", "%label%", label)
                 .addText("\n")
-                .addTextTranslation("minioption.help.edit_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minioption.help.edit_hover", (List<String>) null,
-                        "%label%", label)
+
+                .addText(MessageUtil.getMessage(sender, "minioption.help.edit_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minioption.help.edit_hover", "%label%", label))
                 .addSuggestCommand("/%label% edit ", "%label%", label)
                 .addText("\n")
-                .addTextTranslation("minioption.help.list_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minioption.help.list_hover", (List<String>) null,
-                        "%label%", label)
+
+                .addText(MessageUtil.getMessage(sender, "minioption.help.list_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minioption.help.list_hover", "%label%", label))
                 .addSuggestCommand("/%label% list", "%label%", label)
                 .send();
     }
@@ -135,7 +122,7 @@ public class MiniOptionCommand extends CoreCommand {
         return switch (args.length) {
             case 1 -> UtilsCommand.complete(args[0], List.of("create", "edit"));
             case 2 -> switch (args[0].toLowerCase()) {
-                case "create" -> UtilsCommand.complete(args[1], MinigameTypes.get().getTypes(), (t) -> t.getType(), (t) -> true);
+                case "create" -> UtilsCommand.complete(args[1], MinigameTypes.get().getTypes(), MType::getType, (t) -> true);
                 case "edit" -> UtilsCommand.complete(args[1], OptionManager.get().getOptions().keySet());
                 default -> Collections.emptyList();
             };

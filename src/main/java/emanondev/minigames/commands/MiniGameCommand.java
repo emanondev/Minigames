@@ -44,22 +44,18 @@ public class MiniGameCommand extends CoreCommand {
 
     private void onHelp(CommandSender sender, String label, String[] args) {
         new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minigame.help.create_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minigame.help.create_hover", (List<String>) null,
-                        "%label%", label)
+                .addText(MessageUtil.getMessage(sender, "minigame.help.create_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minigame.help.create_hover", "%label%", label))
                 .addSuggestCommand("/%label% create ", "%label%", label)
                 .addText("\n")
-                .addTextTranslation("minigame.help.edit_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minigame.help.edit_hover", (List<String>) null,
-                        "%label%", label)
+
+                .addText(MessageUtil.getMessage(sender, "minigame.help.edit_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minigame.help.edit_hover", "%label%", label))
                 .addSuggestCommand("/%label% edit ", "%label%", label)
                 .addText("\n")
-                .addTextTranslation("minigame.help.list_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minigame.help.list_hover", (List<String>) null,
-                        "%label%", label)
+
+                .addText(MessageUtil.getMessage(sender, "minigame.help.list_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minigame.help.list_hover", "%label%", label))
                 .addSuggestCommand("/%label% list", "%label%", label)
                 .send();
     }
@@ -76,58 +72,50 @@ public class MiniGameCommand extends CoreCommand {
 
     //create type arena option id
     private void create(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player who)) {
+        if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
 
         if (args.length != 5) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minigame.create.error.arguments_amount", "",
-                            "%label%", label).send();
+            MessageUtil.sendMessage(player, "minigame.create.error.arguments_amount",
+                    "%label%", label);
             return;
         }
         MType mType = MinigameTypes.get().getType(args[1]);
         if (mType == null) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minigame.create.error.invalid_type", "", "%type%", args[1]).send();
+            MessageUtil.sendMessage(player, "minigame.create.error.invalid_type", "%type%", args[1]);
             return;
         }
         MArena arena = ArenaManager.get().getArena(args[2]);
         if (arena == null) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minigame.create.error.invalid_arena_name", "", "%arena%", args[2]).send();
+            MessageUtil.sendMessage(player, "minigame.create.error.invalid_arena_name", "%arena%", args[2]);
             return;
         }
         if (!mType.matchType(arena)) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minigame.create.error.invalid_arena_type", "", "%type%", args[1], "%arena%", args[2]).send();
+            MessageUtil.sendMessage(player, "minigame.create.error.invalid_arena_type", "%type%", args[1], "%arena%", args[2]);
             return;
         }
         MOption option = OptionManager.get().getOption(args[3]);
         if (option == null) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minigame.create.error.invalid_option_name", "", "%option%", args[3]).send();
+            MessageUtil.sendMessage(player, "minigame.create.error.invalid_option_name", "%option%", args[3]);
             return;
         }
         if (!mType.matchType(option)) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minigame.create.error.invalid_option_type", "", "%type%", args[1], "%option%", args[3]).send();
+            MessageUtil.sendMessage(player, "minigame.create.error.invalid_option_type", "%type%", args[1], "%option%", args[3]);
             return;
         }
         String id = args[4].toLowerCase();
         if (!UtilsString.isLowcasedValidID(id)) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minigame.create.error.invalid_id_name", "", "%id%", id).send();
+            MessageUtil.sendMessage(player, "minigame.create.error.invalid_id_name", "%id%", id);
             return;
         }
         if (GameManager.get().getPreMadeGameInstance(id) != null) {
-            new MessageBuilder(Minigames.get(), who)
-                    .addTextTranslation("minigame.create.error.already_used_id", "", "%id%", id).send();
+            MessageUtil.sendMessage(player, "minigame.create.error.already_used_id", "%id%", id);
             return;
         }
         MGame mGame = mType.createGame(arena.getId(), option.getId());
-        GameManager.get().registerGame(id, mGame, who);
+        GameManager.get().registerGame(id, mGame, player);
         GameManager.get().save(mGame);
     }
 

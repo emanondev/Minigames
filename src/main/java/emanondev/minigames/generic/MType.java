@@ -1,8 +1,8 @@
 package emanondev.minigames.generic;
 
-import emanondev.core.PlayerSnapshot;
 import emanondev.core.UtilsString;
 import emanondev.core.YMLSection;
+import emanondev.minigames.Configurations;
 import emanondev.minigames.GameManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -25,26 +25,18 @@ public abstract class MType<A extends MArena, O extends MOption> {
         this.section = GameManager.get().getSection(this);
     }
 
-    public @NotNull YMLSection getSection() {
+    @NotNull
+    public YMLSection getSection() {
         return section;
     }
-
-    public @NotNull String getType() {
+    @NotNull
+    public String getType() {
         return type;
     }
 
     public void applyDefaultPlayerSnapshot(@NotNull Player player) {
-        PlayerSnapshot snap = getSection().get("defaultPlayerSnapshot", null, PlayerSnapshot.class);
-        if (snap != null)
-            snap.apply(player);
+        Configurations.applyGameEmptyStartSnapshot(player);
     }
-
-    /*public @Nullable Location getLobbyLocation() {
-        Location loc = section.getLocation("lobby", null);
-        if (loc != null)
-            return loc;
-        return GameManager.get().getGlobalLobby();
-    }*/
 
     public <T extends MArena> boolean matchType(@NotNull T arena) {
         return arenaClazz.isInstance(arena);
@@ -54,9 +46,10 @@ public abstract class MType<A extends MArena, O extends MOption> {
         return optionClazz.isInstance(option);
     }
 
-    public abstract @NotNull MArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id);
-
-    public abstract @NotNull MOption createDefaultOptions();
-
-    public abstract @NotNull MGame<?, A, O> createGame(@NotNull String arenaId, @NotNull String optionId);
+    @NotNull
+    public abstract MArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id);
+    @NotNull
+    public abstract MOption createDefaultOptions();
+    @NotNull
+    public abstract MGame<?, A, O> createGame(@NotNull String arenaId, @NotNull String optionId);
 }

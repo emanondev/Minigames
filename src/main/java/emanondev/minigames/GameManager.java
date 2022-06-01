@@ -2,7 +2,10 @@ package emanondev.minigames;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
-import emanondev.core.*;
+import emanondev.core.PlayerSnapshot;
+import emanondev.core.UtilsString;
+import emanondev.core.YMLConfig;
+import emanondev.core.YMLSection;
 import emanondev.minigames.generic.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
@@ -290,12 +293,12 @@ public class GameManager implements Listener {
     public ItemStack getKitSelectorItem(Player target) {
         return getGlobalSection().getGuiItem("kitselector_item", new ItemStack(Material.CHEST))
                 .setDescription(Minigames.get().getLanguageConfig(target).loadMultiMessage(
-                        "generic.gui.kitselector_item_description",new ArrayList<>())).build();
+                        "generic.gui.kitselector_item_description", new ArrayList<>())).build();
     }
 
     public ItemStack getGameLeaveItem(Player target) {
-        return getGlobalSection().getGuiItem("gameleave_item",  new ItemStack(Material.IRON_BARS))
+        return getGlobalSection().getGuiItem("gameleave_item", new ItemStack(Material.IRON_BARS))
                 .setDescription(Minigames.get().getLanguageConfig(target).loadMultiMessage(
-                        "generic.gui.gameleave_item_description",new ArrayList<>())).build();
+                        "generic.gui.gameleave_item_description", new ArrayList<>())).build();
     }
 }

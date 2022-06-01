@@ -15,7 +15,6 @@ public class LocationOffset3D implements ConfigurationSerializable {
     public final float yaw;
     public final float pitch;
 
-
     public LocationOffset3D(double x, double y, double z, float yaw, float pitch) {
         this.x = x;
         this.y = y;
@@ -24,11 +23,13 @@ public class LocationOffset3D implements ConfigurationSerializable {
         this.pitch = pitch;
     }
 
-    public static LocationOffset3D fromLocation(Location loc) {
+    @NotNull
+    public static LocationOffset3D fromLocation(@NotNull Location loc) {
         return new LocationOffset3D(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
     }
 
-    public Location add(BlockLocation3D bLoc) {
+    @NotNull
+    public Location add(@NotNull BlockLocation3D bLoc) {
         return new Location(bLoc.getWorld(), bLoc.x + x, bLoc.y + y, bLoc.z + z, yaw, pitch);
     }
 
@@ -39,7 +40,6 @@ public class LocationOffset3D implements ConfigurationSerializable {
         this.yaw = (float) map.get("yaw");
         this.pitch = (float) map.get("pitch");
     }
-
 
     @NotNull
     @Override
@@ -53,7 +53,8 @@ public class LocationOffset3D implements ConfigurationSerializable {
         return map;
     }
 
-    public static @NotNull LocationOffset3D fromString(@NotNull String from) {
+    @NotNull
+    public static LocationOffset3D fromString(@NotNull String from) {
         String[] args = from.split(":");
         return new LocationOffset3D(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2])
                 , Float.parseFloat(args[3]), Float.parseFloat(args[4]));
@@ -61,7 +62,8 @@ public class LocationOffset3D implements ConfigurationSerializable {
     }
 
     @Override
-    public @NotNull String toString() {
+    @NotNull
+    public String toString() {
         return x + ":" + y + ":" + z + ":" + yaw + ":" + pitch;
     }
 }

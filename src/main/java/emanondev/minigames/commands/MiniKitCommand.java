@@ -54,14 +54,13 @@ public class MiniKitCommand extends CoreCommand {
         boolean color = true;
         for (String kit : kits) {
             if (color)
-                mBuilder.addTextTranslation("minikit.success.list_color_1", "");
+                mBuilder.addText(MessageUtil.getMessage(sender, "minikit.success.list_color_1"));
             else
-                mBuilder.addTextTranslation("minikit.success.list_color_2", "");
-
-            mBuilder.addTextTranslation("minikit.success.list_text", "", "%id%", kit)
-                    .addHoverTranslation("minikit.success.list_hover", new ArrayList<>(), "%id%",
-                            kit)
-                    .addSuggestCommandConfigurable("minikit.success.list_suggest", "", "%label%", label,
+                mBuilder.addText(MessageUtil.getMessage(sender, "minikit.success.list_color_2"));
+            color = !color;
+            mBuilder.addText(MessageUtil.getMessage(sender, "minikit.success.list_text",  "%id%", kit))
+                    .addHover(MessageUtil.getMultiMessage(sender,"minikit.success.list_hover", "%id%",                            kit))
+                    .addSuggestCommandConfigurable("minikit.success.list_suggest",  "%label%", label,
                             "%id%",
                             kit, "%player%", sender.getName());
         }
@@ -70,34 +69,29 @@ public class MiniKitCommand extends CoreCommand {
 
     private void onHelp(CommandSender sender, String label, String[] args) {
         new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minikit.help.create_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minikit.help.create_hover", (List<String>) null,
-                        "%label%", label)
+                .addText(MessageUtil.getMessage(sender, "minikit.help.create_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minikit.help.create_hover", "%label%", label))
                 .addSuggestCommand("/%label% create ", "%label%", label)
                 .addText("\n")
-                .addTextTranslation("minikit.help.update_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minikit.help.update_hover", (List<String>) null,
-                        "%label%", label)
+
+                .addText(MessageUtil.getMessage(sender, "minikit.help.update_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minikit.help.update_hover", "%label%", label))
                 .addSuggestCommand("/%label% update ", "%label%", label)
                 .addText("\n")
-                .addTextTranslation("minikit.help.delete_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minikit.help.delete_hover", (List<String>) null,
-                        "%label%", label)
+
+                .addText(MessageUtil.getMessage(sender, "minikit.help.delete_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minikit.help.delete_hover", "%label%", label))
                 .addSuggestCommand("/%label% delete ", "%label%", label)
                 .addText("\n")
-                .addTextTranslation(sender instanceof Player ? "minikit.help.apply_text" : "minikit.help.apply_text_console", "",
-                        "%label%", label)
-                .addHoverTranslation("minikit.help.apply_hover", (List<String>) null,
-                        "%label%", label)
+
+                .addText(MessageUtil.getMessage(sender, sender instanceof Player ? "minikit.help.apply_text" :
+                        "minikit.help.apply_text_console", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minikit.help.apply_hover", "%label%", label))
                 .addSuggestCommand("/%label% apply ", "%label%", label)
                 .addText("\n")
-                .addTextTranslation("minikit.help.list_text", "",
-                        "%label%", label)
-                .addHoverTranslation("minikit.help.list_hover", (List<String>) null,
-                        "%label%", label)
+
+                .addText(MessageUtil.getMessage(sender, "minikit.help.list_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minikit.help.list_hover", "%label%", label))
                 .addSuggestCommand("/%label% list", "%label%", label)
                 .send();
     }
@@ -108,86 +102,72 @@ public class MiniKitCommand extends CoreCommand {
             return;
         }
         if (args.length != 2) {
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.create_arguments_amount", "", "%label%", label).send();
+            MessageUtil.sendMessage(player, "minikit.error.create_arguments_amount", "%label%", label);
             return;
         }
         if (KitManager.get().getKit(args[1]) != null) {
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.already_used_id", "", "%id%", args[1].toLowerCase()).send();
+            MessageUtil.sendMessage(player, "minikit.error.already_used_id", "%id%", args[1].toLowerCase());
             return;
         }
         KitManager.get().createKit(args[1], player);
-        new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minikit.success.create", "", "%id%", args[1].toLowerCase()).send();
+        MessageUtil.sendMessage(player, "minikit.success.create", "%id%", args[1].toLowerCase());
     }
 
     //apply <kit> [player]
     private void apply(CommandSender sender, String label, String[] args) {
         if (args.length != 2 && args.length != 3) {
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.apply_arguments_amount", "").send();
+            MessageUtil.sendMessage(sender, "minikit.error.apply_arguments_amount");
             return;
         }
         Player target = args.length == 3 ? this.readPlayer(sender, args[2]) : sender instanceof Player ? ((Player) sender) : null;
         if (target == null) {
             if (args.length == 3) {
-                new MessageBuilder(Minigames.get(), sender)
-                        .addTextTranslation("minikit.error.apply_target_offline", "", "%player%", args[2]).send();
+                MessageUtil.sendMessage(sender, "minikit.error.apply_target_offline", "%player%", args[2]);
                 return;
             }
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.apply_target_required", "", "%id%", args[1].toLowerCase()).send();
+            MessageUtil.sendMessage(sender, "minikit.error.apply_target_required", "%id%", args[1].toLowerCase());
             return;
         }
         Kit kit = KitManager.get().getKit(args[1]);
         if (kit == null) {
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.unexisting_id", "", "%id%", args[1].toLowerCase()).send();
+            MessageUtil.sendMessage(sender, "minikit.error.unexisting_id", "%id%", args[1].toLowerCase());
             return;
         }
         kit.apply(target);
-        new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minikit.success.apply", "", "%id%", args[1].toLowerCase()
-                        , "%player%", target.getName()).send();
+        MessageUtil.sendMessage(sender, "minikit.success.apply", "%id%", args[1].toLowerCase()
+                , "%player%", target.getName());
     }
 
     private void update(CommandSender sender, String label, String[] args) {
-        if (args.length != 2) {
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.update_arguments_amount", "").send();
-            return;
-        }
         if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
+        if (args.length != 2) {
+            MessageUtil.sendMessage(player, "minikit.error.update_arguments_amount");
+            return;
+        }
         Kit kit = KitManager.get().getKit(args[1]);
         if (kit == null) {
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.unexisting_id", "", "%id%", args[1].toLowerCase()).send();
+            MessageUtil.sendMessage(player, "minikit.error.unexisting_id", "%id%", args[1].toLowerCase());
             return;
         }
         kit.updateSnapshot(new PlayerSnapshot(player)); //not optimized
-        new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minikit.success.update", "", "%id%", args[1].toLowerCase()).send();
+        MessageUtil.sendMessage(player, "minikit.success.update", "%id%", args[1].toLowerCase());
     }
 
     //delete <id>
     private void delete(CommandSender sender, String label, String[] args) {
         if (args.length != 2) {
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.delete_arguments_amount", "").send();
+            MessageUtil.sendMessage(sender, "minikit.error.delete_arguments_amount");
             return;
         }
         if (KitManager.get().getKit(args[1]) == null) {
-            new MessageBuilder(Minigames.get(), sender)
-                    .addTextTranslation("minikit.error.unexisting_id", "", "%id%", args[1].toLowerCase()).send();
+            MessageUtil.sendMessage(sender, "minikit.error.unexisting_id", "%id%", args[1].toLowerCase());
             return;
         }
         KitManager.get().deleteKit(args[1]);
-        new MessageBuilder(Minigames.get(), sender)
-                .addTextTranslation("minikit.success.delete", "", "%id%", args[1].toLowerCase()).send();
+        MessageUtil.sendMessage(sender, "minikit.success.delete", "%id%", args[1].toLowerCase());
     }
 
     @Override

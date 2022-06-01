@@ -3,6 +3,7 @@ package emanondev.minigames;
 import emanondev.core.CorePlugin;
 import emanondev.minigames.commands.*;
 import emanondev.minigames.generic.ChestFiller;
+import emanondev.minigames.generic.MGame;
 import emanondev.minigames.locations.BlockLocation2D;
 import emanondev.minigames.locations.BlockLocation3D;
 import emanondev.minigames.locations.BlockLocationOffset3D;
@@ -25,7 +26,7 @@ public final class Minigames extends CorePlugin {
 
     @Override
     public void disable() {
-
+        GameManager.get().getGames().values().forEach(MGame::gameAbort);
     }
 
     @Override
@@ -57,12 +58,12 @@ public final class Minigames extends CorePlugin {
 
         this.registerCommand(new MiniKitCommand());
         this.registerCommand(new MiniFillerCommand());
-        this.registerCommand(new MiniChestFillerCommand());
         this.registerCommand(new ArenaBuilderCommand());
         this.registerCommand(new MiniOptionCommand());
         this.registerCommand(new MiniGameCommand());
         this.registerCommand(new FastJoinCommand());
         this.registerCommand(new LeaveCommand());
+        this.registerCommand(new SnapshotSupportCommand());
 
     }
 
