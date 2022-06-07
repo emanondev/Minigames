@@ -4,6 +4,7 @@ items:
   game_leave:
     - "&cAbbandona la partita"
 generic:
+  obtain_points: "&a[Game] Hai ottenuto &e%amount% &apunti!"
   game:
     game_interrupted: "&c[Game] Partita interrotta"
   gui:

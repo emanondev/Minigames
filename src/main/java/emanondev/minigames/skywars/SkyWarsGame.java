@@ -7,10 +7,9 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.generic.MFiller;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
+import emanondev.minigames.user.GameStat;
+import emanondev.minigames.user.PlayerStat;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -47,6 +46,15 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         filledChests.clear();
 
         super.gamePreStart();
+    }
+
+    public void gameStart(){
+        super.gameStart();
+        for (Player player:getGamers()) {
+            PlayerStat.SKYWARS_PLAYED.add(player, 1);
+            PlayerStat.GAME_PLAYED.add(player, 1);
+        }
+        GameStat.PLAY_TIMES.add(this,1);
     }
 
     /**
@@ -228,7 +236,9 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         player.getInventory().clear();
         switchToSpectator(player); //TODO
         if (killer != null && isGamer(killer)) {
-            //TODO add points
+            PlayerStat.SKYWARS_KILLS.add(player,1);
+            getMinigameType().applyKillPoints(killer);
+            //TODO prize?
         }
     }
 
@@ -237,7 +247,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             return;
         //TODO check win conditions
         int alive = 0;
-        SkyWarsTeam winner;
+        SkyWarsTeam winner = null;
         for (SkyWarsTeam party : this.getTeams())
             if (!party.hasLost()) {
                 winner = party;
@@ -249,8 +259,15 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         }
         if (alive != 1)
             return;
-        //TODO win!
-        //TODO assign win points
+
+        //has won
+        for (UUID user:winner.getUsers()){
+            Player p = Bukkit.getPlayer(user);
+            if (p!=null && isGamer(p)) {
+                PlayerStat.SKYWARS_VICTORY.add(user, 1);
+                getMinigameType().applyWinPoints(p);
+            }
+        }
         this.gameEnd();
     }
 

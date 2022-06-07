@@ -1,11 +1,15 @@
 package emanondev.minigames.skywars;
 
+import emanondev.core.UtilsString;
+import emanondev.core.VaultEconomyHandler;
 import emanondev.minigames.ArenaManager;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MOption;
 import emanondev.minigames.generic.MType;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -45,5 +49,19 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
         return new SkyWarsGame(map);
     }
 
+    public void applyKillPoints(Player p) {
+        double kp = getSection().loadDouble("kill_points", 2D);
+        if (kp > 0) {
+            new VaultEconomyHandler().addMoney(p, kp);
+            MessageUtil.sendMessage(p,"generic.obtain_points","%amount%", UtilsString.formatOptional2Digit(kp));
+        }
+    }
 
+    public void applyWinPoints(Player p) {
+        double win = getSection().loadDouble("win_points", 10D);
+        if (win > 0) {
+            new VaultEconomyHandler().addMoney(p, win);
+            MessageUtil.sendMessage(p,"generic.obtain_points","%amount%", UtilsString.formatOptional2Digit(win));
+        }
+    }
 }
