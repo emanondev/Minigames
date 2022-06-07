@@ -1,12 +1,15 @@
 package emanondev.minigames.generic;
 
-import emanondev.core.MessageBuilder;
+import emanondev.core.ItemBuilder;
 import emanondev.core.SoundInfo;
-import emanondev.core.UtilsMessages;
 import emanondev.core.UtilsString;
+import emanondev.core.VaultEconomyHandler;
+import emanondev.core.gui.Gui;
+import emanondev.core.gui.PagedListFGui;
 import emanondev.minigames.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -14,11 +17,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.RenderType;
+import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,12 +34,13 @@ import java.util.*;
 
 public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O extends MOption> implements MGame<T, A, O>, Listener {
 
+    private final Objective objective;
     private int collectingPlayersCountdown = -1;
     private int endCountdown = -1;
-    private int prestartCountdown = -1;
+    private int preStartCountdown = -1;
 
     private BukkitTask timer;
-    private final HashSet<Player> collectedPlayers = new HashSet<>();
+    //private final HashSet<Player> collectedPlayers = new HashSet<>();
     private BlockLocation3D loc;
     private Phase phase = Phase.STOPPED;
 
@@ -39,15 +48,15 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private final A arena;
     private final String optionId;
     private final String arenaId;
+    private final HashMap<Player, String> kitPreference = new HashMap<>();
 
+    @SuppressWarnings("unchecked")
     public AbstractMGame(@NotNull Map<String, Object> map) {
         this.optionId = (String) map.get("option");
         this.option = (O) OptionManager.get().getOption(optionId);
-        //Minigames.get().logTetraStar(ChatColor.DARK_RED,"D &e"+optionId+" Null Option: &e"+(option==null));
         this.arenaId = (String) map.get("arena");
         this.arena = (A) ArenaManager.get().getArena(arenaId);
 
-        //Minigames.get().logTetraStar(ChatColor.DARK_RED,"D &e"+arenaId+" Null Arena: &e"+(arena==null));
         if (this.arena == null || this.option == null)
             throw new NullPointerException();
         try {
@@ -60,6 +69,28 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             e.printStackTrace();
             loc = GameManager.get().generateLocation(arena, getWorld());
         }
+        MessageUtil.debug(getId() + " location "+loc);
+        MessageUtil.debug(getId() + " location "+loc.worldName);
+        MessageUtil.debug(getId() + " location "+loc.getWorld());
+        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        this.objective = scoreboard.registerNewObjective("game", "dummy", getObjectiveDisplayName(), RenderType.INTEGER);
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+    }
+
+    protected String getObjectiveDisplayName() {
+        return getMinigameType().getDisplayName();
+    }
+
+    @Override
+    public Objective getObjective() {
+        return objective;
+    }
+
+    private final Scoreboard scoreboard;
+
+    @Override
+    public Scoreboard getScoreboard() {
+        return scoreboard;
     }
 
     public void setLocation(@NotNull BlockLocation3D loc) {
@@ -85,7 +116,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gameInizialize");
         if (phase != Phase.STOPPED)
             throw new IllegalStateException();
-
         phase = Phase.RESTART;
         gameRestart();
     }
@@ -96,8 +126,11 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (phase != Phase.RESTART)
             throw new IllegalStateException();
 
+        kitPreference.clear();
         for (T team : getTeams())
             team.clear();
+        phase = Phase.COLLECTING_PLAYERS;
+        gameCollectingPlayers();
         timer = new BukkitRunnable() {
             public void run() {
                 switch (phase) {
@@ -113,57 +146,58 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 }
             }
         }.runTaskTimer(Minigames.get(), 20L, 20L);
-        phase = Phase.COLLECTING_PLAYERS;
     }
+
+
+    @Override
+    public void gameCollectingPlayers() {
+        if (phase != Phase.COLLECTING_PLAYERS)
+            throw new IllegalStateException();
+        MessageUtil.debug(getId() + " gameCollectingPlayers");
+        registerAsListener(true);
+        preStartCountdown = getOption().getPreStartPhaseCooldownMax();
+        collectingPlayersCountdown = getOption().getCollectingPlayersPhaseCooldownMax();
+    }
+
 
     @Override
     public void gameCollectingPlayersTimer() {
         //Minigames.get().logTetraStar(ChatColor.DARK_RED,"D "+getId()+" gameCollectingPlayersTimer");
         if (phase != Phase.COLLECTING_PLAYERS)
             throw new IllegalStateException();
-        //Minigames.get().logTetraStar(ChatColor.DARK_RED,"D "+getId()+" canprestart? "+gameCanPreStart()+" countdown "+collectingPlayersCountdown);
-
         if (this.gameCanPreStart()) {
-            if (AbstractMGame.this.getCollectedPlayers().size() == AbstractMGame.this.getMaxPlayers()) {
+            if (gamers.size() == getMaxGamers()) {
                 //fast start
                 phase = Phase.PRE_START;
                 gamePreStart();
                 return;
             }
-            if (collectingPlayersCountdown == -1)
-                collectingPlayersCountdown = getOption().getCollectingPlayersPhaseCooldownMax();
-            else
-                collectingPlayersCountdown--;
 
-            if (collectingPlayersCountdown <= 0) {
-                phase = Phase.PRE_START;
-                gamePreStart();
-                return;
-            } else { //>0
-                String[] args = new String[]{"%cooldown%", String.valueOf(collectingPlayersCountdown),
-                        "%current_players%", String.valueOf(getCollectedPlayers().size()),
-                        "%max_players%", String.valueOf(getMaxPlayers())};
-                SoundInfo timerTickSound = Minigames.get().getConfig("sounds").loadSoundInfo(
-                        "collecting_players_cooldown_tick", new SoundInfo(Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 5, true));
-                for (Player player : getCollectedPlayers()) {
-                    UtilsMessages.sendActionbar(player, Minigames.get().getLanguageConfig(player)
-                            .loadMessage(getMinigameType().getType() + ".game.collectingplayers_cooldown_bar", "",
-                                    args));
-                    timerTickSound.play(player);
+            collectingPlayersCountdown--;
+            if (collectingPlayersCountdown > 0) {
+                String[] args = new String[]{
+                        "%cooldown%", String.valueOf(collectingPlayersCountdown),
+                        "%cooldown%", String.valueOf(collectingPlayersCountdown),
+                        "%current_players%", String.valueOf(gamers.size()),
+                        "%max_players%", String.valueOf(getMaxGamers())};
+                SoundInfo tick = Configurations.getCollectingPlayersCooldownTickSound();
+                for (Player player : getGamers()) {
+                    MessageUtil.sendActionBarMessage(player, getMinigameType().getType() + ".game.collectingplayers_cooldown_bar", args);
+                    tick.play(player);
                 }
                 return;
             }
+            phase = Phase.PRE_START;
+            getGamers().forEach(MessageUtil::sendEmptyActionBarMessage);
+            gamePreStart();
+            return;
         }
-        collectingPlayersCountdown = -1;
+        collectingPlayersCountdown = getOption().getCollectingPlayersPhaseCooldownMax();
         String[] args = new String[]{
-                "%current_players%", String.valueOf(getCollectedPlayers().size()),
-                "%max_players%", String.valueOf(getMaxPlayers())};
-        for (Player player : getCollectedPlayers()) {
-            UtilsMessages.sendActionbar(player, Minigames.get().getLanguageConfig(player)
-                    .loadMessage(getMinigameType().getType() + ".game.collectingplayers_no_cooldown_bar", "",
-                            args));
-        }
-
+                "%current_players%", String.valueOf(getGamers().size()),
+                "%max_players%", String.valueOf(getMaxGamers())};
+        getGamers().forEach(player -> MessageUtil.sendActionBarMessage(player,
+                getMinigameType().getType() + ".game.collectingplayers_no_cooldown_bar", args));
     }
 
     @Override
@@ -171,28 +205,25 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gamePreStart");
         if (phase != Phase.PRE_START)
             throw new IllegalStateException();
-        prestartCountdown = getOption().getPreStartPhaseCooldownMax();
-        registerAsListener(true);
+        preStartCountdown = getOption().getPreStartPhaseCooldownMax();
     }
 
     @Override
     public void gamePreStartTimer() {
-        prestartCountdown--;
-        String[] args = new String[]{"%cooldown%", String.valueOf(prestartCountdown)};
-        SoundInfo timerTickSound = Minigames.get().getConfig("sounds").loadSoundInfo(
-                "prestart_cooldown_tick", new SoundInfo(Sound.ENTITY_PLAYER_LEVELUP, 1, 5, true));
-        for (Player player : getPlayingPlayers()) {
-            UtilsMessages.sendActionbar(player, Minigames.get().getLanguageConfig(player)
-                    .loadMessage(getMinigameType().getType() + ".game.prestart_cooldown_bar", "",
-                            args));
-            timerTickSound.play(player);
+        preStartCountdown--;
+        String[] args = new String[]{"%cooldown%", String.valueOf(preStartCountdown)};
+        SoundInfo tick = Configurations.getPreStartPhaseCooldownTickSound();
+        for (Player player : getGamers()) {
+            MessageUtil.sendActionBarMessage(player, getMinigameType().getType() + ".game.prestart_cooldown_bar", args);
+            tick.play(player);
         }
-        if (prestartCountdown <= 0) {
-            if (!gameCanStart()) { //some idiot disconnected
+        if (preStartCountdown <= 0) {
+            if (!gameCanStart()) { //some idiot disconnected //TODO back to Collecting Players (?)
                 this.gameAbort();
                 this.gameRestart();
                 return;
             }
+            getGamers().forEach(MessageUtil::sendEmptyActionBarMessage);
             phase = Phase.PLAYING;
             gameStart();
         }
@@ -203,12 +234,29 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gameStart");
         if (phase != Phase.PLAYING)
             throw new IllegalStateException();
-        for (Player p : getPlayingPlayers()) {
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("skywars.game.game_start", "").send();
-            getMinigameType().applyDefaultPlayerSnapshot(p); //TODO again()
+        for (Player player : getGamers()) {
+            MessageUtil.sendMessage(player, "skywars.game.game_start");
+            getMinigameType().applyDefaultPlayerSnapshot(player); //TODO again()
         }
-        //TODO apply kits
+        VaultEconomyHandler ecoHandler = new VaultEconomyHandler();
+        for (Player player : getGamers()) {
+            if (kitPreference.containsKey(player)) {
+                Kit kit = KitManager.get().getKit(kitPreference.get(player));
+                if (kit == null) {
+                    //TODO apply default kit
+                } else {
+                    if (kit.getPrice() == 0 || ecoHandler.removeMoney(player, kit.getPrice())) {
+                        kit.apply(player);
+                    } else {
+                        //TODO not enough money
+                        //TODO apply default kit
+                    }
+                }
+            } else {
+                //TODO apply default kit
+            }
+            player.closeInventory();
+        }
         //TODO notify game started?
     }
 
@@ -223,54 +271,37 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gameEnd");
         if (this.phase != Phase.PLAYING)
             throw new IllegalStateException();
-        for (Player p : getPlayingPlayers())
-            new MessageBuilder(Minigames.get(), p)
-                    .addTextTranslation("skywars.game.game_end", "").send();
+        getGamers().forEach(player -> MessageUtil.sendMessage(player, "skywars.game.game_end"));
         endCountdown = getOption().getEndPhaseCooldownMax();
         this.phase = Phase.END;
     }
 
     @Override
     public void gameEndTimer() {
-        //MessageUtil.debug(  getId() + " gameEndTimer");
-        //TODO celebrate?
-
         if (endCountdown >= 1)
-            for (Player p : getPlayingPlayers()) {
-                Firework fire = (Firework) p.getLocation().getWorld().spawnEntity(p.getLocation().add(Math.random() * 6 - 3, 2, Math.random() * 6 - 3), EntityType.FIREWORK);
+            for (Player player : getGamers()) {
+                Firework fire = (Firework) player.getLocation().getWorld().spawnEntity(player.getLocation()
+                        .add(Math.random() * 6 - 3, 2, Math.random() * 6 - 3), EntityType.FIREWORK);
                 FireworkMeta meta = fire.getFireworkMeta();
                 meta.addEffect(FireworkEffect.builder().withColor(
-                        Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))
-                        ,
-                        Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))
-                ).build());
+                        Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256)),
+                        Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))).build());
                 fire.setFireworkMeta(meta);
                 Bukkit.getScheduler().runTaskLater(Minigames.get(), fire::detonate, 2L);
-                String[] args = new String[]{"%cooldown%", String.valueOf(prestartCountdown)};
-                UtilsMessages.sendActionbar(p, Minigames.get().getLanguageConfig(p)
-                        .loadMessage(getMinigameType().getType() + ".game.end_cooldown_bar", "",
-                                args));
-
+                String[] args = new String[]{"%cooldown%", String.valueOf(preStartCountdown)};
+                MessageUtil.sendActionBarMessage(player, getMinigameType().getType() + ".game.end_cooldown_bar", args);
             }
-        if (endCountdown == -1)
-            endCountdown = getOption().getEndPhaseCooldownMax();
-        else
-            endCountdown = endCountdown - 1;
-
-        if (endCountdown <= 0) {
+        if (endCountdown <= 0)
             gameClose();
-        }
     }
 
     @Override
     public void gameClose() {
         MessageUtil.debug(getId() + " gameClose");
-        for (Player spectator : new HashSet<>(getSpectators())) //bad
-            GameManager.get().quitGame(spectator);
-        for (Player player : new HashSet<>(getPlayingPlayers())) //bad
-            GameManager.get().quitGame(player);
-        phase = Phase.RESTART;
+        new HashSet<>(getSpectators()).forEach(spectator -> GameManager.get().quitGame(spectator));
+        new HashSet<>(getGamers()).forEach(player -> GameManager.get().quitGame(player));
         timer.cancel();
+        phase = Phase.RESTART;
         registerAsListener(false);
         gameRestart();
     }
@@ -282,11 +313,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             GameManager.get().quitGame(spectator);
             MessageUtil.sendMessage(spectator, "generic.game.game_interrupted");
         }
-        for (Player player : new HashSet<>(getPlayingPlayers())) {//bad
-            GameManager.get().quitGame(player);
-            MessageUtil.sendMessage(player, "generic.game.game_interrupted");
-        }
-        for (Player player : new HashSet<>(getCollectedPlayers())) { //bad
+        for (Player player : new HashSet<>(getGamers())) {//bad
             GameManager.get().quitGame(player);
             MessageUtil.sendMessage(player, "generic.game.game_interrupted");
         }
@@ -301,7 +328,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private final GameListener gameListener = new GameListener(this);
 
     private void registerAsListener(boolean value) {
-
         if (value) {
             if (!registered) {
                 Minigames.get().registerListener(this);
@@ -340,49 +366,96 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     }
 
     @Override
-    public @NotNull Set<Player> getCollectedPlayers() {
-        return Collections.unmodifiableSet(collectedPlayers);
+    public @NotNull Set<Player> getGamers() {
+        return Collections.unmodifiableSet(gamers);
     }
 
     @Override
-    public boolean isCollectedPlayer(@NotNull Player player) {
-        return phase == Phase.COLLECTING_PLAYERS && collectedPlayers.contains(player);
+    public boolean isGamer(@NotNull Player player) {
+        return gamers.contains(player);
     }
 
     @Override
-    public final boolean addCollectedPlayer(@NotNull Player player) {
-        if (!canAddCollectedPlayer(player))
+    public final boolean addGamer(@NotNull Player player) {
+        return switch (getPhase()) {
+            case COLLECTING_PLAYERS, PRE_START, PLAYING -> {
+                if (!canAddGamer(player))
+                    yield false;
+                if (gamers.add(player)) {
+                    onGamerAdded(player);
+                    yield true;
+                }
+                yield false;
+            }
+            default -> false;
+        };
+    }
+
+    @Override
+    public void onGamerAdded(@NotNull Player player) {
+        resetGamer(player);
+    }
+
+    public void resetGamer(@NotNull Player player) {
+        switch (getPhase()) {
+            case COLLECTING_PLAYERS -> {
+                teleportResetLocation(player);
+                Configurations.applyGameCollectingPlayersSnapshot(player);
+                player.getInventory().setHeldItemSlot(4);
+                if (getOption().allowSelectingTeam()) //only if you can choose a kit
+                    player.getInventory().setItem(2, Configurations.getTeamSelectorItem(player));
+                if (getOption().getKits().size() > 0) //only if you can choose a kit
+                    player.getInventory().setItem(4, Configurations.getKitSelectorItem(player));
+                player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
+            }
+            case PRE_START -> {
+                assignTeam(player);
+                //getScoreboard().getTeam(getTeam(player).getColor().name()).addEntry(player.getName());
+                teleportResetLocation(player);
+                Configurations.applyGamePreStartSnapshot(player);
+                player.getInventory().setHeldItemSlot(4);
+                if (getOption().getKits().size() > 0) //only if you can choose a kit
+                    player.getInventory().setItem(4, Configurations.getKitSelectorItem(player));
+                player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
+            }
+            case PLAYING -> {
+                assignTeam(player);
+                //getScoreboard().getTeam(getTeam(player).getColor().name()).addEntry(player.getName());
+                teleportResetLocation(player);
+                Configurations.applyGameEmptyStartSnapshot(player);
+                //TODO assign kit
+            }
+        }
+    }
+
+    @Override
+    public boolean canAddGamer(@NotNull Player player) {
+        if (getMaxGamers() <= gamers.size())
             return false;
-        return collectedPlayers.add(player);
-    }
-
-    @Override
-    public boolean canAddCollectedPlayer(@NotNull Player player) {
-        if (getMaxPlayers() <= collectedPlayers.size() || getPhase() != Phase.COLLECTING_PLAYERS)
-            return false;
-        return !collectedPlayers.contains(player);
+        return !gamers.contains(player);
     }
 
 
     @Override
-    public boolean removeCollectedPlayer(@NotNull Player player) {
-        return collectedPlayers.remove(player);
+    public boolean removeGamer(@NotNull Player player) {
+        if (gamers.remove(player)) {
+            onGamerRemoved(player);
+            return true;
+        }
+        return false;
     }
+
 
     /**
      * Assign a party to user or throw an exception
      */
+    @Deprecated
     protected abstract void assignTeam(Player p);
 
     private final Set<Player> spectators = new HashSet<>();
 
-    @NotNull
     public final boolean switchToSpectator(@NotNull Player player) {
-        if (!isPlayingPlayer(player))
-            return false;
-        if (canSwitchToSpectator(player) && !isSpectator(player)) {
-            onQuitGame(player);
-            spectators.add(player);
+        if (canSwitchToSpectator(player) && removeGamer(player) && spectators.add(player)) {
             onSpectatorAdded(player);
             return true;
         }
@@ -390,15 +463,17 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     }
 
     @Override
-    public abstract boolean canSwitchToSpectator(Player player);
-
-    @Override
     public final boolean addSpectator(@NotNull Player player) {
-        if (isPlayingPlayer(player)) {
-            return switchToSpectator(player);
+        if (getPhase() != Phase.PLAYING)
+            return false;
+        if (isGamer(player)) {
+            if (canSwitchToSpectator(player) && switchToSpectator(player)) {
+                onSpectatorAdded(player);
+                return true;
+            }
+            return false;
         }
-        if (canAddSpectator(player) && !isSpectator(player)) {
-            spectators.add(player);
+        if (canAddSpectator(player) && spectators.add(player)) {
             onSpectatorAdded(player);
             return true;
         }
@@ -420,63 +495,21 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     }
 
     @Override
-    public final @NotNull Set<Player> getSpectators() {
+    @NotNull
+    public final Set<Player> getSpectators() {
         return Collections.unmodifiableSet(spectators);
     }
 
-    private final Set<Player> playing = new HashSet<>();
+    private final Set<Player> gamers = new HashSet<>();
 
     @Override
-    public boolean addPlayingPlayer(@NotNull Player player) {
-        if (canAddPlayingPlayer(player) && playing.add(player)) {
-            collectedPlayers.remove(player);
-            assignTeam(player);
-            onPlayingPlayerAdded(player);
-            return true;
-        }
-        return false;
-    }
-
-
-    @Override
-    public final boolean joinGameAsSpectator(Player player) {
+    public final boolean joinGameAsSpectator(@NotNull Player player) {
         return addSpectator(player);
     }
 
-    protected boolean canAddPlayingPlayer(Player player) {
-        return collectedPlayers.contains(player);
-    }
-
     @Override
-    public final boolean removePlayingPlayer(@NotNull Player player) {
-        if (playing.remove(player)) {
-            onPlayingPlayerRemoved(player);
-            if (getPhase() == Phase.PLAYING)
-                checkGameEnd();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * check if the game has finished, if has should calls for onGameEnd();
-     * <p>
-     * getPhase()==Phase.PLAYING may be a double security check
-     */
-    protected abstract void checkGameEnd();
-
-    @Override
-    public final boolean isPlayingPlayer(@NotNull Player player) {
-        return playing.contains(player);
-    }
-
-    @Override
-    public final @NotNull Set<Player> getPlayingPlayers() {
-        return Collections.unmodifiableSet(playing);
-    }
-
-    @Override
-    public @Nullable World getWorld() {
+    @Nullable
+    public World getWorld() {
         return this.loc == null ? null : this.loc.getWorld();
     }
 
@@ -500,70 +533,61 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         id = null;
     }
 
-    public void onPlayingPlayerPvpDamage(EntityDamageByEntityEvent event, Player p, Player damager) {
+    @Override
+    public void onGamerPvpDamage(@NotNull EntityDamageByEntityEvent event, @NotNull Player p, @NotNull Player damager, boolean directDamage) {
         if (p.equals(damager))
             return;
         if (event.getDamager() instanceof Player && getTeam(p).equals(getTeam(damager)))
             event.setCancelled(true);
     }
 
-    public abstract void onPlayingPlayerDamaging(EntityDamageByEntityEvent event, Player damager);
-
     /**
      * when an entity inside game (not a player) is damaged
-     *
-     * @param event
      */
-    public abstract void onGameEntityDamaged(EntityDamageEvent event);
+    @Override
+    public abstract void onGameEntityDamaged(@NotNull EntityDamageEvent event);
 
     /**
      * Called when a creature spawns inside the arena
-     *
-     * @param event
      */
+    @Override
     public abstract void onCreatureSpawn(@NotNull CreatureSpawnEvent event);
 
     /**
      * Called when an entity (not a player) die inside the arena
-     *
-     * @param event
      */
+    @Override
     public abstract void onEntityDeath(@NotNull EntityDeathEvent event);
 
     /**
-     * Called when playing player die inside the arena
-     * <p>
-     * the player do not die as the final damage is cancelled, but you should handle this instead
-     * this may be called as result of player quitting the game, quitting the arena or being killed, falling below the arena
-     */
-    public abstract void onFakePlayingPlayerDeath(@NotNull Player dead, @Nullable Player killer);
-
-    /**
      * called when a playing player heals
-     *
-     * @param event
-     * @param player
      */
-    public void onPlayingPlayerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player player) {
-    }
+    @Override
+    public abstract void onGamerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player player);
 
     /**
      * called when an entity, not a player heals inside the arena
-     *
-     * @param event
      */
-    public void onEntityRegainHealth(@NotNull EntityRegainHealthEvent event) {
-    }
+    @Override
+    public abstract void onEntityRegainHealth(@NotNull EntityRegainHealthEvent event);
 
     /**
      * Handle block break done by one of playingPlayers
      */
-    public abstract void onPlayingPlayerBlockBreak(@NotNull BlockBreakEvent event);
+    @Override
+    public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
+            event.setCancelled(true);
+    }
 
     /**
      * Handle block place done by one of playingPlayers
      */
-    public abstract void onPlayingPlayerBlockPlace(@NotNull BlockPlaceEvent event);
+    @Override
+    public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
+            event.setCancelled(true);
+    }
 
     /**
      * Handle portal creation inside arena
@@ -572,69 +596,45 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         event.setCancelled(true);
     }
 
-
-    protected boolean canAddSpectator(Player player) {
-        return switch (getPhase()) {
-            case PRE_START, PLAYING, END -> true; //TODO allowSpectators()
+    @Override
+    public boolean canAddSpectator(@NotNull Player player) {
+        return getOption().allowSpectators() && switch (getPhase()) {
+            case PLAYING, END -> true;
             default -> false;
         };
     }
 
-    protected void onSpectatorAdded(@NotNull Player player) {
+    @Override
+    public void onSpectatorAdded(@NotNull Player player) {
         Configurations.applyGameSpectatorSnapshot(player);
     }
 
-    protected void onSpectatorRemoved(@NotNull Player player) {
-        //TODO
-    }
-
-    protected void onPlayingPlayerRemoved(@NotNull Player player) {
-        //TODO
-    }
-
-    protected void onPlayingPlayerAdded(@NotNull Player player) {
-        //TODO
-    }
-
-
-    /**
-     * note the event is always cancelled
-     *
-     * @param event
-     */
-    public abstract void onPlayingPlayerMoveOutsideArena(PlayerMoveEvent event);
-
     /**
      * should also
-     *
-     * @param event
      */
-    public void onPlayingPlayerMove(PlayerMoveEvent event) {
-        if (getPhase() == Phase.PRE_START && event.getFrom().distanceSquared(event.getTo()) > 0) {
-            event.setCancelled(true);
-        }
-    }
-
-
-    public abstract void onPlayingPlayerTeleport(PlayerTeleportEvent event);
-
-
-    public void onPlayingPlayerPickupItem(EntityPickupItemEvent event, Player p) {
-        if (getPhase() == Phase.PRE_START)
+    @Override
+    public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
+        if (getPhase() == Phase.PRE_START && event.getFrom().distanceSquared(event.getTo()) > 0)
             event.setCancelled(true);
     }
 
-    public void onPlayingPlayerDropItem(PlayerDropItemEvent event) {
-        if (getPhase() == Phase.PRE_START)
+    @Override
+    public void onGamerPickupItem(@NotNull EntityPickupItemEvent event, @NotNull Player p) {
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
             event.setCancelled(true);
     }
 
-    public void onPlayingPlayerLaunchProjectile(ProjectileLaunchEvent event) {
-        if (getPhase() == Phase.PRE_START)
+    public void onGamerDropItem(@NotNull PlayerDropItemEvent event) {
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
             event.setCancelled(true);
     }
 
-    public void onPlayingPlayerDamaged(@NotNull EntityDamageEvent event, @NotNull Player p) {
+    public void onGamerLaunchProjectile(@NotNull ProjectileLaunchEvent event) {
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
+            event.setCancelled(true);
+    }
+
+    public void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player player) {
         if (getPhase() != Phase.PLAYING)
             event.setCancelled(true);
     }
@@ -643,17 +643,100 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     /**
      * Handle any player interaction with entities inside arena
      */
-    public void onPlayingPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (getPhase() == Phase.PRE_START)
+    public void onGamerInteractEntity(@NotNull PlayerInteractEntityEvent event) {
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
             event.setCancelled(true);
     }
 
     /**
      * Handle any player interaction inside arena
      */
-    public void onPlayingPlayerInteract(PlayerInteractEvent event) {
-        if (getPhase() == Phase.PRE_START)
+    @Override
+    public void onGamerInteract(@NotNull PlayerInteractEvent event) {
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
             event.setCancelled(true);
+        if (getPhase() == Phase.COLLECTING_PLAYERS || getPhase() == Phase.PRE_START)
+            switch (event.getPlayer().getInventory().getHeldItemSlot()) {
+                case 4 -> {
+                    if (getOption().getKits().size() > 0)
+                        getKitSelectorGui(event.getPlayer()).open(event.getPlayer());
+                }
+                case 2 -> {
+                    if (getPhase() == Phase.COLLECTING_PLAYERS && getOption().allowSelectingTeam())
+                        getTeamSelectorGui(event.getPlayer()).open(event.getPlayer());
+                }
+                case 8 -> GameManager.get().quitGame(event.getPlayer());
+            }
+    }
+
+    private @NotNull Gui getTeamSelectorGui(@NotNull Player player) {
+        PagedListFGui<T> gui = new PagedListFGui<>(
+                MessageUtil.getMessage(player, "generic.gui.teamselector_title"), 3,
+                player, null, Minigames.get(), false,
+                (evt, team) -> {
+                    if (team.containsUser(player))
+                        onGamerLeaveTeam(player,team);
+                    else
+                        onGamerChooseTeam(player,team);
+                    return true;
+                }, (team) -> Configurations.getTeamItem(player, team));
+        gui.addElements(getTeams());
+        gui.updateInventory();
+        return gui;
+    }
+
+    protected boolean onGamerChooseTeam(@NotNull OfflinePlayer player, @NotNull T team) {
+        T pTeam = getTeam(player);
+        if (team==pTeam)
+            return true;
+        if (pTeam!=null)
+            pTeam.removeUser(player);
+        return team.addUser(player);
+    }
+
+    protected boolean onGamerLeaveTeam(@NotNull OfflinePlayer player, @NotNull T team) {
+        return team.removeUser(player);
+    }
+
+    @Override
+    public void onSpectatorInteract(@NotNull PlayerInteractEvent event) {
+        event.setCancelled(true);
+        if (event.getPlayer().getInventory().getHeldItemSlot() == 8) //only if you can choose a kit
+            GameManager.get().quitGame(event.getPlayer());
+    }
+
+    private PagedListFGui<Kit> getKitSelectorGui(Player player) {
+        PagedListFGui<Kit> gui = new PagedListFGui<>(
+                MessageUtil.getMessage(player, "generic.gui.kitselector_title"), 3,
+                player, null, Minigames.get(), true,
+                (evt, kit) -> {
+                    if (kit.getId().equals(kitPreference.get(player)))
+                        kitPreference.remove(player);
+                    else
+                        kitPreference.put(player, kit.getId());
+                    return true;
+                }, (kit) -> new ItemBuilder(Material.IRON_CHESTPLATE).setDescription(//TODO
+                Minigames.get().getLanguageConfig(player).loadMultiMessage("generic.gui.kitselector_description",
+                        new ArrayList<>(), "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" :
+                                String.valueOf(kit.getPrice()))
+        ).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                kit.getId()
+                        .equals(kitPreference.get(player)) ? 1 : 0).setGuiProperty().build());
+        gui.addElements(getOption().getKits());
+        gui.updateInventory();
+        return gui;
+    }
+
+    public void onGamerClickEvent(InventoryClickEvent event, Player player){
+        switch (getPhase()){
+            case COLLECTING_PLAYERS,PRE_START -> event.setCancelled(true);
+        }
+    }
+
+    public void onGamerSwapHandItems(PlayerSwapHandItemsEvent event){
+        switch (getPhase()){
+            case COLLECTING_PLAYERS,PRE_START -> event.setCancelled(true);
+        }
     }
 
 }

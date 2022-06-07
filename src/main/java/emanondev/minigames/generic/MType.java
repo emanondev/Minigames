@@ -4,6 +4,7 @@ import emanondev.core.UtilsString;
 import emanondev.core.YMLSection;
 import emanondev.minigames.Configurations;
 import emanondev.minigames.GameManager;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +30,7 @@ public abstract class MType<A extends MArena, O extends MOption> {
     public YMLSection getSection() {
         return section;
     }
+
     @NotNull
     public String getType() {
         return type;
@@ -48,8 +50,15 @@ public abstract class MType<A extends MArena, O extends MOption> {
 
     @NotNull
     public abstract MArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id);
+
     @NotNull
     public abstract MOption createDefaultOptions();
+
     @NotNull
     public abstract MGame<?, A, O> createGame(@NotNull String arenaId, @NotNull String optionId);
+
+    @NotNull
+    public String getDisplayName() {
+        return getSection().loadMessage("displayName", ChatColor.YELLOW + getType());
+    }
 }

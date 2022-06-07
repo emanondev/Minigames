@@ -13,7 +13,7 @@ public class SkyWarsTeam extends ColoredTeam {
     private final SkyWarsGame game;
 
     public SkyWarsTeam(@NotNull SkyWarsGame game, @NotNull DyeColor color) {
-        super(color);
+        super(game,color);
         this.game = game;
     }
 
@@ -32,7 +32,7 @@ public class SkyWarsTeam extends ColoredTeam {
     public boolean hasLost() {
         for (UUID user : this.getUsers()) {
             Player p = Bukkit.getPlayer(user);
-            if (p != null && game.isPlayingPlayer(p))
+            if (p != null && game.isGamer(p))
                 return false;
         }
         return true;

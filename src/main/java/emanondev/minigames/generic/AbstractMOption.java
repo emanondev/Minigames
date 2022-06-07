@@ -1,6 +1,5 @@
 package emanondev.minigames.generic;
 
-import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
 import emanondev.core.gui.FButton;
 import emanondev.core.gui.NumberEditorFButton;
@@ -8,7 +7,6 @@ import emanondev.core.gui.PagedMapGui;
 import emanondev.minigames.Configurations;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.OptionManager;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,14 +17,14 @@ import java.util.Map;
 public abstract class AbstractMOption implements MOption {
 
     private boolean allowSpectators;
-    private int collectingPlayersPhaseCooldownMax = 10;
-    private int endPhaseCooldownMax = 10;
-    private int preStartPhaseCooldownMax = 6;
+    private int collectingPlayersPhaseCooldownMax;
+    private int endPhaseCooldownMax;
+    private int preStartPhaseCooldownMax;
 
     public AbstractMOption(@NotNull Map<String, Object> map) {
-        collectingPlayersPhaseCooldownMax = (int) map.getOrDefault("collectingplayersphasecooldownmax", 45);
+        collectingPlayersPhaseCooldownMax = (int) map.getOrDefault("collectingplayersphasecooldownmax", 27);
         endPhaseCooldownMax = (int) map.getOrDefault("endphasecooldownmax", 10);
-        preStartPhaseCooldownMax = (int) map.getOrDefault("prestartphasecooldownmax", 10);
+        preStartPhaseCooldownMax = (int) map.getOrDefault("prestartphasecooldownmax", 3);
         allowSpectators = (boolean) map.getOrDefault("allowSpectators", true);
     }
 

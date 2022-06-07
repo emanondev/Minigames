@@ -6,6 +6,4 @@ import emanondev.minigames.locations.LocationOffset3D;
 public interface MSchemArena extends MArena {
 
     Clipboard getSchematic();
-
-    LocationOffset3D getSpectatorsOffset();
 }

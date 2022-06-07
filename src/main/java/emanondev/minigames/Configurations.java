@@ -3,6 +3,10 @@ package emanondev.minigames;
 import emanondev.core.ItemBuilder;
 import emanondev.core.PlayerSnapshot;
 import emanondev.core.SoundInfo;
+import emanondev.core.YMLConfig;
+import emanondev.minigames.generic.ColoredTeam;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -12,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.UUID;
 
 public class Configurations {
 
@@ -58,11 +63,13 @@ public class Configurations {
     public static ItemBuilder getCollectingPlayersPhaseCooldownMaxItem(Player player) {
         return getItem(player, "collecting_players_phase_cooldown_max", null);
     }
+
     @Contract("_ -> new")
     @NotNull
     public static ItemBuilder getEndPhaseCooldownMaxItem(Player player) {
         return getItem(player, "end_phase_cooldown_max", null);
     }
+
     @Contract("_ -> new")
     @NotNull
     public static ItemBuilder getPreStartPhaseCooldownMaxItem(Player player) {
@@ -71,8 +78,8 @@ public class Configurations {
 
     @NotNull
     private static ItemBuilder getItem(@NotNull Player player, @NotNull String path, @Nullable String pathText, String... holders) {
-        ItemBuilder b = Minigames.get().getConfig("configurations" + File.separator + "items.yml")
-                .getGuiItem(path, (ItemBuilder) null);
+        YMLConfig conf = Minigames.get().getConfig("configurations" + File.separator + "items.yml");
+        ItemBuilder b = conf.contains(path) ? conf.getGuiItem(path, new ItemBuilder(Material.STONE)) : null;
         if (b == null) {
             b = new ItemBuilder(Material.STONE);
             MessageUtil.debug("No item found at &e" + path + "&f on file &econfigurations" + File.separator + "items.yml");
@@ -104,6 +111,29 @@ public class Configurations {
     }
 
     public static ItemStack getFillerToggleViewItem(Player player) {
-        return getItem(player,"filler_toggle_view","minifiller.buttons.object_info").build();
+        return getItem(player, "filler_toggle_view", "minifiller.gui.filler_toggle_view").build();
+    }
+
+    public static SoundInfo getCollectingPlayersCooldownTickSound() {
+        return getSoundInfo("collecting_players_cooldown_tick");
+    }
+
+    public static SoundInfo getPreStartPhaseCooldownTickSound() {
+        return getSoundInfo("prestart_cooldown_tick");
+    }
+
+    public static ItemStack getTeamSelectorItem(Player player) {
+        return getItem(player, "team_selector", "items.team_selector").build();
+    }
+
+    public static ItemStack getTeamItem(Player player, ColoredTeam team) {
+        ItemBuilder b = getItem(player, "team_info", "items.team_info",
+                "%team%", team.getName(),
+                "%color%", team.getChatColor().toString(),
+                "%users%", String.valueOf(team.getUsers().size()),
+                "%max_users%", String.valueOf(team.getGame().getMaxGamers())).setColor(team.getColor().getColor());
+        for (UUID uuid : team.getUsers())
+            b.addLore(ChatColor.WHITE + Bukkit.getOfflinePlayer(uuid).getName());
+        return b.build();
     }
 }

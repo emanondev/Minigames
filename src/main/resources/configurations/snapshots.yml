@@ -64,6 +64,8 @@ collecting_players:
   invisible: true
   freezeTicks: 0
   glowing: false
+  collidable: false
+  canPickupItems: false
 prestart:
   ==: emanondev.core.PlayerSnapshot
   armor:
@@ -158,6 +160,8 @@ prestart:
   heldItemSlot: 4
   freezeTicks: 0
   glowing: false
+  collidable: false
+  canPickupItems: false
 empty_start:
   ==: emanondev.core.PlayerSnapshot
   armor:
@@ -221,6 +225,8 @@ empty_start:
   invisible: false
   freezeTicks: 0
   glowing: false
+  collidable: true
+  canPickupItems: true
 spectator:
   ==: emanondev.core.PlayerSnapshot
   armor:
@@ -293,6 +299,8 @@ spectator:
   invisible: true
   freezeTicks: 0
   glowing: false
+  collidable: false
+  canPickupItems: false
 end:
   ==: emanondev.core.PlayerSnapshot
   allowFlight: true

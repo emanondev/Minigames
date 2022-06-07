@@ -20,8 +20,9 @@ public class SkyWarsOption extends AbstractMOption {
 
     private int perTeamMaxPlayers;
     private String fillerId;
-    private List<String> kits = new ArrayList<>();
+    private final List<String> kits = new ArrayList<>();
 
+    @Override
     public int getTeamMaxSize() {
         return perTeamMaxPlayers;
     }
@@ -48,13 +49,13 @@ public class SkyWarsOption extends AbstractMOption {
     }
 
     @Override
-    public void openEditor(Player who) {
+    public void openEditor(@NotNull Player who) {
         PagedMapGui gui = craftEditor(who);
         fillEditor(gui);
         gui.open(who);
     }
 
-    protected void fillEditor(PagedMapGui gui) {
+    protected void fillEditor(@NotNull PagedMapGui gui) {
         super.fillEditor(gui);
         gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> perTeamMaxPlayers
                 , (v) -> {
@@ -116,7 +117,7 @@ public class SkyWarsOption extends AbstractMOption {
     }
 
     public @NotNull List<Kit> getKits() {
-        List<Kit> list = new ArrayList<Kit>();
+        List<Kit> list = new ArrayList<>();
         for (String key : kits) {
             Kit kit = KitManager.get().getKit(key);
             if (kit != null)
@@ -124,5 +125,10 @@ public class SkyWarsOption extends AbstractMOption {
         }
         list.sort((k1, k2) -> k1.getPrice() == k2.getPrice() ? k1.getId().compareToIgnoreCase(k2.getId()) : k2.getPrice() - k1.getPrice());
         return list;
+    }
+
+    @Override
+    public boolean allowSelectingTeam() {
+        return getTeamMaxSize()>1;
     }
 }

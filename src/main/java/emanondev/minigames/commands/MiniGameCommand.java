@@ -66,7 +66,7 @@ public class MiniGameCommand extends CoreCommand {
             BoundingBox bb = ((SkyWarsGame) game).getBoundingBox();
             sender.sendMessage(game.getId() + " (" + game.getMinigameType().getType() + ") Fase " + game.getPhase() + " Arena " + game.getArena().getId() + " Opzione " + game.getOption().getId());
             sender.sendMessage(game.getId() + " Area: " + bb.getMinX() + ":" + bb.getMaxX() + "  " + bb.getMinZ() + ":" + bb.getMaxZ());
-            sender.sendMessage(game.getId() + " PP: " + game.getPlayingPlayers().size() + " SP: " + game.getSpectators().size() + " CP: " + game.getCollectedPlayers().size());
+            sender.sendMessage(game.getId() + " Gamers: " + game.getGamers().size() + " Spect: " + game.getSpectators().size());
         }
     }
 

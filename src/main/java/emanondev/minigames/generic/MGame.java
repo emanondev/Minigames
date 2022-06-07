@@ -1,7 +1,9 @@
 package emanondev.minigames.generic;
 
 import emanondev.minigames.locations.BlockLocation3D;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -11,8 +13,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,17 +32,19 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     @NotNull BlockLocation3D getGameLocation();
 
-    @NotNull Set<Player> getCollectedPlayers();
+    //@NotNull Set<Player> getCollectedPlayers();
 
-    boolean isCollectedPlayer(@NotNull Player player);
+    //boolean isCollectedPlayer(@NotNull Player player);
 
-    boolean addCollectedPlayer(@NotNull Player player);
+    //boolean addCollectedPlayer(@NotNull Player player);
 
-    boolean canAddCollectedPlayer(@NotNull Player player);
+    //void onCollectedPlayerAdded(@NotNull Player player);
 
-    boolean removeCollectedPlayer(@NotNull Player player);
+    //boolean canAddCollectedPlayer(@NotNull Player player);
 
-    @Nullable T getTeam(@NotNull Player player);
+    //boolean removeCollectedPlayer(@NotNull Player player);
+
+    @Nullable T getTeam(@NotNull OfflinePlayer player);
 
     @NotNull Collection<T> getTeams();
 
@@ -54,9 +61,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         };
     }
 
-    void teleportToStartLocation(@NotNull Player player);
-
-    int getMaxPlayers();
+    int getMaxGamers();
 
     @NotNull MType<A, O> getMinigameType();
 
@@ -70,19 +75,23 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     @NotNull Set<Player> getSpectators();
 
-    boolean addPlayingPlayer(@NotNull Player player);
+    boolean addGamer(@NotNull Player player);
 
-    boolean removePlayingPlayer(@NotNull Player player);
+    void teleportResetLocation(@NotNull Player player);
 
-    boolean isPlayingPlayer(@NotNull Player player);
+    boolean canAddGamer(@NotNull Player player);
 
-    @NotNull Set<Player> getPlayingPlayers();
+    boolean removeGamer(@NotNull Player player);
+
+    boolean isGamer(@NotNull Player player);
+
+    @NotNull Set<Player> getGamers();
 
     @NotNull
-    default Set<Player> getPlayingPlayers(@NotNull T team) {
+    default Set<Player> getGamers(@NotNull T team) {
         Set<UUID> users = team.getUsers();
         Set<Player> players = new HashSet<>();
-        for (Player p : this.getPlayingPlayers())
+        for (Player p : this.getGamers())
             if (users.contains(p.getUniqueId()))
                 players.add(p);
         return players;
@@ -102,6 +111,13 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         return containsLocation(b.getLocation());
     }
 
+    /**
+     * check if the game has finished, if has should calls for onGameEnd();
+     * <p>
+     * getPhase()==Phase.PLAYING may be a double security check
+     */
+    void checkGameEnd();
+
     @Nullable World getWorld();
 
     /**
@@ -117,6 +133,8 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      * and finally set the COLLECTING_PLAYERS phase
      */
     void gameRestart();
+
+    void gameCollectingPlayers();
 
     /**
      * called by the timer, uses canPreStart() to understand if can go to next phase
@@ -186,67 +204,97 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      */
     boolean gameCanStart();
 
+    Objective getObjective();
+
+    Scoreboard getScoreboard();
+
     void setLocation(@NotNull BlockLocation3D generateLocation);
 
-    void onPlayingPlayerDropItem(PlayerDropItemEvent event);
+    void onGamerDropItem(@NotNull PlayerDropItemEvent event);
 
-    void onPlayingPlayerPickupItem(EntityPickupItemEvent event, Player p);
+    void onGamerPickupItem(@NotNull EntityPickupItemEvent event, @NotNull Player p);
 
-    void onPlayingPlayerTeleport(PlayerTeleportEvent event);
+    void onGamerTeleport(@NotNull PlayerTeleportEvent event);
 
-    void onPlayingPlayerLaunchProjectile(ProjectileLaunchEvent event);
+    void onGamerLaunchProjectile(@NotNull ProjectileLaunchEvent event);
 
-    void onPlayingPlayerMoveOutsideArena(PlayerMoveEvent event);
+    boolean canAddSpectator(@NotNull Player player);
 
-    void onPlayingPlayerMove(PlayerMoveEvent event);
+    void onSpectatorAdded(@NotNull Player player);
 
-    void onPlayingPlayerInteractEntity(PlayerInteractEntityEvent event);
+    void onSpectatorRemoved(@NotNull Player player);
 
-    void onPlayingPlayerInteract(PlayerInteractEvent event);
+    void onGamerRemoved(@NotNull Player player);
 
-    void onEntityRegainHealth(EntityRegainHealthEvent event);
+    void onGamerAdded(@NotNull Player player);
 
-    void onPlayingPlayerRegainHealth(EntityRegainHealthEvent event, Player p);
+    void onGamerMoveOutsideArena(@NotNull PlayerMoveEvent event);
 
-    void onEntityDeath(EntityDeathEvent event);
+    void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event);
 
-    void onFakePlayingPlayerDeath(Player p, Player damager);
+    void onGamerInteractEntity(@NotNull PlayerInteractEntityEvent event);
 
-    void onPlayingPlayerDamaging(EntityDamageByEntityEvent event, Player damager);
+    void onGamerInteract(@NotNull PlayerInteractEvent event);
 
-    void onPlayingPlayerPvpDamage(EntityDamageByEntityEvent event, Player p, Player damager);
+    void onEntityRegainHealth(@NotNull EntityRegainHealthEvent event);
 
-    void onGameEntityDamaged(EntityDamageEvent event);
+    /**
+     * Called when playing player die inside the arena
+     * <p>
+     * the player do not die as the final damage is cancelled, but you should handle this instead
+     * this may be called as result of player quitting the game, quitting the arena or being killed, falling below the arena
+     */
+    void onFakeGamerDeath(@NotNull Player dead, @Nullable Player killer, boolean direct);
 
-    void onPlayingPlayerDamaged(EntityDamageEvent event, Player p);
+    void onGamerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player p);
+
+    void onEntityDeath(@NotNull EntityDeathEvent event);
+
+    void onGamerDamaging(@NotNull EntityDamageByEntityEvent event, @NotNull Player damager, boolean direct);
+
+    void onGamerPvpDamage(@NotNull EntityDamageByEntityEvent event, @NotNull Player p, @NotNull Player damager, boolean direct);
+
+    void onGameEntityDamaged(@NotNull EntityDamageEvent event);
+
+    void onGamerDamaged(@NotNull EntityDamageEvent event, Player p);
 
     void onCreatureSpawn(@NotNull CreatureSpawnEvent event);
 
-    void onPortalCreate(PortalCreateEvent event);
+    void onPortalCreate(@NotNull PortalCreateEvent event);
 
-    void onPlayingPlayerBlockBreak(BlockBreakEvent event);
+    void onGamerBlockBreak(@NotNull BlockBreakEvent event);
 
-    void onPlayingPlayerBlockPlace(BlockPlaceEvent event);
+    void onGamerBlockPlace(@NotNull BlockPlaceEvent event);
 
-    default void onQuitGame(Player player) {
+    default void onQuitGame(@NotNull Player player) {
         if (isSpectator(player)) {
             removeSpectator(player);
             return;
         }
-        switch (getPhase()) {
-            case PLAYING, PRE_START, END -> {
-                if (!isPlayingPlayer(player)) {
-                    return;
-                }
-                removePlayingPlayer(player);
-            }
-            case COLLECTING_PLAYERS -> removeCollectedPlayer(player);
-        }
+        if (isGamer(player))
+            removeGamer(player);
     }
 
-    boolean joinGameAsPlayer(Player player);
+    boolean joinGameAsGamer(@NotNull Player player);
 
-    boolean joinGameAsSpectator(Player player);
+    boolean joinGameAsSpectator(@NotNull Player player);
+
+    /**
+     * should eventually cancel the event if moving outside of x z borders
+     *
+     * @param event
+     */
+    void onSpectatorMove(@NotNull PlayerMoveEvent event);
+
+    void onSpectatorInteract(@NotNull PlayerInteractEvent event);
+
+    boolean overlaps(@NotNull Chunk chunk);
+
+    void onChunkEntitiesLoad(Chunk chunk);
+
+    void onGamerClickEvent(InventoryClickEvent event, Player player);
+
+    void onGamerSwapHandItems(PlayerSwapHandItemsEvent event);
 
     enum Phase {
         STOPPED,

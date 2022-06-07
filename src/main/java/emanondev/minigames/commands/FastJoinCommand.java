@@ -46,9 +46,9 @@ public class FastJoinCommand extends CoreCommand {
                     default -> false;
                 });
                 Collections.shuffle(available);
-                available.sort((m1, m2) -> (int) (1000 * ((double) m2.getCollectedPlayers().size() / m2.getMaxPlayers() - (double) m1.getCollectedPlayers().size() / m1.getMaxPlayers())));
+                available.sort((m1, m2) -> (int) (1000 * ((double) m2.getGamers().size() / m2.getMaxGamers() - (double) m1.getGamers().size() / m1.getMaxGamers())));
 
-                if (GameManager.get().joinGameAsPlayer(player, available))
+                if (GameManager.get().joinGameAsGamer(player, available))
                     return;
 
                 MessageUtil.sendMessage(player, "fastjoin.error.no_available_game");
@@ -59,15 +59,16 @@ public class FastJoinCommand extends CoreCommand {
                     MessageUtil.sendMessage(player, "fastjoin.error.invalid_type", "%type%", args[0]);
                     return;
                 }
-                List<MGame> available = new ArrayList<MGame>(GameManager.get().getPreMadeGameInstances(type).values());
+                @SuppressWarnings({"rawtypes","unchecked"})
+                List<MGame> available = new ArrayList<>(GameManager.get().getPreMadeGameInstances(type).values());
                 available.removeIf((m) -> switch (m.getPhase()) {
                     case STOPPED, END, RESTART -> true;
                     default -> false;
                 });
                 Collections.shuffle(available);
-                available.sort((m1, m2) -> (100 * (m2.getCollectedPlayers().size() / m2.getMaxPlayers() - m1.getCollectedPlayers().size() / m1.getMaxPlayers())));
+                available.sort((m1, m2) -> (100 * (m2.getGamers().size() / m2.getMaxGamers() - m1.getGamers().size() / m1.getMaxGamers())));
 
-                if (GameManager.get().joinGameAsPlayer(player, available))
+                if (GameManager.get().joinGameAsGamer(player, available))
                     return;
 
                 MessageUtil.sendMessage(player, "fastjoin.error.no_available_game_of_type", "%type%", type.getType());
