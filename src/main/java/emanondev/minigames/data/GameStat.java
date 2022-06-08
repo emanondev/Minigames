@@ -1,16 +1,16 @@
-package emanondev.minigames.user;
+package emanondev.minigames.data;
 
 import emanondev.core.YMLConfig;
-import emanondev.core.YMLSection;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MGame;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Set;
 
 public class GameStat {
 
-    private static final YMLConfig conf = Minigames.get().getConfig("game_data.yml");
+    private static final YMLConfig conf = Minigames.get().getConfig("data"+ File.separator+"game_data.yml");
 
     public final String id;
 

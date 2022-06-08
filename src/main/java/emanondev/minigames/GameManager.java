@@ -246,6 +246,7 @@ public class GameManager implements Listener {
             if (game.joinGameAsGamer(player)) {
                 Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
                 playerGames.put(player, game);
+                //MessageUtil.debug(game.getScoreboard().);
                 player.setScoreboard(game.getScoreboard());
                 return true;
             }
@@ -381,7 +382,7 @@ public class GameManager implements Listener {
         }
         if (game.isGamer(event.getPlayer())) {
             if (!game.containsLocation(event.getTo())) {
-                MessageUtil.debug(game.getId() + " move outside arena");
+                //MessageUtil.debug(game.getId() + " move outside arena");
                 game.onGamerMoveOutsideArena(event);
                 //event.setCancelled(true);
                 return;

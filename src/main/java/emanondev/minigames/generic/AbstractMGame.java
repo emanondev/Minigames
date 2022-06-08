@@ -278,7 +278,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gameEndTimer() {
-        if (endCountdown >= 1)
+        if (endCountdown >= 1) {
             for (Player player : getGamers()) {
                 Firework fire = (Firework) player.getLocation().getWorld().spawnEntity(player.getLocation()
                         .add(Math.random() * 6 - 3, 2, Math.random() * 6 - 3), EntityType.FIREWORK);
@@ -288,9 +288,11 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                         Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256))).build());
                 fire.setFireworkMeta(meta);
                 Bukkit.getScheduler().runTaskLater(Minigames.get(), fire::detonate, 2L);
-                String[] args = new String[]{"%cooldown%", String.valueOf(preStartCountdown)};
+                String[] args = new String[]{"%cooldown%", String.valueOf(endCountdown)};
                 MessageUtil.sendActionBarMessage(player, getMinigameType().getType() + ".game.end_cooldown_bar", args);
             }
+            endCountdown--;
+        }
         if (endCountdown <= 0)
             gameClose();
     }
@@ -710,6 +712,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 MessageUtil.getMessage(player, "generic.gui.kitselector_title"), 3,
                 player, null, Minigames.get(), true,
                 (evt, kit) -> {
+                    MessageUtil.debug(player.getName()+" selected kit "+kit.getId());
                     if (kit.getId().equals(kitPreference.get(player)))
                         kitPreference.remove(player);
                     else
@@ -729,7 +732,10 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     public void onGamerClickEvent(InventoryClickEvent event, Player player){
         switch (getPhase()){
-            case COLLECTING_PLAYERS,PRE_START -> event.setCancelled(true);
+            case COLLECTING_PLAYERS,PRE_START -> {
+                if (!(event.getView().getTopInventory().getHolder() instanceof Gui))
+                    event.setCancelled(true);
+            }
         }
     }
 

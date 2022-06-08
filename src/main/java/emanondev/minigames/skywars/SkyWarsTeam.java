@@ -24,11 +24,6 @@ public class SkyWarsTeam extends ColoredTeam {
         return super.addUser(user);
     }
 
-    @Override
-    public void clear() {
-        super.clear();
-    }
-
     public boolean hasLost() {
         for (UUID user : this.getUsers()) {
             Player p = Bukkit.getPlayer(user);
@@ -36,5 +31,10 @@ public class SkyWarsTeam extends ColoredTeam {
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public SkyWarsGame getGame(){
+        return (SkyWarsGame) super.getGame();
     }
 }

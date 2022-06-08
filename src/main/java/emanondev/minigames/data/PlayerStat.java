@@ -1,17 +1,17 @@
-package emanondev.minigames.user;
+package emanondev.minigames.data;
 
 import emanondev.core.YMLConfig;
 import emanondev.minigames.Minigames;
-import emanondev.minigames.generic.MGame;
 import org.bukkit.OfflinePlayer;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Set;
 import java.util.UUID;
 
 public class PlayerStat {
 
-    private static final YMLConfig conf = Minigames.get().getConfig("user_data.yml");
+    private static final YMLConfig conf = Minigames.get().getConfig("data"+ File.separator+"user_data.yml");
     public final String id;
 
     public PlayerStat(String id){

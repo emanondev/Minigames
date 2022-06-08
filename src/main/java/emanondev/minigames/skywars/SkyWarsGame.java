@@ -7,8 +7,8 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.generic.MFiller;
-import emanondev.minigames.user.GameStat;
-import emanondev.minigames.user.PlayerStat;
+import emanondev.minigames.data.GameStat;
+import emanondev.minigames.data.PlayerStat;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -55,6 +55,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             PlayerStat.GAME_PLAYED.add(player, 1);
         }
         GameStat.PLAY_TIMES.add(this,1);
+        getTeams().forEach(team->team.setScore(team.hasLost()?-1:0));
     }
 
     /**
@@ -110,6 +111,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                         damager = terrorist;
                 }
                 onFakeGamerDeath(event.getPlayer(), damager, direct);
+
             }
             case PRE_START, COLLECTING_PLAYERS -> teleportResetLocation(event.getPlayer());
         }
@@ -229,17 +231,25 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     }
 
     public void onFakeGamerDeath(@NotNull Player player, @Nullable Player killer, boolean direct) {
+        MessageUtil.debug(getId()+" onFakeGamerDeath "+player.getName()+" "+(killer==null?"":killer.getName()));
         if (containsLocation(player))
             for (ItemStack item : player.getInventory().getContents())
                 if (!UtilsInventory.isAirOrNull(item))
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
-        switchToSpectator(player); //TODO
+        SkyWarsTeam team = getTeam(player);
+        if (team!=null && team.hasLost())
+            team.setScore(-1);
+        switchToSpectator(player);
         if (killer != null && isGamer(killer)) {
-            PlayerStat.SKYWARS_KILLS.add(player,1);
+            PlayerStat.SKYWARS_KILLS.add(killer,1);
             getMinigameType().applyKillPoints(killer);
             //TODO prize?
+            team = getTeam(killer);
+            if (team!=null)
+                team.addScore(1);
         }
+        checkGameEnd();
     }
 
     public void checkGameEnd() {

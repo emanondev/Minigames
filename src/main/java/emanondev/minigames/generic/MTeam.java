@@ -2,12 +2,25 @@ package emanondev.minigames.generic;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.UUID;
 
 public interface MTeam {
+    void setScore(int value);
+
+    void addScore(int val);
+
+    int getScore();
+
+    void clearScore();
+
+    AbstractMGame getGame();
+
+    Team getScoreboardTeam();
+
     boolean removeUser(@NotNull OfflinePlayer user);
 
     boolean removeUser(@NotNull UUID user);

@@ -60,6 +60,8 @@ public abstract class ColoredTeam implements MTeam {
         };
     }
 
+    private String lastScoreName = null;
+
     private String getScoreName() {
         if (getGame().getMaxGamers() == 1)
             return getUsersAmount() == 1 ? getSingleChatColor() + Bukkit.getOfflinePlayer(getUsers().iterator().next()).getName()
@@ -67,18 +69,41 @@ public abstract class ColoredTeam implements MTeam {
         return getSingleChatColor() + this.color.name().toLowerCase();
     }
 
-    public void updateScore(int value) {
-        objective.getScore(getScoreName()).setScore(value);
+    @Override
+    public void setScore(int value) {
+        String scoreName = getScoreName();
+        if (lastScoreName != null && !lastScoreName.equals(scoreName)) {
+            objective.getScoreboard().resetScores(lastScoreName);
+            lastScoreName = scoreName;
+        } else if (lastScoreName == null)
+            lastScoreName = scoreName;
+        objective.getScore(scoreName).setScore(value);
     }
 
+    @Override
+    public void addScore(int val) {
+        setScore(getScore()+val);
+    }
+
+    @Override
+    public int getScore(){
+        return lastScoreName==null?0:objective.getScore(lastScoreName).getScore();
+    }
+
+    @Override
     public void clearScore() {
-        objective.getScoreboard().resetScores(getScoreName());
+        if (lastScoreName != null) {
+            objective.getScoreboard().resetScores(lastScoreName);
+            lastScoreName = null;
+        }
     }
 
+    @Override
     public AbstractMGame getGame() {
         return game;
     }
 
+    @Override
     public Team getScoreboardTeam() {
         return team;
     }
@@ -87,8 +112,7 @@ public abstract class ColoredTeam implements MTeam {
     public boolean removeUser(@NotNull OfflinePlayer user) {
         if (getGame().getMaxGamers() == 1) {
             String score = getScoreName();
-            if (removeUser(user.getUniqueId())){
-
+            if (removeUser(user.getUniqueId())) {
                 return true;
             }
             return false;
@@ -147,6 +171,7 @@ public abstract class ColoredTeam implements MTeam {
     @Override
     public void clear() {
         users.clear();
+        this.clearScore();
     }
 
 
@@ -154,5 +179,4 @@ public abstract class ColoredTeam implements MTeam {
     public String getName() {
         return color.name().toLowerCase();
     }
-
 }
