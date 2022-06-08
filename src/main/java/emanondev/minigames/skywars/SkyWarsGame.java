@@ -111,9 +111,10 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                         damager = terrorist;
                 }
                 onFakeGamerDeath(event.getPlayer(), damager, direct);
-
+                if (isSpectator(event.getPlayer()))
+                    teleportResetLocation(event.getPlayer());
             }
-            case PRE_START, COLLECTING_PLAYERS -> teleportResetLocation(event.getPlayer());
+            case PRE_START, COLLECTING_PLAYERS,END -> teleportResetLocation(event.getPlayer());
         }
     }
 
@@ -179,6 +180,11 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         return addGamer(player);
     }
 
+    @Override
+    public void onGamerCombustEvent(@NotNull EntityCombustEvent event, @NotNull Player player) {
+
+    }
+
 
     @Override
     public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
@@ -238,9 +244,9 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
         SkyWarsTeam team = getTeam(player);
+        switchToSpectator(player);
         if (team!=null && team.hasLost())
             team.setScore(-1);
-        switchToSpectator(player);
         if (killer != null && isGamer(killer)) {
             PlayerStat.SKYWARS_KILLS.add(killer,1);
             getMinigameType().applyKillPoints(killer);

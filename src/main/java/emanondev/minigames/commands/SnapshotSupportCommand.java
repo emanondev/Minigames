@@ -3,6 +3,7 @@ package emanondev.minigames.commands;
 import emanondev.core.CoreCommand;
 import emanondev.core.PermissionBuilder;
 import emanondev.core.PlayerSnapshot;
+import emanondev.minigames.Configurations;
 import emanondev.minigames.Minigames;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -22,7 +23,25 @@ public class SnapshotSupportCommand extends CoreCommand {
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args) {
         Player p = (Player) sender;
-        Minigames.get().getConfig("snapshots.yml").set(args[0], new PlayerSnapshot(p));
+        p.setAllowFlight(true);
+        p.setFlying(true);
+
+
+        /*if (args[0].equals("load")) {
+            if (args.length > 1)
+                switch (args[1]) {
+                    case "spect" -> Configurations.applyGameSpectatorSnapshot(p);
+                    case "pre" -> Configurations.applyGamePreStartSnapshot(p);
+                    case "game" -> Configurations.applyGameEmptyStartSnapshot(p);
+                    case "collect" -> Configurations.applyGameCollectingPlayersSnapshot(p);
+                    case "end" -> Configurations.applyGameEndSnapshot(p);
+                }
+            else
+                Configurations.applyGameSpectatorSnapshot(p);
+
+            return;
+        }
+        Minigames.get().getConfig("snapshots.yml").set(args[0], new PlayerSnapshot(p));*/
     }
 
     @Override

@@ -291,7 +291,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     private final HashSet<Chunk> clearedEntitiesBefore = new HashSet<>();
 
     @Override
-    public void onChunkEntitiesLoad(Chunk chunk) {
+    public void onChunkEntitiesLoad(@NotNull Chunk chunk) {
         if (!clearedEntitiesBefore.contains(chunk)) {
             for (Entity e : chunk.getEntities())
                 if (!(e instanceof Player))

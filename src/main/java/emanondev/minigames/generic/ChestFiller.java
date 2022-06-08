@@ -11,7 +11,6 @@ import emanondev.minigames.Configurations;
 import emanondev.minigames.FillerManager;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -109,11 +108,17 @@ public class ChestFiller implements MFiller {
                     return true;
                 })));
         gui.setControlGuiButton(2, new NumberEditorFButton<>(gui, 1, 1, 10, () -> amountMin,
-                (val) -> setAmountMin(val), null,
-                () -> MessageUtil.getMultiMessage(player,"minifiller.gui.amountmin_desc")));
+                (val) -> {
+                    setAmountMin(val);
+                    FillerManager.get().save(ChestFiller.this);
+                }, null,
+                () -> MessageUtil.getMultiMessage(player, "minifiller.gui.amountmin_desc")));
         gui.setControlGuiButton(3, new NumberEditorFButton<>(gui, 1, 1, 10, () -> amountMax,
-                (val) -> setAmountMax(val), null,
-                () -> MessageUtil.getMultiMessage(player,"minifiller.gui.amountmax_desc")));
+                (val) -> {
+                    setAmountMax(val);
+                    FillerManager.get().save(ChestFiller.this);
+                }, null,
+                () -> MessageUtil.getMultiMessage(player, "minifiller.gui.amountmax_desc")));
         return gui;
     }
 

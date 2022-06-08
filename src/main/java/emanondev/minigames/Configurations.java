@@ -22,6 +22,8 @@ public class Configurations {
 
     public static void applyGameCollectingPlayersSnapshot(@NotNull Player player) {
         applySnapshot(player, "collecting_players");
+        player.setAllowFlight(true);//TODO hotfix
+        player.setFlying(true);
     }
 
     public static void applyGamePreStartSnapshot(@NotNull Player player) {
@@ -30,10 +32,13 @@ public class Configurations {
 
     public static void applyGameSpectatorSnapshot(@NotNull Player player) {
         applySnapshot(player, "spectator");
+        player.setAllowFlight(true);//TODO hotfix
+        player.setFlying(true);
     }
 
     public static void applyGameEndSnapshot(@NotNull Player player) {
         applySnapshot(player, "end");
+        player.setAllowFlight(true);//TODO hotfix
     }
 
     public static void applyGameEmptyStartSnapshot(@NotNull Player player) {

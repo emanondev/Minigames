@@ -290,11 +290,13 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     boolean overlaps(@NotNull Chunk chunk);
 
-    void onChunkEntitiesLoad(Chunk chunk);
+    void onChunkEntitiesLoad(@NotNull Chunk chunk);
 
-    void onGamerClickEvent(InventoryClickEvent event, Player player);
+    void onGamerClickEvent(@NotNull InventoryClickEvent event, @NotNull Player player);
 
-    void onGamerSwapHandItems(PlayerSwapHandItemsEvent event);
+    void onGamerSwapHandItems(@NotNull PlayerSwapHandItemsEvent event);
+
+    void onGamerCombustEvent(@NotNull EntityCombustEvent event, @NotNull Player player);
 
     enum Phase {
         STOPPED,

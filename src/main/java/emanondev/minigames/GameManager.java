@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -490,6 +491,20 @@ public class GameManager implements Listener {
             else
                 game.onGamerSwapHandItems(event);
         }
-
     }
+
+    @EventHandler(ignoreCancelled = true)
+    private void event(EntityCombustEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            if (game != null) {
+                if (!game.isGamer(player))
+                    event.setCancelled(true);
+                else
+                    game.onGamerCombustEvent(event, player);
+
+            }
+        }
+    }
+
 }

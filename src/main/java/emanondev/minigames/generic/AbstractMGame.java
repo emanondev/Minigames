@@ -730,7 +730,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return gui;
     }
 
-    public void onGamerClickEvent(InventoryClickEvent event, Player player){
+    public void onGamerClickEvent(@NotNull InventoryClickEvent event, @NotNull Player player){
         switch (getPhase()){
             case COLLECTING_PLAYERS,PRE_START -> {
                 if (!(event.getView().getTopInventory().getHolder() instanceof Gui))
@@ -739,7 +739,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
-    public void onGamerSwapHandItems(PlayerSwapHandItemsEvent event){
+    public void onGamerSwapHandItems(@NotNull PlayerSwapHandItemsEvent event){
         switch (getPhase()){
             case COLLECTING_PLAYERS,PRE_START -> event.setCancelled(true);
         }
