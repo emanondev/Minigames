@@ -3,13 +3,15 @@ package emanondev.minigames.skywars;
 import emanondev.core.UtilsInventory;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.Minigames;
+import emanondev.minigames.data.GameStat;
+import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.generic.MFiller;
-import emanondev.minigames.data.GameStat;
-import emanondev.minigames.data.PlayerStat;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -19,6 +21,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -48,14 +52,14 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         super.gamePreStart();
     }
 
-    public void gameStart(){
+    public void gameStart() {
         super.gameStart();
-        for (Player player:getGamers()) {
+        for (Player player : getGamers()) {
             PlayerStat.SKYWARS_PLAYED.add(player, 1);
             PlayerStat.GAME_PLAYED.add(player, 1);
         }
-        GameStat.PLAY_TIMES.add(this,1);
-        getTeams().forEach(team->team.setScore(team.hasLost()?-1:0));
+        GameStat.PLAY_TIMES.add(this, 1);
+        getTeams().forEach(team -> team.setScore(team.hasLost() ? -1 : 0));
     }
 
     /**
@@ -114,7 +118,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 if (isSpectator(event.getPlayer()))
                     teleportResetLocation(event.getPlayer());
             }
-            case PRE_START, COLLECTING_PLAYERS,END -> teleportResetLocation(event.getPlayer());
+            case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
         }
     }
 
@@ -128,8 +132,14 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 if (!(event.getBlock().getState() instanceof Chest cHolder))
                     return;
                 onFillChest(cHolder.getBlockInventory());
-                if (cHolder.update(false, false))
-                    Minigames.get().logTetraStar(ChatColor.DARK_RED, "D updated broken chest debug");
+                /** not dropped
+                 if (cHolder.update(false, false))
+                 Minigames.get().logTetraStar(ChatColor.DARK_RED, "D updated broken chest debug");*/
+                Location dropLoc = event.getBlock().getLocation().add(0.5, 0.5, 0.5);
+                for (ItemStack item : cHolder.getBlockInventory().getContents())
+                    if (!UtilsInventory.isAirOrNull(item))
+                        dropLoc.getWorld().dropItemNaturally(dropLoc, item);
+
             }
     }
 
@@ -178,6 +188,29 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         if (isSpectator(player))
             return false;*/
         return addGamer(player);
+    }
+
+    @Override
+    public void onGamerInventoryOpen(@NotNull InventoryOpenEvent event, @NotNull Player player) {
+        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
+            event.getView().getTopInventory().setItem(1, new ItemStack(Material.LAPIS_LAZULI, 64));
+    }
+
+    @Override
+    public void onGamerInventoryClose(@NotNull InventoryCloseEvent event, @NotNull Player player) {
+        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
+            event.getView().getTopInventory().setItem(1, null);
+    }
+
+
+    @Override
+    public void onGamerInventoryClick(@NotNull InventoryClickEvent event, @NotNull Player player) {
+        super.onGamerInventoryClick(event, player);
+        if (event.isCancelled())
+            return;
+        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
+            if (event.getRawSlot() == 1) //TODO test with numbered clicks
+                event.setCancelled(true);
     }
 
     @Override
@@ -237,7 +270,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     }
 
     public void onFakeGamerDeath(@NotNull Player player, @Nullable Player killer, boolean direct) {
-        MessageUtil.debug(getId()+" onFakeGamerDeath "+player.getName()+" "+(killer==null?"":killer.getName()));
+        MessageUtil.debug(getId() + " onFakeGamerDeath " + player.getName() + " " + (killer == null ? "" : killer.getName()));
         if (containsLocation(player))
             for (ItemStack item : player.getInventory().getContents())
                 if (!UtilsInventory.isAirOrNull(item))
@@ -245,14 +278,14 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         player.getInventory().clear();
         SkyWarsTeam team = getTeam(player);
         switchToSpectator(player);
-        if (team!=null && team.hasLost())
+        if (team != null && team.hasLost())
             team.setScore(-1);
         if (killer != null && isGamer(killer)) {
-            PlayerStat.SKYWARS_KILLS.add(killer,1);
+            PlayerStat.SKYWARS_KILLS.add(killer, 1);
             getMinigameType().applyKillPoints(killer);
             //TODO prize?
             team = getTeam(killer);
-            if (team!=null)
+            if (team != null)
                 team.addScore(1);
         }
         checkGameEnd();
@@ -277,14 +310,18 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             return;
 
         //has won
-        for (UUID user:winner.getUsers()){
+        for (UUID user : winner.getUsers()) {
             Player p = Bukkit.getPlayer(user);
-            if (p!=null && isGamer(p)) {
+            if (p != null && isGamer(p)) {
                 PlayerStat.SKYWARS_VICTORY.add(user, 1);
                 getMinigameType().applyWinPoints(p);
             }
         }
         this.gameEnd();
+    }
+
+    public boolean canAddGamer(@NotNull Player player) {
+        return getPhase() != Phase.PLAYING && super.canAddGamer(player);
     }
 
 }

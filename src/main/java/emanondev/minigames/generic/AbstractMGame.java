@@ -69,9 +69,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             e.printStackTrace();
             loc = GameManager.get().generateLocation(arena, getWorld());
         }
-        MessageUtil.debug(getId() + " location "+loc);
-        MessageUtil.debug(getId() + " location "+loc.worldName);
-        MessageUtil.debug(getId() + " location "+loc.getWorld());
+        MessageUtil.debug(getId() + " location " + loc);
+        MessageUtil.debug(getId() + " location " + loc.worldName);
+        MessageUtil.debug(getId() + " location " + loc.getWorld());
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.objective = scoreboard.registerNewObjective("game", "dummy", getObjectiveDisplayName(), RenderType.INTEGER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -176,8 +176,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             collectingPlayersCountdown--;
             if (collectingPlayersCountdown > 0) {
                 String[] args = new String[]{
-                        "%cooldown%", String.valueOf(collectingPlayersCountdown),
-                        "%cooldown%", String.valueOf(collectingPlayersCountdown),
+                        "%cooldown%", String.valueOf(collectingPlayersCountdown + preStartCountdown),
                         "%current_players%", String.valueOf(gamers.size()),
                         "%max_players%", String.valueOf(getMaxGamers())};
                 SoundInfo tick = Configurations.getCollectingPlayersCooldownTickSound();
@@ -215,6 +214,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         SoundInfo tick = Configurations.getPreStartPhaseCooldownTickSound();
         for (Player player : getGamers()) {
             MessageUtil.sendActionBarMessage(player, getMinigameType().getType() + ".game.prestart_cooldown_bar", args);
+            MessageUtil.sendSubTitle(player, getMinigameType().getType() + ".game.prestart_cooldown_bar", args);
             tick.play(player);
         }
         if (preStartCountdown <= 0) {
@@ -224,6 +224,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 return;
             }
             getGamers().forEach(MessageUtil::sendEmptyActionBarMessage);
+            getGamers().forEach(MessageUtil::clearTitle);
             phase = Phase.PLAYING;
             gameStart();
         }
@@ -271,7 +272,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gameEnd");
         if (this.phase != Phase.PLAYING)
             throw new IllegalStateException();
-        getGamers().forEach(player -> MessageUtil.sendMessage(player, "skywars.game.game_end"));
+        getGamers().forEach(player -> MessageUtil.sendMessage(player, "skywars.game.game_end"));//TODO
         endCountdown = getOption().getEndPhaseCooldownMax();
         this.phase = Phase.END;
     }
@@ -396,6 +397,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void onGamerAdded(@NotNull Player player) {
         resetGamer(player);
+        for (Player spectator : getSpectators())
+            player.hidePlayer(Minigames.get(), spectator);
     }
 
     public void resetGamer(@NotNull Player player) {
@@ -480,6 +483,19 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onSpectatorRemoved(@NotNull Player player) {
+        for (Player gamer : getGamers())
+            gamer.showPlayer(Minigames.get(), player);
+    }
+
+
+    @Override
+    public void onGamerRemoved(@NotNull Player player) {
+        for (Player spectator : getSpectators())
+            player.showPlayer(Minigames.get(), spectator);
     }
 
     @Override
@@ -609,6 +625,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void onSpectatorAdded(@NotNull Player player) {
         Configurations.applyGameSpectatorSnapshot(player);
+        for (Player gamer : getGamers())
+            gamer.hidePlayer(Minigames.get(), player);
+        player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
     }
 
     /**
@@ -677,9 +696,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 player, null, Minigames.get(), false,
                 (evt, team) -> {
                     if (team.containsUser(player))
-                        onGamerLeaveTeam(player,team);
+                        onGamerLeaveTeam(player, team);
                     else
-                        onGamerChooseTeam(player,team);
+                        onGamerChooseTeam(player, team);
                     return true;
                 }, (team) -> Configurations.getTeamItem(player, team));
         gui.addElements(getTeams());
@@ -689,9 +708,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     protected boolean onGamerChooseTeam(@NotNull OfflinePlayer player, @NotNull T team) {
         T pTeam = getTeam(player);
-        if (team==pTeam)
+        if (team == pTeam)
             return true;
-        if (pTeam!=null)
+        if (pTeam != null)
             pTeam.removeUser(player);
         return team.addUser(player);
     }
@@ -712,7 +731,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 MessageUtil.getMessage(player, "generic.gui.kitselector_title"), 3,
                 player, null, Minigames.get(), true,
                 (evt, kit) -> {
-                    MessageUtil.debug(player.getName()+" selected kit "+kit.getId());
+                    MessageUtil.debug(player.getName() + " selected kit " + kit.getId());
                     if (kit.getId().equals(kitPreference.get(player)))
                         kitPreference.remove(player);
                     else
@@ -730,18 +749,18 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return gui;
     }
 
-    public void onGamerClickEvent(@NotNull InventoryClickEvent event, @NotNull Player player){
-        switch (getPhase()){
-            case COLLECTING_PLAYERS,PRE_START -> {
+    public void onGamerInventoryClick(@NotNull InventoryClickEvent event, @NotNull Player player) {
+        switch (getPhase()) {
+            case COLLECTING_PLAYERS, PRE_START -> {
                 if (!(event.getView().getTopInventory().getHolder() instanceof Gui))
                     event.setCancelled(true);
             }
         }
     }
 
-    public void onGamerSwapHandItems(@NotNull PlayerSwapHandItemsEvent event){
-        switch (getPhase()){
-            case COLLECTING_PLAYERS,PRE_START -> event.setCancelled(true);
+    public void onGamerSwapHandItems(@NotNull PlayerSwapHandItemsEvent event) {
+        switch (getPhase()) {
+            case COLLECTING_PLAYERS, PRE_START -> event.setCancelled(true);
         }
     }
 

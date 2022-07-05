@@ -17,9 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class MiniFillerCommand extends CoreCommand {
     public MiniFillerCommand() {
@@ -42,13 +40,56 @@ public class MiniFillerCommand extends CoreCommand {
             case "clear" -> clear(p, label, args);
             case "show" -> show(p, label, args);
             case "list" -> list(p, label, args);
+            case "delete" -> delete(p, label, args);
             default -> onHelp(p, label, args);
         }
     }
 
-    private void onHelp(Player p, String label, String[] args) {
-        new MessageBuilder(Minigames.get(), p)
-                .addText("Non implementato").send();
+    //delete <id>
+    private void delete(CommandSender sender, String label, String[] args) {
+        if (args.length != 2) {
+            MessageUtil.sendMessage(sender, "minifiller.error.delete_arguments_amount");
+            return;
+        }
+        if (FillerManager.get().getFiller(args[1]) == null) {
+            MessageUtil.sendMessage(sender, "minifiller.error.unexisting_id", "%id%", args[1].toLowerCase());
+            return;
+        }
+        FillerManager.get().deleteFiller(args[1]);
+        MessageUtil.sendMessage(sender, "minifiller.success.delete", "%id%", args[1].toLowerCase());
+    }
+
+    private void onHelp(Player sender, String label, String[] args) {
+        new MessageBuilder(Minigames.get(), sender)
+                .addText(MessageUtil.getMessage(sender, "minifiller.help.create_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minifiller.help.create_hover", "%label%", label))
+                .addSuggestCommand("/%label% create ", "%label%", label)
+                .addText("\n")
+
+                .addText(MessageUtil.getMessage(sender, "minifiller.help.addall_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minifiller.help.addall_hover", "%label%", label))
+                .addSuggestCommand("/%label% addall ", "%label%", label)
+                .addText("\n")
+
+                .addText(MessageUtil.getMessage(sender, "minifiller.help.clear_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minifiller.help.clear_hover", "%label%", label))
+                .addSuggestCommand("/%label% clear", "%label%", label)
+                .addText("\n")
+
+                .addText(MessageUtil.getMessage(sender, "minifiller.help.show_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minifiller.help.show_hover", "%label%", label))
+                .addSuggestCommand("/%label% show", "%label%", label)
+                .addText("\n")
+
+                .addText(MessageUtil.getMessage(sender, "minifiller.help.delete_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minifiller.help.delete_hover", "%label%", label))
+                .addSuggestCommand("/%label% delete", "%label%", label)
+                .addText("\n")
+
+                .addText(MessageUtil.getMessage(sender, "minifiller.help.list_text", "%label%", label))
+                .addHover(MessageUtil.getMultiMessage(sender, "minifiller.help.list_hover", "%label%", label))
+                .addSuggestCommand("/%label% list", "%label%", label)
+                .send();
     }
 
     //create <id>
@@ -176,18 +217,36 @@ public class MiniFillerCommand extends CoreCommand {
         filler.editorGui(player, null).open(player);
     }
 
-    private void list(Player p, String label, String[] args) {
-        new MessageBuilder(Minigames.get(), p)
-                .addText("Non implementato").send();
+    private void list(Player sender, String label, String[] args) {
+        Set<String> fillers = new TreeSet<>(FillerManager.get().getFillers().keySet());
+        if (fillers.isEmpty()) {
+            new MessageBuilder(Minigames.get(), sender).addTextTranslation("minifiller.success.list_no_fillers", "").send();
+            return;
+        }
+        MessageBuilder mBuilder = new MessageBuilder(Minigames.get(), sender);
+        boolean color = true;
+        for (String filler : fillers) {
+            if (color)
+                mBuilder.addText(MessageUtil.getMessage(sender, "minifiller.success.list_color_1"));
+            else
+                mBuilder.addText(MessageUtil.getMessage(sender, "minifiller.success.list_color_2"));
+            color = !color;
+            mBuilder.addText(MessageUtil.getMessage(sender, "minifiller.success.list_text", "%id%", filler))
+                    .addHover(MessageUtil.getMultiMessage(sender, "minifiller.success.list_hover", "%id%", filler))
+                    .addSuggestCommandConfigurable("minifiller.success.list_suggest", "%label%", label,
+                            "%id%",
+                            filler, "%player%", sender.getName());
+        }
+        mBuilder.send();
     }
 
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
             case 1 -> this.complete(args[0], List.of("create", "addall", "clear",
-                    "show", "list"));
+                    "show", "list", "delete"));
             case 2 -> switch (args[0].toLowerCase()) {
-                case "addall", "clear", "show" -> this.complete(args[1], FillerManager.get().getFillers().keySet());
+                case "addall", "clear", "show", "delete" -> this.complete(args[1], FillerManager.get().getFillers().keySet());
                 default -> Collections.emptyList();
             };
             case 3 -> switch (args[0].toLowerCase()) {

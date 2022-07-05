@@ -53,7 +53,7 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
         double kp = getSection().loadDouble("kill_points", 2D);
         if (kp > 0) {
             new VaultEconomyHandler().addMoney(p, kp);
-            MessageUtil.sendMessage(p,"generic.obtain_points","%amount%", UtilsString.formatOptional2Digit(kp));
+            MessageUtil.sendMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(kp));
         }
     }
 
@@ -61,7 +61,7 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
         double win = getSection().loadDouble("win_points", 10D);
         if (win > 0) {
             new VaultEconomyHandler().addMoney(p, win);
-            MessageUtil.sendMessage(p,"generic.obtain_points","%amount%", UtilsString.formatOptional2Digit(win));
+            MessageUtil.sendMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(win));
         }
     }
 }

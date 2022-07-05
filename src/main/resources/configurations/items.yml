@@ -1,1 +1,19 @@
 #Do not touch this file unless you know what you do!
+kit_selector:
+  material: CHEST
+team_info:
+  material: LEATHER_HELMET
+game_leave:
+  material: IRON_BARS
+team_selector:
+  material: LEATHER_HELMET
+filler_toggle_view:
+  material: NAME_TAG
+collecting_players_phase_cooldown_max:
+  material: REPEATER
+end_phase_cooldown_max:
+  material: REPEATER
+prestart_phase_cooldown_max:
+  material: REPEATER
+option_allow_spectator:
+  material: VEX_SPAWN_EGG

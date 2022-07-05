@@ -113,7 +113,7 @@ public class SkyWarsOption extends AbstractMOption {
     }
 
     public @Nullable MFiller getFiller() {
-        return FillerManager.get().getFiller(this.fillerId);
+        return this.fillerId == null ? null : FillerManager.get().getFiller(this.fillerId);
     }
 
     public @NotNull List<Kit> getKits() {
@@ -129,6 +129,6 @@ public class SkyWarsOption extends AbstractMOption {
 
     @Override
     public boolean allowSelectingTeam() {
-        return getTeamMaxSize()>1;
+        return getTeamMaxSize() > 1;
     }
 }

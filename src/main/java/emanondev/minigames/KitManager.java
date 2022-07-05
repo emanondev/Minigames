@@ -122,7 +122,7 @@ public class KitManager {
         config.save();
         kits.remove(id).setUnregister();
         kitsFile.remove(id);
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated Kit &e" + id);
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Deleted Kit &e" + id);
     }
 
     public void createKit(@NotNull String id, @NotNull Player creator) {

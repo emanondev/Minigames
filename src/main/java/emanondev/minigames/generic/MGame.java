@@ -14,6 +14,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.scoreboard.Objective;
@@ -28,7 +30,6 @@ import java.util.UUID;
 
 
 public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends ConfigurationSerializable, Cloneable, Registrable {
-
 
     @NotNull BlockLocation3D getGameLocation();
 
@@ -292,7 +293,11 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     void onChunkEntitiesLoad(@NotNull Chunk chunk);
 
-    void onGamerClickEvent(@NotNull InventoryClickEvent event, @NotNull Player player);
+    void onGamerInventoryClick(@NotNull InventoryClickEvent event, @NotNull Player player);
+
+    void onGamerInventoryOpen(@NotNull InventoryOpenEvent event, @NotNull Player player);
+
+    void onGamerInventoryClose(@NotNull InventoryCloseEvent event, @NotNull Player player);
 
     void onGamerSwapHandItems(@NotNull PlayerSwapHandItemsEvent event);
 

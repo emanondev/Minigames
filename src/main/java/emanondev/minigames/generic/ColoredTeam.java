@@ -82,12 +82,12 @@ public abstract class ColoredTeam implements MTeam {
 
     @Override
     public void addScore(int val) {
-        setScore(getScore()+val);
+        setScore(getScore() + val);
     }
 
     @Override
-    public int getScore(){
-        return lastScoreName==null?0:objective.getScore(lastScoreName).getScore();
+    public int getScore() {
+        return lastScoreName == null ? 0 : objective.getScore(lastScoreName).getScore();
     }
 
     @Override

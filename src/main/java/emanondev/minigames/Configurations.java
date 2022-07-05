@@ -11,11 +11,13 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Configurations {
@@ -43,6 +45,8 @@ public class Configurations {
 
     public static void applyGameEmptyStartSnapshot(@NotNull Player player) {
         applySnapshot(player, "empty_start");
+        for (PotionEffect effect : new ArrayList<>(player.getActivePotionEffects()))
+            player.removePotionEffect(effect.getType());
     }
 
     @Contract("_ -> new")

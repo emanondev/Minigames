@@ -13,7 +13,7 @@ public class SkyWarsTeam extends ColoredTeam {
     private final SkyWarsGame game;
 
     public SkyWarsTeam(@NotNull SkyWarsGame game, @NotNull DyeColor color) {
-        super(game,color);
+        super(game, color);
         this.game = game;
     }
 
@@ -34,7 +34,7 @@ public class SkyWarsTeam extends ColoredTeam {
     }
 
     @Override
-    public SkyWarsGame getGame(){
+    public SkyWarsGame getGame() {
         return (SkyWarsGame) super.getGame();
     }
 }

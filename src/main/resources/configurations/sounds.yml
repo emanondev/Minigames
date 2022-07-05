@@ -1,0 +1,10 @@
+prestart_cooldown_tick:
+  sound: ENTITY_PLAYER_LEVELUP
+  pitch: 5.0
+  volume: 0.7
+  selfSound: true
+collecting_players_cooldown_tick:
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+  pitch: 5.0
+  volume: 0.7
+  selfSound: true

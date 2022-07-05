@@ -261,11 +261,13 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     @Override
     public void onSpectatorRemoved(@NotNull Player player) {
         player.setWorldBorder(null);
+        super.onSpectatorRemoved(player);
     }
 
     @Override
     public void onGamerRemoved(@NotNull Player player) {
         player.setWorldBorder(null);
+        super.onGamerRemoved(player);
     }
 
     @Override

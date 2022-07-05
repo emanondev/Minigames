@@ -12,7 +12,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class MiniKitCommand extends CoreCommand {
     public MiniKitCommand() {
@@ -58,9 +61,9 @@ public class MiniKitCommand extends CoreCommand {
             else
                 mBuilder.addText(MessageUtil.getMessage(sender, "minikit.success.list_color_2"));
             color = !color;
-            mBuilder.addText(MessageUtil.getMessage(sender, "minikit.success.list_text",  "%id%", kit))
-                    .addHover(MessageUtil.getMultiMessage(sender,"minikit.success.list_hover", "%id%",                            kit))
-                    .addSuggestCommandConfigurable("minikit.success.list_suggest",  "%label%", label,
+            mBuilder.addText(MessageUtil.getMessage(sender, "minikit.success.list_text", "%id%", kit))
+                    .addHover(MessageUtil.getMultiMessage(sender, "minikit.success.list_hover", "%id%", kit))
+                    .addSuggestCommandConfigurable("minikit.success.list_suggest", "%label%", label,
                             "%id%",
                             kit, "%player%", sender.getName());
         }

@@ -20,6 +20,8 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
@@ -311,6 +313,8 @@ public class GameManager implements Listener {
         game.onQuitGame(player);
         playerGames.remove(player);
         playerSnapshots.remove(player).apply(player);
+        //TODO debug remove invisible maybe useless
+        //player.setInvisible(false);
         player.setScoreboard(playerBoards.remove(player));
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());
     }
@@ -473,12 +477,30 @@ public class GameManager implements Listener {
         if (event.getWhoClicked() instanceof Player player) {
             @SuppressWarnings("rawtypes") MGame game = getGame(player);
             if (game != null) {
-                if (!game.isGamer(player))
+                if (!game.isGamer(player)) //that's a spectator
                     event.setCancelled(true);
                 else
-                    game.onGamerClickEvent(event, player);
+                    game.onGamerInventoryClick(event, player);
 
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void event(InventoryCloseEvent event) {
+        if (event.getPlayer() instanceof Player player) {
+            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            if (game != null && game.isGamer(player))
+                game.onGamerInventoryClose(event, player);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void event(InventoryOpenEvent event) {
+        if (event.getPlayer() instanceof Player player) {
+            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            if (game != null && game.isGamer(player))
+                game.onGamerInventoryOpen(event, player);
         }
     }
 

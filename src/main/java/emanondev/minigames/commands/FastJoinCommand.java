@@ -59,7 +59,7 @@ public class FastJoinCommand extends CoreCommand {
                     MessageUtil.sendMessage(player, "fastjoin.error.invalid_type", "%type%", args[0]);
                     return;
                 }
-                @SuppressWarnings({"rawtypes","unchecked"})
+                @SuppressWarnings({"rawtypes", "unchecked"})
                 List<MGame> available = new ArrayList<>(GameManager.get().getPreMadeGameInstances(type).values());
                 available.removeIf((m) -> switch (m.getPhase()) {
                     case STOPPED, END, RESTART -> true;

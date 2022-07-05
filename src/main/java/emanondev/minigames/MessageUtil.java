@@ -40,6 +40,14 @@ public class MessageUtil {
         new MessageBuilder(Minigames.get(), player).addText(getMessage(player, path, holders)).send();
     }
 
+    public static void sendSubTitle(@NotNull Player player, @NotNull String path, String... holders) {
+        player.sendTitle(" ", getMessage(player, path, holders), 0, 1, 0);
+    }
+
+    public static void clearTitle(@NotNull Player player) {
+        player.sendTitle(" ", "", 0, 1, 0);
+    }
+
     public static void debug(String message) {
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "Debug " + message);
     }

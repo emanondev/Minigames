@@ -131,9 +131,41 @@ minifiller:
     invalid_block: "&c[MiniFiller] Il blocco dev'essere un contenitore"
     empty_container: "&c[MiniFiller] Il blocco non contiene oggetti"
     show_arguments_amount: "&c[MiniFiller] /%label% show <id>"
+  help:
+    create_text: "&9/%label% create &b<id>"
+    create_hover:
+      - "&6Create a new Filler"
+      - "&7Fillers are used to replenish chests"
+      - "&7 and item contents"
+    addall_text: "&9/%label% addall &b<id> [weight]"
+    addall_hover:
+      - "&6Add contents to Filler"
+      - "&7Place a chest and put your items into it"
+      - "&7 look ad the chest and run the command"
+      - "&7 to add all the items in the chest"
+    clear_text: "&9/%label% clear &b<id>"
+    clear_hover:
+      - "&6Empty Filler contents"
+    show_text: "&9/%label% show &b<id>"
+    show_hover:
+      - "&6Show filler contents"
+      - "&7Also allow to change values"
+    delete_text: "&9/%label% delete &b<id>"
+    delete_hover:
+      - "&6Delete Filler"
+    list_text: "&9/%label% list"
+    list_hover:
+      - "&6Shows created Fillers"
   success:
     create: "&a[MiniFiller] Creato il filler &e%id%"
     addall: "&a[MiniFiller] Aggiunti &e%amount% &aoggetti al filler &e%id% &acon peso &e%weight%"
+    delete: "&a[MiniKit] Hai eliminato il filler &e%id%"
+    list_color_1: "&b"
+    list_color_2: "&9"
+    list_text: "%id% "
+    list_hover: "&6Clicca per mostrare"
+    list_suggest: "/%label% show %id%"
+    list_no_fillers: "&a[MiniFiller] Non ci sono filler salvati"
   buttons:
     object_info:
       - "&6Peso &e%weight%"

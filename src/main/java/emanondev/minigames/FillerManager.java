@@ -82,7 +82,7 @@ public class FillerManager {
         filler.setRegistered(id);
         fillers.put(filler.getId(), filler);
         fillersFile.put(filler.getId(), config);
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Registered InventoryFiller &e" + id);
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Registered Filler &e" + id);
     }
 
     public void save(@NotNull MFiller filler) {
@@ -92,6 +92,18 @@ public class FillerManager {
             throw new IllegalStateException();
         fillersFile.get(filler.getId()).set(filler.getId(), filler);
         fillersFile.get(filler.getId()).save();
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated InventoryFiller &e" + filler.getId());
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated Filler &e" + filler.getId());
+    }
+
+    public void deleteFiller(String id) {
+        id = id.toLowerCase();
+        if (!fillers.containsKey(id))
+            throw new IllegalStateException();
+        YMLConfig config = fillersFile.get(id);
+        config.set(id, null);
+        config.save();
+        fillers.remove(id).setUnregister();
+        fillersFile.remove(id);
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Deleted Filler &e" + id);
     }
 }
