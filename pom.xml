@@ -6,7 +6,7 @@
 
     <groupId>emanondev.minigames</groupId>
     <artifactId>Minigames</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>emanondev.core</groupId>
             <artifactId>DeepCore</artifactId>
-            <version>3.4.2</version>
+            <version>3.6.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

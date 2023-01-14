@@ -2,38 +2,26 @@ package emanondev.minigames;
 
 import emanondev.core.MessageBuilder;
 import emanondev.core.UtilsMessages;
+import emanondev.core.UtilsString;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MessageUtil {
 
     public static @NotNull List<String> getMultiMessage(@NotNull CommandSender player, @NotNull String path, String... holders) {
-        List<String> msg = Minigames.get().getLanguageConfig(player).loadMultiMessage(path, null, true, player, holders);
-        if (msg == null || msg.isEmpty())
-            debug("No message list found at &e" + path + "&f on language file &e"
-                    + Minigames.get().getLanguageConfig(player).getFileName());
-        return msg == null ? Collections.emptyList() : msg;
+        return Minigames.get().getLanguageConfig(player).getTrackMultiMessage(path, player, holders);
     }
 
     public static @NotNull String getMessage(@NotNull CommandSender player, @NotNull String path, String... holders) {
-        String msg = Minigames.get().getLanguageConfig(player).loadMessage(path, (String) null, true, player, holders);
-        if (msg == null || msg.isEmpty())
-            debug("No message list found at &e" + path + "&f on language file &e"
-                    + Minigames.get().getLanguageConfig(player).getFileName());
-        return msg == null ? "" : msg;
+        return Minigames.get().getLanguageConfig(player).getTrackMessage(path, player, holders);
     }
 
     public static @NotNull String getString(@NotNull CommandSender player, @NotNull String path, String... holders) {
-        String msg = Minigames.get().getLanguageConfig(player).loadMessage(path, (String) null, false, player, holders);
-        if (msg == null || msg.isEmpty())
-            debug("No message list found at &e" + path + "&f on language file &e"
-                    + Minigames.get().getLanguageConfig(player).getFileName());
-        return msg == null ? "" : msg;
+        return UtilsString.fix(Minigames.get().getLanguageConfig(player).getTrackString(path), player instanceof Player? (Player) player :null, false, holders);
     }
 
     public static void sendMessage(@NotNull CommandSender player, @NotNull String path, String... holders) {

@@ -131,6 +131,7 @@ minifiller:
     invalid_block: "&c[MiniFiller] Il blocco dev'essere un contenitore"
     empty_container: "&c[MiniFiller] Il blocco non contiene oggetti"
     show_arguments_amount: "&c[MiniFiller] /%label% show <id>"
+    delete_arguments_amount: "&c[MiniFiller] /%label% delete <id>"
   help:
     create_text: "&9/%label% create &b<id>"
     create_hover:

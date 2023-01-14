@@ -1,13 +1,14 @@
-package emanondev.minigames.commands;
+package emanondev.minigames.command;
 
 import emanondev.core.CoreCommand;
 import emanondev.core.PermissionBuilder;
-import emanondev.core.PlayerSnapshot;
-import emanondev.minigames.Configurations;
+import emanondev.core.packetentity.PacketItem;
 import emanondev.minigames.Minigames;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,14 @@ public class SnapshotSupportCommand extends CoreCommand {
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args) {
         Player p = (Player) sender;
+        PacketItem item = Minigames.get().getPacketManager().getPacketItem(p.getLocation());
+        item.setGravity(false);
+        item.setItemStack(new ItemStack(Material.DIAMOND),true);
+        item.setCustomName("hola!");
+        item.setCustomNameVisible(true);
+        item.spawn(List.of(p));
+
+        /*;
         p.setAllowFlight(true);
         p.setFlying(true);
 

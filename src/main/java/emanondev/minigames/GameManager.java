@@ -6,8 +6,13 @@ import emanondev.core.PlayerSnapshot;
 import emanondev.core.UtilsString;
 import emanondev.core.YMLConfig;
 import emanondev.core.YMLSection;
+import emanondev.core.util.ConsoleLogger;
+import emanondev.minigames.event.PlayerJoinedGameEvent;
+import emanondev.minigames.event.PlayerQuitGameEvent;
+import emanondev.minigames.event.PlayerSpectateGameEvent;
 import emanondev.minigames.generic.*;
 import emanondev.minigames.locations.BlockLocation3D;
+import emanondev.minigames.locations.BlockLocationOffset3D;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,10 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -35,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameManager implements Listener {
+public class GameManager implements Listener, ConsoleLogger {
 
     public File getGamesFolder() {
         return new File(Minigames.get().getDataFolder(), "games");
@@ -121,7 +123,9 @@ public class GameManager implements Listener {
         if (!UtilsString.isLowcasedValidID(id) || games.containsKey(id))
             throw new IllegalStateException("invalid id");
         boolean save = false;
+        logTetraStar(ChatColor.DARK_RED, "D Registering Game &e" + id + "&f of type &e" + game.getMinigameType().getType());
         if (!isValidLocation(game.getGameLocation(), game.getArena(), game.getWorld())) {
+            logTetraStar(ChatColor.DARK_RED, "D Game Location is invalid assigning new location");
             game.setLocation(generateLocation(game.getArena(), game.getWorld()));
             save = true;
         }
@@ -131,9 +135,14 @@ public class GameManager implements Listener {
         game.setRegistered(id);
         games.put(id, game);
         gamesFile.put(id, config);
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Registered Game &e" + id + "&f of type &e" + game.getMinigameType().getType());
         if (save)
             save(game);
+        logTetraStar(ChatColor.DARK_RED, "D Registered Game &e" + id + "&f of type &e" + game.getMinigameType().getType()
+                +"&f at location &e"+game.getGameLocation().toString().replace(":"," ")
+                +(game.getArena() instanceof MSchemArena mArena ? " to "+
+                (game.getGameLocation().x+mArena.getSchematic().getDimensions().getBlockX())+" "
+                +(game.getGameLocation().y+mArena.getSchematic().getDimensions().getBlockY())+" "+
+                (game.getGameLocation().z+mArena.getSchematic().getDimensions().getBlockZ()):""));
     }
 
     public void save(@SuppressWarnings("rawtypes") @NotNull MGame mGame) {
@@ -143,26 +152,32 @@ public class GameManager implements Listener {
             throw new IllegalStateException();
         gamesFile.get(mGame.getId()).set(mGame.getId(), mGame);
         gamesFile.get(mGame.getId()).save();
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated Game &e" + mGame.getId() + "&f of type &e" + mGame.getMinigameType().getType());
+        logTetraStar(ChatColor.DARK_RED, "D Updated Game &e" + mGame.getId() + "&f of type &e" + mGame.getMinigameType().getType());
     }
 
-    public @NotNull BlockLocation3D generateLocation(@NotNull MArena arena, @Nullable World w) {
+    /**
+     * Generate a new Location for selected arena on selected world
+     * @param arena
+     * @param world
+     * @return
+     */
+    public @NotNull BlockLocation3D generateLocation(@NotNull MArena arena, @Nullable World world) {
         int counter = 0;
         int offset = 500;
         boolean isValid = false;
         BlockLocation3D loc = null;
-        if (w == null)
-            w = Bukkit.getWorld(getGlobalSection().getString("defaultWorld", ""));
-        if (w == null)
-            w = Bukkit.getWorlds().get(0);
+        if (world == null)
+            world = Bukkit.getWorld(getGlobalSection().getString("defaultWorld", ""));
+        if (world == null)
+            world = Bukkit.getWorlds().get(0);
         while (!isValid && counter < 200) { //TODO
-            loc = new BlockLocation3D(w, 10000 + offset * counter, 0, 10000);
-            isValid = isValidLocation(loc, arena, w);
+            loc = new BlockLocation3D(world, 10000 + offset * counter, 0, 10000);
+            isValid = isValidLocation(loc, arena, world);
             counter++;
         }
         if (!isValid) //TODO
             throw new IllegalStateException();
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Generated Game Location at &e"
+        logTetraStar(ChatColor.DARK_RED, "D Generated Game Location at &e"
                 + loc.toString().replace(":", " "));
         return loc;
     }
@@ -170,12 +185,12 @@ public class GameManager implements Listener {
     public boolean isValidLocation(@NotNull BlockLocation3D loc, @NotNull MArena arena, @NotNull World w) {
         if (arena instanceof MSchemArena schemArena) {
             Clipboard clip = schemArena.getSchematic();
-            BlockVector3 min = clip.getMinimumPoint();
+            //BlockVector3 min = clip.getMinimumPoint();
             BlockVector3 dim = clip.getDimensions();
             //TODO eventually move the y
             BoundingBox box = new BoundingBox(
-                    loc.x + min.getX(), loc.y + min.getY(), loc.z + min.getZ(),
-                    loc.x + min.getX() + dim.getX(), loc.y + min.getY() + dim.getY(), loc.z + min.getZ() + dim.getZ());
+                    loc.x , loc.y , loc.z , //loc.x + min.getX(), loc.y + min.getY(), loc.z + min.getZ(),
+                    loc.x + dim.getX(), loc.y +  dim.getY(), loc.z + dim.getZ()); //loc.x + min.getX() + dim.getX(), loc.y + min.getY() + dim.getY(), loc.z + min.getZ() + dim.getZ());
             box.expand(528); //32+1 chunk (528)
 
             for (@SuppressWarnings("rawtypes") MGame game : games.values()) {
@@ -183,17 +198,21 @@ public class GameManager implements Listener {
                     if (!game.getWorld().getName().equals(w.getName()))
                         continue;
                     Clipboard clip2 = schemArena2.getSchematic();
-                    BlockVector3 min2 = clip2.getMinimumPoint();
+                    //BlockVector3 min2 = clip2.getMinimumPoint();
+                    //logInfo("Debug -> min "+min2.getX()+" "+min2.getY()+" "+min2.getZ());
                     BlockVector3 dim2 = clip2.getDimensions();
                     BlockLocation3D loc2 = game.getGameLocation();
+                    logTetraStar(ChatColor.DARK_RED, "D Box1  &e"+ box.getMinX()+ " "+ box.getMinY()+ " "+ box.getMinZ()+ " to "+ box.getMaxX()+ " "+ box.getMaxY()+ " "+ box.getMaxZ()
+                           );
 
                     BoundingBox box2 = new BoundingBox(
-                            loc2.x + min2.getX(), loc2.y + min2.getY(), loc2.z + min2.getZ(),
-                            loc2.x + min2.getX() + dim2.getX(), loc2.y + min2.getY() + dim2.getY(), loc2.z + min2.getZ() + dim2.getZ());
+                            loc2.x , loc2.y , loc2.z ,
+                            loc2.x  + dim2.getX(), loc2.y  + dim2.getY(), loc2.z  + dim2.getZ());
 
-                    if (box.overlaps(box2)) {
+                    logTetraStar(ChatColor.DARK_RED, "D Box2  &e"+ box2.getMinX()+ " "+ box2.getMinY()+ " "+ box2.getMinZ()+ " to "+ box2.getMaxX()+ " "+ box2.getMaxY()+ " "+ box2.getMaxZ()
+                    );
+                    if (box.overlaps(box2))
                         return false;
-                    }
                 } else
                     throw new UnsupportedOperationException("invalid arena type");
             }
@@ -224,6 +243,11 @@ public class GameManager implements Listener {
         return games.get(id.toLowerCase());
     }
 
+    /**
+     * Returns the Game the player is currently on
+     * @param player
+     * @return the Game the player is currently on
+     */
     @SuppressWarnings("rawtypes")
     @Nullable
     public MGame getGame(@NotNull Player player) {
@@ -247,7 +271,8 @@ public class GameManager implements Listener {
         }
         for (MGame game : gameList)
             if (game.joinGameAsGamer(player)) {
-                Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
+                Bukkit.getPluginManager().callEvent(new PlayerJoinedGameEvent(game,player));
+                logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
                 playerGames.put(player, game);
                 //MessageUtil.debug(game.getScoreboard().);
                 player.setScoreboard(game.getScoreboard());
@@ -262,6 +287,7 @@ public class GameManager implements Listener {
 
     @SuppressWarnings("rawtypes")
     public boolean joinGameAsGamer(Player player, MGame game) {
+        return this.joinGameAsGamer(player,List.of(game));/*
         MGame gameOld = getGame(player);
 
         if (gameOld != null)
@@ -271,7 +297,7 @@ public class GameManager implements Listener {
             playerBoards.put(player, player.getScoreboard());
         }
         if (game.joinGameAsGamer(player)) {
-            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
+            logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
             playerGames.put(player, game);
             player.setScoreboard(game.getScoreboard());
             return true;
@@ -280,7 +306,7 @@ public class GameManager implements Listener {
             playerSnapshots.remove(player).apply(player);
             player.setScoreboard(playerBoards.remove(player));
         }
-        return false;
+        return false;*/
     }
 
     @SuppressWarnings("rawtypes")
@@ -294,7 +320,8 @@ public class GameManager implements Listener {
             playerBoards.put(player, player.getScoreboard());
         }
         if (game.joinGameAsSpectator(player)) {
-            Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game (as specatator) &e" + game.getId());
+            Bukkit.getPluginManager().callEvent(new PlayerSpectateGameEvent(game,player));
+            logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game (as specatator) &e" + game.getId());
             playerGames.put(player, game);
             player.setScoreboard(game.getScoreboard());
             return true;
@@ -316,7 +343,8 @@ public class GameManager implements Listener {
         //TODO debug remove invisible maybe useless
         //player.setInvisible(false);
         player.setScoreboard(playerBoards.remove(player));
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());
+        Bukkit.getPluginManager().callEvent(new PlayerQuitGameEvent(game,player));
+        logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());
     }
 
     @EventHandler
@@ -440,6 +468,19 @@ public class GameManager implements Listener {
     }
 
     @EventHandler
+    private void event(ProjectileHitEvent event) {
+        if (event.getHitEntity() instanceof Player player) {
+            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            if (game == null)
+                return;
+            if (game.isGamer(player))
+                game.onGamerHitByProjectile(event);
+            else
+                event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     private void event(EntityPickupItemEvent event) {
         if (event.getEntity() instanceof Player player) {
             @SuppressWarnings("rawtypes") MGame game = getGame(player);
@@ -524,9 +565,12 @@ public class GameManager implements Listener {
                     event.setCancelled(true);
                 else
                     game.onGamerCombustEvent(event, player);
-
             }
         }
     }
 
+    @Override
+    public void log(String s) {
+        Minigames.get().log("(GameManager) "+s);
+    }
 }

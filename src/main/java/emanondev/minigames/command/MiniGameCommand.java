@@ -1,16 +1,10 @@
-package emanondev.minigames.commands;
+package emanondev.minigames.command;
 
-import emanondev.core.CoreCommand;
-import emanondev.core.MessageBuilder;
-import emanondev.core.PermissionBuilder;
 import emanondev.core.UtilsString;
+import emanondev.core.command.CoreCommandPlus;
+import emanondev.core.command.SubCommandListExecutor;
 import emanondev.minigames.*;
-import emanondev.minigames.generic.MArena;
-import emanondev.minigames.generic.MGame;
-import emanondev.minigames.generic.MOption;
-import emanondev.minigames.generic.MType;
-import emanondev.minigames.skywars.SkyWarsGame;
-import org.bukkit.ChatColor;
+import emanondev.minigames.generic.*;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,54 +15,35 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MiniGameCommand extends CoreCommand {
+import static org.bukkit.ChatColor.*;
+
+public class MiniGameCommand extends CoreCommandPlus {
 
     public MiniGameCommand() {
-        super("MiniGame", Minigames.get(), PermissionBuilder.ofCommand(Minigames.get(), "MiniGame")
-                .buildAndRegister(Minigames.get()), "Sets Games");
+        super("MiniGame", Minigames.get(), Perms.COMMAND_MINIGAME, "Sets Games");
+        addSubCommandHandler("create", this::create, (sender, label, args) -> onComplete(sender, label, args, null));
+        addSubCommandHandler("edit", this::edit, (sender, label, args) -> onComplete(sender, label, args, null));
+        addSubCommandHandler("list", new SubCommandListExecutor<MGame>(this, "list", () -> GameManager.get().getGames().values(),
+                (Registrable::getId), this::list
+        ), (sender, label, args) -> onComplete(sender, label, args, null));
     }
 
-    @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (args.length == 0) {
-            onHelp(sender, label, args);
-            return;
+    private String list(MGame game, CommandSender sender) {
+        StringBuilder text = new StringBuilder();
+        text.append(GOLD + game.getId() + AQUA + " (" + YELLOW + game.getMinigameType().getType() + AQUA + ")").append("\n");
+        text.append(AQUA + " Fase " + YELLOW + game.getPhase() + AQUA + " Arena " + YELLOW + game.getArena().getId() + AQUA +
+                " Opzione " + YELLOW + game.getOption().getId()).append("\n");
+        if (game instanceof AbstractMColorSchemGame boundGame) {
+            BoundingBox bb = boundGame.getBoundingBox();
+            text.append(AQUA + " Area: X da " + YELLOW + bb.getMinX() +
+                    AQUA + " a " + YELLOW + bb.getMaxX() + AQUA + ", Z da " + YELLOW + bb.getMinZ() + AQUA + " a " + YELLOW +
+                    bb.getMaxZ()).append("\n");
         }
-        switch (args[0].toLowerCase()) {
-            case "create" -> create(sender, label, args);
-            case "edit" -> edit(sender, label, args);
-            case "list" -> list(sender, label, args);
-            default -> onHelp(sender, label, args);
-        }
+        text.append(AQUA + " Gamers: " + game.getGamers().size() + AQUA + " Spect: " + game.getSpectators().size());
+
+        return text.toString();
     }
 
-    private void onHelp(CommandSender sender, String label, String[] args) {
-        new MessageBuilder(Minigames.get(), sender)
-                .addText(MessageUtil.getMessage(sender, "minigame.help.create_text", "%label%", label))
-                .addHover(MessageUtil.getMultiMessage(sender, "minigame.help.create_hover", "%label%", label))
-                .addSuggestCommand("/%label% create ", "%label%", label)
-                .addText("\n")
-
-                .addText(MessageUtil.getMessage(sender, "minigame.help.edit_text", "%label%", label))
-                .addHover(MessageUtil.getMultiMessage(sender, "minigame.help.edit_hover", "%label%", label))
-                .addSuggestCommand("/%label% edit ", "%label%", label)
-                .addText("\n")
-
-                .addText(MessageUtil.getMessage(sender, "minigame.help.list_text", "%label%", label))
-                .addHover(MessageUtil.getMultiMessage(sender, "minigame.help.list_hover", "%label%", label))
-                .addSuggestCommand("/%label% list", "%label%", label)
-                .send();
-    }
-
-    private void list(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(ChatColor.GOLD + "Incomplete command"); //TODO
-        for (MGame game : GameManager.get().getGames().values()) {
-            BoundingBox bb = ((SkyWarsGame) game).getBoundingBox();
-            sender.sendMessage(game.getId() + " (" + game.getMinigameType().getType() + ") Fase " + game.getPhase() + " Arena " + game.getArena().getId() + " Opzione " + game.getOption().getId());
-            sender.sendMessage(game.getId() + " Area: " + bb.getMinX() + ":" + bb.getMaxX() + "  " + bb.getMinZ() + ":" + bb.getMaxZ());
-            sender.sendMessage(game.getId() + " Gamers: " + game.getGamers().size() + " Spect: " + game.getSpectators().size());
-        }
-    }
 
     //create type arena option id
     private void create(CommandSender sender, String label, String[] args) {

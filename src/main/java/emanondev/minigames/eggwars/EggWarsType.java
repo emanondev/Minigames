@@ -1,4 +1,4 @@
-package emanondev.minigames.skywars;
+package emanondev.minigames.eggwars;
 
 import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
@@ -16,27 +16,27 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
-    public SkyWarsType() {
-        super("skywars", SkyWarsArena.class, SkyWarsOption.class);
-        ConfigurationSerialization.registerClass(SkyWarsArena.class);
-        ConfigurationSerialization.registerClass(SkyWarsOption.class);
-        ConfigurationSerialization.registerClass(SkyWarsGame.class);
+public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
+    public EggWarsType() {
+        super("eggwars", EggWarsArena.class, EggWarsOption.class);
+        ConfigurationSerialization.registerClass(EggWarsArena.class);
+        ConfigurationSerialization.registerClass(EggWarsOption.class);
+        ConfigurationSerialization.registerClass(EggWarsGame.class);
     }
 
     @Override
     @NotNull
-    public SkyWarsArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id) {
-        return new SkyWarsArenaBuilder(uuid, id);
+    public EggWarsArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id) {
+        return new EggWarsArenaBuilder(uuid, id);
     }
 
     @Override
     public @NotNull MOption createDefaultOptions() {
-        return new SkyWarsOption();
+        return new EggWarsOption();
     }
 
     @Override
-    public @NotNull SkyWarsGame createGame(@NotNull String arenaId, @NotNull String optionId) {
+    public @NotNull EggWarsGame createGame(@NotNull String arenaId, @NotNull String optionId) {
         MArena arena = ArenaManager.get().getArena(arenaId);
         if (arena == null || !this.matchType(arena))
             throw new IllegalStateException();
@@ -46,7 +46,7 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("option", optionId);
         map.put("arena", arenaId);
-        return new SkyWarsGame(map);
+        return new EggWarsGame(map);
     }
 
     public void applyKillPoints(Player p) {
@@ -65,7 +65,7 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
         }
     }
 
-    public double getSnowballPush(){
+    public double getSnowballPush() {
         return this.getSection().loadDouble("snowball_push",0.5D);
     }
 }

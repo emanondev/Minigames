@@ -1,7 +1,6 @@
-package emanondev.minigames.commands;
+package emanondev.minigames.command;
 
-import emanondev.core.CoreCommand;
-import emanondev.core.PermissionBuilder;
+import emanondev.core.command.CoreCommand;
 import emanondev.core.UtilsCommand;
 import emanondev.minigames.GameManager;
 import emanondev.minigames.MessageUtil;
@@ -9,10 +8,10 @@ import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MGame;
 import emanondev.minigames.generic.MType;
+import emanondev.minigames.generic.Perms;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,8 +22,7 @@ import java.util.List;
 public class FastJoinCommand extends CoreCommand {
 
     public FastJoinCommand() {
-        super("fastjoin", Minigames.get(), PermissionBuilder.ofCommand(Minigames.get(), "fastjoin")
-                .setAccess(PermissionDefault.TRUE).buildAndRegister(Minigames.get()), "fast join a game");
+        super("fastjoin", Minigames.get(), Perms.COMMAND_FASTJOIN, "fast join a game");
     }
 
     @Override

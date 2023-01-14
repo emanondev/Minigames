@@ -1,7 +1,7 @@
 package emanondev.minigames;
 
 import emanondev.core.CorePlugin;
-import emanondev.minigames.commands.*;
+import emanondev.minigames.command.*;
 import emanondev.minigames.generic.ChestFiller;
 import emanondev.minigames.generic.MGame;
 import emanondev.minigames.locations.BlockLocation2D;

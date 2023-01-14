@@ -1,5 +1,6 @@
 package emanondev.minigames;
 
+import emanondev.minigames.eggwars.EggWarsType;
 import emanondev.minigames.generic.MType;
 import emanondev.minigames.skywars.SkyWarsType;
 import org.jetbrains.annotations.NotNull;
@@ -43,5 +44,6 @@ public class MinigameTypes {
     }
 
     public static final SkyWarsType SKYWARS = new SkyWarsType();
+    public static final EggWarsType EGGWARS = new EggWarsType();
 
 }

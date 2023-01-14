@@ -303,6 +303,8 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     void onGamerCombustEvent(@NotNull EntityCombustEvent event, @NotNull Player player);
 
+    void onGamerHitByProjectile(ProjectileHitEvent event);
+
     enum Phase {
         STOPPED,
         COLLECTING_PLAYERS,

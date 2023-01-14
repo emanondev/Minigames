@@ -1,4 +1,4 @@
-package emanondev.minigames.skywars;
+package emanondev.minigames.eggwars;
 
 import emanondev.core.UtilsInventory;
 import emanondev.minigames.MessageUtil;
@@ -8,7 +8,10 @@ import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.generic.MFiller;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -31,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsArena, SkyWarsOption> {
+public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsArena, EggWarsOption> {
 
     private final HashSet<Block> ignoredChest = new HashSet<>();
     private final HashSet<Block> filledChests = new HashSet<>();
@@ -68,11 +71,11 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         if (getTeam(player) != null)
             return;
         MessageUtil.debug(getId() + " assigning team to " + player.getName());
-        List<SkyWarsTeam> teams = new ArrayList<>(getTeams());
+        List<EggWarsTeam> teams = new ArrayList<>(getTeams());
         teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
-        for (SkyWarsTeam team : teams)
+        for (EggWarsTeam team : teams)
             if (team.addUser(player)) {
-                MessageUtil.sendMessage(player, "skywars.game.assign_team", "%color%", team.getColor().name());
+                MessageUtil.sendMessage(player, "eggwars.game.assign_team", "%color%", team.getColor().name());
                 return;
             }
         throw new IllegalStateException("unable to add user to a party");
@@ -88,13 +91,13 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         return getOption().allowSpectators();
     }
 
-    public SkyWarsGame(@NotNull Map<String, Object> map) {
+    public EggWarsGame(@NotNull Map<String, Object> map) {
         super(map);
     }
 
     @Override
-    protected @NotNull SkyWarsTeam craftTeam(@NotNull DyeColor color) {
-        return new SkyWarsTeam(this, color);
+    protected @NotNull EggWarsTeam craftTeam(@NotNull DyeColor color) {
+        return new EggWarsTeam(this, color);
     }
 
     @Override
@@ -216,20 +219,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     }
 
-    @Override
-    public void onGamerHitByProjectile(ProjectileHitEvent event) {
-        if (event.getEntity() instanceof Snowball){ //adds push
-            if(!getPhase().equals(Phase.PLAYING))
-                return;
-            if (event.getEntity().getShooter() instanceof Player launcher &&
-                    getTeam(launcher).equals(getTeam((Player) event.getHitEntity())))
-                return;
-            double push = getMinigameType().getSnowballPush();
-            if (push!=0)
-                event.getHitEntity().setVelocity(event.getEntity().getVelocity().normalize().multiply(push));
-        }
-    }
-
 
     @Override
     public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
@@ -263,8 +252,8 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     }
 
     @Override
-    public @NotNull SkyWarsType getMinigameType() {
-        return MinigameTypes.SKYWARS;
+    public @NotNull EggWarsType getMinigameType() {
+        return MinigameTypes.EGGWARS;
     }
 
     @Override
@@ -275,7 +264,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     @Override
     public boolean gameCanStart() {
         int counter = 0;
-        for (SkyWarsTeam team : getTeams())
+        for (EggWarsTeam team : getTeams())
             if (getGamers(team).size() > 0)
                 counter++;
         return counter >= 2;
@@ -288,7 +277,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 if (!UtilsInventory.isAirOrNull(item))
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
-        SkyWarsTeam team = getTeam(player);
+        EggWarsTeam team = getTeam(player);
         switchToSpectator(player);
         if (team != null && team.hasLost())
             team.setScore(-1);
@@ -308,8 +297,8 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             return;
         //TODO check win conditions
         int alive = 0;
-        SkyWarsTeam winner = null;
-        for (SkyWarsTeam party : this.getTeams())
+        EggWarsTeam winner = null;
+        for (EggWarsTeam party : this.getTeams())
             if (!party.hasLost()) {
                 winner = party;
                 alive++;
@@ -334,6 +323,21 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     public boolean canAddGamer(@NotNull Player player) {
         return getPhase() != Phase.PLAYING && super.canAddGamer(player);
+    }
+
+
+    @Override
+    public void onGamerHitByProjectile(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof Snowball){ //adds push
+            if(!getPhase().equals(Phase.PLAYING))
+                return;
+            if (event.getEntity().getShooter() instanceof Player launcher &&
+                    getTeam(launcher).equals(getTeam((Player) event.getHitEntity())))
+                return;
+            double push = getMinigameType().getSnowballPush();
+            if (push!=0)
+                event.getHitEntity().setVelocity(event.getEntity().getVelocity().normalize().multiply(push));
+        }
     }
 
 }

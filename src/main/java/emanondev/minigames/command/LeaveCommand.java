@@ -1,15 +1,14 @@
-package emanondev.minigames.commands;
+package emanondev.minigames.command;
 
-import emanondev.core.CoreCommand;
-import emanondev.core.PermissionBuilder;
+import emanondev.core.command.CoreCommand;
 import emanondev.minigames.GameManager;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MGame;
+import emanondev.minigames.generic.Perms;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,8 +17,7 @@ import java.util.List;
 
 public class LeaveCommand extends CoreCommand {
     public LeaveCommand() {
-        super("leave", Minigames.get(), PermissionBuilder.ofCommand(Minigames.get(), "leave")
-                        .setAccess(PermissionDefault.TRUE).buildAndRegister(Minigames.get()),
+        super("leave", Minigames.get(), Perms.COMMAND_LEAVE,
                 "allow to quit the current game", List.of("quit", "exit"));
     }
 

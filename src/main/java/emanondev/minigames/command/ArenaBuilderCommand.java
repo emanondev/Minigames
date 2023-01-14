@@ -1,9 +1,9 @@
-package emanondev.minigames.commands;
+package emanondev.minigames.command;
 
-import emanondev.core.CoreCommand;
-import emanondev.core.PermissionBuilder;
+import emanondev.core.command.CoreCommand;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
+import emanondev.minigames.generic.Perms;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ public class ArenaBuilderCommand extends CoreCommand {
 
 
     public ArenaBuilderCommand() {
-        super("arenabuilder", Minigames.get(), PermissionBuilder.ofCommand(Minigames.get(), "arenabuilder").buildAndRegister(Minigames.get())
+        super("arenabuilder", Minigames.get(), Perms.COMMAND_ARENABUILDER
                 , "setup arenas");
     }
 

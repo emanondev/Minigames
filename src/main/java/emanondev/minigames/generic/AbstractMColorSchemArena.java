@@ -25,8 +25,6 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
         if (schematicName == null)
             throw new IllegalStateException();
         spectatorsOffset = LocationOffset3D.fromString((String) map.get("spectatorSpawnOffset"));
-        if (spectatorsOffset == null)
-            throw new IllegalStateException();
     }
 
     private Clipboard schematicCache;
@@ -73,7 +71,7 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
     }
 
     @Override
-    public LocationOffset3D getSpectatorsOffset() {
+    public @NotNull LocationOffset3D getSpectatorsOffset() {
         return spectatorsOffset;
     }
 }
