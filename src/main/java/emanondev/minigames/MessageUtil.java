@@ -3,6 +3,7 @@ package emanondev.minigames;
 import emanondev.core.MessageBuilder;
 import emanondev.core.UtilsMessages;
 import emanondev.core.UtilsString;
+import emanondev.core.message.MessageComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public class MessageUtil {
     }
 
     public static void sendMessage(@NotNull CommandSender player, @NotNull String path, String... holders) {
-        new MessageBuilder(Minigames.get(), player).addText(getMessage(player, path, holders)).send();
+        new MessageComponent(Minigames.get(), player).append(getMessage(player, path, holders)).send();
     }
 
     public static void sendSubTitle(@NotNull Player player, @NotNull String path, String... holders) {

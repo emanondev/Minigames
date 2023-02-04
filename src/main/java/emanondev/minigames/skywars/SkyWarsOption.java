@@ -72,7 +72,7 @@ public class SkyWarsOption extends AbstractMOption {
                         "%size%", FillerManager.get().getFiller(fillerId) == null ? "-" : String.valueOf(FillerManager.get().getFiller(fillerId).getElementsAmount()),
                         "%min%", FillerManager.get().getFiller(fillerId) == null ? "-" : String.valueOf(FillerManager.get().getFiller(fillerId).getMinElements()),
                         "%max%", FillerManager.get().getFiller(fillerId) == null ? "-" : String.valueOf(FillerManager.get().getFiller(fillerId).getMaxElements()))).build(),
-                (String base, MFiller filler1) -> filler1.getId().toLowerCase().contains(base.toLowerCase()),
+                (String base, MFiller filler1) -> filler1.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, MFiller filler) -> {
                     fillerId = filler.getId().equals(fillerId) ? null : filler.getId();
                     OptionManager.get().save(SkyWarsOption.this);
@@ -89,7 +89,7 @@ public class SkyWarsOption extends AbstractMOption {
                 () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
                         "minioption.buttons.kitselector", new ArrayList<>(), "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", kits)
                 )).build(),
-                (String base, Kit kit) -> kit.getId().toLowerCase().contains(base.toLowerCase()),
+                (String base, Kit kit) -> kit.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, Kit kit) -> {
                     if (kits.contains(kit.getId()))
                         kits.remove(kit.getId());

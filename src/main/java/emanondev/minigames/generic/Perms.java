@@ -15,5 +15,7 @@ public class Perms {
             .setAccess(PermissionDefault.TRUE).buildAndRegister(Minigames.get());
     public static final Permission COMMAND_FASTJOIN = PermissionBuilder.ofCommand(Minigames.get(), "fastjoin")
             .setAccess(PermissionDefault.TRUE).buildAndRegister(Minigames.get());
+    public static final Permission COMMAND_JOIN = PermissionBuilder.ofCommand(Minigames.get(), "join")
+            .setAccess(PermissionDefault.TRUE).buildAndRegister(Minigames.get());
     public static final Permission COMMAND_ARENABUILDER = PermissionBuilder.ofCommand(Minigames.get(), "arenabuilder").buildAndRegister(Minigames.get());
 }

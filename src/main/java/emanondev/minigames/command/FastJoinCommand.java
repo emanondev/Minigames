@@ -1,7 +1,6 @@
 package emanondev.minigames.command;
 
 import emanondev.core.command.CoreCommand;
-import emanondev.core.UtilsCommand;
 import emanondev.minigames.GameManager;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
@@ -58,7 +57,7 @@ public class FastJoinCommand extends CoreCommand {
                     return;
                 }
                 @SuppressWarnings({"rawtypes", "unchecked"})
-                List<MGame> available = new ArrayList<>(GameManager.get().getPreMadeGameInstances(type).values());
+                List<MGame> available = new ArrayList<>(GameManager.get().getGameInstances(type).values());
                 available.removeIf((m) -> switch (m.getPhase()) {
                     case STOPPED, END, RESTART -> true;
                     default -> false;
@@ -78,9 +77,6 @@ public class FastJoinCommand extends CoreCommand {
 
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
-        return switch (args.length) {
-            case 1 -> UtilsCommand.complete(args[0], MinigameTypes.get().getTypes(), MType::getType, (m) -> true);
-            default -> Collections.emptyList();
-        };
+        return args.length == 1 ? this.complete(args[0], MinigameTypes.get().getTypes(), MType::getType, (m) -> true) : Collections.emptyList();
     }
 }

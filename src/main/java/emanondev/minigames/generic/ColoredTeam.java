@@ -41,6 +41,7 @@ public abstract class ColoredTeam implements MTeam {
         return chatColor;
     }
 
+    /*
     public org.bukkit.ChatColor getSingleChatColor() {
         return switch (color) {
             case RED -> org.bukkit.ChatColor.RED;
@@ -58,15 +59,15 @@ public abstract class ColoredTeam implements MTeam {
             case CYAN -> org.bukkit.ChatColor.DARK_AQUA;
             case LIGHT_BLUE -> org.bukkit.ChatColor.AQUA;
         };
-    }
+    }*/
 
     private String lastScoreName = null;
 
     private String getScoreName() {
         if (getGame().getMaxGamers() == 1)
-            return getUsersAmount() == 1 ? getSingleChatColor() + Bukkit.getOfflinePlayer(getUsers().iterator().next()).getName()
-                    : (getSingleChatColor() + this.color.name().toLowerCase());
-        return getSingleChatColor() + this.color.name().toLowerCase();
+            return getUsersAmount() == 1 ? chatColor + Bukkit.getOfflinePlayer(getUsers().iterator().next()).getName()
+                    : (chatColor + this.color.name().toLowerCase());
+        return chatColor + this.color.name().toLowerCase();
     }
 
     @Override

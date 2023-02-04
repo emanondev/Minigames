@@ -17,7 +17,8 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
 
     private World world;
     private BoundingBox area;
-    protected int phase = 1;
+    //protected int phase = 1;
+
 
     public SchematicArenaBuilder(@NotNull UUID user, @NotNull String id) {
         super(user, id);

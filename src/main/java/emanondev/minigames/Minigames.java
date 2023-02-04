@@ -1,7 +1,9 @@
 package emanondev.minigames;
 
 import emanondev.core.CorePlugin;
+import emanondev.core.Hooks;
 import emanondev.minigames.command.*;
+import emanondev.minigames.compability.MinigamePlaceHolders;
 import emanondev.minigames.generic.ChestFiller;
 import emanondev.minigames.generic.MGame;
 import emanondev.minigames.locations.BlockLocation2D;
@@ -62,8 +64,12 @@ public final class Minigames extends CorePlugin {
         this.registerCommand(new MiniOptionCommand());
         this.registerCommand(new MiniGameCommand());
         this.registerCommand(new FastJoinCommand());
+        this.registerCommand(new JoinCommand());
         this.registerCommand(new LeaveCommand());
         this.registerCommand(new SnapshotSupportCommand());
+
+        if (Hooks.isPAPIEnabled())
+            new MinigamePlaceHolders().register();
 
     }
 

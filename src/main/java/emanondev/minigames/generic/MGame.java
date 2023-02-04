@@ -1,5 +1,6 @@
 package emanondev.minigames.generic;
 
+import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -18,15 +19,13 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
 public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends ConfigurationSerializable, Cloneable, Registrable {
@@ -304,6 +303,16 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     void onGamerCombustEvent(@NotNull EntityCombustEvent event, @NotNull Player player);
 
     void onGamerHitByProjectile(ProjectileHitEvent event);
+
+    default ItemStack getGameSelectorItem(Player player) {
+        return getMinigameType().getGameSelectorBaseItem().setAmount(Math.max(1, getGamers().size()))
+                .setMiniDescription(
+                        getMinigameType().getPlugin().getLanguageConfig(player).loadMultiMessage(getMinigameType().getType() + ".gui.selector",
+                                new ArrayList<>(), true, "%arena_name%", getArena().getDisplayName()
+                                , "%players%", String.valueOf(getGamers().size())
+                                , "%max_players%", String.valueOf(getMaxGamers()))
+                ).build();
+    }
 
     enum Phase {
         STOPPED,

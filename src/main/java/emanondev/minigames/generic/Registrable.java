@@ -1,6 +1,7 @@
 package emanondev.minigames.generic;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface Registrable {
 
@@ -9,10 +10,15 @@ public interface Registrable {
     /**
      * internal use only
      *
-     * @param id
+     * @param id if of this object
      */
     void setRegistered(@NotNull String id);
 
+    /**
+     * The id is null if this object is not registered
+     * @return id
+     */
+    @Nullable
     String getId();
 
     /**

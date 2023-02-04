@@ -1,11 +1,14 @@
 package emanondev.minigames.generic;
 
+import emanondev.core.CorePlugin;
+import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
 import emanondev.core.YMLSection;
 import emanondev.minigames.Configurations;
 import emanondev.minigames.GameManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -16,14 +19,16 @@ public abstract class MType<A extends MArena, O extends MOption> {
     private final YMLSection section;
     private final Class<O> optionClazz;
     private final Class<A> arenaClazz;
+    private final CorePlugin plugin;
 
-    public MType(@NotNull String type, @NotNull Class<A> arenaClazz, @NotNull Class<O> optionClazz) {
+    public MType(@NotNull String type, @NotNull Class<A> arenaClazz, @NotNull Class<O> optionClazz, @NotNull CorePlugin plugin) {
         if (!UtilsString.isLowcasedValidID(type))
             throw new IllegalStateException("invalid id");
         this.type = type;
         this.arenaClazz = arenaClazz;
         this.optionClazz = optionClazz;
         this.section = GameManager.get().getSection(this);
+        this.plugin = plugin;
     }
 
     @NotNull
@@ -59,6 +64,14 @@ public abstract class MType<A extends MArena, O extends MOption> {
 
     @NotNull
     public String getDisplayName() {
-        return getSection().loadMessage("displayName", ChatColor.YELLOW + getType());
+        return getSection().loadMessage("display.displayName", ChatColor.YELLOW + getType());
+    }
+
+    @NotNull
+    public abstract ItemBuilder getGameSelectorBaseItem();
+
+
+    public final CorePlugin getPlugin(){
+        return plugin;
     }
 }

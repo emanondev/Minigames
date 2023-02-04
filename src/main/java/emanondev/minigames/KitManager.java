@@ -10,10 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class KitManager {
 
@@ -39,15 +36,15 @@ public class KitManager {
     private final HashMap<String, YMLConfig> kitsFile = new HashMap<>();
 
     public @Nullable Kit getKit(@NotNull String id) {
-        return kits.get(id.toLowerCase());
+        return kits.get(id.toLowerCase(Locale.ENGLISH));
     }
 
     /*public boolean existKit(String id) {
-        return kits.get(id.toLowerCase()) != null;
+        return kits.get(id.toLowerCase(Locale.ENGLISH)) != null;
     }
 
     public void applyKit(String id, Player player) {
-        kits.get(id.toLowerCase()).apply(player);
+        kits.get(id.toLowerCase(Locale.ENGLISH)).apply(player);
     }*/
 
     public @NotNull Set<String> getKitsId() {
@@ -95,7 +92,7 @@ public class KitManager {
     }
 
     private void updateKit(@NotNull String id, @NotNull PlayerSnapshot snap) {
-        id = id.toLowerCase();
+        id = id.toLowerCase(Locale.ENGLISH);
         if (!UtilsString.isLowcasedValidID(id) || !kits.containsKey(id))
             throw new IllegalStateException();
         YMLConfig config = kitsFile.get(id);
@@ -114,7 +111,7 @@ public class KitManager {
     }
 
     public void deleteKit(@NotNull String id) {
-        id = id.toLowerCase();
+        id = id.toLowerCase(Locale.ENGLISH);
         if (!kits.containsKey(id))
             throw new IllegalStateException();
         YMLConfig config = kitsFile.get(id);
@@ -136,7 +133,7 @@ public class KitManager {
     }
 
     private void createKit(@NotNull String id, @NotNull PlayerSnapshot snap, @NotNull YMLConfig config) {
-        id = id.toLowerCase();
+        id = id.toLowerCase(Locale.ENGLISH);
         if (!UtilsString.isLowcasedValidID(id) || kits.containsKey(id))
             throw new IllegalStateException();
         Kit kit = Kit.fromPlayerSnapshot(snap);

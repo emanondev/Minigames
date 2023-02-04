@@ -29,6 +29,10 @@ generic:
       abort_not_created: "&c[ArenaBuilder] Non stai impostando nessuna arena al momento"
       pre_create_invalid_action: "&c[ArenaBuilder] /%label% create <type> <id>"
 skywars:
+  gui:
+    selector:
+      - "<gold>%arena_name%"
+      - "<gold><b>%players%/%max_players%</b></gold>"
   game:
     assign_team: "&a[SkyWars] Ti è stato assegnato il team &e%color%"
     collectingplayers_cooldown_bar: "&6SkyWars: Giocatori &e%current_players%&6/&e%max_players% &6inizia in &e%cooldown% &6s"
@@ -40,24 +44,32 @@ skywars:
     spectator_cannot_go_outside_arena_bar: "&cNon puoi uscire dall'arena"
   arenabuilder:
     error:
-      unselected_area: "&c[ArenaBuilder] Devi selezionare l'area con worldedit"
-      unknown_action: "&c[ArenaBuilder] Azione non valida"
-      outside_area: "&c[ArenaBuilder] Devi selezionare un punto all'interno dell'arena"
-      invalid_color: "&c[ArenaBuilder] Colore non valido"
+      unselected_area: "<gold><b>ArenaBuilder</b></gold><red> Devi selezionare l'area con worldedit"
+      unknown_action: "<gold><b>ArenaBuilder</b></gold><red> Azione non valida"
+      outside_area: "<gold><b>ArenaBuilder</b></gold><red> Devi selezionare un punto all'interno dell'arena"
+      invalid_color: "<gold><b>ArenaBuilder</b></gold><red> Colore non valido"
     success:
-      select_area: "&a[ArenaBuilder] Hai selezionato l'area dell'arena (&e%world% %x1%:%x2% %y1%:%y2% %z1%:%z2%&a)"
-      override_team_spawn: "&a[ArenaBuilder] Hai cambiato lo spawn per il team &e%color%"
-      set_team_spawn: "&a[ArenaBuilder] Hai impostato lo spawn per il team &e%color%"
-      next: "&a[ArenaBuilder] Sei avanzato alla fase successiva"
-      set_spectators_spawn: "&a[ArenaBuilder] Hai impostato lo spawn per gli spettatori"
-      override_spectators_spawn: "&a[ArenaBuilder] Hai cambiato lo spawn per gli spettatori"
-      completed: "&a[ArenaBuilder] Schematic salvata, Arena Creata"
-    actionbar:
-      phase1: "&6/arenabuilder selectarea"
-      phase2: "&6/arenabuilder setteamspawn <color>"
-      phase3: "&6/arenabuilder setteamspawn <color> &f| &6/arenabuilder next"
-      phase4: "&6/arenabuilder setspectatorspawn"
-      phase5: "&6/arenabuilder setspectatorspawn &f| &6/arenabuilder next"
+      select_area: "<gold><b>ArenaBuilder</b></gold><green> Hai selezionato l'area dell'arena (&e%world% %x1%:%x2% %y1%:%y2% %z1%:%z2%&a)"
+      override_team_spawn: "<gold><b>ArenaBuilder</b></gold><green> Hai cambiato lo spawn per il team &e%color%"
+      set_team_spawn: "<gold><b>ArenaBuilder</b></gold><green> Hai impostato lo spawn per il team &e%color%"
+      delete_team_spawn: "<gold><b>ArenaBuilder</b></gold><green> Hai rimosso lo spawn per il team &e%color%"
+      set_spectators_spawn: "<gold><b>ArenaBuilder</b></gold><green> Hai impostato lo spawn per gli spettatori"
+      override_spectators_spawn: "<gold><b>ArenaBuilder</b></gold><green> Hai cambiato lo spawn per gli spettatori"
+      completed: "&a[ArenaBuilder] Schematic salvata, Arena <yellow>%name%</yellow> Creata"
+    repeatmessage:
+      phase1: "<gold><b>ArenaBuilder</b></gold>\n<blue>Seleziona l'area dell'arena con worldedit <u><aqua><click:run_command:'//wand'><hover:show_text:'<light_purple>Ottieni l''ascia worldedit per selezionare</light_purple>'>[//wand]</hover></click></aqua></u>\nImposta l'area dell'arena <u><aqua><click:run_command:'/arenabuilder selectarea'><hover:show_text:'<light_purple>Imposta la regione worldedit\nselezionata come l'area dell'arena\ne procedi alla prossima fase</light_purple>'>[Conferma]</hover></click></aqua></u></blue>"
+      phase2: "<gold><b>ArenaBuilder</b></gold>\n<blue>Imposta lo spawn per i vari team:\nImposta: <aqua>%setteamsspawn%</aqua>\nCancella: <aqua>%deleteteamsspawn%</aqua></blue>"
+      phase3: "<gold><b>ArenaBuilder</b></gold>\n<blue>Imposta lo spawn per i vari team:\nImposta: <aqua>%setteamsspawn%</aqua>\nCancella: <aqua>%deleteteamsspawn%</aqua>\nProcedi alla prossima fase <aqua><hover:show_text:'<light_purple>Conferma definitivamente le posizioni di spawn selezionate\ne continua il settaggio dell''arena</light_purple>'><click:run_command:'/arenabuilder next'><u>[Conferma]</u></click></hover></aqua></blue>"
+      phase4: "<gold><b>ArenaBuilder</b></gold>\n<blue>Imposta lo spawn per gli spettatori: <u><aqua><click:run_command:'/arenabuilder setspectatorspawn'><hover:show_text:'<light_purple>Imposta lo spawn per gli spettatori\nnella tua posizione corrente</light_purple>'>[//wand]</hover></click></aqua></u></blue>"
+      phase5: "<gold><b>ArenaBuilder</b></gold>\n<blue>Cambia lo spawn per gli spettatori: <u><aqua><click:run_command:'/arenabuilder setspectatorspawn'><hover:show_text:'<light_purple>Imposta lo spawn per gli spettatori\nnella tua posizione corrente</light_purple>'>[imposta]</hover></click></aqua></u>\noppure completa l'arena: <u><aqua><click:run_command:'/arenabuilder next'><hover:show_text:'<light_purple>Conferma e crea l''arena corrente</light_purple>'>[Completa]</hover></click></aqua></u></blue>"
+      setteamcolor: "<hover:show_text:'<light_purple>Imposta lo spawn per il team colore <color:%hexa%>%color%</color>\nnella tua posizione corrente</light_purple>'><click:run_command:'/arenabuilder setteamspawn %color%'><u>[<color:%hexa%>%color%</color>]</u></click></hover> "
+      deleteteamcolor: "<hover:show_text:'<light_purple>Cancella lo spawn per il team colore <color:%hexa%>%color%</color></light_purple>'><click:run_command:'/arenabuilder deleteteamspawn %color%'><u>[<color:%hexa%>%color%</color>]</u></click></hover> "
+    bossbar:
+      phase1: "&eSeleziona l'area dell'arena"
+      phase2: "&eSeleziona il team spawn"
+      phase3: "&eSeleziona i team spawn &9| &eProcedi"
+      phase4: "&eSeleziona lo spawn degli spettatori"
+      phase5: "&eSeleziona lo spawn degli spettatori &9| &eProcedi"
   option_gui_title: "&9SkyWars Options"
 minigame:
   create:
@@ -263,6 +275,14 @@ fastjoin:
     no_available_game_of_type: "&c[FastJoin] Non ci sono partite disponibili per &6%type%"
     arguments_amount: "&c[FastJoin] /%label% [type]"
     already_inside_a_game: "&c[FastJoin] Sei già all'interno di un gioco"
+    invalid_type: "&c[FastJoin] Non esiste un minigame chiamato &6%type%"
+join:
+  error:
+    invalid_game_or_minigame: "&c[Join] Non esiste un Gioco o un Minigame chiamato &e%name%"
+    no_available_game: "&c[Join] Non ci sono partite disponibili"
+    game_not_available: "&c[Join] Non puoi entrare in partita"
+    arguments_amount: "&c[Join] /%label% [type/game]"
+    already_inside_a_game: "&c[Join] Sei già all'interno di un gioco"
 leave:
   error:
     not_inside_game: "&c[Leave] Non sei in una partita"

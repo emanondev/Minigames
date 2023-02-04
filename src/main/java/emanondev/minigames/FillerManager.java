@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class FillerManager {
@@ -61,7 +62,7 @@ public class FillerManager {
     }
 
     public @Nullable MFiller getFiller(@NotNull String id) {
-        return fillers.get(id.toLowerCase());
+        return fillers.get(id.toLowerCase(Locale.ENGLISH));
     }
 
 
@@ -96,7 +97,7 @@ public class FillerManager {
     }
 
     public void deleteFiller(String id) {
-        id = id.toLowerCase();
+        id = id.toLowerCase(Locale.ENGLISH);
         if (!fillers.containsKey(id))
             throw new IllegalStateException();
         YMLConfig config = fillersFile.get(id);

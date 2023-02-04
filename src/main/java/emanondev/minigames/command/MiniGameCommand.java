@@ -85,7 +85,7 @@ public class MiniGameCommand extends CoreCommandPlus {
             MessageUtil.sendMessage(player, "minigame.create.error.invalid_id_name", "%id%", id);
             return;
         }
-        if (GameManager.get().getPreMadeGameInstance(id) != null) {
+        if (GameManager.get().getGameInstance(id) != null) {
             MessageUtil.sendMessage(player, "minigame.create.error.already_used_id", "%id%", id);
             return;
         }

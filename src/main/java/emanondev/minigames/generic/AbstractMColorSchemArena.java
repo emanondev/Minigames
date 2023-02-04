@@ -6,6 +6,7 @@ import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -15,6 +16,7 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
 
     private final String schematicName;
     private final LocationOffset3D spectatorsOffset;
+    private String displayName;
 
     /*
      * schematic: (name)
@@ -25,6 +27,7 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
         if (schematicName == null)
             throw new IllegalStateException();
         spectatorsOffset = LocationOffset3D.fromString((String) map.get("spectatorSpawnOffset"));
+        this.displayName = (String) map.get("displayName");
     }
 
     private Clipboard schematicCache;
@@ -74,4 +77,18 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
     public @NotNull LocationOffset3D getSpectatorsOffset() {
         return spectatorsOffset;
     }
+
+    @Override
+    @NotNull
+    public String getDisplayName(){
+        return displayName!=null?displayName:getId()!=null?getId():"";
+    }
+
+    @Override
+    public void setDisplayName(@Nullable String displayName){
+        this.displayName = displayName;
+    }
+
+
+
 }

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class OptionManager {
@@ -70,7 +71,7 @@ public class OptionManager {
     }
 
     public @Nullable MOption getOption(@NotNull String id) {
-        return options.get(id.toLowerCase());
+        return options.get(id.toLowerCase(Locale.ENGLISH));
     }
 
 

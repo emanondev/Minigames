@@ -36,7 +36,7 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
     @Override
     @Nullable
     public String getCurrentActionMessage() {
-        return Minigames.get().getLanguageConfig(getPlayer()).getString("eggwars.arenabuilder.actionbar.phase" + phase);
+        return Minigames.get().getLanguageConfig(getBuilder()).getString("eggwars.arenabuilder.actionbar.phase" + phase);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
 
     @Override
     public void onTimerCall() {
-        Player p = getPlayer();
+        Player p = getBuilder();
         if (p == null || !p.isOnline())
             return;
         Vector min;

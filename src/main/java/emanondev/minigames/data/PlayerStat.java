@@ -3,108 +3,85 @@ package emanondev.minigames.data;
 import emanondev.core.YMLConfig;
 import emanondev.minigames.Minigames;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Calendar;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.UUID;
 
-public class PlayerStat {
+public class PlayerStat extends Stat<UUID> {
 
     private static final YMLConfig conf = Minigames.get().getConfig("data" + File.separator + "user_data.yml");
-    public final String id;
+    private static final HashMap<String, PlayerStat> stats = new HashMap<>();
 
-    public PlayerStat(String id) {
-        this.id = id.toLowerCase();
+
+    private PlayerStat(@NotNull String id) {
+        super(id);
     }
 
-    public final static PlayerStat SKYWARS_KILLS = new PlayerStat("SKYWARS_KILLS");
-    public final static PlayerStat SKYWARS_VICTORY = new PlayerStat("SKYWARS_VICTORY");
-    public final static PlayerStat SKYWARS_PLAYED = new PlayerStat("SKYWARS_PLAYED");
-    public final static PlayerStat GAME_PLAYED = new PlayerStat("GAME_PLAYED");
-
-
-    public void add(OfflinePlayer player, int amount) {
-        add(player.getUniqueId(), amount);
+    public static PlayerStat getStat(@NotNull String id) {
+        id = id.toLowerCase();
+        if (stats.containsKey(id))
+            return stats.get(id);
+        PlayerStat stat = new PlayerStat(id);
+        stats.put(id, stat);
+        return stat;
     }
 
-    public int getTotal(OfflinePlayer player) {
-        return getTotal(player.getUniqueId());
+    @Override
+    protected @NotNull YMLConfig getConfig() {
+        return conf;
     }
 
-    public int getToday(OfflinePlayer player) {
-        return getToday(player.getUniqueId());
+    @Override
+    protected @NotNull String getId(@NotNull UUID target) {
+        return target.toString();
     }
 
-    public int getMonth(OfflinePlayer player) {
-        return getLastThreeMonth(player.getUniqueId());
+    public final static PlayerStat SKYWARS_KILLS = getStat("SKYWARS_KILLS");
+    public final static PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
+    public final static PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
+    public final static PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
+
+
+    public void add(@NotNull OfflinePlayer target, int amount) {
+        add(target.getUniqueId(), amount);
     }
 
-    public int getLastThreeMonth(OfflinePlayer player) {
-        return getLastThreeMonth(player.getUniqueId());
+    public void add(@NotNull OfflinePlayer target, @NotNull Calendar day, int amount) {
+        add(target.getUniqueId(), day, amount);
     }
 
-
-    public void add(UUID uuid, int amount) {
-        String path = uuid + ".permanent." + id;
-        conf.set(path, conf.getInt(path, 0) + amount);
-        path = uuid + ".temp." + Calendar.getInstance().get(Calendar.YEAR) + "." +
-                Calendar.getInstance().get(Calendar.MONTH) + "." + Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-                + "." + id;
-        conf.set(path, conf.getInt(path, 0) + amount);
+    public int getTotal(@NotNull OfflinePlayer target) {
+        return getTotal(target.getUniqueId());
     }
 
-    public int getTotal(UUID uuid) {
-        String path = uuid + ".permanent." + id;
-        return conf.getInt(path, 0);
+    public int getToday(@NotNull OfflinePlayer target) {
+        return getToday(target.getUniqueId());
     }
 
-    public int getToday(UUID uuid) {
-        String path = uuid + ".temp." + Calendar.getInstance().get(Calendar.YEAR) + "." +
-                Calendar.getInstance().get(Calendar.MONTH) + "." + Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-                + "." + id;
-        if (!conf.contains(path))
-            return 0;
-        return conf.getInt(path, 0);
+    public int getYesterday(@NotNull OfflinePlayer target) {
+        return getYesterday(target.getUniqueId());
     }
 
-    public int getMonth(UUID uuid) {
-        return getMonth(uuid, String.valueOf(Calendar.getInstance().get(Calendar.MONTH)),
-                String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+    public int getCurrentWeek(@NotNull OfflinePlayer target) {
+        return getCurrentWeek(target.getUniqueId());
     }
 
-    public int getLastThreeMonth(UUID uuid) {
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        int month = Calendar.getInstance().get(Calendar.MONTH);
-        int val = getMonth(uuid, String.valueOf(month),
-                String.valueOf(year));
-        if (month == 1) {
-            month = 12;
-            year -= 1;
-        } else
-            month -= 1;
-        val += getMonth(uuid, String.valueOf(month),
-                String.valueOf(year));
-        if (month == 1) {
-            month = 12;
-            year -= 1;
-        } else
-            month -= 1;
-        val += getMonth(uuid, String.valueOf(month),
-                String.valueOf(year));
-        return val;
+    public int getLastWeek(@NotNull OfflinePlayer target) {
+        return getLastWeek(target.getUniqueId());
     }
 
-    private int getMonth(UUID uuid, String month, String year) {
-        String prePath = uuid + ".temp." + year + "." +
-                month;
-        if (!conf.contains(prePath))
-            return 0;
-        Set<String> days = conf.getKeys(prePath);
-        int val = 0;
-        for (String day : days)
-            if (conf.contains(prePath + "." + day + "." + id))
-                val += conf.getInt(prePath + "." + day + "." + id, 0);
-        return val;
+    public int getCurrentMonth(@NotNull OfflinePlayer target) {
+        return getCurrentMonth(target.getUniqueId());
+    }
+
+    public int getLastMonth(@NotNull OfflinePlayer target) {
+        return getLastMonth(target.getUniqueId());
+    }
+
+    public int getLastThreeMonths(@NotNull OfflinePlayer target) {
+        return getLastThreeMonths(target.getUniqueId());
     }
 }

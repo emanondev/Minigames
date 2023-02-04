@@ -68,7 +68,7 @@ public class ArenaManager {
     }
 
     public @Nullable MArena getArena(@NotNull String id) {
-        return arenas.get(id.toLowerCase());
+        return arenas.get(id.toLowerCase(Locale.ENGLISH));
     }
 
     public @NotNull Map<String, MArena> getArenas() {
@@ -147,7 +147,7 @@ public class ArenaManager {
                                     "%type%", args[1]).send();
                     return;
                 }
-                String id = args[2].toLowerCase();
+                String id = args[2].toLowerCase(Locale.ENGLISH);
                 if (!UtilsString.isLowcasedValidID(id)) {
                     new MessageBuilder(Minigames.get(), who)
                             .addTextTranslation("generic.arenabuilder.error.invalid_id", "",
@@ -195,7 +195,7 @@ public class ArenaManager {
         if (!builders.containsKey(who.getUniqueId()))
             return switch (args.length) {
                 case 1 -> UtilsCommand.complete(args[0], List.of("create"));
-                case 2 -> switch (args[0].toLowerCase()) {
+                case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "create" -> UtilsCommand.complete(args[1], MinigameTypes.get().getTypes(), (t) -> t.getType(), (t) -> true);
                     //case "edit" -> UtilsCommand.complete(args[1], MinigameManager.get().getOptions().keySet());
                     default -> Collections.emptyList();

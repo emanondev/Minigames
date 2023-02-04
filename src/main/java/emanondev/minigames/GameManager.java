@@ -12,7 +12,6 @@ import emanondev.minigames.event.PlayerQuitGameEvent;
 import emanondev.minigames.event.PlayerSpectateGameEvent;
 import emanondev.minigames.generic.*;
 import emanondev.minigames.locations.BlockLocation3D;
-import emanondev.minigames.locations.BlockLocationOffset3D;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,10 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameManager implements Listener, ConsoleLogger {
 
@@ -228,7 +224,7 @@ public class GameManager implements Listener, ConsoleLogger {
     }
 
     @SuppressWarnings("unchecked")
-    public @NotNull <A extends MArena, O extends MOption> Map<String, MGame<?, A, O>> getPreMadeGameInstances(@NotNull MType<A, O> type) {
+    public @NotNull <A extends MArena, O extends MOption> Map<String, MGame<?, A, O>> getGameInstances(@NotNull MType<A, O> type) {
         Map<String, MGame<?, A, O>> map = new HashMap<>();
         games.forEach((k, v) -> {
             if (v.getMinigameType().equals(type))
@@ -239,8 +235,8 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @SuppressWarnings("rawtypes")
     @Nullable
-    public MGame getPreMadeGameInstance(@NotNull String id) {
-        return games.get(id.toLowerCase());
+    public MGame getGameInstance(@NotNull String id) {
+        return games.get(id.toLowerCase(Locale.ENGLISH));
     }
 
     /**

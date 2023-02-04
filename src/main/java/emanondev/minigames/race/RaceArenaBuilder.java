@@ -41,7 +41,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     @Override
     @Nullable
     public String getCurrentActionMessage() {
-        return Minigames.get().getLanguageConfig(getPlayer()).getString("race.arenabuilder.actionbar.phase" + phase);
+        return Minigames.get().getLanguageConfig(getBuilder()).getString("race.arenabuilder.actionbar.phase" + phase);
     }
 
     @Override
@@ -320,7 +320,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
 
     @Override
     public void onTimerCall() {
-        Player p = getPlayer();
+        Player p = getBuilder();
         if (p == null || !p.isOnline())
             return;
         org.bukkit.util.Vector min;
