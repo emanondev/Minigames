@@ -5,21 +5,24 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsCommand;
+import emanondev.core.YMLSection;
+import emanondev.core.message.MessageComponent;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
+import emanondev.minigames.UtilColor;
 import emanondev.minigames.generic.SchematicArenaBuilder;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
@@ -34,10 +37,48 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
     }
 
     @Override
+    protected void onPhaseStart() {
+
+    }
+
+    private static final int PHASE_SELECT_AREA = 1;
+    private static final int PHASE_SET_TEAM_SPAWNS = 2;
+    private static final int PHASE_SET_TEAM_SPAWNS_OR_NEXT = 3;
+    private static final int PHASE_SET_SPECTATOR_SPAWN = 4;
+    private static final int PHASE_SET_SPECTATOR_SPAWN_OR_NEXT = 5;
+
+
+    @Override
+    public @NotNull String getCurrentBossBarMessage() {
+        return Minigames.get().getLanguageConfig(getBuilder()).getString("eggwars.arenabuilder.bossbar.phase" + getPhase(), "");
+    }
+
+    @Override
+    public @NotNull String getRepeatedMessage() {
+        return switch (getPhase()) {
+            case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
+                YMLSection sect = Minigames.get().getLanguageConfig(getBuilder()).loadSection("eggwars.arenabuilder.repeatmessage");
+                StringBuilder teamSet = new StringBuilder();
+                for (DyeColor color : DyeColor.values())
+                    if (!spawnLocations.containsKey(color))
+                        teamSet.append(sect.loadMessage("setteamcolor", "", (CommandSender) null, "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color)));
+                StringBuilder teamDelete = new StringBuilder();
+                for (DyeColor color : spawnLocations.keySet())
+                    teamDelete.append(sect.loadMessage("deleteteamcolor", "", (CommandSender) null, "%color%", color.name()));
+                yield sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
+                        , "%setteamsspawn%", teamSet.toString()
+                        , "%deleteteamsspawn%", teamDelete.toString());
+            }
+            default -> Minigames.get().getLanguageConfig(getBuilder()).getString("eggwars.arenabuilder.repeatmessage.phase" + getPhase(), "");
+        };
+    }
+    /*
+
+    @Override
     @Nullable
     public String getCurrentActionMessage() {
         return Minigames.get().getLanguageConfig(getBuilder()).getString("eggwars.arenabuilder.actionbar.phase" + phase);
-    }
+    }*/
 
     @Override
     public void handleCommand(@NotNull Player player, @NotNull String[] args) {
@@ -45,8 +86,8 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
             MessageUtil.sendMessage(player, "eggwars.arenabuilder.error.unknown_action");
             return;
         }
-        switch (phase) {
-            case 1 -> {
+        switch (getPhase()) {
+            case PHASE_SELECT_AREA -> {
                 if (!args[0].equalsIgnoreCase("selectarea")) {
                     MessageUtil.sendMessage(player, "eggwars.arenabuilder.error.unknown_action");
                     return;
@@ -62,15 +103,15 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
                             "%z1%", String.valueOf((int) getArea().getMinZ()),
                             "%z2%", String.valueOf((int) getArea().getMaxZ()));
 
-                    phase++;
+                    setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
                 } catch (IncompleteRegionException e) {
                     MessageUtil.sendMessage(player, "eggwars.arenabuilder.error.unselected_area");
                 }
             }
-            case 2, 3 -> {
+            case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
                 if (spawnLocations.size() >= 2 && args[0].equalsIgnoreCase("next")) {
                     MessageUtil.sendMessage(player, "eggwars.arenabuilder.success.next");
-                    phase++;
+                    setPhaseRaw(PHASE_SET_SPECTATOR_SPAWN);
                     return;
                 }
                 if (!args[0].equalsIgnoreCase("setteamspawn")) {
@@ -88,13 +129,14 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
                     spawnLocations.put(color, loc);
                     MessageUtil.sendMessage(player, override ? "eggwars.arenabuilder.success.override_team_spawn"
                             : "eggwars.arenabuilder.success.set_team_spawn", "%color%", color.name());
-                    if (phase == 2 && spawnLocations.size() >= 2)
-                        phase++;
+                    if (PHASE_SET_TEAM_SPAWNS == getPhase() && spawnLocations.size() >= 2)
+                        setPhaseRaw(PHASE_SET_TEAM_SPAWNS_OR_NEXT);
+                    ;
                 } catch (Exception e) {
                     MessageUtil.sendMessage(player, "eggwars.arenabuilder.error.invalid_color");
                 }
             }
-            case 4, 5 -> {
+            case PHASE_SET_SPECTATOR_SPAWN, PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> {
                 if (spectatorsOffset != null && args[0].equalsIgnoreCase("next")) {
                     MessageUtil.sendMessage(player, "eggwars.arenabuilder.success.completed");
                     ArenaManager.get().onArenaBuilderCompletedArena(this);
@@ -113,8 +155,8 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
                     spectatorsOffset = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
                     MessageUtil.sendMessage(player, override ? "eggwars.arenabuilder.success.override_spectators_spawn"
                             : "eggwars.arenabuilder.success.set_spectators_spawn");
-                    if (phase == 4)
-                        phase++;
+                    if (getPhase() == PHASE_SET_SPECTATOR_SPAWN)
+                        setPhaseRaw(PHASE_SET_SPECTATOR_SPAWN_OR_NEXT);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -128,7 +170,7 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
 
     @Override
     public List<String> handleComplete(@NotNull String[] args) {
-        return switch (phase) {
+        return switch (getPhase()) {
             case 1 -> args.length == 1 ? UtilsCommand.complete(args[0], List.of("selectarea")) : Collections.emptyList();
             case 2 -> args.length == 1 ? UtilsCommand.complete(args[0], List.of("setteamspawn")) :
                     args.length == 2 ? UtilsCommand.complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c)) : Collections.emptyList();
@@ -141,7 +183,7 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
             }
             case 4 -> UtilsCommand.complete(args[0], List.of("setspectatorspawn"));
             case 5 -> UtilsCommand.complete(args[0], List.of("setspectatorspawn", "next"));
-            default -> throw new IllegalStateException("Unexpected value: " + phase);
+            default -> throw new IllegalStateException("Unexpected value: " + getPhase());
         };
     }
 
@@ -180,6 +222,69 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
     }
 
 
+    @Override
+    public void onTimerCall(int timerTick) {
+        Player p = getBuilder();
+        if (p == null || !p.isOnline())
+            return;
+        if (timerTick % 3 == 0) { //every 15 game ticks
+            Vector min;
+            Vector max;
+
+            if (getPhase() > PHASE_SELECT_AREA) {
+                min = getArea().getMin();
+                max = getArea().getMax();
+            } else {
+                try {
+                    World world = p.getWorld();
+                    Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
+                            .getSelection(BukkitAdapter.adapt(world));
+                    BoundingBox area = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
+                            sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
+                            sel.getMaximumPoint().getZ());
+                    min = area.getMin();
+                    max = area.getMax();
+                } catch (Exception e) {
+                    return;
+                }
+            }
+
+            for (int i = min.getBlockX(); i <= max.getBlockX(); i++) {
+                p.spawnParticle(Particle.COMPOSTER, i, min.getY(), min.getZ(), 1);
+                p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, min.getZ(), 1);
+                p.spawnParticle(Particle.COMPOSTER, i, min.getY(), max.getZ() + 1, 1);
+                p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, max.getZ() + 1, 1);
+            }
+            for (int i = min.getBlockY(); i <= max.getBlockY(); i++) {
+                p.spawnParticle(Particle.COMPOSTER, min.getX(), i, min.getZ(), 1);
+                p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, i, min.getZ(), 1);
+                p.spawnParticle(Particle.COMPOSTER, min.getX(), i, max.getZ() + 1, 1);
+                p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, i, max.getZ() + 1, 1);
+            }
+            for (int i = min.getBlockZ(); i <= max.getBlockZ(); i++) {
+                p.spawnParticle(Particle.COMPOSTER, min.getX(), min.getY(), i, 1);
+                p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, min.getY(), i, 1);
+                p.spawnParticle(Particle.COMPOSTER, min.getX(), max.getY() + 1, i, 1);
+                p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, max.getY() + 1, i, 1);
+            }
+            for (int i = 0; i < 8; i++) {
+                double xOffset = min.getX() + 0.4 * Math.sin(i * Math.PI / 4);
+                double zOffset = min.getZ() + 0.4 * Math.cos(i * Math.PI / 4);
+                double yOffset = min.getY() + 0.05D;
+                spawnLocations.forEach((k, v) ->
+                        p.spawnParticle(Particle.REDSTONE, v.x + xOffset, v.y + yOffset,
+                                v.z + zOffset, 1, new Particle.DustOptions(k.getColor(), 1F)));
+                if (spectatorsOffset != null)
+                    p.spawnParticle(Particle.WAX_ON, spectatorsOffset.x + xOffset,
+                            spectatorsOffset.y + yOffset, spectatorsOffset.z + zOffset, 1);
+            }
+        }
+        if (timerTick % 60 == 0) { //every 15 seconds
+            new MessageComponent(Minigames.get(), getBuilder()).append(getRepeatedMessage()).send();
+        }
+    }
+
+    /*
     @Override
     public void onTimerCall() {
         Player p = getBuilder();
@@ -235,6 +340,6 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
                 p.spawnParticle(Particle.WAX_ON, spectatorsOffset.x + xOffset,
                         spectatorsOffset.y + yOffset, spectatorsOffset.z + zOffset, 1);
         }
-    }
+    }*/
 }
 

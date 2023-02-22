@@ -12,8 +12,6 @@ import emanondev.minigames.generic.Perms;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class JoinCommand extends CoreCommand {
 
@@ -45,8 +41,8 @@ public class JoinCommand extends CoreCommand {
         switch (args.length) {
             case 0 -> {
                 //TODO open a gui
-                Collection<MGame> values = GameManager.get().getGames().values();
-                values.removeIf((game)->game.getPhase()== MGame.Phase.STOPPED);
+                ArrayList<MGame> values = new ArrayList<>(GameManager.get().getGames().values());
+                values.removeIf((game) -> game.getPhase() == MGame.Phase.STOPPED);
                 if (values.isEmpty()) {
                     MessageUtil.sendMessage(player, "join.error.no_available_game");
                     return;
@@ -54,7 +50,7 @@ public class JoinCommand extends CoreCommand {
                 PagedListFGui<MGame> gui = new PagedListFGui<>(
                         getPlugin().getLanguageConfig(sender).loadMessage("join.gui_title", new ArrayList<>())
                         , 6, player, null, Minigames.get(),
-                        true,
+                        false,
                         (e, game) ->
                                 GameManager.get().joinGameAsGamer(player, game)
                         ,
@@ -64,9 +60,9 @@ public class JoinCommand extends CoreCommand {
             }
             case 1 -> {
                 MType type = MinigameTypes.get().getType(args[0]);
-                if (type!=null){
+                if (type != null) {
                     Collection<MGame> values = new ArrayList(GameManager.get().getGameInstances(type).values());
-                    values.removeIf((game)->game.getPhase()== MGame.Phase.STOPPED);
+                    values.removeIf((game) -> game.getPhase() == MGame.Phase.STOPPED);
                     if (values.isEmpty()) {
                         MessageUtil.sendMessage(player, "join.error.no_available_game");
                         return;
@@ -85,11 +81,11 @@ public class JoinCommand extends CoreCommand {
                 }
                 //
                 MGame game = GameManager.get().getGameInstance(args[0]);
-                if (game==null){
+                if (game == null) {
                     MessageUtil.sendMessage(player, "join.error.invalid_game_or_minigame", "%name%", game.getId());
                     return;
                 }
-                if (GameManager.get().joinGameAsGamer(player,game))
+                if (GameManager.get().joinGameAsGamer(player, game))
                     return;
                 MessageUtil.sendMessage(player, "join.error.game_not_available", "%name%", game.getId());
             }

@@ -71,7 +71,7 @@ public class MiniGameCommand extends CoreCommandPlus {
             MessageUtil.sendMessage(player, "minigame.create.error.invalid_arena_type", "%type%", args[1], "%arena%", args[2]);
             return;
         }
-        MOption option = OptionManager.get().getOption(args[3]);
+        MOption option = OptionManager.get().get(args[3]);
         if (option == null) {
             MessageUtil.sendMessage(player, "minigame.create.error.invalid_option_name", "%option%", args[3]);
             return;
@@ -118,7 +118,7 @@ public class MiniGameCommand extends CoreCommandPlus {
                 case "create" -> {
                     MType mtype = MinigameTypes.get().getType(args[1]);
                     yield mtype == null ? Collections.emptyList() :
-                            this.complete(args[3], OptionManager.get().getCompatibleOptions(mtype).keySet());
+                            this.complete(args[3], OptionManager.get().getCompatibles(mtype).keySet());
                 }
                 default -> Collections.emptyList();
             };

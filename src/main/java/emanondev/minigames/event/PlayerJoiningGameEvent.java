@@ -3,7 +3,6 @@ package emanondev.minigames.event;
 import emanondev.minigames.generic.MGame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +31,7 @@ public class PlayerJoiningGameEvent extends GameEvent implements Cancellable {
 
     /**
      * Note: if you cancel this event you should also handle a feedback for the player
+     *
      * @param cancelled
      */
     @Override

@@ -68,10 +68,10 @@ public class EggWarsOption extends AbstractMOption {
         ));
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.fillerselector", new ArrayList<>(), "%id%", FillerManager.get().getFiller(fillerId) == null ? "-none-" : fillerId,
-                        "%size%", FillerManager.get().getFiller(fillerId) == null ? "-" : String.valueOf(FillerManager.get().getFiller(fillerId).getElementsAmount()),
-                        "%min%", FillerManager.get().getFiller(fillerId) == null ? "-" : String.valueOf(FillerManager.get().getFiller(fillerId).getMinElements()),
-                        "%max%", FillerManager.get().getFiller(fillerId) == null ? "-" : String.valueOf(FillerManager.get().getFiller(fillerId).getMaxElements()))).build(),
+                        "minioption.buttons.fillerselector", new ArrayList<>(), "%id%", FillerManager.get().get(fillerId) == null ? "-none-" : fillerId,
+                        "%size%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getElementsAmount()),
+                        "%min%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getMinElements()),
+                        "%max%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getMaxElements()))).build(),
                 (String base, MFiller filler1) -> filler1.getId().toLowerCase().contains(base.toLowerCase()),
                 (InventoryClickEvent event, MFiller filler) -> {
                     fillerId = filler.getId().equals(fillerId) ? null : filler.getId();
@@ -83,7 +83,7 @@ public class EggWarsOption extends AbstractMOption {
                         "minioption.buttons.fillerdescription", new ArrayList<>(), "%id%", filler.getId(), "%size%", String.valueOf(filler.getElementsAmount()),
                         "%min%", String.valueOf(filler.getMinElements()), "%max%", String.valueOf(filler.getMaxElements())
                 )).build(),
-                () -> FillerManager.get().getFillers().values()));
+                () -> FillerManager.get().getAll().values()));
 
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
@@ -113,7 +113,7 @@ public class EggWarsOption extends AbstractMOption {
     }
 
     public @Nullable MFiller getFiller() {
-        return this.fillerId == null ? null : FillerManager.get().getFiller(this.fillerId);
+        return this.fillerId == null ? null : FillerManager.get().get(this.fillerId);
     }
 
     public @NotNull List<Kit> getKits() {

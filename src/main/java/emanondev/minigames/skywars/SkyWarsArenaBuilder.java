@@ -150,7 +150,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
                         case "next" -> {
                             if (spectatorsOffset != null) {
                                 MessageUtil.sendMessage(player, "skywars.arenabuilder.success.completed",
-                                        "%name%",getId());
+                                        "%name%", getId());
                                 //TODO
                                 ArenaManager.get().onArenaBuilderCompletedArena(this);
                                 return;

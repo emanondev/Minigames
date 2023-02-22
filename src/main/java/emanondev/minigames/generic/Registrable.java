@@ -16,6 +16,7 @@ public interface Registrable {
 
     /**
      * The id is null if this object is not registered
+     *
      * @return id
      */
     @Nullable

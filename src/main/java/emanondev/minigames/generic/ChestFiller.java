@@ -13,7 +13,6 @@ import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class ChestFiller implements MFiller {
 
     // private static final int MAX_FAILS = 3;
@@ -60,7 +60,7 @@ public class ChestFiller implements MFiller {
     }
 
     @Override
-    public @NotNull Gui editorGui(@NotNull Player player, @Nullable Gui previousGui) {
+    public @NotNull Gui getEditorGui(@NotNull Player player, @Nullable Gui previousGui) {
         //TODO edit the core
         final boolean[] showItem = {true};
 
@@ -123,28 +123,35 @@ public class ChestFiller implements MFiller {
     }
 
     @Override
+    public List<ItemStack> getDrops() {
+        ArrayList<ItemStack> list = new ArrayList<>();
+        int itemAttemps = amountMin + ((amountMax == amountMin) ? 0 : (int) (Math.random() * (amountMax - amountMin + 1)));
+        for (int i = 0; i < itemAttemps; i++)
+            list.add(items.getItem());
+        return list;
+    }
+
     public int getMinElements() {
         return amountMin;
     }
 
-    @Override
     public int getMaxElements() {
         return amountMax;
     }
 
-    @Override
     public int getElementsAmount() {
         return items.getItems().size();
     }
 
 
+    /*
     @Override
     public void fillInventory(@NotNull Inventory inv) {
         int itemAttemps = amountMin + ((amountMax == amountMin) ? 0 : (int) (Math.random() * (amountMax - amountMin + 1)));
         for (int i = 0; i < itemAttemps && i < inv.getSize(); i++)
             inv.setItem(i, items.getItem());
         //TODO flush ?
-    }
+    }*/
 
 
     private String id = null;

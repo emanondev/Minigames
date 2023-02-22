@@ -2,7 +2,6 @@ package emanondev.minigames.generic;
 
 import emanondev.core.ItemBuilder;
 import emanondev.core.SoundInfo;
-import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.PagedListFGui;
@@ -32,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O extends MOption> implements MGame<T, A, O>, Listener {
+public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O extends MOption> extends ARegistrable implements MGame<T, A, O>, Listener {
 
     private final Objective objective;
     private int collectingPlayersCountdown = -1;
@@ -53,7 +52,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @SuppressWarnings("unchecked")
     public AbstractMGame(@NotNull Map<String, Object> map) {
         this.optionId = (String) map.get("option");
-        this.option = (O) OptionManager.get().getOption(optionId);
+        this.option = (O) OptionManager.get().get(optionId);
         this.arenaId = (String) map.get("arena");
         this.arena = (A) ArenaManager.get().getArena(arenaId);
 
@@ -230,6 +229,32 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
+    private final HashSet<String> scores = new HashSet<>();
+
+    @Override
+    public void setScore(String score, int value) {
+        objective.getScore(score).setScore(value);
+        scores.add(score);
+    }
+
+
+    @Override
+    public int getScore(String score) {
+        return objective.getScore(score).getScore();
+    }
+
+    @Override
+    public void resetScore(String score) {
+        scoreboard.resetScores(score);
+        scores.remove(score);
+    }
+
+    @Override
+    public void resetScores() {
+        for (String score : scores)
+            scoreboard.resetScores(score);
+    }
+
     @Override
     public void gameStart() {
         MessageUtil.debug(getId() + " gameStart");
@@ -242,7 +267,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         VaultEconomyHandler ecoHandler = new VaultEconomyHandler();
         for (Player player : getGamers()) {
             if (kitPreference.containsKey(player)) {
-                Kit kit = KitManager.get().getKit(kitPreference.get(player));
+                Kit kit = KitManager.get().get(kitPreference.get(player));
                 if (kit == null) {
                     //TODO apply default kit
                 } else {
@@ -274,6 +299,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             throw new IllegalStateException();
         getGamers().forEach(player -> MessageUtil.sendMessage(player, "skywars.game.game_end"));//TODO
         endCountdown = getOption().getEndPhaseCooldownMax();
+        resetScores();
         this.phase = Phase.END;
     }
 
@@ -529,26 +555,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Nullable
     public World getWorld() {
         return this.loc == null ? null : this.loc.getWorld();
-    }
-
-    private String id = null;
-
-    public final boolean isRegistered() {
-        return id != null;
-    }
-
-    public final void setRegistered(@NotNull String id) {
-        if (!UtilsString.isLowcasedValidID(id))
-            throw new IllegalStateException();
-        this.id = id;
-    }
-
-    public final String getId() {
-        return id;
-    }
-
-    public final void setUnregister() {
-        id = null;
     }
 
     @Override

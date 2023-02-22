@@ -3,8 +3,9 @@ package emanondev.minigames;
 import emanondev.core.CorePlugin;
 import emanondev.core.Hooks;
 import emanondev.minigames.command.*;
-import emanondev.minigames.compability.MinigamePlaceHolders;
+import emanondev.minigames.compability.MinigamePlaceholders;
 import emanondev.minigames.generic.ChestFiller;
+import emanondev.minigames.generic.DropGroup;
 import emanondev.minigames.generic.MGame;
 import emanondev.minigames.locations.BlockLocation2D;
 import emanondev.minigames.locations.BlockLocation3D;
@@ -43,6 +44,7 @@ public final class Minigames extends CorePlugin {
     @Override
     public void enable() {
         registerConfigurationSerializables();
+        new DropGroupManager();
         new KitManager();
         new FillerManager();
         new ArenaManager();
@@ -52,14 +54,26 @@ public final class Minigames extends CorePlugin {
 
         new MinigameTypes();
 
+        DropGroupManager.get().reload();
         KitManager.get().reload();
         FillerManager.get().reload();
         ArenaManager.get().reload();
         OptionManager.get().reload();
         GameManager.get().reload();
 
+        registerCommands();
+
+        this.registerCommand(new TestCommand());
+
+        if (Hooks.isPAPIEnabled())
+            new MinigamePlaceholders().register();
+
+    }
+
+    private void registerCommands() {
         this.registerCommand(new MiniKitCommand());
-        this.registerCommand(new MiniFillerCommand());
+        this.registerCommand(new MiniDropGroupCommand());
+        this.registerCommand(new MiniDropsFillerCommand());
         this.registerCommand(new ArenaBuilderCommand());
         this.registerCommand(new MiniOptionCommand());
         this.registerCommand(new MiniGameCommand());
@@ -67,10 +81,6 @@ public final class Minigames extends CorePlugin {
         this.registerCommand(new JoinCommand());
         this.registerCommand(new LeaveCommand());
         this.registerCommand(new SnapshotSupportCommand());
-
-        if (Hooks.isPAPIEnabled())
-            new MinigamePlaceHolders().register();
-
     }
 
     private void registerConfigurationSerializables() {
@@ -79,6 +89,7 @@ public final class Minigames extends CorePlugin {
         ConfigurationSerialization.registerClass(BlockLocationOffset3D.class);
         ConfigurationSerialization.registerClass(LocationOffset3D.class);
         ConfigurationSerialization.registerClass(Kit.class);
+        ConfigurationSerialization.registerClass(DropGroup.class);
         ConfigurationSerialization.registerClass(ChestFiller.class);
 
         //Commands

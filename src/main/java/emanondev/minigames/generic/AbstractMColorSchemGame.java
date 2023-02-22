@@ -3,6 +3,7 @@ package emanondev.minigames.generic;
 import com.sk89q.worldedit.math.BlockVector3;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.MessageUtil;
+import emanondev.minigames.Minigames;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -53,13 +54,11 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             if (isSquared) {
                 bordersId.put(player, 0);
                 player.setWorldBorder(borders.get(0));
-                MessageUtil.debug(getId() + " aggiornato box per " + player.getName());
                 return;
             }
             int closest = getClosestBorder(player.getLocation().toVector());
             bordersId.put(player, closest);
             player.setWorldBorder(borders.get(closest));
-            MessageUtil.debug(getId() + " aggiornato box per " + player.getName());
             return;
         }
         if (isSquared)
@@ -69,7 +68,6 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             return;
         bordersId.put(player, closest);
         player.setWorldBorder(borders.get(closest));
-        MessageUtil.debug(getId() + " aggiornato box per " + player.getName());
     }
 
     public AbstractMColorSchemGame(@NotNull Map<String, Object> map) {
@@ -129,22 +127,22 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
                 box.getMaxX(), box.getMinY() - 1, box.getMaxZ());
         above.expand(CLEAR_MARGIN, 0, CLEAR_MARGIN);
         below.expand(CLEAR_MARGIN, 0, CLEAR_MARGIN);
-        WorldEditUtility.clearArea(getWorld(), above);
-        WorldEditUtility.clearArea(getWorld(), below);
+        WorldEditUtility.pasteAir(above, getWorld(), true, Minigames.get());
+        WorldEditUtility.pasteAir(below, getWorld(), true, Minigames.get());
         BoundingBox side1 = new BoundingBox(box.getMinX(), box.getMinY(), box.getMinZ() - 1,
                 box.getMaxX(), box.getMaxY(), box.getMinZ() - CLEAR_MARGIN);
         BoundingBox side2 = new BoundingBox(box.getMinX(), box.getMinY(), box.getMaxZ(),
                 box.getMaxX(), box.getMaxY(), box.getMaxZ() + CLEAR_MARGIN);
         side1.expand(CLEAR_MARGIN, 0, 0);
         side2.expand(CLEAR_MARGIN, 0, 0);
-        WorldEditUtility.clearArea(getWorld(), side1);
-        WorldEditUtility.clearArea(getWorld(), side2);
-        side1 = new BoundingBox(box.getMinX() - 1, box.getMinY(), box.getMinZ(),
+        WorldEditUtility.pasteAir(side1, getWorld(), true, Minigames.get());
+        WorldEditUtility.pasteAir(side2, getWorld(), true, Minigames.get());
+        BoundingBox side3 = new BoundingBox(box.getMinX() - 1, box.getMinY(), box.getMinZ(),
                 box.getMinX() - CLEAR_MARGIN, box.getMaxY(), box.getMaxZ());
-        side2 = new BoundingBox(box.getMaxX(), box.getMinY(), box.getMinZ(),
+        BoundingBox side4 = new BoundingBox(box.getMaxX(), box.getMinY(), box.getMinZ(),
                 box.getMaxX() + CLEAR_MARGIN, box.getMaxY(), box.getMaxZ());
-        WorldEditUtility.clearArea(getWorld(), side1);
-        WorldEditUtility.clearArea(getWorld(), side2);
+        WorldEditUtility.pasteAir(side3, getWorld(), true, Minigames.get());
+        WorldEditUtility.pasteAir(side4, getWorld(), true, Minigames.get());
     }
 
     @Override

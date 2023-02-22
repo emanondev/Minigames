@@ -92,44 +92,6 @@ minigame:
     list_text: "&9/%label% list"
     list_hover:
       - "&6Shows info about games"
-minikit:
-  help:
-    create_text: "&9/%label% create &b<id>"
-    create_hover:
-      - "&6Create a new Kit"
-    update_text: "&9/%label% update &b<id>"
-    update_hover:
-      - "&6Update an existing Kit"
-    delete_text: "&9/%label% delete &b<id>"
-    delete_hover:
-      - "&6Delete an existing Kit"
-    apply_text: "&9/%label% apply &b<id> [player]"
-    apply_text_console: "&9/%label% apply &b<id> <player>"
-    apply_hover:
-      - "&6Load an existing Kit on player"
-    list_text: "&9/%label% list"
-    list_hover:
-      - "&6Shows all the Kits"
-  success:
-    create: "&a[MiniKit] Hai creato il kit &e%id%"
-    apply: "&a[MiniKit] caricato il kit &e%id% &asu &e%player%"
-    update: "&a[MiniKit] Hai aggiornato il kit &e%id%"
-    delete: "&a[MiniKit] Hai eliminato il kit &e%id%"
-    list_color_1: "&b"
-    list_color_2: "&9"
-    list_text: "%id% "
-    list_hover: "&6Clicca per caricare"
-    list_suggest: "/%label% load %id% %player%"
-    list_no_kits: "&a[MiniKit] Non ci sono kit salvati"
-  error:
-    create_arguments_amount: "&c[MiniKit] /%label% create <id>"
-    already_used_id: "&c[MiniKit] L'id &6%id% &cè già in uso"
-    apply_arguments_amount: "&c[MiniKit] /%label% apply <id> [player]"
-    apply_target_offline: "&c[MiniKit] il giocatore &6%player% &cè offline"
-    apply_target_required: "&c[MiniKit] /%label% apply <id> <player>"
-    unexisting_id: "&c[MiniKit] Il kit &6%id% &cnon è presente"
-    update_arguments_amount: "&c[MiniKit] /%label% update <id>"
-    delete_arguments_amount: "&c[MiniKit] /%label% delete <id>"
 minifiller:
   error:
     invalid_id: "&c[MiniFiller] &6%id% &cnon è id valido"
@@ -288,4 +250,125 @@ leave:
     not_inside_game: "&c[Leave] Non sei in una partita"
   success:
     message: "&a[Leave] Hai abbandonato la partita"
+###
 
+minikit:
+  error:
+    create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id></hover>"
+    id_already_used: "<hover:show_text:'<#e060de>Scegli un <#fab66e><id></#fab66e> che non sia già utilizzato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> è già in uso</hover>"
+    invalid_id: "<hover:show_text:\"<#e060de>L'<#fab66e><id></#fab66e> dev'essere una stringa di\ncaratteri numeri e/o trattini bassi\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non è valido</hover>"
+    id_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><id></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non esiste</hover>"
+    delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
+    update_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% update <#fab66e><id></hover>"
+    apply_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% apply <#fab66e><id> [player]</hover>"
+    apply_target_offline: "<hover:show_text:\"<#e060de>Il <#fab66e>[player]</#fab66e> non è online\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Il player <#fab66e>%target%</#fab66e> non è online</hover>"
+    apply_target_required: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Devi specificare un giocatore"
+    price_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% price <#fab66e><id> <amount></hover>"
+    invalid_price: "<hover:show_text:\"<#e060de>Il <#fab66e><price></#fab66e> dev'essere numero\nmaggiore o uguale a 0\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Il price <#fab66e>%price%</#fab66e> non è valido</hover>"
+  help:
+    - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniKit</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare\ni kit di gioco (Kit)'><#fab787>[?]</hover>"
+    - "<hover:show_text:\"<#acfad1>Crea un nuovo Kit\nRegistrerà gli oggetti che stai indossando\n<#ffffb3><id><#acfad1> è l'id del Kit\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Aggiorna il Kit\nRegistrerà gli oggetti che stai indossando\n<#ffffb3><id><#acfad1> è l'id del Kit\"><click:suggest_command:'/%alias% update '><#4079ff>/%alias% <#57c9fa>update <#ffffb3><id></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Applica il Kit\nequipaggia il kit\n<#ffffb3><id><#acfad1> è l'id del Kit\n<#ffffb3>[player]<#acfad1> è il giocatore su cui caricare\"><click:suggest_command:'/%alias% apply '><#4079ff>/%alias% <#57c9fa>apply <#ffffb3><id> [player]</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Imposta il prezzo del Kit\n<#ffffb3><id><#acfad1> è l'id del Kit\n<#ffffb3><price><#acfad1> è il costo\"><click:suggest_command:'/%alias% price '><#4079ff>/%alias% <#57c9fa>price <#ffffb3><id> <price></click></hover>"
+    - "<hover:show_text:'<#acfad1>Mostra la lista dei Kit esistenti'><click:run_command:'/%alias% list'><#4079ff>/%alias% <#57c9fa>list</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Elimina il Kit\n<#ffffb3><id><#acfad1> è l'id del Kit\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
+  success:
+    create: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Nuovo Kit <#ffffb3>%id%</#ffffb3> creato"
+    update: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Kit <#ffffb3>%id%</#ffffb3> aggiornato"
+    price: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Prezzo impostato a <#ffffb3>%price%</#ffffb3> per il Kit <#ffffb3>%id%</#ffffb3>"
+    delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Kit <#ffffb3>%id%</#ffffb3> eliminato"
+    list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniKit Lista Kit</b></gradient>"
+    list_info:
+      - "<#57c9fa><#ffffb3><b>%id%</b></#ffffb3>"
+      - "Il Kit costa <#ffffb3>%price%</#ffffb3>"
+      - ""
+      - "<#ffffb3>Clicca per caricare su te stesso"
+minidropsfiller:
+  error:
+    create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id></hover>"
+    id_already_used: "<hover:show_text:'<#e060de>Scegli un <#fab66e><id></#fab66e> che non sia già utilizzato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> è già in uso</hover>"
+    invalid_id: "<hover:show_text:\"<#e060de>L'<#fab66e><id></#fab66e> dev'essere una stringa di\ncaratteri numeri e/o trattini bassi\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non è valido</hover>"
+    id_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><id></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non esiste</hover>"
+    gui_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% gui <#fab66e><id></hover>"
+    delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
+  help:
+    - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniDropsFiller</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare\ni generatori di drop (Filler)'><#fab787>[?]</hover>"
+    - "<hover:show_text:\"<#acfad1>Crea un nuovo Filler\n<#ffffb3><id><#acfad1> è l'id del Filler\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Apre una comoda gui per modificare\nil Filler selezionato\n<#ffffb3><id><#acfad1> è l'id del Filler\"><click:suggest_command:'/%alias% gui '><#4079ff>/%alias% <#57c9fa>gui <#ffffb3><id></click></hover>"
+    - "<hover:show_text:'<#acfad1>Mostra la lista dei Filler esistenti'><click:run_command:'/%alias% list'><#4079ff>/%alias% <#57c9fa>list</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Elimina il Filler\n<#ffffb3><id><#acfad1> è l'id del Filler\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
+  success:
+    create: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Nuovo Filler <#ffffb3>%id%</#ffffb3> creato"
+    delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Filler <#ffffb3>%id%</#ffffb3> eliminato"
+    list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniDropsFiller Lista Filler</b></gradient>"
+    list_info:
+      - "<#57c9fa><#ffffb3><b>%id%</b></#ffffb3>"
+      - "Contiene <#ffffb3>%size%</#ffffb3> Drop"
+      - ""
+      - "<#ffffb3>Clicca per vedere e modificare"
+  gui:
+    title: "<#4079ff>Filler <#57c9fa><b>%id%"
+    clear:
+      - "<#4079ff>Pulisci"
+      - "<#57c9fa>Rimuove definitivamente tutti i Drop che hanno probabilità 0"
+    add_group:
+      - "<#4079ff>Aggiungi"
+      - "<#57c9fa>Aggiunge un nuovo Drop"
+    group_selector:
+      - "<#4079ff>Seleziona <#ffffb3>%id%"
+      - "<#57c9fa>Aggiunge il Drop <#ffffb3>%id%"
+      - ""
+      - "<#57c9fa>Contiene <#ffffb3>%drops_size% <#57c9fa>oggetti"
+    group_info:
+      - "<#4079ff>Drop <#ffffb3>%id%"
+      - "<#57c9fa>Ha una probabilità del <#ffffb3>%chance% <#57c9fa>% di generare un oggetto"
+
+minidropgroup:
+  error:
+    create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id></hover>"
+    id_already_used: "<hover:show_text:'<#e060de>Scegli un <#fab66e><id></#fab66e> che non sia già utilizzato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> è già in uso</hover>"
+    invalid_id: "<hover:show_text:\"<#e060de>L'<#fab66e><id></#fab66e> dev'essere una stringa di\ncaratteri numeri e/o trattini bassi\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non è valido</hover>"
+    addhand_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% addhand <#fab66e><id> [weight]</hover>"
+    no_item_in_hand: "<hover:show_text:\"<#e060de>Tieni nella mano principale l'oggetto da aggiungere\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non hai un oggetto in mano</hover>"
+    id_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><id></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non esiste</hover>"
+    invalid_weight: "<hover:show_text:\"<#e060de>Usa un numero intero\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> il peso <#fab66e>%weight%</#fab66e> non è valido</hover>"
+    null_weight: "<hover:show_text:\"<#e060de>Non puoi impostare il peso a 0\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> il peso è nullo</hover>"
+    addchest_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% addchest <#fab66e><id> [weight]</hover>"
+    not_looking_to_container: "<hover:show_text:\"<#e060de>Devi guardare un contenitore\nTip: prova ad avvicinarti\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non stai guardando un blocco contenitore</hover>"
+    empty_container: "<hover:show_text:\"<#e060de>Metti degli oggetti al suo interno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Il contenitore è vuoto!</hover>"
+    gui_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% gui <#fab66e><id></hover>"
+    delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
+  help:
+    - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniDropGroup</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare i singoli\ndrop di eventuali casse o premi nei minigame (Drop)'><#fab787>[?]</hover>"
+    - "<hover:show_text:\"<#acfad1>Crea un nuovo Drop\n<#ffffb3><id><#acfad1> è l'id del Drop\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Aggiungi l'oggetto che hai in mano a Drop\n<#ffffb3><id><#acfad1> è l'id del Drop\n<#ffffb3>[weight]<#acfad1> è il peso dell'oggetto\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>addhand <#ffffb3><id> [weight=10]</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Aggiungi tutti gli oggetti contenuti nella\ncassa che stai guardando\n<#ffffb3><id><#acfad1> è l'id del Drop\n<#ffffb3>[weight]<#acfad1> è il peso degli oggetti\"><click:suggest_command:'/%alias% addchest '><#4079ff>/%alias% <#57c9fa>addchest <#ffffb3><id> [weight=10]</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Apre una comoda gui per modificare\nil Drop selezionato\n<#ffffb3><id><#acfad1> è l'id del Drop\"><click:suggest_command:'/%alias% gui '><#4079ff>/%alias% <#57c9fa>gui <#ffffb3><id></click></hover>"
+    - "<hover:show_text:'<#acfad1>Mostra la lista dei Drop esistenti'><click:run_command:'/%alias% list'><#4079ff>/%alias% <#57c9fa>list</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Elimina il Drop\n<#ffffb3><id><#acfad1> è l'id del Drop\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
+
+  success:
+    create: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Nuovo Drop <#ffffb3>%id%</#ffffb3> creato"
+    delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Drop <#ffffb3>%id%</#ffffb3> eliminato"
+    addhand: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>L'oggetto nella tua mano ha ora un peso di <#ffffb3>%weight%</#ffffb3> nel Drop <#ffffb3>%id%</#ffffb3>"
+    addchest: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa><#ffffb3>%items%</#ffffb3> oggetti sono stati aggiunti con un peso di <#ffffb3>%weight%</#ffffb3> nel Drop <#ffffb3>%id%</#ffffb3>"
+    list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniDropGroup Lista Drop</b></gradient>"
+    list_info:
+      - "<#57c9fa><#ffffb3><b>%id%</b></#ffffb3>"
+      - "Contiene <#ffffb3>%items_size%</#ffffb3> oggetti"
+      - ""
+      - "<#ffffb3>Clicca per vedere e modificare"
+  gui:
+    title: "<#4079ff>Drop <#57c9fa><b>%id%"
+    chance_info:
+      - "<#4079ff>Modificatore del Peso:"
+      - "<#57c9fa>Il peso è <#ffffb3>%weight%</#ffffb3> (<#ffffb3>%chance%</#ffffb3> % di essere pescato)"
+    info:
+      - "<#4079ff><b>Info</b>"
+      - "<#57c9fa>Quelli che vedi sono gli oggetti con le"
+      - "<#57c9fa>rispettive probabilità di essere pescati"
+      - "<#57c9fa>Qui puoi modificare i pesi"
+      - ""
+      - "<#57c9fa>Per aggiungere nuovi oggetti devi invece usare:"
+      - "<#ffffb3>/minidropgroup addhand %id%</#ffffb3><#57c9fa> o </#57c9fa><#ffffb3>/minidropgroup addchest %id%"

@@ -96,6 +96,7 @@ public abstract class MArenaBuilder {
     /**
      * Timer Runnable call
      * Note: this funcion is called 4 times each second (every 5 game ticks)
+     *
      * @param timerTick increasing value
      */
     public abstract void onTimerCall(int timerTick);

@@ -134,11 +134,11 @@ public class GameManager implements Listener, ConsoleLogger {
         if (save)
             save(game);
         logTetraStar(ChatColor.DARK_RED, "D Registered Game &e" + id + "&f of type &e" + game.getMinigameType().getType()
-                +"&f at location &e"+game.getGameLocation().toString().replace(":"," ")
-                +(game.getArena() instanceof MSchemArena mArena ? " to "+
-                (game.getGameLocation().x+mArena.getSchematic().getDimensions().getBlockX())+" "
-                +(game.getGameLocation().y+mArena.getSchematic().getDimensions().getBlockY())+" "+
-                (game.getGameLocation().z+mArena.getSchematic().getDimensions().getBlockZ()):""));
+                + "&f at location &e" + game.getGameLocation().toString().replace(":", " ")
+                + (game.getArena() instanceof MSchemArena mArena ? " to " +
+                (game.getGameLocation().x + mArena.getSchematic().getDimensions().getBlockX()) + " "
+                + (game.getGameLocation().y + mArena.getSchematic().getDimensions().getBlockY()) + " " +
+                (game.getGameLocation().z + mArena.getSchematic().getDimensions().getBlockZ()) : ""));
     }
 
     public void save(@SuppressWarnings("rawtypes") @NotNull MGame mGame) {
@@ -153,6 +153,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     /**
      * Generate a new Location for selected arena on selected world
+     *
      * @param arena
      * @param world
      * @return
@@ -185,8 +186,8 @@ public class GameManager implements Listener, ConsoleLogger {
             BlockVector3 dim = clip.getDimensions();
             //TODO eventually move the y
             BoundingBox box = new BoundingBox(
-                    loc.x , loc.y , loc.z , //loc.x + min.getX(), loc.y + min.getY(), loc.z + min.getZ(),
-                    loc.x + dim.getX(), loc.y +  dim.getY(), loc.z + dim.getZ()); //loc.x + min.getX() + dim.getX(), loc.y + min.getY() + dim.getY(), loc.z + min.getZ() + dim.getZ());
+                    loc.x, loc.y, loc.z, //loc.x + min.getX(), loc.y + min.getY(), loc.z + min.getZ(),
+                    loc.x + dim.getX(), loc.y + dim.getY(), loc.z + dim.getZ()); //loc.x + min.getX() + dim.getX(), loc.y + min.getY() + dim.getY(), loc.z + min.getZ() + dim.getZ());
             box.expand(528); //32+1 chunk (528)
 
             for (@SuppressWarnings("rawtypes") MGame game : games.values()) {
@@ -198,14 +199,14 @@ public class GameManager implements Listener, ConsoleLogger {
                     //logInfo("Debug -> min "+min2.getX()+" "+min2.getY()+" "+min2.getZ());
                     BlockVector3 dim2 = clip2.getDimensions();
                     BlockLocation3D loc2 = game.getGameLocation();
-                    logTetraStar(ChatColor.DARK_RED, "D Box1  &e"+ box.getMinX()+ " "+ box.getMinY()+ " "+ box.getMinZ()+ " to "+ box.getMaxX()+ " "+ box.getMaxY()+ " "+ box.getMaxZ()
-                           );
+                    logTetraStar(ChatColor.DARK_RED, "D Box1  &e" + box.getMinX() + " " + box.getMinY() + " " + box.getMinZ() + " to " + box.getMaxX() + " " + box.getMaxY() + " " + box.getMaxZ()
+                    );
 
                     BoundingBox box2 = new BoundingBox(
-                            loc2.x , loc2.y , loc2.z ,
-                            loc2.x  + dim2.getX(), loc2.y  + dim2.getY(), loc2.z  + dim2.getZ());
+                            loc2.x, loc2.y, loc2.z,
+                            loc2.x + dim2.getX(), loc2.y + dim2.getY(), loc2.z + dim2.getZ());
 
-                    logTetraStar(ChatColor.DARK_RED, "D Box2  &e"+ box2.getMinX()+ " "+ box2.getMinY()+ " "+ box2.getMinZ()+ " to "+ box2.getMaxX()+ " "+ box2.getMaxY()+ " "+ box2.getMaxZ()
+                    logTetraStar(ChatColor.DARK_RED, "D Box2  &e" + box2.getMinX() + " " + box2.getMinY() + " " + box2.getMinZ() + " to " + box2.getMaxX() + " " + box2.getMaxY() + " " + box2.getMaxZ()
                     );
                     if (box.overlaps(box2))
                         return false;
@@ -241,6 +242,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     /**
      * Returns the Game the player is currently on
+     *
      * @param player
      * @return the Game the player is currently on
      */
@@ -267,7 +269,7 @@ public class GameManager implements Listener, ConsoleLogger {
         }
         for (MGame game : gameList)
             if (game.joinGameAsGamer(player)) {
-                Bukkit.getPluginManager().callEvent(new PlayerJoinedGameEvent(game,player));
+                Bukkit.getPluginManager().callEvent(new PlayerJoinedGameEvent(game, player));
                 logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
                 playerGames.put(player, game);
                 //MessageUtil.debug(game.getScoreboard().);
@@ -283,7 +285,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @SuppressWarnings("rawtypes")
     public boolean joinGameAsGamer(Player player, MGame game) {
-        return this.joinGameAsGamer(player,List.of(game));/*
+        return this.joinGameAsGamer(player, List.of(game));/*
         MGame gameOld = getGame(player);
 
         if (gameOld != null)
@@ -316,7 +318,7 @@ public class GameManager implements Listener, ConsoleLogger {
             playerBoards.put(player, player.getScoreboard());
         }
         if (game.joinGameAsSpectator(player)) {
-            Bukkit.getPluginManager().callEvent(new PlayerSpectateGameEvent(game,player));
+            Bukkit.getPluginManager().callEvent(new PlayerSpectateGameEvent(game, player));
             logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game (as specatator) &e" + game.getId());
             playerGames.put(player, game);
             player.setScoreboard(game.getScoreboard());
@@ -339,7 +341,7 @@ public class GameManager implements Listener, ConsoleLogger {
         //TODO debug remove invisible maybe useless
         //player.setInvisible(false);
         player.setScoreboard(playerBoards.remove(player));
-        Bukkit.getPluginManager().callEvent(new PlayerQuitGameEvent(game,player));
+        Bukkit.getPluginManager().callEvent(new PlayerQuitGameEvent(game, player));
         logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());
     }
 
@@ -567,6 +569,6 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @Override
     public void log(String s) {
-        Minigames.get().log("(GameManager) "+s);
+        Minigames.get().log("(GameManager) " + s);
     }
 }

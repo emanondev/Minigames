@@ -41,12 +41,12 @@ public class MiniOptionCommand extends CoreCommandPlus {
                         MessageUtil.sendMessage(player, "minioption.error.invalid_id", "%id%", args[2]);
                         return;
                     }
-                    if (OptionManager.get().getOption(id) != null) {
+                    if (OptionManager.get().get(id) != null) {
                         MessageUtil.sendMessage(player, "minioption.error.already_used_id", "%id%", args[2]);
                         return;
                     }
                     MOption option = type.createDefaultOptions();
-                    OptionManager.get().registerOption(id, option, player);
+                    OptionManager.get().register(id, option, player);
                     OptionManager.get().save(option);
                     option.openEditor(player);
                 }, (sender, label, args) ->
@@ -65,7 +65,7 @@ public class MiniOptionCommand extends CoreCommandPlus {
                         return;
                     }
                     String id = args[1].toLowerCase();
-                    MOption options = OptionManager.get().getOption(id);
+                    MOption options = OptionManager.get().get(id);
                     if (options == null) {
                         MessageUtil.sendMessage(player, "minioption.error.unexisting_id",
                                 "%id%", args[1]);
@@ -73,7 +73,7 @@ public class MiniOptionCommand extends CoreCommandPlus {
                     }
                     options.openEditor(player);
                 }, (sender, label, args) ->
-                        args.length == 2 ? UtilsCommand.complete(args[1], OptionManager.get().getOptions().keySet())
+                        args.length == 2 ? UtilsCommand.complete(args[1], OptionManager.get().getAll().keySet())
                                 : Collections.emptyList()
 
         );
@@ -99,7 +99,7 @@ public class MiniOptionCommand extends CoreCommandPlus {
 
     private void list(CommandSender who, String label, String[] args) {
         who.sendMessage(ChatColor.GOLD + "Incomplete command"); //TODO
-        for (MOption option : OptionManager.get().getOptions().values()) {
+        for (MOption option : OptionManager.get().getAll().values()) {
             who.sendMessage(ChatColor.GOLD + option.getId());
         }
     }
@@ -137,7 +137,7 @@ public class MiniOptionCommand extends CoreCommandPlus {
             case 1 -> UtilsCommand.complete(args[0], List.of("create", "edit"));
             case 2 -> switch (args[0].toLowerCase()) {
                 case "create" -> UtilsCommand.complete(args[1], MinigameTypes.get().getTypes(), MType::getType, (t) -> true);
-                case "edit" -> UtilsCommand.complete(args[1], OptionManager.get().getOptions().keySet());
+                case "edit" -> UtilsCommand.complete(args[1], OptionManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             default -> Collections.emptyList();

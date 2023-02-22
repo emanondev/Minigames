@@ -7,21 +7,26 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 import java.util.List;
 
 public interface MFiller extends Registrable, ConfigurationSerializable {
-    void fillInventory(@NotNull Inventory inv);
+    default void fillInventory(@NotNull Inventory inv) {
+        inv.addItem(getDrops().toArray(new ItemStack[0]));
+    }
 
-    void addItems(@NotNull List<ItemStack> items, @Range(from = 1L, to = Integer.MAX_VALUE) int weight);
+    //void addItems(@NotNull List<ItemStack> items, @Range(from = 1L, to = Integer.MAX_VALUE) int weight);
 
     @NotNull
-    Gui editorGui(@NotNull Player player, @Nullable Gui previousGui);
+    default Gui getEditorGui(@NotNull Player player) {
+        return getEditorGui(player, null);
+    }
 
-    int getMinElements();
+    @NotNull
+    Gui getEditorGui(@NotNull Player player, @Nullable Gui previousGui);
 
-    int getMaxElements();
+    @NotNull
+    List<ItemStack> getDrops();
 
-    int getElementsAmount();
+    String[] getPlaceholders();
 }

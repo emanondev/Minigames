@@ -8,7 +8,10 @@ import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.generic.MFiller;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -57,8 +60,11 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             PlayerStat.GAME_PLAYED.add(player, 1);
         }
         GameStat.PLAY_TIMES.add(this, 1);
-        getTeams().forEach(team -> team.setScore(team.hasLost() ? -1 : 0));
+        getTeams().forEach(team -> {
+            if (!team.hasLost()) setScore(team.getName(), 0);
+        });
     }
+
 
     /**
      * Assign a party to user or throw an exception
@@ -218,14 +224,14 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     @Override
     public void onGamerHitByProjectile(ProjectileHitEvent event) {
-        if (event.getEntity() instanceof Snowball){ //adds push
-            if(!getPhase().equals(Phase.PLAYING))
+        if (event.getEntity() instanceof Snowball) { //adds push
+            if (!getPhase().equals(Phase.PLAYING))
                 return;
             if (event.getEntity().getShooter() instanceof Player launcher &&
                     getTeam(launcher).equals(getTeam((Player) event.getHitEntity())))
                 return;
             double push = getMinigameType().getSnowballPush();
-            if (push!=0)
+            if (push != 0)
                 event.getHitEntity().setVelocity(event.getEntity().getVelocity().normalize().multiply(push));
         }
     }
@@ -291,14 +297,14 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         SkyWarsTeam team = getTeam(player);
         switchToSpectator(player);
         if (team != null && team.hasLost())
-            team.setScore(-1);
+            setScore(team.getName(), -1);
         if (killer != null && isGamer(killer)) {
             PlayerStat.SKYWARS_KILLS.add(killer, 1);
             getMinigameType().applyKillPoints(killer);
             //TODO prize?
             team = getTeam(killer);
             if (team != null)
-                team.addScore(1);
+                addScore(team.getName(), 1);
         }
         checkGameEnd();
     }

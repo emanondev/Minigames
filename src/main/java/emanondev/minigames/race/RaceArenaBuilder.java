@@ -5,21 +5,23 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsCommand;
+import emanondev.core.YMLSection;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
+import emanondev.minigames.UtilColor;
 import emanondev.minigames.generic.SchematicArenaBuilder;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
@@ -38,11 +40,49 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         super(user, id);
     }
 
+    private static final int PHASE_SELECT_AREA = 1;
+    private static final int PHASE_SET_TEAM_SPAWNS = 2;
+    private static final int PHASE_SET_TEAM_SPAWNS_OR_NEXT = 3;
+    private static final int PHASE_SET_SPECTATOR_SPAWN = 4;
+    private static final int PHASE_SET_SPECTATOR_SPAWN_OR_NEXT = 5;
+
+
+    @Override
+    protected void onPhaseStart() {
+
+    }
+
+    @Override
+    public @NotNull String getCurrentBossBarMessage() {
+        return Minigames.get().getLanguageConfig(getBuilder()).getString("skywars.arenabuilder.bossbar.phase" + getPhase(), "");
+    }
+
+    @Override
+    public @NotNull String getRepeatedMessage() {
+        return switch (getPhase()) {
+            case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
+                YMLSection sect = Minigames.get().getLanguageConfig(getBuilder()).loadSection("skywars.arenabuilder.repeatmessage");
+                StringBuilder teamSet = new StringBuilder();
+                for (DyeColor color : DyeColor.values())
+                    if (!spawnLocations.containsKey(color))
+                        teamSet.append(sect.loadMessage("setteamcolor", "", (CommandSender) null, "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color)));
+                StringBuilder teamDelete = new StringBuilder();
+                for (DyeColor color : spawnLocations.keySet())
+                    teamDelete.append(sect.loadMessage("deleteteamcolor", "", (CommandSender) null, "%color%", color.name()));
+                yield sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
+                        , "%setteamsspawn%", teamSet.toString()
+                        , "%deleteteamsspawn%", teamDelete.toString());
+            }
+            default -> Minigames.get().getLanguageConfig(getBuilder()).getString("skywars.arenabuilder.repeatmessage.phase" + getPhase(), "");
+        };
+    }
+
+    /*
     @Override
     @Nullable
     public String getCurrentActionMessage() {
         return Minigames.get().getLanguageConfig(getBuilder()).getString("race.arenabuilder.actionbar.phase" + phase);
-    }
+    }*/
 
     @Override
     public void handleCommand(@NotNull Player player, @NotNull String[] args) {
@@ -50,7 +90,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             MessageUtil.sendMessage(player, "race.arenabuilder.error.unknown_action");
             return;
         }
-        switch (phase) {
+        switch (getPhase()) {
             case 1 -> {
                 if (!args[0].equalsIgnoreCase("selectarea")) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.error.unknown_action");
@@ -67,7 +107,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             "%z1%", String.valueOf((int) getArea().getMinZ()),
                             "%z2%", String.valueOf((int) getArea().getMaxZ()));
 
-                    phase++;
+                    setPhaseRaw(getPhase() + 1);
                 } catch (IncompleteRegionException e) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.error.unselected_area");
                 }
@@ -75,7 +115,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             case 2, 3 -> {
                 if (spawnLocations.size() >= 2 && args[0].equalsIgnoreCase("next")) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.success.next");
-                    phase++;
+                    setPhaseRaw(getPhase() + 1);
                     return;
                 }
                 if (!args[0].equalsIgnoreCase("setteamspawn")) {
@@ -93,8 +133,8 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                     spawnLocations.put(color, loc);
                     MessageUtil.sendMessage(player, override ? "race.arenabuilder.success.override_team_spawn"
                             : "race.arenabuilder.success.set_team_spawn", "%color%", color.name());
-                    if (phase == 2 && spawnLocations.size() >= 2)
-                        phase++;
+                    if (getPhase() == 2 && spawnLocations.size() >= 2)
+                        setPhaseRaw(getPhase() + 1);
                 } catch (Exception e) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.error.invalid_color");
                 }
@@ -118,8 +158,8 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                     spectatorsOffset = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
                     MessageUtil.sendMessage(player, override ? "race.arenabuilder.success.override_spectators_spawn"
                             : "race.arenabuilder.success.set_spectators_spawn");
-                    if (phase == 4)
-                        phase++;
+                    if (getPhase() == 4)
+                        setPhaseRaw(getPhase() + 1);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -127,7 +167,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             case 6 -> { //checkpointarea or next
                 if (args[0].equalsIgnoreCase("next")) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.success.next");
-                    phase = 8;
+                    setPhaseRaw(8);
                     return;
                 }
                 if (!args[0].equalsIgnoreCase("checkpointarea")) {
@@ -157,7 +197,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             return;
                         }
                     checkPoints.add(checkPointArea);
-                    phase = 7;
+                    setPhaseRaw(7);
                 } catch (IncompleteRegionException e) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.error.unselected_area");
                 }
@@ -166,7 +206,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                 if (args[0].equalsIgnoreCase("undo")) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.success.undo");
                     checkPoints.remove(checkPoints.size() - 1);
-                    phase = 6;
+                    setPhaseRaw(6);
                     return;
                 }
                 if (!args[0].equalsIgnoreCase("checkpointrespawnloc")) {
@@ -179,7 +219,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                     return;
                 }
                 checkPointsRespawn.add(LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin())));
-                phase = 6;
+                setPhaseRaw(6);
             }
             case 8 -> { // finisharea
                 if (!args[0].equalsIgnoreCase("finisharea")) {
@@ -205,7 +245,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             return;
                         }
                     this.endArea = finishArea;
-                    phase = 9;
+                    setPhaseRaw(9);
                 } catch (IncompleteRegionException e) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.error.unselected_area");
                 }
@@ -213,7 +253,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             case 9 -> { //zone di caduta
                 if (args[0].equalsIgnoreCase("next")) {
                     MessageUtil.sendMessage(player, "race.arenabuilder.success.next");
-                    phase = 10;//TODO ???
+                    setPhaseRaw(10);//TODO ???
                     return;
                 }
                 if (!args[0].equalsIgnoreCase("fallingzone")) {
@@ -262,7 +302,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
 
     @Override
     public List<String> handleComplete(@NotNull String[] args) {
-        return switch (phase) {
+        return switch (getPhase()) {
             case 1 -> args.length == 1 ? UtilsCommand.complete(args[0], List.of("selectarea")) : Collections.emptyList();
             case 2 -> args.length == 1 ? UtilsCommand.complete(args[0], List.of("setteamspawn")) :
                     args.length == 2 ? UtilsCommand.complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c)) : Collections.emptyList();
@@ -279,7 +319,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             case 7 -> UtilsCommand.complete(args[0], List.of("checkpointrespawnloc", "undo"));
             case 8 -> UtilsCommand.complete(args[0], List.of("finisharea"));
             case 9 -> UtilsCommand.complete(args[0], List.of("fallingzone", "next"));
-            default -> throw new IllegalStateException("Unexpected value: " + phase);
+            default -> throw new IllegalStateException("Unexpected value: " + getPhase());
         };
     }
 
@@ -319,14 +359,14 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
 
 
     @Override
-    public void onTimerCall() {
+    public void onTimerCall(int timerTick) {
         Player p = getBuilder();
         if (p == null || !p.isOnline())
             return;
         org.bukkit.util.Vector min;
         Vector max;
 
-        if (phase > 1) {
+        if (getPhase() > 1) {
             min = getArea().getMin();
             max = getArea().getMax();
         } else {

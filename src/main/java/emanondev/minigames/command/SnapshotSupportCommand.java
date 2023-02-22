@@ -26,7 +26,7 @@ public class SnapshotSupportCommand extends CoreCommand {
         Player p = (Player) sender;
         PacketItem item = Minigames.get().getPacketManager().getPacketItem(p.getLocation());
         item.setGravity(false);
-        item.setItemStack(new ItemStack(Material.DIAMOND),true);
+        item.setItemStack(new ItemStack(Material.DIAMOND), true);
         item.setCustomName("hola!");
         item.setCustomNameVisible(true);
         item.spawn(List.of(p));

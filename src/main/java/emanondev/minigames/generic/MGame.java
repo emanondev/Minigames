@@ -1,6 +1,5 @@
 package emanondev.minigames.generic;
 
-import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -156,6 +155,18 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      * eventually set phase to PLAYING
      */
     void gamePreStartTimer();
+
+    void setScore(String score, int value);
+
+    int getScore(String score);
+
+    void resetScore(String score);
+
+    void resetScores();
+
+    default void addScore(String score, int value) {
+        setScore(score, getScore(score) + value);
+    }
 
     /**
      * im'not sure what this method should do phase is PLAYING

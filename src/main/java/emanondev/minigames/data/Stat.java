@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public abstract class Stat<T> {
-    
+
     public final String id;
 
     public Stat(@NotNull String id) {
@@ -18,6 +18,7 @@ public abstract class Stat<T> {
     }
 
     protected abstract @NotNull YMLConfig getConfig();
+
     protected abstract @NotNull String getId(@NotNull T target);
 
     public void add(@NotNull T target, int amount) {

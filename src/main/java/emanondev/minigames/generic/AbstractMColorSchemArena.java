@@ -1,7 +1,6 @@
 package emanondev.minigames.generic;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import emanondev.core.UtilsString;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.LocationOffset3D;
@@ -12,7 +11,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class AbstractMColorSchemArena implements MSchemArena, MColorableTeamArena {
+public abstract class AbstractMColorSchemArena extends ARegistrable implements MSchemArena, MColorableTeamArena {
 
     private final String schematicName;
     private final LocationOffset3D spectatorsOffset;
@@ -52,27 +51,6 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
         return map;
     }
 
-
-    private String id = null;
-
-    public boolean isRegistered() {
-        return id != null;
-    }
-
-    public void setRegistered(@NotNull String id) {
-        if (!UtilsString.isLowcasedValidID(id))
-            throw new IllegalStateException();
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setUnregister() {
-        id = null;
-    }
-
     @Override
     public @NotNull LocationOffset3D getSpectatorsOffset() {
         return spectatorsOffset;
@@ -80,15 +58,14 @@ public abstract class AbstractMColorSchemArena implements MSchemArena, MColorabl
 
     @Override
     @NotNull
-    public String getDisplayName(){
-        return displayName!=null?displayName:getId()!=null?getId():"";
+    public String getDisplayName() {
+        return displayName != null ? displayName : getId() != null ? getId() : "";
     }
 
     @Override
-    public void setDisplayName(@Nullable String displayName){
+    public void setDisplayName(@Nullable String displayName) {
         this.displayName = displayName;
     }
-
 
 
 }

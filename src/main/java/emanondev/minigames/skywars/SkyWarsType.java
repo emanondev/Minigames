@@ -5,6 +5,7 @@ import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.MessageUtil;
+import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MOption;
@@ -20,7 +21,7 @@ import java.util.UUID;
 
 public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
     public SkyWarsType() {
-        super("skywars", SkyWarsArena.class, SkyWarsOption.class);
+        super("skywars", SkyWarsArena.class, SkyWarsOption.class, Minigames.get());
         ConfigurationSerialization.registerClass(SkyWarsArena.class);
         ConfigurationSerialization.registerClass(SkyWarsOption.class);
         ConfigurationSerialization.registerClass(SkyWarsGame.class);
@@ -42,7 +43,7 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
         MArena arena = ArenaManager.get().getArena(arenaId);
         if (arena == null || !this.matchType(arena))
             throw new IllegalStateException();
-        MOption option = OptionManager.get().getOption(optionId);
+        MOption option = OptionManager.get().get(optionId);
         if (option == null || !this.matchType(option))
             throw new IllegalStateException();
         Map<String, Object> map = new LinkedHashMap<>();
@@ -74,7 +75,7 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
         }
     }
 
-    public double getSnowballPush(){
-        return this.getSection().loadDouble("game.snowball_push",0.5D);
+    public double getSnowballPush() {
+        return this.getSection().loadDouble("game.snowball_push", 0.5D);
     }
 }

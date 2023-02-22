@@ -1,6 +1,5 @@
 package emanondev.minigames;
 
-import emanondev.core.MessageBuilder;
 import emanondev.core.UtilsMessages;
 import emanondev.core.UtilsString;
 import emanondev.core.message.MessageComponent;
@@ -22,7 +21,7 @@ public class MessageUtil {
     }
 
     public static @NotNull String getString(@NotNull CommandSender player, @NotNull String path, String... holders) {
-        return UtilsString.fix(Minigames.get().getLanguageConfig(player).getTrackString(path), player instanceof Player? (Player) player :null, false, holders);
+        return UtilsString.fix(Minigames.get().getLanguageConfig(player).getTrackString(path), player instanceof Player ? (Player) player : null, false, holders);
     }
 
     public static void sendMessage(@NotNull CommandSender player, @NotNull String path, String... holders) {

@@ -9,7 +9,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class MinigamePlaceHolders extends PlaceholderExpansion {
+public class MinigamePlaceholders extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getIdentifier() {

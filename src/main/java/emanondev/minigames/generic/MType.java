@@ -8,7 +8,6 @@ import emanondev.minigames.Configurations;
 import emanondev.minigames.GameManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -71,7 +70,7 @@ public abstract class MType<A extends MArena, O extends MOption> {
     public abstract ItemBuilder getGameSelectorBaseItem();
 
 
-    public final CorePlugin getPlugin(){
+    public final CorePlugin getPlugin() {
         return plugin;
     }
 }

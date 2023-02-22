@@ -1,13 +1,16 @@
 package emanondev.minigames.eggwars;
 
+import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.MessageUtil;
+import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MOption;
 import emanondev.minigames.generic.MType;
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +21,7 @@ import java.util.UUID;
 
 public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
     public EggWarsType() {
-        super("eggwars", EggWarsArena.class, EggWarsOption.class);
+        super("eggwars", EggWarsArena.class, EggWarsOption.class, Minigames.get());
         ConfigurationSerialization.registerClass(EggWarsArena.class);
         ConfigurationSerialization.registerClass(EggWarsOption.class);
         ConfigurationSerialization.registerClass(EggWarsGame.class);
@@ -40,13 +43,18 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
         MArena arena = ArenaManager.get().getArena(arenaId);
         if (arena == null || !this.matchType(arena))
             throw new IllegalStateException();
-        MOption option = OptionManager.get().getOption(optionId);
+        MOption option = OptionManager.get().get(optionId);
         if (option == null || !this.matchType(option))
             throw new IllegalStateException();
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("option", optionId);
         map.put("arena", arenaId);
         return new EggWarsGame(map);
+    }
+
+    @Override
+    public @NotNull ItemBuilder getGameSelectorBaseItem() {
+        return new ItemBuilder(Material.DRAGON_EGG).setGuiProperty();
     }
 
     public void applyKillPoints(Player p) {
@@ -66,6 +74,6 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
     }
 
     public double getSnowballPush() {
-        return this.getSection().loadDouble("snowball_push",0.5D);
+        return this.getSection().loadDouble("snowball_push", 0.5D);
     }
 }

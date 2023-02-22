@@ -1,6 +1,5 @@
 package emanondev.minigames.generic;
 
-import emanondev.core.UtilsString;
 import emanondev.core.gui.FButton;
 import emanondev.core.gui.NumberEditorFButton;
 import emanondev.core.gui.PagedMapGui;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class AbstractMOption implements MOption {
+public abstract class AbstractMOption extends ARegistrable implements MOption {
 
     private boolean allowSpectators;
     private int collectingPlayersPhaseCooldownMax;
@@ -41,26 +40,6 @@ public abstract class AbstractMOption implements MOption {
     @Override
     public int getPreStartPhaseCooldownMax() {
         return preStartPhaseCooldownMax;
-    }
-
-    private String id = null;
-
-    public boolean isRegistered() {
-        return id != null;
-    }
-
-    public void setRegistered(@NotNull String id) {
-        if (!UtilsString.isLowcasedValidID(id))
-            throw new IllegalStateException();
-        this.id = id;
-    }
-
-    public @NotNull String getId() {
-        return id;
-    }
-
-    public void setUnregister() {
-        id = null;
     }
 
     @NotNull
