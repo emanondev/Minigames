@@ -1,8 +1,8 @@
 package emanondev.minigames.command;
 
 import emanondev.core.command.CoreCommand;
+import emanondev.core.message.DMessage;
 import emanondev.minigames.GameManager;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MGame;
@@ -30,14 +30,14 @@ public class FastJoinCommand extends CoreCommand {
             this.playerOnlyNotify(sender);
             return;
         }
-        if (GameManager.get().getGame(player) != null) {
-            MessageUtil.sendMessage(player, "fastjoin.error.already_inside_a_game");
+        if (GameManager.get().getCurrentGame(player) != null) {
+            sendMsg(player, "join.error.already_inside_a_game", "%label%", label);
             return;
         }
 
         switch (args.length) {
             case 0 -> {
-                List<MGame> available = new ArrayList<>(GameManager.get().getGames().values());
+                List<MGame> available = new ArrayList<>(GameManager.get().getAll().values());
                 available.removeIf((m) -> switch (m.getPhase()) {
                     case STOPPED, END, RESTART -> true;
                     default -> false;
@@ -48,12 +48,12 @@ public class FastJoinCommand extends CoreCommand {
                 if (GameManager.get().joinGameAsGamer(player, available))
                     return;
 
-                MessageUtil.sendMessage(player, "fastjoin.error.no_available_game");
+                sendMsg(player, "join.error.no_available_game", "%label%", label);
             }
             case 1 -> {
                 MType type = MinigameTypes.get().getType(args[0]);
                 if (type == null) {
-                    MessageUtil.sendMessage(player, "fastjoin.error.invalid_type", "%type%", args[0]);
+                    sendMsg(player, "join.error.invalid_type", "%type%", args[0], "%label%", label);
                     return;
                 }
                 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -68,10 +68,9 @@ public class FastJoinCommand extends CoreCommand {
                 if (GameManager.get().joinGameAsGamer(player, available))
                     return;
 
-                MessageUtil.sendMessage(player, "fastjoin.error.no_available_game_of_type", "%type%", type.getType());
+                sendMsg(player, "join.error.no_available_game_of_type", "%type%", type.getType(), "%label%", label);
             }
-            default -> MessageUtil.sendMessage(player, "fastjoin.error.arguments_amount", "%label%", label);
-
+            default -> sendMsg(player, "join.error.fastjoin_params", "%label%", label);
         }
     }
 
@@ -79,4 +78,13 @@ public class FastJoinCommand extends CoreCommand {
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return args.length == 1 ? this.complete(args[0], MinigameTypes.get().getTypes(), MType::getType, (m) -> true) : Collections.emptyList();
     }
+
+    private void sendMsg(CommandSender target, String path, String... holders) {
+        new DMessage(getPlugin(), target).appendLang(path, holders).send();
+    }
+
+    private void sendMsgList(CommandSender target, String path, String... holders) {
+        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
+    }
+
 }

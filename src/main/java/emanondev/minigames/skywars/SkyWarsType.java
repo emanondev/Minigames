@@ -40,7 +40,7 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
 
     @Override
     public @NotNull SkyWarsGame createGame(@NotNull String arenaId, @NotNull String optionId) {
-        MArena arena = ArenaManager.get().getArena(arenaId);
+        MArena arena = ArenaManager.get().get(arenaId);
         if (arena == null || !this.matchType(arena))
             throw new IllegalStateException();
         MOption option = OptionManager.get().get(optionId);

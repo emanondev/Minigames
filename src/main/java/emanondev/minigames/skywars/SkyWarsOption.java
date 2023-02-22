@@ -6,10 +6,9 @@ import emanondev.core.gui.PagedMapGui;
 import emanondev.core.gui.ResearchFButton;
 import emanondev.minigames.*;
 import emanondev.minigames.generic.AbstractMOption;
-import emanondev.minigames.generic.MFiller;
+import emanondev.minigames.generic.DropsFiller;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,13 +47,6 @@ public class SkyWarsOption extends AbstractMOption {
         return map;
     }
 
-    @Override
-    public void openEditor(@NotNull Player who) {
-        PagedMapGui gui = craftEditor(who);
-        fillEditor(gui);
-        gui.open(who);
-    }
-
     protected void fillEditor(@NotNull PagedMapGui gui) {
         super.fillEditor(gui);
         gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> perTeamMaxPlayers
@@ -68,17 +60,18 @@ public class SkyWarsOption extends AbstractMOption {
         ));
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.fillerselector", new ArrayList<>(), "%id%", FillerManager.get().get(fillerId) == null ? "-none-" : fillerId,
+                        "minioption.buttons.fillerselector", new ArrayList<>(),
+                        "%id%", FillerManager.get().get(fillerId) == null ? "-none-" : fillerId,
                         "%size%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getElementsAmount()),
                         "%min%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getMinElements()),
                         "%max%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getMaxElements()))).build(),
-                (String base, MFiller filler1) -> filler1.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
-                (InventoryClickEvent event, MFiller filler) -> {
+                (String base, DropsFiller filler1) -> filler1.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
+                (InventoryClickEvent event, DropsFiller filler) -> {
                     fillerId = filler.getId().equals(fillerId) ? null : filler.getId();
                     OptionManager.get().save(SkyWarsOption.this);
                     return true;
                 },
-                (MFiller filler) -> new ItemBuilder(Material.PAPER).addEnchantment(Enchantment.DURABILITY,
+                (DropsFiller filler) -> new ItemBuilder(Material.PAPER).addEnchantment(Enchantment.DURABILITY,
                         filler.getId().equals(fillerId) ? 1 : 0).setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
                         "minioption.buttons.fillerdescription", new ArrayList<>(), "%id%", filler.getId(), "%size%", String.valueOf(filler.getElementsAmount()),
                         "%min%", String.valueOf(filler.getMinElements()), "%max%", String.valueOf(filler.getMaxElements())
@@ -103,23 +96,17 @@ public class SkyWarsOption extends AbstractMOption {
                         "minioption.buttons.kitdescription", new ArrayList<>(), "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
 
                 )).build(),
-                () -> KitManager.get().getKits().values()));
+                () -> KitManager.get().getAll().values()));
     }
 
-    @Override
-    public PagedMapGui craftEditor(@NotNull Player target) {
-        return new PagedMapGui(Minigames.get().getLanguageConfig(target).loadMessage(
-                "skywars.option_gui_title", ""), 6, target, null, Minigames.get());
-    }
-
-    public @Nullable MFiller getFiller() {
+    public @Nullable DropsFiller getFiller() {
         return this.fillerId == null ? null : FillerManager.get().get(this.fillerId);
     }
 
     public @NotNull List<Kit> getKits() {
         List<Kit> list = new ArrayList<>();
         for (String key : kits) {
-            Kit kit = KitManager.get().getKit(key);
+            Kit kit = KitManager.get().get(key);
             if (kit != null)
                 list.add(kit);
         }
@@ -131,4 +118,5 @@ public class SkyWarsOption extends AbstractMOption {
     public boolean allowSelectingTeam() {
         return getTeamMaxSize() > 1;
     }
+
 }

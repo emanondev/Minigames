@@ -261,10 +261,10 @@ public class MiniDropGroupCommand extends CoreCommand {
     }
 
     private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders);
+        new DMessage(getPlugin(), target).appendLang(path, holders).send();
     }
 
     private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders);
+        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 }

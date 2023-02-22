@@ -7,7 +7,7 @@ import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
-import emanondev.minigames.generic.MFiller;
+import emanondev.minigames.generic.DropsFiller;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -91,7 +91,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     @Override
     public boolean canSwitchToSpectator(Player player) {
-        return getOption().allowSpectators();
+        return getOption().getAllowSpectators();
     }
 
     public SkyWarsGame(@NotNull Map<String, Object> map) {
@@ -168,7 +168,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     }
 
     protected void onFillChest(Inventory inventory) {
-        MFiller filler = getOption().getFiller();
+        DropsFiller filler = getOption().getFiller();
         if (filler != null)
             filler.fillInventory(inventory);
     }
@@ -185,12 +185,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     @Override
     public boolean joinGameAsGamer(@NotNull Player player) {
-        /*if (isGamer(player)) {
-            new IllegalStateException().printStackTrace();
-            return true;
-        }
-        if (isSpectator(player))
-            return false;*/
         return addGamer(player);
     }
 

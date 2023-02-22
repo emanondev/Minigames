@@ -8,19 +8,28 @@ import emanondev.minigames.DropGroupManager;
 import emanondev.minigames.FillerManager;
 import emanondev.minigames.Minigames;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class DropsFiller extends ARegistrable implements MFiller {
+public class DropsFiller extends ARegistrable implements ConfigurationSerializable {
 
     private final List<String> dropGroups = new ArrayList<>();
     private final List<Double> chances = new ArrayList<>();
 
-    @Override
+    public void fillInventory(@NotNull Inventory inv) {
+        inv.addItem(getDrops().toArray(new ItemStack[0]));
+    }
+
+    public Gui getEditorGui(@NotNull Player player) {
+        return getEditorGui(player, null);
+    }
+
     public @NotNull Gui getEditorGui(@NotNull Player player, @Nullable Gui previousGui) {
         PagedMapGui gui = new PagedMapGui(
                 new DMessage(Minigames.get(), player).appendLang("minidropsfiller.gui.title", "%id%", getId()).toLegacy(),
@@ -128,7 +137,6 @@ public class DropsFiller extends ARegistrable implements MFiller {
         return DropGroupManager.get().get(dropGroups.get(slot));
     }
 
-    @Override
     public @NotNull List<ItemStack> getDrops() {
         ArrayList<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < dropGroups.size(); i++) {
@@ -142,13 +150,11 @@ public class DropsFiller extends ARegistrable implements MFiller {
         return list;
     }
 
-    @Override
     public String[] getPlaceholders() {
         return new String[]{"%size%", String.valueOf(getSize()), "%id%", getId()};
     }
 
     @NotNull
-    @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("groups", new ArrayList<>(dropGroups));

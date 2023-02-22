@@ -1,8 +1,8 @@
 package emanondev.minigames.command;
 
 import emanondev.core.command.CoreCommand;
+import emanondev.core.message.DMessage;
 import emanondev.minigames.GameManager;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MGame;
 import emanondev.minigames.generic.Perms;
@@ -27,18 +27,26 @@ public class LeaveCommand extends CoreCommand {
             this.playerOnlyNotify(sender);
             return;
         }
-        MGame game = GameManager.get().getGame(player);
+        MGame game = GameManager.get().getCurrentGame(player);
         if (game == null) {
-            MessageUtil.sendMessage(player, "leave.error.not_inside_game");
+            sendMsg(player, "leave.error.not_inside_game", "%label%", label);
             return;
         }
         GameManager.get().quitGame(player);
-        MessageUtil.sendMessage(player, "leave.success.message");
+        sendMsg(player, "leave.success.leave", "%name%", game.getId(), "%label%", label);
 
     }
 
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @Nullable Location location) {
         return Collections.emptyList();
+    }
+
+    private void sendMsg(CommandSender target, String path, String... holders) {
+        new DMessage(getPlugin(), target).appendLang(path, holders).send();
+    }
+
+    private void sendMsgList(CommandSender target, String path, String... holders) {
+        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 }

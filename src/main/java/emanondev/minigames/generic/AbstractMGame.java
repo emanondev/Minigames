@@ -54,7 +54,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         this.optionId = (String) map.get("option");
         this.option = (O) OptionManager.get().get(optionId);
         this.arenaId = (String) map.get("arena");
-        this.arena = (A) ArenaManager.get().getArena(arenaId);
+        this.arena = (A) ArenaManager.get().get(arenaId);
 
         if (this.arena == null || this.option == null)
             throw new NullPointerException();
@@ -622,7 +622,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public boolean canAddSpectator(@NotNull Player player) {
-        return getOption().allowSpectators() && switch (getPhase()) {
+        return getOption().getAllowSpectators() && switch (getPhase()) {
             case PLAYING, END -> true;
             default -> false;
         };

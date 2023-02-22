@@ -4,8 +4,8 @@ import emanondev.core.CorePlugin;
 import emanondev.core.Hooks;
 import emanondev.minigames.command.*;
 import emanondev.minigames.compability.MinigamePlaceholders;
-import emanondev.minigames.generic.ChestFiller;
 import emanondev.minigames.generic.DropGroup;
+import emanondev.minigames.generic.DropsFiller;
 import emanondev.minigames.generic.MGame;
 import emanondev.minigames.locations.BlockLocation2D;
 import emanondev.minigames.locations.BlockLocation3D;
@@ -29,7 +29,7 @@ public final class Minigames extends CorePlugin {
 
     @Override
     public void disable() {
-        GameManager.get().getGames().values().forEach(MGame::gameAbort);
+        GameManager.get().getAll().values().forEach(MGame::gameAbort);
     }
 
     @Override
@@ -90,9 +90,7 @@ public final class Minigames extends CorePlugin {
         ConfigurationSerialization.registerClass(LocationOffset3D.class);
         ConfigurationSerialization.registerClass(Kit.class);
         ConfigurationSerialization.registerClass(DropGroup.class);
-        ConfigurationSerialization.registerClass(ChestFiller.class);
-
-        //Commands
+        ConfigurationSerialization.registerClass(DropsFiller.class);
     }
 
     @Override

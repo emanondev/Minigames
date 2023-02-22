@@ -61,7 +61,7 @@ public class TestCommand extends CoreCommand {
                 p.setScoreboard(scoreboard);
             }
             case "2" -> {
-                GameManager.get().getGames().forEach((k, g) -> {
+                GameManager.get().getAll().forEach((k, g) -> {
                     p.getInventory().addItem(g.getGameSelectorItem(p));
                 });
                 p.getInventory().addItem(new ItemBuilder(Material.SADDLE).setMiniDescription(List.of("aaddw", "adwdaw"))

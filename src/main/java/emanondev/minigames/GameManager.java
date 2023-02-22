@@ -12,7 +12,10 @@ import emanondev.minigames.event.PlayerQuitGameEvent;
 import emanondev.minigames.event.PlayerSpectateGameEvent;
 import emanondev.minigames.generic.*;
 import emanondev.minigames.locations.BlockLocation3D;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,25 +33,14 @@ import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class GameManager implements Listener, ConsoleLogger {
-
-    public File getGamesFolder() {
-        return new File(Minigames.get().getDataFolder(), "games");
-    }
-
-    public YMLConfig getGameConfig(@NotNull String fileName) {
-        return Minigames.get().getConfig("games" + File.separator + fileName);
-    }
+@SuppressWarnings("rawtypes")
+public class GameManager extends Manager<MGame> implements Listener, ConsoleLogger {
 
     private static GameManager instance;
-
-    @SuppressWarnings("rawtypes")
-    private final Map<String, MGame> games = new HashMap<>();
-    private final HashMap<String, YMLConfig> gamesFile = new HashMap<>();
-
 
     public static @NotNull GameManager get() {
         return instance;
@@ -60,6 +52,7 @@ public class GameManager implements Listener, ConsoleLogger {
     }
 
     public GameManager() {
+        super("games");
         if (instance != null)
             throw new IllegalStateException();
         instance = this;
@@ -78,29 +71,10 @@ public class GameManager implements Listener, ConsoleLogger {
 
 
     public void reload() {
-
-        games.forEach((k, v) -> v.gameAbort());
-        games.clear();
-        gamesFile.clear();
-        File gameInstancesFolder = getGamesFolder();
-        if (gameInstancesFolder.isDirectory()) {
-            File[] files = gameInstancesFolder.listFiles((f, n) -> (n.endsWith(".yml")));
-            if (files != null)
-                for (File file : files) {
-                    YMLConfig config = getGameConfig(file.getName());
-                    for (String key : config.getKeys(false)) {
-                        try {
-                            Object value = config.get(key);
-                            if (value instanceof MGame game)
-                                registerGame(key, game, config);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        }
+        getAll().forEach((k, v) -> v.gameAbort());
+        super.reload();
         long counter = 1;
-        for (@SuppressWarnings("rawtypes") MGame game : games.values()) {
+        for (@SuppressWarnings("rawtypes") MGame game : getAll().values()) {
             new BukkitRunnable() {
                 public void run() {
                     game.gameInitialize();
@@ -111,12 +85,8 @@ public class GameManager implements Listener, ConsoleLogger {
 
     }
 
-    public void registerGame(@NotNull String id, @SuppressWarnings("rawtypes") @NotNull MGame game, @NotNull OfflinePlayer player) {
-        registerGame(id, game, getGameConfig(player.getName()));
-    }
-
-    private void registerGame(@NotNull String id, @SuppressWarnings("rawtypes") @NotNull MGame game, @NotNull YMLConfig config) {
-        if (!UtilsString.isLowcasedValidID(id) || games.containsKey(id))
+    public void register(@NotNull String id, @SuppressWarnings("rawtypes") @NotNull MGame game, @NotNull YMLConfig config) {
+        if (!UtilsString.isLowcasedValidID(id) || get(id) != null)
             throw new IllegalStateException("invalid id");
         boolean save = false;
         logTetraStar(ChatColor.DARK_RED, "D Registering Game &e" + id + "&f of type &e" + game.getMinigameType().getType());
@@ -126,11 +96,7 @@ public class GameManager implements Listener, ConsoleLogger {
             save = true;
         }
         //throw new IllegalStateException("location"); //may just move it
-        if (game.isRegistered())
-            throw new IllegalStateException();
-        game.setRegistered(id);
-        games.put(id, game);
-        gamesFile.put(id, config);
+        super.register(id, game, config);
         if (save)
             save(game);
         logTetraStar(ChatColor.DARK_RED, "D Registered Game &e" + id + "&f of type &e" + game.getMinigameType().getType()
@@ -139,16 +105,6 @@ public class GameManager implements Listener, ConsoleLogger {
                 (game.getGameLocation().x + mArena.getSchematic().getDimensions().getBlockX()) + " "
                 + (game.getGameLocation().y + mArena.getSchematic().getDimensions().getBlockY()) + " " +
                 (game.getGameLocation().z + mArena.getSchematic().getDimensions().getBlockZ()) : ""));
-    }
-
-    public void save(@SuppressWarnings("rawtypes") @NotNull MGame mGame) {
-        if (!mGame.isRegistered())
-            throw new IllegalStateException();
-        if (games.get(mGame.getId()) != mGame)
-            throw new IllegalStateException();
-        gamesFile.get(mGame.getId()).set(mGame.getId(), mGame);
-        gamesFile.get(mGame.getId()).save();
-        logTetraStar(ChatColor.DARK_RED, "D Updated Game &e" + mGame.getId() + "&f of type &e" + mGame.getMinigameType().getType());
     }
 
     /**
@@ -186,11 +142,11 @@ public class GameManager implements Listener, ConsoleLogger {
             BlockVector3 dim = clip.getDimensions();
             //TODO eventually move the y
             BoundingBox box = new BoundingBox(
-                    loc.x, loc.y, loc.z, //loc.x + min.getX(), loc.y + min.getY(), loc.z + min.getZ(),
-                    loc.x + dim.getX(), loc.y + dim.getY(), loc.z + dim.getZ()); //loc.x + min.getX() + dim.getX(), loc.y + min.getY() + dim.getY(), loc.z + min.getZ() + dim.getZ());
+                    loc.x, loc.y, loc.z,
+                    loc.x + dim.getX(), loc.y + dim.getY(), loc.z + dim.getZ());
             box.expand(528); //32+1 chunk (528)
 
-            for (@SuppressWarnings("rawtypes") MGame game : games.values()) {
+            for (@SuppressWarnings("rawtypes") MGame game : getAll().values()) {
                 if (game.getArena() instanceof MSchemArena schemArena2) {
                     if (!game.getWorld().getName().equals(w.getName()))
                         continue;
@@ -218,26 +174,14 @@ public class GameManager implements Listener, ConsoleLogger {
         throw new UnsupportedOperationException("invalid arena type");
     }
 
-    @SuppressWarnings("rawtypes")
-    @NotNull
-    public Map<String, MGame> getGames() {
-        return Collections.unmodifiableMap(games);
-    }
-
     @SuppressWarnings("unchecked")
     public @NotNull <A extends MArena, O extends MOption> Map<String, MGame<?, A, O>> getGameInstances(@NotNull MType<A, O> type) {
         Map<String, MGame<?, A, O>> map = new HashMap<>();
-        games.forEach((k, v) -> {
+        getAll().forEach((k, v) -> {
             if (v.getMinigameType().equals(type))
                 map.put(k, v);
         });
         return map;
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Nullable
-    public MGame getGameInstance(@NotNull String id) {
-        return games.get(id.toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -248,7 +192,7 @@ public class GameManager implements Listener, ConsoleLogger {
      */
     @SuppressWarnings("rawtypes")
     @Nullable
-    public MGame getGame(@NotNull Player player) {
+    public MGame getCurrentGame(@NotNull Player player) {
         return playerGames.get(player);
     }
 
@@ -259,7 +203,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @SuppressWarnings("rawtypes")
     public boolean joinGameAsGamer(Player player, List<MGame> gameList) {
-        MGame gameOld = getGame(player);
+        MGame gameOld = getCurrentGame(player);
 
         if (gameOld != null)
             gameOld.onQuitGame(player);
@@ -285,31 +229,12 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @SuppressWarnings("rawtypes")
     public boolean joinGameAsGamer(Player player, MGame game) {
-        return this.joinGameAsGamer(player, List.of(game));/*
-        MGame gameOld = getGame(player);
-
-        if (gameOld != null)
-            gameOld.onQuitGame(player);
-        if (gameOld == null) {
-            playerSnapshots.put(player, new PlayerSnapshot(player));
-            playerBoards.put(player, player.getScoreboard());
-        }
-        if (game.joinGameAsGamer(player)) {
-            logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
-            playerGames.put(player, game);
-            player.setScoreboard(game.getScoreboard());
-            return true;
-        }
-        if (gameOld != null) {
-            playerSnapshots.remove(player).apply(player);
-            player.setScoreboard(playerBoards.remove(player));
-        }
-        return false;*/
+        return this.joinGameAsGamer(player, List.of(game));
     }
 
     @SuppressWarnings("rawtypes")
     public boolean joinGameAsSpectator(Player player, MGame game) {
-        MGame gameOld = getGame(player);
+        MGame gameOld = getCurrentGame(player);
 
         if (gameOld != null)
             gameOld.onQuitGame(player);
@@ -332,14 +257,12 @@ public class GameManager implements Listener, ConsoleLogger {
     }
 
     public void quitGame(Player player) {
-        @SuppressWarnings("rawtypes") MGame game = getGame(player);
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
         if (game == null)
             return;
         game.onQuitGame(player);
         playerGames.remove(player);
         playerSnapshots.remove(player).apply(player);
-        //TODO debug remove invisible maybe useless
-        //player.setInvisible(false);
         player.setScoreboard(playerBoards.remove(player));
         Bukkit.getPluginManager().callEvent(new PlayerQuitGameEvent(game, player));
         logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());
@@ -352,7 +275,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     private void event(@NotNull BlockPlaceEvent event) {
-        @SuppressWarnings("rawtypes") MGame game = getGame(event.getPlayer());
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game == null)
             return;
         if (game.isGamer(event.getPlayer()) && game.containsLocation(event.getBlock())) {
@@ -364,7 +287,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     private void event(@NotNull BlockBreakEvent event) {
-        @SuppressWarnings("rawtypes") MGame game = getGame(event.getPlayer());
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game == null)
             return;
         if (game.isGamer(event.getPlayer()) && game.containsLocation(event.getBlock())) {
@@ -377,7 +300,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @EventHandler
     private void event(PlayerInteractEvent event) {
-        @SuppressWarnings("rawtypes") MGame game = getGame(event.getPlayer());
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game == null)
             return;
         if (game.isGamer(event.getPlayer())) {
@@ -391,7 +314,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @EventHandler
     private void event(PlayerInteractEntityEvent event) {
-        @SuppressWarnings("rawtypes") MGame game = getGame(event.getPlayer());
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game == null)
             return;
         if (game.isGamer(event.getPlayer())) {
@@ -404,7 +327,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     private void event(PlayerMoveEvent event) { //!=teleportevent
-        @SuppressWarnings("rawtypes") MGame game = getGame(event.getPlayer());
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game == null)
             return;
         if (event.getTo() == null) { //Dead ? should not happen
@@ -428,7 +351,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     private void event(PlayerTeleportEvent event) {
-        @SuppressWarnings("rawtypes") MGame game = getGame(event.getPlayer());
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game == null)
             return;
         if (event.getTo() == null) { //dead?
@@ -455,7 +378,7 @@ public class GameManager implements Listener, ConsoleLogger {
     @EventHandler
     private void event(ProjectileLaunchEvent event) {
         if (event.getEntity() instanceof Player player) {
-            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
             if (game == null)
                 return;
             if (game.isGamer(player))
@@ -468,7 +391,7 @@ public class GameManager implements Listener, ConsoleLogger {
     @EventHandler
     private void event(ProjectileHitEvent event) {
         if (event.getHitEntity() instanceof Player player) {
-            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
             if (game == null)
                 return;
             if (game.isGamer(player))
@@ -481,7 +404,7 @@ public class GameManager implements Listener, ConsoleLogger {
     @EventHandler
     private void event(EntityPickupItemEvent event) {
         if (event.getEntity() instanceof Player player) {
-            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
             if (game == null)
                 return;
             if (game.isGamer(player))
@@ -493,7 +416,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @EventHandler(ignoreCancelled = true)
     private void event(PlayerDropItemEvent event) {
-        @SuppressWarnings("rawtypes") MGame game = getGame(event.getPlayer());
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game == null)
             return;
         if (game.isGamer(event.getPlayer()))
@@ -505,7 +428,7 @@ public class GameManager implements Listener, ConsoleLogger {
     @EventHandler(ignoreCancelled = true)
     private void event(EntityTargetLivingEntityEvent event) {
         if (event.getTarget() instanceof Player player) {
-            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
             if (game != null && !game.isGamer(player))
                 event.setCancelled(true);
         }
@@ -514,7 +437,7 @@ public class GameManager implements Listener, ConsoleLogger {
     @EventHandler(ignoreCancelled = true)
     private void event(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player player) {
-            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
             if (game != null) {
                 if (!game.isGamer(player)) //that's a spectator
                     event.setCancelled(true);
@@ -528,7 +451,7 @@ public class GameManager implements Listener, ConsoleLogger {
     @EventHandler(ignoreCancelled = true)
     private void event(InventoryCloseEvent event) {
         if (event.getPlayer() instanceof Player player) {
-            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
             if (game != null && game.isGamer(player))
                 game.onGamerInventoryClose(event, player);
         }
@@ -537,7 +460,7 @@ public class GameManager implements Listener, ConsoleLogger {
     @EventHandler(ignoreCancelled = true)
     private void event(InventoryOpenEvent event) {
         if (event.getPlayer() instanceof Player player) {
-            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
             if (game != null && game.isGamer(player))
                 game.onGamerInventoryOpen(event, player);
         }
@@ -545,7 +468,7 @@ public class GameManager implements Listener, ConsoleLogger {
 
     @EventHandler(ignoreCancelled = true)
     private void event(PlayerSwapHandItemsEvent event) {
-        @SuppressWarnings("rawtypes") MGame game = getGame(event.getPlayer());
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game != null) {
             if (!game.isGamer(event.getPlayer()))
                 event.setCancelled(true);
@@ -557,7 +480,7 @@ public class GameManager implements Listener, ConsoleLogger {
     @EventHandler(ignoreCancelled = true)
     private void event(EntityCombustEvent event) {
         if (event.getEntity() instanceof Player player) {
-            @SuppressWarnings("rawtypes") MGame game = getGame(player);
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
             if (game != null) {
                 if (!game.isGamer(player))
                     event.setCancelled(true);

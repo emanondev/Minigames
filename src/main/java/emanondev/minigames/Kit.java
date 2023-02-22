@@ -1,7 +1,6 @@
 package emanondev.minigames;
 
 import emanondev.core.PlayerSnapshot;
-import emanondev.core.UtilsString;
 import emanondev.minigames.generic.ARegistrable;
 import emanondev.minigames.generic.Registrable;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -9,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +34,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
 
     public static @NotNull Kit fromPlayer(@NotNull Player player) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        PlayerSnapshot clone = new PlayerSnapshot(player, PlayerSnapshot.FieldType.INVENTORY,PlayerSnapshot.FieldType.ARMOR, PlayerSnapshot.FieldType.EXTRACONTENTS);
+        PlayerSnapshot clone = new PlayerSnapshot(player, PlayerSnapshot.FieldType.INVENTORY, PlayerSnapshot.FieldType.ARMOR, PlayerSnapshot.FieldType.EXTRACONTENTS);
         map.put("snap", clone);
         return new Kit(map);
     }
@@ -56,7 +54,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
 
 
     public void updateSnapshot(@NotNull Player player) {
-        this.snap.loadFrom(player, PlayerSnapshot.FieldType.INVENTORY,PlayerSnapshot.FieldType.ARMOR, PlayerSnapshot.FieldType.EXTRACONTENTS);
+        this.snap.loadFrom(player, PlayerSnapshot.FieldType.INVENTORY, PlayerSnapshot.FieldType.ARMOR, PlayerSnapshot.FieldType.EXTRACONTENTS);
         KitManager.get().save(this);
     }
 
@@ -83,8 +81,8 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         };
     }
 
-    public void setPrice(int val){
-        this.price = Math.max(0,val);
+    public void setPrice(int val) {
+        this.price = Math.max(0, val);
         KitManager.get().save(this);
     }
 }

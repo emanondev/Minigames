@@ -158,14 +158,6 @@ minifiller:
       - "&7Quanti oggetti tenterà di mettere"
       - "&7 nell'inventario al massimo"
 minioption:
-  error:
-    invalid_type: "&c[MiniOption] &6%type% &cnon è un minigame valido"
-    invalid_id: "&c[MiniOption] &6%id% &cnon è id valido"
-    already_used_id: "&c[MiniOption] L'id &6%id% &cè già in uso"
-    create_arguments_amount: "&c[MiniOption] /%label% create <type> <id>"
-    edit_arguments_amount: "&c[MiniOption] /%label% edit <id>"
-    pre_create_invalid_action: "&c[MiniOption] /%label% create <type> <id>"
-    unexisting_id: "&c[MiniOption] L'id &6%id% &cnon è presente"
   buttons:
     kitselector:
       - "&6Seleziona kit"
@@ -196,31 +188,9 @@ minioption:
       - "&7Serve a riempire le casse nell'arena"
       - "&7Puoi vedere il contenuto con /minifiller show %id%"
       - "&9[&fClick&9] &fAny &9-> &fSeleziona"
-    allowspectators:
-      - "&6Are players allowed to spectate?"
-      - "&9Current value: &e%value%"
-      - ""
-      - "&9[&fClick&9] &fAny &9-> &fToggle"
     teammaxplayers:
       - "&6Max players on each team"
       - "&9Current value: &e%value%"
-    collectingplayersphasecooldownmax:
-      - "&6How many seconds after the minimal"
-      - "&6 requirements are meet to start pre-game?"
-      - "&9Current value: &e%value%"
-      - ""
-      - "&7This time is (usually) required to allow"
-      - "&7 player to join the game before it start"
-    prestartphasecooldownmax:
-      - "&6How many seconds to start game?"
-      - "&9Current value: &e%value%"
-      - ""
-      - "&7This time is (usually) required to select a kit"
-    endphasecooldownmax:
-      - "&6How many seconds to celebrate victory?"
-      - "&9Current value: &e%value%"
-      - ""
-      - "&7This time is (usually) used to celebrate winners"
   help:
     create_text: "&9/%label% create &b<type> <id>"
     create_hover:
@@ -231,27 +201,77 @@ minioption:
     list_text: "&9/%label% list"
     list_hover:
       - "&6Shows info about options"
-fastjoin:
+###
+minioption:
   error:
-    no_available_game: "&c[FastJoin] Non ci sono partite disponibili"
-    no_available_game_of_type: "&c[FastJoin] Non ci sono partite disponibili per &6%type%"
-    arguments_amount: "&c[FastJoin] /%label% [type]"
-    already_inside_a_game: "&c[FastJoin] Sei già all'interno di un gioco"
-    invalid_type: "&c[FastJoin] Non esiste un minigame chiamato &6%type%"
+    create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type></hover>"
+    id_already_used: "<hover:show_text:'<#e060de>Scegli un <#fab66e><id></#fab66e> che non sia già utilizzato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> è già in uso</hover>"
+    invalid_id: "<hover:show_text:\"<#e060de>L'<#fab66e><id></#fab66e> dev'essere una stringa di\ncaratteri numeri e/o trattini bassi\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non è valido</hover>"
+    id_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><id></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non esiste</hover>"
+    gui_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% gui <#fab66e><id></hover>"
+    delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
+    invalid_minigametype: "<hover:show_text:'<#e060de>Scegli un Minigame esistente'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850>Non esiste un Minigame chiamato <#fab66e>%type%"
+  help:
+    - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniOption</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare\nle opzioni di un Game (Option)'><#fab787>[?]</hover>"
+    - "<hover:show_text:\"<#acfad1>Crea un nuovo Option\n<#ffffb3><id><#acfad1> è l'id del Option\n<#ffffb3><type><#acfad1> è il tipo di Minigame\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id> <type></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Apre una comoda gui per modificare\nl'Option selezionato\n<#ffffb3><id><#acfad1> è l'id del Option\"><click:suggest_command:'/%alias% gui '><#4079ff>/%alias% <#57c9fa>gui <#ffffb3><id></click></hover>"
+    - "<hover:show_text:'<#acfad1>Mostra la lista di Option esistenti'><click:run_command:'/%alias% list'><#4079ff>/%alias% <#57c9fa>list</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Elimina l'Option\n<#ffffb3><id><#acfad1> è l'id del Option\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
+  success:
+    create: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Nuovo Option <#ffffb3>%id%</#ffffb3> creato"
+    delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Option <#ffffb3>%id%</#ffffb3> eliminato"
+    list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniOption Lista Option</b></gradient>"
+    list_info:
+      - "<#57c9fa>Option <#ffffb3><b>%id%</b></#ffffb3>"
+      - "Minigame <#ffffb3>%type%</#ffffb3>"
+      - ""
+      - "<#ffffb3>Clicca per vedere e modificare"
+  gui:
+    title: "<#4079ff>Filler <#57c9fa><b>%id% <#4079ff>(<#57c9fa>%type%<#4079ff>)"
+    collecting_players_phase_max_cooldown:
+      - "<#57c9fa>Quanti secondi dopo che i requisiti minimi"
+      - "<#57c9fa> sono soddisfatti per iniziare la Partita?"
+      - "&9Tempo: &e%value%"
+      - ""
+      - "&7Questo intervallo di tempo (solitamente)"
+      - "&7 serve ai giocatori ad entrare in Partita"
+      - "&7 prima che questa inizi"
+    end_phase_max_cooldown:
+      - "<#57c9fa>Per quanti secondi si celebra la vittoria?"
+      - "&9Tempo: &e%value%"
+      - ""
+      - "&7Questo è l'intervallo di tempo fra la vittoria"
+      - "&7e quando i giocatori vengono fatti uscire dalla"
+      - "&7Partita forzatamente"
+    pre_start_phase_max_cooldown:
+      - "&6Quanti secondi per iniziare la Partita?"
+      - "&9CTempo: &e%value%"
+      - ""
+      - "&7Questo è l'intervallo di tempo in cui i giocatori vengono"
+      - "&7spostati nell'arena ed eventualmente scelgono un kit"
+      - "&7prima dell'inizio effettivo della Partita"
+    allow_spectators:
+      - "&6Permetti ai giocatori di assistere alla partita?"
+      - "&9Valore: &e%value%"
+      - ""
+      - "&9[&fClick&9] &fQualsiasi &9-> &fAlterna"
 join:
   error:
-    invalid_game_or_minigame: "&c[Join] Non esiste un Gioco o un Minigame chiamato &e%name%"
-    no_available_game: "&c[Join] Non ci sono partite disponibili"
-    game_not_available: "&c[Join] Non puoi entrare in partita"
-    arguments_amount: "&c[Join] /%label% [type/game]"
-    already_inside_a_game: "&c[Join] Sei già all'interno di un gioco"
+    game_not_available: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non puoi entrare in <#fab66e>%name%"
+    no_available_game: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non ci sono Partite disponibili"
+    no_available_game_of_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non ci sono Partite disponibili per <#fab66e>%type%"
+    fastjoin_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%label% <#fab66e>[type]"
+    join_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%label% <#fab66e>[type/game]"
+    already_inside_a_game: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Sei già all'interno di una Partita"
+    invalid_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste un Gioco chiamato <#fab66e>%type%"
+    invalid_game_or_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste una Partita o un Gioco chiamato <#fab66e>%name%"
+  gui:
+    title: "<#4079ff>Seleziona la Partita"
 leave:
   error:
-    not_inside_game: "&c[Leave] Non sei in una partita"
+    not_inside_game: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non sei in una Partita"
   success:
-    message: "&a[Leave] Hai abbandonato la partita"
-###
-
+    leave: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Hai abbandonato la Partita"
 minikit:
   error:
     create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id></hover>"
@@ -280,8 +300,8 @@ minikit:
     delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Kit <#ffffb3>%id%</#ffffb3> eliminato"
     list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniKit Lista Kit</b></gradient>"
     list_info:
-      - "<#57c9fa><#ffffb3><b>%id%</b></#ffffb3>"
-      - "Il Kit costa <#ffffb3>%price%</#ffffb3>"
+      - "<#57c9fa>Kit <#ffffb3><b>%id%</b></#ffffb3>"
+      - "Costa <#ffffb3>%price%</#ffffb3>"
       - ""
       - "<#ffffb3>Clicca per caricare su te stesso"
 minidropsfiller:
@@ -303,7 +323,7 @@ minidropsfiller:
     delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Filler <#ffffb3>%id%</#ffffb3> eliminato"
     list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniDropsFiller Lista Filler</b></gradient>"
     list_info:
-      - "<#57c9fa><#ffffb3><b>%id%</b></#ffffb3>"
+      - "<#57c9fa>Filler <#ffffb3><b>%id%</b></#ffffb3>"
       - "Contiene <#ffffb3>%size%</#ffffb3> Drop"
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
@@ -355,7 +375,7 @@ minidropgroup:
     addchest: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa><#ffffb3>%items%</#ffffb3> oggetti sono stati aggiunti con un peso di <#ffffb3>%weight%</#ffffb3> nel Drop <#ffffb3>%id%</#ffffb3>"
     list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniDropGroup Lista Drop</b></gradient>"
     list_info:
-      - "<#57c9fa><#ffffb3><b>%id%</b></#ffffb3>"
+      - "<#57c9fa>Drop <#ffffb3><b>%id%</b></#ffffb3>"
       - "Contiene <#ffffb3>%items_size%</#ffffb3> oggetti"
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"

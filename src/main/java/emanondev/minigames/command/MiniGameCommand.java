@@ -19,11 +19,17 @@ import static org.bukkit.ChatColor.*;
 
 public class MiniGameCommand extends CoreCommandPlus {
 
+    /*
+    create
+    gui
+    list
+    delete
+     */
     public MiniGameCommand() {
         super("MiniGame", Minigames.get(), Perms.COMMAND_MINIGAME, "Sets Games");
         addSubCommandHandler("create", this::create, (sender, label, args) -> onComplete(sender, label, args, null));
-        addSubCommandHandler("edit", this::edit, (sender, label, args) -> onComplete(sender, label, args, null));
-        addSubCommandHandler("list", new SubCommandListExecutor<MGame>(this, "list", () -> GameManager.get().getGames().values(),
+        addSubCommandHandler("gui", this::gui, (sender, label, args) -> onComplete(sender, label, args, null));
+        addSubCommandHandler("list", new SubCommandListExecutor<MGame>(this, "list", () -> GameManager.get().getAll().values(),
                 (Registrable::getId), this::list
         ), (sender, label, args) -> onComplete(sender, label, args, null));
     }
@@ -62,7 +68,7 @@ public class MiniGameCommand extends CoreCommandPlus {
             MessageUtil.sendMessage(player, "minigame.create.error.invalid_type", "%type%", args[1]);
             return;
         }
-        MArena arena = ArenaManager.get().getArena(args[2]);
+        MArena arena = ArenaManager.get().get(args[2]);
         if (arena == null) {
             MessageUtil.sendMessage(player, "minigame.create.error.invalid_arena_name", "%arena%", args[2]);
             return;
@@ -85,16 +91,16 @@ public class MiniGameCommand extends CoreCommandPlus {
             MessageUtil.sendMessage(player, "minigame.create.error.invalid_id_name", "%id%", id);
             return;
         }
-        if (GameManager.get().getGameInstance(id) != null) {
+        if (GameManager.get().get(id) != null) {
             MessageUtil.sendMessage(player, "minigame.create.error.already_used_id", "%id%", id);
             return;
         }
         MGame mGame = mType.createGame(arena.getId(), option.getId());
-        GameManager.get().registerGame(id, mGame, player);
+        GameManager.get().register(id, mGame, player);
         GameManager.get().save(mGame);
     }
 
-    private void edit(CommandSender sender, String s, String[] args) {
+    private void gui(CommandSender sender, String s, String[] args) {
     }
 
     @Override
@@ -103,7 +109,7 @@ public class MiniGameCommand extends CoreCommandPlus {
             case 1 -> this.complete(args[0], List.of("create", "edit", "list"));
             case 2 -> switch (args[0].toLowerCase()) {
                 case "create" -> this.complete(args[1], MinigameTypes.get().getTypesId());
-                case "edit" -> this.complete(args[1], GameManager.get().getGames().keySet());
+                case "edit" -> this.complete(args[1], GameManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             case 3 -> switch (args[0].toLowerCase()) {

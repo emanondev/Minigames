@@ -6,7 +6,6 @@ import emanondev.core.message.DMessage;
 import emanondev.minigames.FillerManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.DropsFiller;
-import emanondev.minigames.generic.MFiller;
 import emanondev.minigames.generic.Perms;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -69,7 +68,7 @@ public class MiniDropsFillerCommand extends CoreCommand {
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
-        MFiller group = FillerManager.get().get(id);
+        DropsFiller group = FillerManager.get().get(id);
         if (group == null) {
             sendMsg(sender, "minidropsfiller.error.id_not_found", "%id%", id, "%label%", label);
             return;
@@ -88,7 +87,7 @@ public class MiniDropsFillerCommand extends CoreCommand {
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
-        MFiller group = FillerManager.get().get(id);
+        DropsFiller group = FillerManager.get().get(id);
         if (group != null) {
             sendMsg(player, "minidropsfiller.error.id_already_used", "%id%", id, "%label%", label);
             return;
@@ -106,7 +105,7 @@ public class MiniDropsFillerCommand extends CoreCommand {
         boolean color = true;
         Color color1 = new Color(66, 233, 245);
         Color color2 = new Color(66, 179, 245);
-        for (MFiller drop : FillerManager.get().getAll().values()) {
+        for (DropsFiller drop : FillerManager.get().getAll().values()) {
             msg.appendHover(
                     new DMessage(getPlugin(), sender).appendLangList("minidropsfiller.success.list_info",
                             UtilsString.merge(drop.getPlaceholders(), "%label%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
@@ -125,7 +124,7 @@ public class MiniDropsFillerCommand extends CoreCommand {
             sendMsg(player, "minidropsfiller.error.gui_params", "%label%", label);
             return;
         }
-        MFiller group = FillerManager.get().get(args[1]);
+        DropsFiller group = FillerManager.get().get(args[1]);
         if (group == null) {
             sendMsg(player, "minidropsfiller.error.id_not_found", "%label%", label, "%id%", args[1]);
             return;
@@ -134,10 +133,10 @@ public class MiniDropsFillerCommand extends CoreCommand {
     }
 
     private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders);
+        new DMessage(getPlugin(), target).appendLang(path, holders).send();
     }
 
     private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders);
+        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 }

@@ -3,7 +3,9 @@ package emanondev.minigames.command;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommandPlus;
 import emanondev.core.message.DMessage;
-import emanondev.minigames.*;
+import emanondev.minigames.Kit;
+import emanondev.minigames.KitManager;
+import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.Perms;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -12,8 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.*;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class MiniKitCommand extends CoreCommandPlus {
     /*
@@ -50,9 +53,9 @@ public class MiniKitCommand extends CoreCommandPlus {
     @Override
     public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("create", "update","apply", "list", "delete","price"));
+            case 1 -> this.complete(args[0], List.of("create", "update", "apply", "list", "delete", "price"));
             case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case "update","apply", "delete", "price" -> this.complete(args[1], KitManager.get().getAll().keySet());
+                case "update", "apply", "delete", "price" -> this.complete(args[1], KitManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             default -> Collections.emptyList();
@@ -60,7 +63,7 @@ public class MiniKitCommand extends CoreCommandPlus {
     }
 
     private void price(CommandSender sender, String label, String[] args) {
-        if ( args.length != 3) {
+        if (args.length != 3) {
             sendMsg(sender, "minikit.error.price_params", "%label%", label);
             return;
         }
@@ -70,8 +73,8 @@ public class MiniKitCommand extends CoreCommandPlus {
             sendMsg(sender, "minikit.error.id_not_found", "%id%", id, "%label%", label);
             return;
         }
-        Integer price = this.readInt( args[2]);
-        if (price == null || price<0) {
+        Integer price = this.readInt(args[2]);
+        if (price == null || price < 0) {
             sendMsg(sender, "minikit.error.invalid_price", "%price%", args[2], "%label%", label);
             return;
         }
@@ -181,10 +184,10 @@ public class MiniKitCommand extends CoreCommandPlus {
     }
 
     private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders);
+        new DMessage(getPlugin(), target).appendLang(path, holders).send();
     }
 
     private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders);
+        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 }

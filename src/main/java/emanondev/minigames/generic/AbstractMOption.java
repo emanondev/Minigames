@@ -1,11 +1,15 @@
 package emanondev.minigames.generic;
 
+import emanondev.core.ItemBuilder;
 import emanondev.core.gui.FButton;
+import emanondev.core.gui.Gui;
 import emanondev.core.gui.NumberEditorFButton;
 import emanondev.core.gui.PagedMapGui;
+import emanondev.core.message.DMessage;
 import emanondev.minigames.Configurations;
-import emanondev.minigames.MessageUtil;
+import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +58,7 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
     }
 
     @Override
-    public boolean allowSpectators() {
+    public boolean getAllowSpectators() {
         return allowSpectators;
     }
 
@@ -65,14 +69,17 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
             OptionManager.get().save(AbstractMOption.this);
         },
                 () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, collectingPlayersPhaseCooldownMax))).build(),
-                () -> MessageUtil.getMultiMessage(gui.getTargetPlayer(), "minioption.buttons.collectingplayersphasecooldownmax"), null
+                () -> new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        "minioption.gui.collecting_players_phase_max_cooldown").toStringList(), null
         ));
         gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> endPhaseCooldownMax, (v) -> {
             endPhaseCooldownMax = Math.max(1, Math.min(32, v));
             OptionManager.get().save(AbstractMOption.this);
         },
                 () -> Configurations.getEndPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, endPhaseCooldownMax))).build(),
-                () -> MessageUtil.getMultiMessage(gui.getTargetPlayer(), "minioption.buttons.endphasecooldownmax"), null
+                () ->
+                        new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                                "minioption.gui.end_phase_max_cooldown").toStringList(), null
         ));
         gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> preStartPhaseCooldownMax
                 , (v) -> {
@@ -80,10 +87,13 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
             OptionManager.get().save(AbstractMOption.this);
         },
                 () -> Configurations.getPreStartPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, preStartPhaseCooldownMax))).build(),
-                () -> MessageUtil.getMultiMessage(gui.getTargetPlayer(), "minioption.buttons.prestartphasecooldownmax"), null
+                () -> new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        "minioption.gui.pre_start_phase_max_cooldown").toStringList(), null
         ));
-        gui.addButton(new FButton(gui, () -> Configurations.getOptionAllowSpectatorItem(gui.getTargetPlayer(), "%value%", String.valueOf(allowSpectators))
-                .addEnchantment(Enchantment.DURABILITY, allowSpectators ? 1 : 0).build(), (event) -> {
+        gui.addButton(new FButton(gui, () ->
+                new ItemBuilder(Material.VEX_SPAWN_EGG).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer())
+                                .appendLangList("minioption.gui.allow_spectators", "%value%", String.valueOf(allowSpectators)))
+                        .addEnchantment(Enchantment.DURABILITY, allowSpectators ? 1 : 0).build(), (event) -> {
             allowSpectators = !allowSpectators;
             OptionManager.get().save(AbstractMOption.this);
             return true;
@@ -91,5 +101,22 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
         ));
     }
 
-    public abstract PagedMapGui craftEditor(Player target);
+    @Override
+    public Gui getEditorGui(Player player, Gui parent) {
+        PagedMapGui gui = craftEditor(player, parent);
+        fillEditor(gui);
+        return gui;
+    }
+
+    public PagedMapGui craftEditor(Player target, Gui parent) {
+        return new PagedMapGui(
+                new DMessage(Minigames.get(), target).appendLang("minioption.gui.title").toLegacy(),
+                6, target, parent, Minigames.get());
+    }
+
+    public String[] getPlaceholders() {
+        return new String[]{
+                "%id%", getId(), "%type%", getClass().getSimpleName()
+        };
+    }
 }

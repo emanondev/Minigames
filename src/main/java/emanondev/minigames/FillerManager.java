@@ -1,8 +1,8 @@
 package emanondev.minigames;
 
-import emanondev.minigames.generic.MFiller;
+import emanondev.minigames.generic.DropsFiller;
 
-public class FillerManager extends Manager<MFiller> {
+public class FillerManager extends Manager<DropsFiller> {
 
     private static FillerManager instance;
 

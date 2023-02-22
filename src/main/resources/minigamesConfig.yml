@@ -2,7 +2,7 @@ global:
   defaultWorld: events
 skywars:
   display:
-    displayName:   §eSkywars
+    displayName: §eSkywars
     gui:
       material: BOW
       custommodel: 0

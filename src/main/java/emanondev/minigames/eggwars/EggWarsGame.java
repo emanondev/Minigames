@@ -7,7 +7,7 @@ import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
-import emanondev.minigames.generic.MFiller;
+import emanondev.minigames.generic.DropsFiller;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -90,7 +90,7 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
 
     @Override
     public boolean canSwitchToSpectator(Player player) {
-        return getOption().allowSpectators();
+        return getOption().getAllowSpectators();
     }
 
     public EggWarsGame(@NotNull Map<String, Object> map) {
@@ -167,7 +167,7 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
     }
 
     protected void onFillChest(Inventory inventory) {
-        MFiller filler = getOption().getFiller();
+        DropsFiller filler = getOption().getFiller();
         if (filler != null)
             filler.fillInventory(inventory);
     }

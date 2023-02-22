@@ -3,21 +3,16 @@ package emanondev.minigames;
 import emanondev.core.MessageBuilder;
 import emanondev.core.UtilsCommand;
 import emanondev.core.UtilsString;
-import emanondev.core.YMLConfig;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MArenaBuilder;
 import emanondev.minigames.generic.MType;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.*;
 
-public class ArenaManager {
+public class ArenaManager extends Manager<MArena> {
 
     private static ArenaManager instance;
 
@@ -25,85 +20,16 @@ public class ArenaManager {
         return instance;
     }
 
-
-    public @NotNull File getArenasFolder() {
-        return new File(Minigames.get().getDataFolder(), "arenas");
-    }
-
-    public @NotNull YMLConfig getArenaConfig(String fileName) {
-        return Minigames.get().getConfig("arenas" + File.separator + fileName);
-    }
-
-
     private final HashMap<UUID, MArenaBuilder> builders = new HashMap<>();
-    private final HashMap<String, MArena> arenas = new HashMap<>();
-    private final HashMap<String, YMLConfig> arenasFile = new HashMap<>();
 
     public ArenaManager() {
+        super("arenas");
         instance = this;
-    }
-
-    public void reload() {
-        arenas.clear();
-        arenasFile.clear();
-        File arenasFolder = getArenasFolder();
-        if (arenasFolder.isDirectory()) {
-            File[] files = arenasFolder.listFiles((f, n) -> (n.endsWith(".yml")));
-            if (files != null)
-                for (File file : files) {
-                    YMLConfig config = getArenaConfig(file.getName());
-                    for (String key : config.getKeys(false)) {
-                        try {
-                            if (!UtilsString.isLowcasedValidID(key))
-                                throw new IllegalStateException("invalid id");
-                            Object value = config.get(key);
-                            if (value instanceof MArena arena)
-                                registerArena(key, arena, config);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        }
-    }
-
-    public @Nullable MArena getArena(@NotNull String id) {
-        return arenas.get(id.toLowerCase(Locale.ENGLISH));
-    }
-
-    public @NotNull Map<String, MArena> getArenas() {
-        return Collections.unmodifiableMap(arenas);
-    }
-
-
-    private void registerArena(@NotNull String id, @NotNull MArena game, @NotNull OfflinePlayer player) {
-        registerArena(id, game, getArenaConfig(player.getName()));
-    }
-
-    public void registerArena(@NotNull String id, @NotNull MArena arena, @NotNull YMLConfig config) {
-        if (!UtilsString.isLowcasedValidID(id) || arenas.containsValue(id))
-            throw new IllegalStateException("invalid id");
-        if (arena.isRegistered())
-            throw new IllegalStateException();
-        arena.setRegistered(id);
-        arenas.put(id, arena);
-        arenasFile.put(id, config);
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Registered Arena &e" + id);
-    }
-
-    public void save(@NotNull MArena mArena) {
-        if (!mArena.isRegistered())
-            throw new IllegalStateException();
-        if (arenas.get(mArena.getId()) != mArena)
-            throw new IllegalStateException();
-        arenasFile.get(mArena.getId()).set(mArena.getId(), mArena);
-        arenasFile.get(mArena.getId()).save();
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated Arena &e" + mArena.getId());
     }
 
     public <A extends MArena> @NotNull Map<String, A> getCompatibleArenas(@NotNull MType<A, ?> type) {
         HashMap<String, A> map = new HashMap<>();
-        arenas.forEach((k, v) -> {
+        getAll().forEach((k, v) -> {
             if (type.matchType(v)) map.put(k, (A) v);
         });
         return map;
@@ -114,7 +40,7 @@ public class ArenaManager {
             //TODO
             return;
         }
-        if (getArena(id) != null) {
+        if (get(id) != null) {
             //TODO
             return;
         }
@@ -154,7 +80,7 @@ public class ArenaManager {
                                     "%id%", args[2]).send();
                     return;
                 }
-                if (getArena(id) != null) {
+                if (get(id) != null) {
                     new MessageBuilder(Minigames.get(), who)
                             .addTextTranslation("generic.arenabuilder.error.already_used_id", "",
                                     "%id%", args[2]).send();
@@ -207,7 +133,7 @@ public class ArenaManager {
 
     public void onArenaBuilderCompletedArena(@NotNull MArenaBuilder builder) {
         MArena arena = builder.build();
-        registerArena(builder.getId(), arena, Bukkit.getOfflinePlayer(builder.getUser()));
+        register(builder.getId(), arena, Bukkit.getOfflinePlayer(builder.getUser()));
         save(arena);
         builders.remove(builder.getUser());
         builder.abort();
