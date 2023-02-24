@@ -2,6 +2,7 @@ package emanondev.minigames;
 
 import org.bukkit.command.CommandSender;
 
+@Deprecated
 public class Messages {
 
 

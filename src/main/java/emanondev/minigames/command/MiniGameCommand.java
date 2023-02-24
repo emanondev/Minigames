@@ -60,7 +60,7 @@ public class MiniGameCommand extends CoreCommandPlus {
 
         if (args.length != 5) {
             MessageUtil.sendMessage(player, "minigame.create.error.arguments_amount",
-                    "%label%", label);
+                    "%alias%", label);
             return;
         }
         MType mType = MinigameTypes.get().getType(args[1]);

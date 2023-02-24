@@ -29,11 +29,11 @@ public class LeaveCommand extends CoreCommand {
         }
         MGame game = GameManager.get().getCurrentGame(player);
         if (game == null) {
-            sendMsg(player, "leave.error.not_inside_game", "%label%", label);
+            sendMsg(player, "leave.error.not_inside_game", "%alias%", label);
             return;
         }
         GameManager.get().quitGame(player);
-        sendMsg(player, "leave.success.leave", "%name%", game.getId(), "%label%", label);
+        sendMsg(player, "leave.success.leave", "%name%", game.getId(), "%alias%", label);
 
     }
 

@@ -63,6 +63,7 @@ public final class Minigames extends CorePlugin {
 
         registerCommands();
 
+        //TODO
         this.registerCommand(new TestCommand());
 
         if (Hooks.isPAPIEnabled())
@@ -74,7 +75,7 @@ public final class Minigames extends CorePlugin {
         this.registerCommand(new MiniKitCommand());
         this.registerCommand(new MiniDropGroupCommand());
         this.registerCommand(new MiniDropsFillerCommand());
-        this.registerCommand(new ArenaBuilderCommand());
+        this.registerCommand(new MiniArenaBuilderCommand());
         this.registerCommand(new MiniOptionCommand());
         this.registerCommand(new MiniGameCommand());
         this.registerCommand(new FastJoinCommand());

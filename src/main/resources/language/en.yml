@@ -16,18 +16,6 @@ generic:
       - "&aScegli il Kit"
     gameleave_item_description:
       - "&cAbbandona la partita"
-  arenabuilder:
-    success:
-      aborted: "&c[ArenaBuilder] Creazione arena interrotta"
-      started: "&a[ArenaBuilder] Creazione arena iniziata"
-    error:
-      invalid_type: "&c[ArenaBuilder] &6%type% &cnon è un minigame valido"
-      invalid_id: "&c[ArenaBuilder] &6%id% &cnon è id valido"
-      already_used_id: "&c[ArenaBuilder] L'id &6%id% &cè già in uso"
-      arguments_amount: "&c[ArenaBuilder] /%label% create <type> <id>"
-      create_already_started: "&c[ArenaBuilder] Hai già creato l'arena ora devi impostarne i valori"
-      abort_not_created: "&c[ArenaBuilder] Non stai impostando nessuna arena al momento"
-      pre_create_invalid_action: "&c[ArenaBuilder] /%label% create <type> <id>"
 skywars:
   gui:
     selector:
@@ -74,7 +62,7 @@ skywars:
 minigame:
   create:
     error:
-      arguments_amount: "&c[MiniGame] /%label% create <type> <arena> <option> <id>"
+      arguments_amount: "&c[MiniGame] /%alias% create <type> <arena> <option> <id>"
       invalid_type: "&c[MiniGame] invalid game type &6%type%"
       invalid_arena_name: "&c[MiniGame] invalid game type &6%arena%"
       invalid_arena_type: "&c[MiniGame] &6%arena% &cis not a valid arena for &6%type%"
@@ -83,125 +71,32 @@ minigame:
       invalid_id_name: "&c[MiniGame] invalid id &6%id%"
       already_used_id: "&c[MiniGame] Id &6%id% &cis already used"
   help:
-    create_text: "&9/%label% create &b<type> <arena> <option> <id>"
+    create_text: "&9/%alias% create &b<type> <arena> <option> <id>"
     create_hover:
       - "&6Create a new Game with given arena and option"
-    edit_text: "&9/%label% edit &b<id>"
+    edit_text: "&9/%alias% edit &b<id>"
     edit_hover:
       - "&6Edit an existing game"
-    list_text: "&9/%label% list"
+    list_text: "&9/%alias% list"
     list_hover:
       - "&6Shows info about games"
-minifiller:
-  error:
-    invalid_id: "&c[MiniFiller] &6%id% &cnon è id valido"
-    already_used_id: "&c[MiniFiller] L'id &6%id% &cè già in uso"
-    create_arguments_amount: "&c[MiniFiller] /%label% create <id>"
-    addall_arguments_amount: "&c[MiniFiller] /%label% addall <id> <weight>"
-    create_already_started: "&c[MiniFiller] Hai già creato il filler ora devi impostarne i valori"
-    unexisting_id: "&c[MiniFiller] L'id &6%id% &cnon è presente"
-    invalid_weight: "&c[MiniFiller] Il peso &6&weight% &cnon è id valido"
-    invalid_target: "&c[MiniFiller] Avvicinati e punta ad un blocco"
-    invalid_block: "&c[MiniFiller] Il blocco dev'essere un contenitore"
-    empty_container: "&c[MiniFiller] Il blocco non contiene oggetti"
-    show_arguments_amount: "&c[MiniFiller] /%label% show <id>"
-    delete_arguments_amount: "&c[MiniFiller] /%label% delete <id>"
-  help:
-    create_text: "&9/%label% create &b<id>"
-    create_hover:
-      - "&6Create a new Filler"
-      - "&7Fillers are used to replenish chests"
-      - "&7 and item contents"
-    addall_text: "&9/%label% addall &b<id> [weight]"
-    addall_hover:
-      - "&6Add contents to Filler"
-      - "&7Place a chest and put your items into it"
-      - "&7 look ad the chest and run the command"
-      - "&7 to add all the items in the chest"
-    clear_text: "&9/%label% clear &b<id>"
-    clear_hover:
-      - "&6Empty Filler contents"
-    show_text: "&9/%label% show &b<id>"
-    show_hover:
-      - "&6Show filler contents"
-      - "&7Also allow to change values"
-    delete_text: "&9/%label% delete &b<id>"
-    delete_hover:
-      - "&6Delete Filler"
-    list_text: "&9/%label% list"
-    list_hover:
-      - "&6Shows created Fillers"
-  success:
-    create: "&a[MiniFiller] Creato il filler &e%id%"
-    addall: "&a[MiniFiller] Aggiunti &e%amount% &aoggetti al filler &e%id% &acon peso &e%weight%"
-    delete: "&a[MiniKit] Hai eliminato il filler &e%id%"
-    list_color_1: "&b"
-    list_color_2: "&9"
-    list_text: "%id% "
-    list_hover: "&6Clicca per mostrare"
-    list_suggest: "/%label% show %id%"
-    list_no_fillers: "&a[MiniFiller] Non ci sono filler salvati"
-  buttons:
-    object_info:
-      - "&6Peso &e%weight%"
-      - "&7Probabilità &e%chance%&7% (x%multiplier% ≈ &e%multiplier-chance%&7%)"
-    object_info_toggler:
-      - "&6Mostra oggetti/informazioni"
-      - "&7Cambia la visualizzazione degli oggetti sopra"
-      - "&7Clicca per cambiare"
-    amountmin_desc:
-      - "&6Oggetti minimi &e%value%"
-      - "&7Quanti oggetti tenterà di mettere"
-      - "&7 nell'inventario al minimo"
-    amountmin_max:
-      - "&6Oggetti massimi &e%value%"
-      - "&7Quanti oggetti tenterà di mettere"
-      - "&7 nell'inventario al massimo"
-minioption:
-  buttons:
-    kitselector:
-      - "&6Seleziona kit"
-      - "&9Kit abilitati:"
-      - "&e%selected%"
-      - "&7I kit abilitati possono essere selezionati"
-      - "&7 dai giocatori prima della partita"
-      - "&9[&fClick&9] &fAny &9-> &fCambia/Imposta"
-    kitdescription:
-      - "&6Riempitore &e%id%"
-      - "&9Prezzo: &e%price%"
-      - ""
-      - "&7Serve a riempire le casse nell'arena"
-      - "&7Puoi vedere il contenuto con /minikit load %id%"
-      - "&9[&fClick&9] &fAny &9-> &fSeleziona"
-    fillerselector:
-      - "&6Riempitore &e%id%"
-      - "&9Genera fra &e%min% &9e &e%max% &9oggetti"
-      - "&9Contiene &e%size%&9 oggetti salvati"
-      - ""
-      - "&7Serve a riempire le casse nell'arena"
-      - "&9[&fClick&9] &fAny &9-> &fCambia/Imposta"
-    fillerdescription:
-      - "&6Riempitore &e%id%"
-      - "&9Genera fra &e%min% &9e &e%max% &9oggetti"
-      - "&9Contiene &e%size%&9 oggetti salvati"
-      - ""
-      - "&7Serve a riempire le casse nell'arena"
-      - "&7Puoi vedere il contenuto con /minifiller show %id%"
-      - "&9[&fClick&9] &fAny &9-> &fSeleziona"
-    teammaxplayers:
-      - "&6Max players on each team"
-      - "&9Current value: &e%value%"
-  help:
-    create_text: "&9/%label% create &b<type> <id>"
-    create_hover:
-      - "&6Create a new Option for give type"
-    edit_text: "&9/%label% edit &b<id>"
-    edit_hover:
-      - "&6Edit an existing option"
-    list_text: "&9/%label% list"
-    list_hover:
-      - "&6Shows info about options"
 ###
+miniarenabuilder:
+  help:
+    - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArenaBuilder</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare\nun arena per un Game (Arena)'><#fab787>[?]</hover>"
+      - "<hover:show_text:\"<#acfad1>Comincia la configurazione\ndi un'Arena\n<#ffffb3><id><#acfad1> è l'id del Arena\n<#ffffb3><type><#acfad1> è il tipo di Minigame\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id> <type></click></hover>"
+      - "<hover:show_text:\"<#acfad1>Interrompe la configurazione\ndell'Arena\"><click:suggest_command:'/%alias% abort'><#4079ff>/%alias% <#57c9fa>abort</click></hover>"
+      - "<hover:show_text:\"<#acfad1>Configura l'arena:\ndurante la configurazione\npotrebbero essere richiesti dei\nparametri\"><click:suggest_command:'/%alias% '><#4079ff>/%alias% <#57c9fa>?</click></hover>"
+  error:
+    already_creating: "<hover:show_text:\"<#e060de>Puoi configurare solo un'Arena\nalla volta, completa la configurazione\ncorrente o abbandonala con\n<#fab66e>/%label% abort\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Stai già configurando un'Arena</hover>"
+    create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type></hover>"
+    id_already_used: "<hover:show_text:'<#e060de>Scegli un <#fab66e><id></#fab66e> che non sia già utilizzato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> è già in uso</hover>"
+    id_already_building: "<hover:show_text:'<#e060de>Scegli un <#fab66e><id></#fab66e> che non sia già utilizzato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> è già in uso da <#fab66e>%who%</#fab66e> che sta creando un'Arena</hover>"
+    invalid_minigametype: "<hover:show_text:'<#e060de>Scegli un Minigame esistente'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste un Minigame chiamato <#fab66e>%type%"
+    invalid_id: "<hover:show_text:\"<#e060de>L'<#fab66e><id></#fab66e> dev'essere una stringa di\ncaratteri numeri e/o trattini bassi\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non è valido</hover>"
+    not_creating: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non stai configurando un'Arena"
+  success:
+    abort: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Hai abbandonato la configurazione dell'Arena <#ffffb3>%id%"
 minioption:
   error:
     create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type></hover>"
@@ -210,7 +105,7 @@ minioption:
     id_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><id></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non esiste</hover>"
     gui_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% gui <#fab66e><id></hover>"
     delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
-    invalid_minigametype: "<hover:show_text:'<#e060de>Scegli un Minigame esistente'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850>Non esiste un Minigame chiamato <#fab66e>%type%"
+    invalid_minigametype: "<hover:show_text:'<#e060de>Scegli un Minigame esistente'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste un Minigame chiamato <#fab66e>%type%"
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniOption</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare\nle opzioni di un Game (Option)'><#fab787>[?]</hover>"
     - "<hover:show_text:\"<#acfad1>Crea un nuovo Option\n<#ffffb3><id><#acfad1> è l'id del Option\n<#ffffb3><type><#acfad1> è il tipo di Minigame\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id> <type></click></hover>"
@@ -226,42 +121,71 @@ minioption:
       - "Minigame <#ffffb3>%type%</#ffffb3>"
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
-  gui:
-    title: "<#4079ff>Filler <#57c9fa><b>%id% <#4079ff>(<#57c9fa>%type%<#4079ff>)"
+  gui: #TODO refine this section
+    title: "<#4079ff>Filler <57c9fa>%id% <#4079ff>(<57c9fa>%type%<#4079ff>)"
     collecting_players_phase_max_cooldown:
-      - "<#57c9fa>Quanti secondi dopo che i requisiti minimi"
-      - "<#57c9fa> sono soddisfatti per iniziare la Partita?"
-      - "&9Tempo: &e%value%"
+      - "<#4079ff>Quanti secondi dopo che i requisiti minimi"
+      - "<#4079ff> sono soddisfatti per iniziare la Partita?"
+      - "<#57c9fa>Tempo: <#ffffb3>%value%"
       - ""
-      - "&7Questo intervallo di tempo (solitamente)"
-      - "&7 serve ai giocatori ad entrare in Partita"
-      - "&7 prima che questa inizi"
+      - "<#b3b3b3>Questo intervallo di tempo (solitamente)"
+      - "<#b3b3b3> serve ai giocatori ad entrare in Partita"
+      - "<#b3b3b3> prima che questa inizi"
     end_phase_max_cooldown:
-      - "<#57c9fa>Per quanti secondi si celebra la vittoria?"
-      - "&9Tempo: &e%value%"
+      - "<#4079ff>Per quanti secondi si celebra la vittoria?"
+      - "<#57c9fa>Tempo: <#ffffb3>%value%"
       - ""
-      - "&7Questo è l'intervallo di tempo fra la vittoria"
-      - "&7e quando i giocatori vengono fatti uscire dalla"
-      - "&7Partita forzatamente"
+      - "<#b3b3b3>Questo è l'intervallo di tempo fra la vittoria"
+      - "<#b3b3b3>e quando i giocatori vengono fatti uscire dalla"
+      - "<#b3b3b3>Partita forzatamente"
     pre_start_phase_max_cooldown:
-      - "&6Quanti secondi per iniziare la Partita?"
-      - "&9CTempo: &e%value%"
+      - "<#4079ff>Quanti secondi per iniziare la Partita?"
+      - "<#57c9fa>Tempo: <#ffffb3>%value%"
       - ""
-      - "&7Questo è l'intervallo di tempo in cui i giocatori vengono"
-      - "&7spostati nell'arena ed eventualmente scelgono un kit"
-      - "&7prima dell'inizio effettivo della Partita"
+      - "<#b3b3b3>Questo è l'intervallo di tempo in cui i giocatori vengono"
+      - "<#b3b3b3>spostati nell'arena ed eventualmente scelgono un kit"
+      - "<#b3b3b3>prima dell'inizio effettivo della Partita"
     allow_spectators:
-      - "&6Permetti ai giocatori di assistere alla partita?"
-      - "&9Valore: &e%value%"
+      - "<#4079ff>Permetti ai giocatori di assistere alla partita?"
+      - "<#57c9fa>Valore: <#ffffb3>%value%"
       - ""
-      - "&9[&fClick&9] &fQualsiasi &9-> &fAlterna"
+      - "<#57c9fa>[&fClick<#57c9fa>] &fQualsiasi <#57c9fa>-> &fAlterna"
+    team_max_players:
+      - "<#4079ff>Numero massimo di giocatori per Team"
+      - "<#57c9fa>Valore: <#ffffb3>%value%"
+    dropsfiller_selector:
+      - "<#4079ff>Filler <#ffffb3>%id%"
+      - "<#57c9fa>Contiene <#ffffb3>%size%<#57c9fa> oggetti salvati"
+      - ""
+      - "<#b3b3b3>Serve a riempire le casse nell'arena"
+      - "<#57c9fa>[&fClick<#57c9fa>] &fQualsiasi <#57c9fa>-> &fCambia/Imposta"
+    kit_selector:
+      - "<#4079ff>Seleziona kit"
+      - "<#57c9fa>Kit abilitati:"
+      - "<#ffffb3>%selected%"
+      - "<#b3b3b3>I kit abilitati possono essere selezionati"
+      - "<#b3b3b3> dai giocatori prima della partita"
+      - "<#57c9fa>[&fClick<#57c9fa>] &fAny <#57c9fa>-> &fCambia/Imposta"
+    kit_description:
+      - "<#4079ff>Kit <#ffffb3>%id%"
+      - "<#57c9fa>Prezzo: <#ffffb3>%price%"
+      - ""
+      - "<#b3b3b3>Puoi vedere il contenuto con /minikit apply %id%"
+      - "<#57c9fa>[&fClick<#57c9fa>] &fAny <#57c9fa>-> &fSeleziona"
+    dropsfiller_description:
+      - "<#4079ff>Filler <#ffffb3>%id%"
+      - "<#57c9fa>Contiene <#ffffb3>%size%<#57c9fa> oggetti salvati"
+      - ""
+      - "<#b3b3b3>Serve a riempire le casse nell'arena"
+      - "<#b3b3b3>Puoi vedere il contenuto con /minifiller show %id%"
+      - "<#57c9fa>[&fClick<#57c9fa>] &fAny <#57c9fa>-> &fSeleziona"
 join:
   error:
     game_not_available: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non puoi entrare in <#fab66e>%name%"
     no_available_game: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non ci sono Partite disponibili"
     no_available_game_of_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non ci sono Partite disponibili per <#fab66e>%type%"
-    fastjoin_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%label% <#fab66e>[type]"
-    join_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%label% <#fab66e>[type/game]"
+    fastjoin_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% <#fab66e>[type]"
+    join_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% <#fab66e>[type/game]"
     already_inside_a_game: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Sei già all'interno di una Partita"
     invalid_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste un Gioco chiamato <#fab66e>%type%"
     invalid_game_or_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste una Partita o un Gioco chiamato <#fab66e>%name%"
@@ -328,7 +252,7 @@ minidropsfiller:
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
   gui:
-    title: "<#4079ff>Filler <#57c9fa><b>%id%"
+    title: "<#4079ff>Filler <57c9fa>%id%"
     clear:
       - "<#4079ff>Pulisci"
       - "<#57c9fa>Rimuove definitivamente tutti i Drop che hanno probabilità 0"
@@ -367,7 +291,6 @@ minidropgroup:
     - "<hover:show_text:\"<#acfad1>Apre una comoda gui per modificare\nil Drop selezionato\n<#ffffb3><id><#acfad1> è l'id del Drop\"><click:suggest_command:'/%alias% gui '><#4079ff>/%alias% <#57c9fa>gui <#ffffb3><id></click></hover>"
     - "<hover:show_text:'<#acfad1>Mostra la lista dei Drop esistenti'><click:run_command:'/%alias% list'><#4079ff>/%alias% <#57c9fa>list</click></hover>"
     - "<hover:show_text:\"<#acfad1>Elimina il Drop\n<#ffffb3><id><#acfad1> è l'id del Drop\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
-
   success:
     create: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Nuovo Drop <#ffffb3>%id%</#ffffb3> creato"
     delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Drop <#ffffb3>%id%</#ffffb3> eliminato"
@@ -376,11 +299,11 @@ minidropgroup:
     list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniDropGroup Lista Drop</b></gradient>"
     list_info:
       - "<#57c9fa>Drop <#ffffb3><b>%id%</b></#ffffb3>"
-      - "Contiene <#ffffb3>%items_size%</#ffffb3> oggetti"
+      - "Contiene <#ffffb3>%drops_size%</#ffffb3> oggetti"
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
   gui:
-    title: "<#4079ff>Drop <#57c9fa><b>%id%"
+    title: "<#4079ff>Drop <57c9fa>%id%"
     chance_info:
       - "<#4079ff>Modificatore del Peso:"
       - "<#57c9fa>Il peso è <#ffffb3>%weight%</#ffffb3> (<#ffffb3>%chance%</#ffffb3> % di essere pescato)"
@@ -391,4 +314,5 @@ minidropgroup:
       - "<#57c9fa>Qui puoi modificare i pesi"
       - ""
       - "<#57c9fa>Per aggiungere nuovi oggetti devi invece usare:"
-      - "<#ffffb3>/minidropgroup addhand %id%</#ffffb3><#57c9fa> o </#57c9fa><#ffffb3>/minidropgroup addchest %id%"
+      - "<#ffffb3>/minidropgroup addhand %id%</#ffffb3><#57c9fa> o"
+      - "<#ffffb3>/minidropgroup addchest %id%"

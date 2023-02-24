@@ -85,7 +85,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     }*/
 
     @Override
-    public void handleCommand(@NotNull Player player, @NotNull String[] args) {
+    public void handleCommand(@NotNull Player player, String label, @NotNull String[] args) {
         if (args.length == 0) {
             MessageUtil.sendMessage(player, "race.arenabuilder.error.unknown_action");
             return;

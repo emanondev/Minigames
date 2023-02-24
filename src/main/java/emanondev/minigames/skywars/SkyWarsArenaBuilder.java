@@ -73,7 +73,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
     }
 
     @Override
-    public void handleCommand(@NotNull Player player, @NotNull String[] args) {
+    public void handleCommand(@NotNull Player player, String label,@NotNull String[] args) {
         if (args.length == 0) {
             MessageUtil.sendMessage(player, "skywars.arenabuilder.error.unknown_action");
             return;

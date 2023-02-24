@@ -82,7 +82,7 @@ public abstract class MArenaBuilder {
 
     public abstract @NotNull String getRepeatedMessage();
 
-    public abstract void handleCommand(Player sender, @NotNull String[] args);
+    public abstract void handleCommand(Player sender, String label, @NotNull String[] args);
 
     public abstract List<String> handleComplete(@NotNull String[] args);
 

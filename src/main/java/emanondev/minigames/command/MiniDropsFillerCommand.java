@@ -59,22 +59,22 @@ public class MiniDropsFillerCommand extends CoreCommand {
     }
 
     private void help(CommandSender sender, String label, String[] args) {
-        sendMsgList(sender, "minidropsfiller.help", "%label%", label);
+        sendMsgList(sender, "minidropsfiller.help", "%alias%", label);
     }
 
     private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
-            sendMsg(sender, "minidropsfiller.error.delete_params", "%label%", label);
+            sendMsg(sender, "minidropsfiller.error.delete_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         DropsFiller group = FillerManager.get().get(id);
         if (group == null) {
-            sendMsg(sender, "minidropsfiller.error.id_not_found", "%id%", id, "%label%", label);
+            sendMsg(sender, "minidropsfiller.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
         FillerManager.get().delete(group);
-        sendMsg(sender, "minidropsfiller.success.delete", "%id%", id, "%label%", label);
+        sendMsg(sender, "minidropsfiller.success.delete", "%id%", id, "%alias%", label);
     }
 
     private void create(CommandSender sender, String label, String[] args) {
@@ -83,20 +83,20 @@ public class MiniDropsFillerCommand extends CoreCommand {
             return;
         }
         if (args.length <= 1) {
-            sendMsg(player, "minidropsfiller.error.create_params", "%label%", label);
+            sendMsg(player, "minidropsfiller.error.create_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         DropsFiller group = FillerManager.get().get(id);
         if (group != null) {
-            sendMsg(player, "minidropsfiller.error.id_already_used", "%id%", id, "%label%", label);
+            sendMsg(player, "minidropsfiller.error.id_already_used", "%id%", id, "%alias%", label);
             return;
         }
         try {
             FillerManager.get().register(args[1].toLowerCase(Locale.ENGLISH), new DropsFiller(), player);
-            sendMsg(player, "minidropsfiller.success.create", "%id%", id, "%label%", label);
+            sendMsg(player, "minidropsfiller.success.create", "%id%", id, "%alias%", label);
         } catch (IllegalArgumentException e) {
-            sendMsg(player, "minidropsfiller.error.invalid_id", "%id%", id, "%label%", label);
+            sendMsg(player, "minidropsfiller.error.invalid_id", "%id%", id, "%alias%", label);
         }
     }
 
@@ -108,7 +108,7 @@ public class MiniDropsFillerCommand extends CoreCommand {
         for (DropsFiller drop : FillerManager.get().getAll().values()) {
             msg.appendHover(
                     new DMessage(getPlugin(), sender).appendLangList("minidropsfiller.success.list_info",
-                            UtilsString.merge(drop.getPlaceholders(), "%label%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
+                            UtilsString.merge(drop.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
                             .appendRunCommand("/" + label + " gui " + drop.getId(), drop.getId())).append(" ");
             color = !color;
         }
@@ -121,12 +121,12 @@ public class MiniDropsFillerCommand extends CoreCommand {
             return;
         }
         if (args.length <= 1) {
-            sendMsg(player, "minidropsfiller.error.gui_params", "%label%", label);
+            sendMsg(player, "minidropsfiller.error.gui_params", "%alias%", label);
             return;
         }
         DropsFiller group = FillerManager.get().get(args[1]);
         if (group == null) {
-            sendMsg(player, "minidropsfiller.error.id_not_found", "%label%", label, "%id%", args[1]);
+            sendMsg(player, "minidropsfiller.error.id_not_found", "%alias%", label, "%id%", args[1]);
             return;
         }
         group.getEditorGui(player, null).open(player);

@@ -7,6 +7,7 @@ import emanondev.core.gui.ResearchFButton;
 import emanondev.minigames.*;
 import emanondev.minigames.generic.AbstractMOption;
 import emanondev.minigames.generic.DropsFiller;
+import emanondev.minigames.skywars.SkyWarsOption;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -56,15 +57,13 @@ public class EggWarsOption extends AbstractMOption {
         },
                 () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(perTeamMaxPlayers).build(),
                 () -> Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
-                        "minioption.buttons.teammaxplayers", new ArrayList<>()), null
+                        "minioption.gui.team_max_players", new ArrayList<>()), null
         ));
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.fillerselector", new ArrayList<>(), "%id%", FillerManager.get().get(fillerId) == null ? "-none-" : fillerId,
-                        "%size%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getElementsAmount()),
-                        "%min%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getMinElements()),
-                        "%max%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getMaxElements()))).build(),
-                (String base, DropsFiller filler1) -> filler1.getId().toLowerCase().contains(base.toLowerCase()),
+                        "minioption.gui.dropsfiller_selector", new ArrayList<>(),
+                        "%id%", FillerManager.get().get(fillerId) == null ? "-none-" : fillerId)).build(),
+                (String base, DropsFiller filler1) -> filler1.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, DropsFiller filler) -> {
                     fillerId = filler.getId().equals(fillerId) ? null : filler.getId();
                     OptionManager.get().save(EggWarsOption.this);
@@ -72,16 +71,15 @@ public class EggWarsOption extends AbstractMOption {
                 },
                 (DropsFiller filler) -> new ItemBuilder(Material.PAPER).addEnchantment(Enchantment.DURABILITY,
                         filler.getId().equals(fillerId) ? 1 : 0).setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.fillerdescription", new ArrayList<>(), "%id%", filler.getId(), "%size%", String.valueOf(filler.getElementsAmount()),
-                        "%min%", String.valueOf(filler.getMinElements()), "%max%", String.valueOf(filler.getMaxElements())
+                        "minioption.gui.dropsfiller_description", new ArrayList<>(), "%id%", filler.getId()
                 )).build(),
                 () -> FillerManager.get().getAll().values()));
 
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.kitselector", new ArrayList<>(), "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", kits)
+                        "minioption.gui.kit_selector", new ArrayList<>(), "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", kits)
                 )).build(),
-                (String base, Kit kit) -> kit.getId().toLowerCase().contains(base.toLowerCase()),
+                (String base, Kit kit) -> kit.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, Kit kit) -> {
                     if (kits.contains(kit.getId()))
                         kits.remove(kit.getId());
@@ -92,7 +90,7 @@ public class EggWarsOption extends AbstractMOption {
                 },
                 (Kit kit) -> new ItemBuilder(Material.PAPER).addEnchantment(Enchantment.DURABILITY,
                         kits.contains(kit.getId()) ? 1 : 0).setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.kitdescription", new ArrayList<>(), "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
+                        "minioption.gui.kit_description", new ArrayList<>(), "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
 
                 )).build(),
                 () -> KitManager.get().getAll().values()));

@@ -1,9 +1,10 @@
 package emanondev.minigames.skywars;
 
 import emanondev.core.ItemBuilder;
-import emanondev.core.gui.NumberEditorFButton;
+import emanondev.core.gui.LongEditorFButton;
 import emanondev.core.gui.PagedMapGui;
 import emanondev.core.gui.ResearchFButton;
+import emanondev.core.message.DMessage;
 import emanondev.minigames.*;
 import emanondev.minigames.generic.AbstractMOption;
 import emanondev.minigames.generic.DropsFiller;
@@ -49,38 +50,39 @@ public class SkyWarsOption extends AbstractMOption {
 
     protected void fillEditor(@NotNull PagedMapGui gui) {
         super.fillEditor(gui);
-        gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> perTeamMaxPlayers
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) perTeamMaxPlayers
                 , (v) -> {
-            perTeamMaxPlayers = Math.max(1, Math.min(32, v));
+            perTeamMaxPlayers = (int) Math.max(1, Math.min(32, v));
             OptionManager.get().save(SkyWarsOption.this);
         },
-                () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(perTeamMaxPlayers).build(),
-                () -> Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadStringList(
-                        "minioption.buttons.teammaxplayers", new ArrayList<>()), null
-        ));
+                () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(perTeamMaxPlayers)
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                                "minioption.gui.team_max_players", "%value%", String.valueOf(perTeamMaxPlayers))).build()));
+
         gui.addButton(new ResearchFButton<>(gui,
-                () -> new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.fillerselector", new ArrayList<>(),
-                        "%id%", FillerManager.get().get(fillerId) == null ? "-none-" : fillerId,
-                        "%size%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getElementsAmount()),
-                        "%min%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getMinElements()),
-                        "%max%", FillerManager.get().get(fillerId) == null ? "-" : String.valueOf(FillerManager.get().get(fillerId).getMaxElements()))).build(),
+                () -> {
+                    DropsFiller filler = fillerId == null ? null : FillerManager.get().get(fillerId);
+                    return new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                            "minioption.gui.dropsfiller_selector",
+                            "%id%", filler == null ? "-none-" : fillerId,
+                            "%size%", filler == null ? "-" : String.valueOf(filler.getSize())
+                    )).build();
+                },
                 (String base, DropsFiller filler1) -> filler1.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, DropsFiller filler) -> {
                     fillerId = filler.getId().equals(fillerId) ? null : filler.getId();
                     OptionManager.get().save(SkyWarsOption.this);
                     return true;
                 },
-                (DropsFiller filler) -> new ItemBuilder(Material.PAPER).addEnchantment(Enchantment.DURABILITY,
-                        filler.getId().equals(fillerId) ? 1 : 0).setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.fillerdescription", new ArrayList<>(), "%id%", filler.getId(), "%size%", String.valueOf(filler.getElementsAmount()),
-                        "%min%", String.valueOf(filler.getMinElements()), "%max%", String.valueOf(filler.getMaxElements())
+                (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                        filler.getId().equals(fillerId) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        "minioption.gui.dropsfiller_description", filler.getPlaceholders()
                 )).build(),
                 () -> FillerManager.get().getAll().values()));
 
         gui.addButton(new ResearchFButton<>(gui,
-                () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.kitselector", new ArrayList<>(), "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", kits)
+                () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        "minioption.gui.kit_selector", "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", kits)
                 )).build(),
                 (String base, Kit kit) -> kit.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, Kit kit) -> {
@@ -92,9 +94,8 @@ public class SkyWarsOption extends AbstractMOption {
                     return true;
                 },
                 (Kit kit) -> new ItemBuilder(Material.PAPER).addEnchantment(Enchantment.DURABILITY,
-                        kits.contains(kit.getId()) ? 1 : 0).setDescription(Minigames.get().getLanguageConfig(gui.getTargetPlayer()).loadMultiMessage(
-                        "minioption.buttons.kitdescription", new ArrayList<>(), "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
-
+                        kits.contains(kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
                 )).build(),
                 () -> KitManager.get().getAll().values()));
     }

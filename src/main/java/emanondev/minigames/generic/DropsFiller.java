@@ -33,7 +33,7 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
     public @NotNull Gui getEditorGui(@NotNull Player player, @Nullable Gui previousGui) {
         PagedMapGui gui = new PagedMapGui(
                 new DMessage(Minigames.get(), player).appendLang("minidropsfiller.gui.title", "%id%", getId()).toLegacy(),
-                6, player, null, Minigames.get(), false);
+                6, player, previousGui, Minigames.get(), false);
         for (int i = 0; i < getSize(); i++)
             gui.addButton(getEditorButton(gui, i));
         gui.addButton(new ResearchDropGroupButton(gui));
@@ -80,14 +80,11 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
         return new LongEditorFButton(gui, 10, 1, 100,
                 () -> getChancePercent(slot),
                 (chance) -> setChancePercent(slot, chance),
-                () -> new ItemBuilder(Material.CHEST).build(),
-                () -> {
-                    DropGroup group = getGroup(slot);
-                    return new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList("minidropsfiller.gui.group_info", UtilsString.merge(
-                            group.getPlaceholders(),
-                            "%chance%", String.valueOf(getChancePercent(slot))
-                    )).toStringList();
-                });
+                () -> new ItemBuilder(Material.CHEST)
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList("minidropsfiller.gui.group_info", UtilsString.merge(
+                                getGroup(slot).getPlaceholders(),
+                                "%chance%", String.valueOf(getChancePercent(slot))
+                        ))).build());
     }
 
     public int getSize() {

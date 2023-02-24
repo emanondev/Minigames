@@ -34,7 +34,7 @@ public class JoinCommand extends CoreCommand {
             return;
         }
         if (GameManager.get().getCurrentGame(player) != null) {
-            sendMsg(player, "join.error.already_inside_a_game", "%label%", label);
+            sendMsg(player, "join.error.already_inside_a_game", "%alias%", label);
             return;
         }
 
@@ -44,7 +44,7 @@ public class JoinCommand extends CoreCommand {
                 ArrayList<MGame> values = new ArrayList<>(GameManager.get().getAll().values());
                 values.removeIf((game) -> game.getPhase() == MGame.Phase.STOPPED);
                 if (values.isEmpty()) {
-                    sendMsg(player, "join.error.no_available_game", "%label%", label);
+                    sendMsg(player, "join.error.no_available_game", "%alias%", label);
                     return;
                 }
                 PagedListFGui<MGame> gui = new PagedListFGui<>(
@@ -64,7 +64,7 @@ public class JoinCommand extends CoreCommand {
                     Collection<MGame> values = new ArrayList(GameManager.get().getGameInstances(type).values());
                     values.removeIf((game) -> game.getPhase() == MGame.Phase.STOPPED);
                     if (values.isEmpty()) {
-                        sendMsg(player, "join.error.no_available_game", "%label%", label);
+                        sendMsg(player, "join.error.no_available_game", "%alias%", label);
                         return;
                     }
                     PagedListFGui<MGame> gui = new PagedListFGui<>(
@@ -82,14 +82,14 @@ public class JoinCommand extends CoreCommand {
                 //
                 MGame game = GameManager.get().get(args[0]);
                 if (game == null) {
-                    sendMsg(player, "join.error.invalid_game_or_minigame", "%name%", game.getId(), "%label%", label);
+                    sendMsg(player, "join.error.invalid_game_or_minigame", "%name%", game.getId(), "%alias%", label);
                     return;
                 }
                 if (GameManager.get().joinGameAsGamer(player, game))
                     return;
-                sendMsg(player, "join.error.game_not_available", "%name%", game.getId(), "%label%", label);
+                sendMsg(player, "join.error.game_not_available", "%name%", game.getId(), "%alias%", label);
             }
-            default -> sendMsg(player, "join.error.join_params", "%label%", label);
+            default -> sendMsg(player, "join.error.join_params", "%alias%", label);
         }
     }
 

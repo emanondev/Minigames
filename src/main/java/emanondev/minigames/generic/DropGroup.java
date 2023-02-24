@@ -9,7 +9,9 @@ import emanondev.core.gui.Gui;
 import emanondev.core.gui.LongEditorFButton;
 import emanondev.core.gui.PagedMapGui;
 import emanondev.core.message.DMessage;
+import emanondev.minigames.DropGroupManager;
 import emanondev.minigames.Minigames;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -37,6 +39,7 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
     @NotNull
     @Override
     public Map<String, Object> serialize() {
+        Minigames.get().logTetraStar(ChatColor.RED, "serialize ");
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         List<ItemStack> items = drops.getItems();
         for (int i = 0; i < items.size(); i++) {
@@ -44,6 +47,7 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
             map.putIfAbsent(key, new ArrayList<String>());
             ((ArrayList<String>) map.get(key)).add(GsonUtil.toJson(items.get(i)));
         }
+        Minigames.get().logTetraStar(ChatColor.RED, "mapsize: " + map.size());
         return map;
     }
 
@@ -64,11 +68,17 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
     }
 
     public void addWeight(@NotNull ItemStack stack, int weight) {
-        drops.setWeight(stack, weight);
+        drops.addItem(stack, weight);
+        DropGroupManager.get().save(this);
+    }
+
+    public int getWeight(@NotNull ItemStack stack) {
+        return drops.getWeight(stack);
     }
 
     public void remove(@NotNull ItemStack stack) {
         drops.deleteItem(stack);
+        DropGroupManager.get().save(this);
     }
 
 
@@ -84,18 +94,16 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
 
     public Gui getEditorGui(@NotNull Player player, @Nullable Gui previous) {
         PagedMapGui gui = new PagedMapGui(
-                Minigames.get().getLanguageConfig(player).getMessage("minidropgroup.gui.title", null, "%id%", getId()),
+                new DMessage(Minigames.get(), player).appendLang("minidropgroup.gui.title", "%id%", getId()).toLegacy(),
                 6, player, previous, Minigames.get(), false);
         for (ItemStack item : drops.getItems()) {
-            gui.addButton(new LongEditorFButton(gui, 50, 1, 1000,
-                    () -> (long) drops.getWeight(item),
-                    (weight) -> drops.setWeight(item, weight.intValue()),
-                    () -> new ItemBuilder(item).build(),
-                    () -> new ItemBuilder(item).getDescription(
-                            Minigames.get()).append("").append(
-                            Minigames.get().getLanguageConfig(player).getMultiMessage("minidropgroup.gui.chance_info", false, null,
-                                    "%chance%", UtilsString.formatForced2Digit(((double) drops.getWeight(item)) / drops.getFullWeight()),
-                                    "%weight%", String.valueOf(drops.getWeight(item)))).toStringList()));
+            gui.addButton(new LongEditorFButton(gui, 10, 1, 1000,
+                    () -> (long) getWeight(item),
+                    (weight) -> addWeight(item, weight.intValue()),
+                    () -> new ItemBuilder(item).addDescription(new DMessage(
+                            gui.getPlugin(), gui.getTargetPlayer()).append("\n").appendLangList("minidropgroup.gui.chance_info",
+                            "%chance%", UtilsString.formatForced2Digit(100 * ((double) getWeight(item)) / drops.getFullWeight()),
+                            "%weight%", String.valueOf(getWeight(item)))).build()));
         }
         gui.setControlGuiButton(4, new FButton(gui, () -> new ItemBuilder(Material.PAPER).setGuiProperty()
                 .setDescription(new DMessage(Minigames.get(), player).appendLangList("minidropgroup.gui.info", "%id%", getId())).build(),

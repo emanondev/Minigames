@@ -68,6 +68,7 @@ public class Manager<T extends Registrable> {
 
     public void register(@NotNull String id, @NotNull T registrable, @NotNull OfflinePlayer player) {
         register(id, registrable, getConfig(player.getName()));
+        save(registrable);
     }
 
     public void register(@NotNull String id, @NotNull T registrable, @NotNull YMLConfig config) {

@@ -3,7 +3,6 @@ package emanondev.minigames.command;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
@@ -58,28 +57,32 @@ public class MiniOptionCommand extends CoreCommand {
                 case "gui", "delete" -> this.complete(args[1], OptionManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
+            case 3 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
+                case "create" -> this.complete(args[2], MinigameTypes.get().getTypesId());
+                default -> Collections.emptyList();
+            };
             default -> Collections.emptyList();
         };
     }
 
     private void help(CommandSender sender, String label, String[] args) {
-        sendMsgList(sender, "minioption.help", "%label%", label);
+        sendMsgList(sender, "minioption.help", "%alias%", label);
     }
 
     private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
-            sendMsg(sender, "minioption.error.delete_params", "%label%", label);
+            sendMsg(sender, "minioption.error.delete_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         MOption group = OptionManager.get().get(id);
         if (group == null) {
-            sendMsg(sender, "minioption.error.id_not_found", "%id%", id, "%label%", label);
+            sendMsg(sender, "minioption.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
         //TODO is used???
         OptionManager.get().delete(group);
-        sendMsg(sender, "minioption.success.delete", "%id%", id, "%label%", label);
+        sendMsg(sender, "minioption.success.delete", "%id%", id, "%alias%", label);
     }
 
     private void create(CommandSender sender, String label, String[] args) {
@@ -88,26 +91,26 @@ public class MiniOptionCommand extends CoreCommand {
             return;
         }
         if (args.length != 3) {
-            sendMsg(player, "minioption.error.create_params", "%label%", label);
+            sendMsg(player, "minioption.error.create_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         MOption group = OptionManager.get().get(id);
         if (group != null) {
-            sendMsg(player, "minioption.error.id_already_used", "%id%", id, "%label%", label);
+            sendMsg(player, "minioption.error.id_already_used", "%id%", id, "%alias%", label);
             return;
         }
         @SuppressWarnings("rawtypes")
         MType type = MinigameTypes.get().getType(args[2]);
         if (type == null) {
-            MessageUtil.sendMessage(player, "minioption.error.invalid_minigametype", "%type%", args[1]);
+            sendMsg(player, "minioption.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
             return;
         }
         try {
             OptionManager.get().register(id, type.createDefaultOptions(), player);
-            sendMsg(player, "minioption.success.create", "%id%", id, "%label%", label);
+            sendMsg(player, "minioption.success.create", "%id%", id, "%type%", type.getType(), "%alias%", label);
         } catch (IllegalArgumentException e) {
-            sendMsg(player, "minioption.error.invalid_id", "%id%", id, "%label%", label);
+            sendMsg(player, "minioption.error.invalid_id", "%id%", id, "%alias%", label);
         }
     }
 
@@ -119,7 +122,7 @@ public class MiniOptionCommand extends CoreCommand {
         for (MOption drop : OptionManager.get().getAll().values()) {
             msg.appendHover(
                     new DMessage(getPlugin(), sender).appendLangList("minioption.success.list_info",
-                            UtilsString.merge(drop.getPlaceholders(), "%label%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
+                            UtilsString.merge(drop.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
                             .appendRunCommand("/" + label + " gui " + drop.getId(), drop.getId())).append(" ");
             color = !color;
         }
@@ -132,12 +135,12 @@ public class MiniOptionCommand extends CoreCommand {
             return;
         }
         if (args.length <= 1) {
-            sendMsg(player, "minioption.error.gui_params", "%label%", label);
+            sendMsg(player, "minioption.error.gui_params", "%alias%", label);
             return;
         }
         MOption group = OptionManager.get().get(args[1]);
         if (group == null) {
-            sendMsg(player, "minioption.error.id_not_found", "%label%", label, "%id%", args[1]);
+            sendMsg(player, "minioption.error.id_not_found", "%alias%", label, "%id%", args[1]);
             return;
         }
         group.getEditorGui(player, null).open(player);

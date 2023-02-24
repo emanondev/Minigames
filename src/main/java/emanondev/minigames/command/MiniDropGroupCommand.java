@@ -61,27 +61,27 @@ public class MiniDropGroupCommand extends CoreCommand {
     private static final int DEFAULT_WEIGHT = 10;
 
     private void help(CommandSender sender, String label, String[] args) {
-        sendMsgList(sender, "minidropgroup.help", "%label%", label);
+        sendMsgList(sender, "minidropgroup.help", "%alias%", label);
     }
 
     /*
     private void info(CommandSender sender, String label, String[] args) {
-        sendMsgList(sender, "minidropgroup.info", "%label%", label);
+        sendMsgList(sender, "minidropgroup.info", "%alias%", label);
     }*/
 
     private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
-            sendMsg(sender, "minidropgroup.error.delete_params", "%label%", label);
+            sendMsg(sender, "minidropgroup.error.delete_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         DropGroup group = DropGroupManager.get().get(id);
         if (group == null) {
-            sendMsg(sender, "minidropgroup.error.id_not_found", "%id%", id, "%label%", label);
+            sendMsg(sender, "minidropgroup.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
         DropGroupManager.get().delete(group);
-        sendMsg(sender, "minidropgroup.success.delete", "%id%", id, "%label%", label);
+        sendMsg(sender, "minidropgroup.success.delete", "%id%", id, "%alias%", label);
 
     }
 
@@ -91,20 +91,20 @@ public class MiniDropGroupCommand extends CoreCommand {
             return;
         }
         if (args.length <= 1) {
-            sendMsg(player, "minidropgroup.error.create_params", "%label%", label);
+            sendMsg(player, "minidropgroup.error.create_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         DropGroup group = DropGroupManager.get().get(id);
         if (group != null) {
-            sendMsg(player, "minidropgroup.error.id_already_used", "%id%", id, "%label%", label);
+            sendMsg(player, "minidropgroup.error.id_already_used", "%id%", id, "%alias%", label);
             return;
         }
         try {
             DropGroupManager.get().register(args[1].toLowerCase(Locale.ENGLISH), new DropGroup(), player);
-            sendMsg(player, "minidropgroup.success.create", "%id%", id, "%label%", label);
+            sendMsg(player, "minidropgroup.success.create", "%id%", id, "%alias%", label);
         } catch (IllegalArgumentException e) {
-            sendMsg(player, "minidropgroup.error.invalid_id", "%id%", id, "%label%", label);
+            sendMsg(player, "minidropgroup.error.invalid_id", "%id%", id, "%alias%", label);
         }
     }
 
@@ -114,17 +114,18 @@ public class MiniDropGroupCommand extends CoreCommand {
             return;
         }
         if (args.length <= 1) {
-            sendMsg(player, "minidropgroup.error.addhand_params", "%label%", label);
+            sendMsg(player, "minidropgroup.error.addhand_params", "%alias%", label);
             return;
         }
         ItemStack item = player.getInventory().getItemInMainHand();
         if (UtilsInventory.isAirOrNull(item)) {
-            sendMsg(player, "minidropgroup.error.no_item_in_hand", "%label%", label);
+            sendMsg(player, "minidropgroup.error.no_item_in_hand", "%alias%", label);
             return;
         }
-        DropGroup group = DropGroupManager.get().get(args[1]);
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        DropGroup group = DropGroupManager.get().get(id);
         if (group == null) {
-            sendMsg(player, "minidropgroup.error.id_not_found", "%label%", label, "%id%", args[1].toLowerCase(Locale.ENGLISH));
+            sendMsg(player, "minidropgroup.error.id_not_found", "%alias%", label, "%id%", id);
             return;
         }
         int weight = DEFAULT_WEIGHT;
@@ -132,16 +133,16 @@ public class MiniDropGroupCommand extends CoreCommand {
             try {
                 weight = Integer.parseInt(args[2]);
             } catch (Exception e) {
-                sendMsg(player, "minidropgroup.error.invalid_weight", "%label%", label, "%weight%", args[2]);
+                sendMsg(player, "minidropgroup.error.invalid_weight", "%alias%", label, "%weight%", args[2]);
                 return;
             }
             if (weight == 0) {
-                sendMsg(player, "minidropgroup.error.null_weight", "%label%", label, "%weight%", args[2]);
+                sendMsg(player, "minidropgroup.error.null_weight", "%alias%", label, "%weight%", args[2]);
                 return;
             }
         }
         group.addWeight(item, weight);
-        sendMsg(player, "minidropgroup.success.addhand", "%label%", label, "%weight%", String.valueOf(weight));
+        sendMsg(player, "minidropgroup.success.addhand", "%alias%", label, "%weight%", String.valueOf(weight), "%id%",id);
     }
 
     private void addchest(CommandSender sender, String label, String[] args) {
@@ -150,13 +151,13 @@ public class MiniDropGroupCommand extends CoreCommand {
             return;
         }
         if (args.length <= 1) {
-            sendMsg(player, "minidropgroup.error.addchest_params", "%label%", label);
+            sendMsg(player, "minidropgroup.error.addchest_params", "%alias%", label);
             return;
         }
         RayTraceResult result = player.getWorld().rayTraceBlocks(player.getEyeLocation(), player.getEyeLocation().getDirection(), 10, FluidCollisionMode.NEVER, true);
         Block block = result == null ? null : result.getHitBlock();
-        if (block == null || !(block.getBlockData() instanceof Container container)) {
-            sendMsg(player, "minidropgroup.error.not_looking_to_container", "%label%", label);
+        if (block == null || !(block.getState() instanceof Container container)) {
+            sendMsg(player, "minidropgroup.error.not_looking_to_container", "%alias%", label);
             return;
         }
         List<ItemStack> items = new ArrayList<>();
@@ -164,12 +165,13 @@ public class MiniDropGroupCommand extends CoreCommand {
             if (!UtilsInventory.isAirOrNull(item))
                 items.add(item);
         if (items.isEmpty()) {
-            sendMsg(player, "minidropgroup.error.empty_container", "%label%", label);
+            sendMsg(player, "minidropgroup.error.empty_container", "%alias%", label);
             return;
         }
-        DropGroup group = DropGroupManager.get().get(args[1]);
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        DropGroup group = DropGroupManager.get().get(id);
         if (group == null) {
-            sendMsg(player, "minidropgroup.error.id_not_found", "%label%", label, "%id%", args[1].toLowerCase(Locale.ENGLISH));
+            sendMsg(player, "minidropgroup.error.id_not_found", "%alias%", label, "%id%", id);
             return;
         }
         int weight = DEFAULT_WEIGHT;
@@ -177,11 +179,11 @@ public class MiniDropGroupCommand extends CoreCommand {
             try {
                 weight = Integer.parseInt(args[2]);
             } catch (Exception e) {
-                sendMsg(player, "minidropgroup.error.invalid_weight", "%label%", label, "%weight%", args[2]);
+                sendMsg(player, "minidropgroup.error.invalid_weight", "%alias%", label, "%weight%", args[2]);
                 return;
             }
             if (weight == 0) {
-                sendMsg(player, "minidropgroup.error.null_weight", "%label%", label, "%weight%", args[2]);
+                sendMsg(player, "minidropgroup.error.null_weight", "%alias%", label, "%weight%", args[2]);
                 return;
             }
         }
@@ -209,7 +211,7 @@ public class MiniDropGroupCommand extends CoreCommand {
 
         for (ItemStack item : items)
             group.addWeight(item, weight);
-        sendMsg(player, "minidropgroup.success.addchest", "%label%", label, "%weight%", String.valueOf(weight), "%items%", String.valueOf(items.size()));
+        sendMsg(player, "minidropgroup.success.addchest", "%alias%", label, "%weight%", String.valueOf(weight), "%items%", String.valueOf(items.size()), "%id%",id);
     }
 
     private void list(CommandSender sender, String label, String[] args) {
@@ -220,7 +222,7 @@ public class MiniDropGroupCommand extends CoreCommand {
         for (DropGroup drop : DropGroupManager.get().getAll().values()) {
             msg.appendHover(
                     new DMessage(getPlugin(), sender).appendLangList("minidropgroup.success.list_info",
-                            UtilsString.merge(drop.getPlaceholders(), "%label%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
+                            UtilsString.merge(drop.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
                             .appendRunCommand("/" + label + " gui " + drop.getId(), drop.getId())).append(" ");
             color = !color;
         }
@@ -233,12 +235,12 @@ public class MiniDropGroupCommand extends CoreCommand {
             return;
         }
         if (args.length <= 1) {
-            sendMsg(player, "minidropgroup.error.gui_params", "%label%", label);
+            sendMsg(player, "minidropgroup.error.gui_params", "%alias%", label);
             return;
         }
         DropGroup group = DropGroupManager.get().get(args[1]);
         if (group == null) {
-            sendMsg(player, "minidropgroup.error.id_not_found", "%label%", label, "%id%", args[1]);
+            sendMsg(player, "minidropgroup.error.id_not_found", "%alias%", label, "%id%", args[1]);
             return;
         }
         group.getEditorGui(player).open(player);

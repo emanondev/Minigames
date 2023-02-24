@@ -138,7 +138,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
     public boolean isValidLocation(@NotNull BlockLocation3D loc, @NotNull MArena arena, @NotNull World w) {
         if (arena instanceof MSchemArena schemArena) {
             Clipboard clip = schemArena.getSchematic();
-            //BlockVector3 min = clip.getMinimumPoint();
             BlockVector3 dim = clip.getDimensions();
             //TODO eventually move the y
             BoundingBox box = new BoundingBox(
@@ -151,8 +150,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                     if (!game.getWorld().getName().equals(w.getName()))
                         continue;
                     Clipboard clip2 = schemArena2.getSchematic();
-                    //BlockVector3 min2 = clip2.getMinimumPoint();
-                    //logInfo("Debug -> min "+min2.getX()+" "+min2.getY()+" "+min2.getZ());
                     BlockVector3 dim2 = clip2.getDimensions();
                     BlockLocation3D loc2 = game.getGameLocation();
                     logTetraStar(ChatColor.DARK_RED, "D Box1  &e" + box.getMinX() + " " + box.getMinY() + " " + box.getMinZ() + " to " + box.getMaxX() + " " + box.getMaxY() + " " + box.getMaxZ()

@@ -31,7 +31,7 @@ public class FastJoinCommand extends CoreCommand {
             return;
         }
         if (GameManager.get().getCurrentGame(player) != null) {
-            sendMsg(player, "join.error.already_inside_a_game", "%label%", label);
+            sendMsg(player, "join.error.already_inside_a_game", "%alias%", label);
             return;
         }
 
@@ -48,12 +48,12 @@ public class FastJoinCommand extends CoreCommand {
                 if (GameManager.get().joinGameAsGamer(player, available))
                     return;
 
-                sendMsg(player, "join.error.no_available_game", "%label%", label);
+                sendMsg(player, "join.error.no_available_game", "%alias%", label);
             }
             case 1 -> {
                 MType type = MinigameTypes.get().getType(args[0]);
                 if (type == null) {
-                    sendMsg(player, "join.error.invalid_type", "%type%", args[0], "%label%", label);
+                    sendMsg(player, "join.error.invalid_type", "%type%", args[0], "%alias%", label);
                     return;
                 }
                 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -68,9 +68,9 @@ public class FastJoinCommand extends CoreCommand {
                 if (GameManager.get().joinGameAsGamer(player, available))
                     return;
 
-                sendMsg(player, "join.error.no_available_game_of_type", "%type%", type.getType(), "%label%", label);
+                sendMsg(player, "join.error.no_available_game_of_type", "%type%", type.getType(), "%alias%", label);
             }
-            default -> sendMsg(player, "join.error.fastjoin_params", "%label%", label);
+            default -> sendMsg(player, "join.error.fastjoin_params", "%alias%", label);
         }
     }
 
