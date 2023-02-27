@@ -325,6 +325,20 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
                 ).build();
     }
 
+    default String[] getPlaceholders() {
+        return new String[]{
+                "%id%", this.getId(),
+                "%option%", this.getOption().getId(),
+                "%arena%", this.getArena().getId(),
+                "%players%", String.valueOf(this.getGamers().size()),
+                "%spectators%", String.valueOf(this.getSpectators().size()),
+                "%phase%", this.getPhase().name(),
+                "%maxplayers%", String.valueOf(this.getMaxGamers()),
+                "%type%", this.getMinigameType().getType(),
+                "%location%", this.getGameLocation().toString().replace(":", " ")
+        };
+    }
+
     enum Phase {
         STOPPED,
         COLLECTING_PLAYERS,

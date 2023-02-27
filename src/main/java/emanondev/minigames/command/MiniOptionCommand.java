@@ -22,7 +22,7 @@ import java.util.Locale;
 
 public class MiniOptionCommand extends CoreCommand {
 
-    /*
+    /* //TODO filter list with type
      * create <id> <type>
      * gui <id>
      * list

@@ -93,7 +93,7 @@ public class SkyWarsOption extends AbstractMOption {
                     OptionManager.get().save(SkyWarsOption.this);
                     return true;
                 },
-                (Kit kit) -> new ItemBuilder(Material.PAPER).addEnchantment(Enchantment.DURABILITY,
+                (Kit kit) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
                         kits.contains(kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                         "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
                 )).build(),

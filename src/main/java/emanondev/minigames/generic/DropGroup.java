@@ -55,14 +55,15 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
     public static DropGroup deserialize(Map<String, Object> map) {
         RandomItemContainer<ItemStack> drops = new RandomItemContainer<>();
         for (String key : map.keySet()) {
-            try {
-                int value = Integer.parseInt(key);
-                List<String> items = (List<String>) map.get(key);
-                for (String json : items)
-                    drops.addItem((ItemStack) GsonUtil.fromJson(json), value);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            if (!key.equals("=="))
+                try {
+                    int value = Integer.parseInt(key);
+                    List<String> items = (List<String>) map.get(key);
+                    for (String json : items)
+                        drops.addItem((ItemStack) GsonUtil.fromJson(json), value);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
         }
         return new DropGroup(drops);
     }

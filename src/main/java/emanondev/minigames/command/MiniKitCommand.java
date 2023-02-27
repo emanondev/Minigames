@@ -1,6 +1,7 @@
 package emanondev.minigames.command;
 
 import emanondev.core.UtilsString;
+import emanondev.core.command.CoreCommand;
 import emanondev.core.command.CoreCommandPlus;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.Kit;
@@ -18,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public class MiniKitCommand extends CoreCommandPlus {
+public class MiniKitCommand extends CoreCommand {
     /*
     create <id>
     update <id>

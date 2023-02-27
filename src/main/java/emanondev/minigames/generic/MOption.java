@@ -29,7 +29,12 @@ public interface MOption extends ConfigurationSerializable, Cloneable, Registrab
 
     boolean allowSelectingTeam();
 
-    String[] getPlaceholders();
+    default String[] getPlaceholders() {
+        String name = getClass().getSimpleName();
+        return new String[]{
+                "%id%", getId(), "%type%", name.endsWith("Option") ? name.substring(0, name.length() - 6) : name
+        };
+    }
 
     Gui getEditorGui(Player player, Gui parent);
 

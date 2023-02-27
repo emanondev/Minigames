@@ -31,7 +31,25 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
         String[] args = params.split("_");
         try {
             switch (args[0]) {
-                //minigames_playerstats_<time>_<stat_id>
+                //minigames_playerstats_<what>_<game_id>
+                case "game" -> {
+                    String gameId = params.substring(args[0].length() + args[1].length() + 2);
+                    MGame game = GameManager.get().get(gameId);
+                    if (game == null) {
+                        Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% game " + gameId + " does not exist");
+                        return "-error-";
+                    }
+                    return switch (args[1]) {
+                        case "players" -> String.valueOf(game.getGamers().size());
+                        case "spectators" -> String.valueOf(game.getMaxGamers());
+                        case "maxplayers" -> String.valueOf(game.getSpectators());
+                        case "phase" -> game.getPhase().name(); //TODO translate that
+                        default -> {
+                            Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% time unit " + args[1] + " doesn't match with existing ones");
+                            yield "0";
+                        }
+                    };
+                }
                 case "playerstats" -> {
                     String statId = params.substring(args[0].length() + args[1].length() + 2);
                     return switch (args[1]) {
@@ -82,7 +100,9 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
             Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% please check correct values");
             Minigames.get().logInfo("%minigames_playerstats_<time_unit>_<stat_id>");
             Minigames.get().logInfo("%minigames_gamestats_<time_unit>_<game_id>_stat_<stat_id>");
-            Minigames.get().logInfo("Where tim_unit could be: today, yesterday, currentweek, lastweek, currentmonth, lastmonth, last3months, total");
+            Minigames.get().logInfo("Where time_unit could be: today, yesterday, currentweek, lastweek, currentmonth, lastmonth, last3months, total");
+            Minigames.get().logInfo("%minigames_game_<what>_<game_id>");
+            Minigames.get().logInfo("Where what could be: players, maxplayers, spectators, phase");
             return null;
         }
     }

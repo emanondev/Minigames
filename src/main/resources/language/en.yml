@@ -1,3 +1,6 @@
+not_implemented: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Questa funzione non è stata implementata"
+
+
 items:
   kit_selector:
     - "&aScegli il Kit"
@@ -59,17 +62,7 @@ skywars:
       phase4: "&eSeleziona lo spawn degli spettatori"
       phase5: "&eSeleziona lo spawn degli spettatori &9| &eProcedi"
   option_gui_title: "&9SkyWars Options"
-minigame:
-  create:
-    error:
-      arguments_amount: "&c[MiniGame] /%alias% create <type> <arena> <option> <id>"
-      invalid_type: "&c[MiniGame] invalid game type &6%type%"
-      invalid_arena_name: "&c[MiniGame] invalid game type &6%arena%"
-      invalid_arena_type: "&c[MiniGame] &6%arena% &cis not a valid arena for &6%type%"
-      invalid_option_name: "&c[MiniGame] invalid game type &6%option%"
-      invalid_option_type: "&c[MiniGame] &6%option% &cis not a valid option for &6%type%"
-      invalid_id_name: "&c[MiniGame] invalid id &6%id%"
-      already_used_id: "&c[MiniGame] Id &6%id% &cis already used"
+minigameold:
   help:
     create_text: "&9/%alias% create &b<type> <arena> <option> <id>"
     create_hover:
@@ -81,12 +74,58 @@ minigame:
     list_hover:
       - "&6Shows info about games"
 ###
+miniarena:
+  error:
+    id_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><id></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non esiste</hover>"
+    delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
+  help:
+    - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArena</b></gradient> <hover:show_text:\"<#acfad1>Questo comando permette di visualizzare\nle arene per i vari Minigame (Arena)\nPer creare un'arena <#ffffb3>/miniarenabuilder\"><#fab787>[?]</hover>"
+    - "<hover:show_text:'<#acfad1>Mostra la lista di Arena esistenti'><click:run_command:'/%alias% list'><#4079ff>/%alias% <#57c9fa>list</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Elimina l'Arena\n<#ffffb3><id><#acfad1> è l'id del Arena\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
+  success:
+    delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Arena <#ffffb3>%id%</#ffffb3> eliminata"
+    list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArena Lista Arene</b></gradient>"
+    list_info:
+      - "<#57c9fa>Arena <#ffffb3><b>%id%</b></#ffffb3>"
+      - "Nome: <#ffffb3>%displayname%</#ffffb3>"
+      - "Minigame <#ffffb3>%type%</#ffffb3>"
+      - ""
+      - "<#ffffb3>Clicca per vedere"
+minigame:
+  help:
+    - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniGame</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di gestire\nle partite (Game)'><#fab787>[?]</hover>"
+    - "<hover:show_text:\"<#acfad1>Configura un Game\n<#ffffb3><id><#acfad1> è l'id del Game\n<#ffffb3><type><#acfad1> è il tipo di Minigame\n<#ffffb3><option><#acfad1> è la configurazione di opzioni\n<#ffffb3><arena><#acfad1> è l'arena designata\n<#ffffb3><type><#acfad1> è il tipo di Minigame\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id> <type> <option> <arena></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Sospendi il Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% stop '><#4079ff>/%alias% <#57c9fa>stop <#ffffb3><id></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Riavvia il Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% reset '><#4079ff>/%alias% <#57c9fa>reset <#ffffb3><id></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Teletrasportati al Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% tp '><#4079ff>/%alias% <#57c9fa>tp <#ffffb3><id></click></hover>"
+    - "<hover:show_text:'<#acfad1>Mostra la lista dei Game esistenti\n<#ffffb3>[type]<#acfad1> per filtrare una tipologia di Minigame'><click:run_command:'/%alias% list '><#4079ff>/%alias% <#57c9fa>list <#ffffb3>[type]</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Elimina il Game\n<#ffffb3><id><#acfad1> è l'id del Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
+  error:
+    create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type> <option> <arena></hover>"
+    invalid_id: "<hover:show_text:\"<#e060de>L'<#fab66e><id></#fab66e> dev'essere una stringa di\ncaratteri numeri e/o trattini bassi\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non è valido</hover>"
+    id_already_used: "<hover:show_text:'<#e060de>Scegli un <#fab66e><id></#fab66e> che non sia già utilizzato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> è già in uso</hover>"
+    invalid_minigametype: "<hover:show_text:'<#e060de>Scegli un Minigame esistente'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste un Minigame chiamato <#fab66e>%type%"
+    arena_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><arena></#fab66e> esistente o creane una\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'Arena <#fab66e>%arena%</#fab66e> non esiste</hover>"
+    invalid_arena_type: "<hover:show_text:\"<#e060de>Usa un <#fab66e><arena></#fab66e> compatibile o creane una\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'Arena <#fab66e>%arena%</#fab66e> non è compatibile per il Minigame %type%</hover>"
+    option_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><option></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'Option <#fab66e>%option%</#fab66e> non esiste</hover>"
+    invalid_option_type: "<hover:show_text:\"<#e060de>Usa un <#fab66e><option></#fab66e> compatibile o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'Option <#fab66e>%option%</#fab66e> non è compatibile per il Minigame %type%</hover>"
+  success:
+    create: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Nuovo Game <#ffffb3>%id%</#ffffb3> creato"
+    list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniGame Lista Game</b></gradient>"
+    list_info:
+      - "<#57c9fa>Game <#ffffb3><b>%id%</b></#ffffb3>"
+      - "<#57c9fa>Giocatori: <#ffffb3>%players%</#ffffb3>/<#ffffb3>%maxplayers%</#ffffb3> Spettatori: <#ffffb3>%spectators%"
+      - "<#57c9fa>Minigame: <#ffffb3>%type%</#ffffb3>"
+      - "<#57c9fa>Arena: <#ffffb3>%arena%</#ffffb3> Option: <#ffffb3>%option%</#ffffb3>"
+      - "<#57c9fa>Location: <#ffffb3>%location%</#ffffb3>"
+      - ""
+      - "<#57c9fa>Fase: <#ffffb3>%phase%"
 miniarenabuilder:
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArenaBuilder</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare\nun arena per un Game (Arena)'><#fab787>[?]</hover>"
-      - "<hover:show_text:\"<#acfad1>Comincia la configurazione\ndi un'Arena\n<#ffffb3><id><#acfad1> è l'id del Arena\n<#ffffb3><type><#acfad1> è il tipo di Minigame\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id> <type></click></hover>"
-      - "<hover:show_text:\"<#acfad1>Interrompe la configurazione\ndell'Arena\"><click:suggest_command:'/%alias% abort'><#4079ff>/%alias% <#57c9fa>abort</click></hover>"
-      - "<hover:show_text:\"<#acfad1>Configura l'arena:\ndurante la configurazione\npotrebbero essere richiesti dei\nparametri\"><click:suggest_command:'/%alias% '><#4079ff>/%alias% <#57c9fa>?</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Comincia la configurazione\ndi un'Arena\n<#ffffb3><id><#acfad1> è l'id del Arena\n<#ffffb3><type><#acfad1> è il tipo di Minigame\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id> <type></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Interrompe la configurazione\ndell'Arena\"><click:suggest_command:'/%alias% abort'><#4079ff>/%alias% <#57c9fa>abort</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Configura l'arena:\ndurante la configurazione\npotrebbero essere richiesti dei\nparametri\"><click:suggest_command:'/%alias% '><#4079ff>/%alias% <#57c9fa>?</click></hover>"
   error:
     already_creating: "<hover:show_text:\"<#e060de>Puoi configurare solo un'Arena\nalla volta, completa la configurazione\ncorrente o abbandonala con\n<#fab66e>/%label% abort\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Stai già configurando un'Arena</hover>"
     create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type></hover>"
@@ -122,7 +161,7 @@ minioption:
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
   gui: #TODO refine this section
-    title: "<#4079ff>Filler <57c9fa>%id% <#4079ff>(<57c9fa>%type%<#4079ff>)"
+    title: "<#4079ff>Filler <#57c9fa>%id% <#4079ff>(<#57c9fa>%type%<#4079ff>)"
     collecting_players_phase_max_cooldown:
       - "<#4079ff>Quanti secondi dopo che i requisiti minimi"
       - "<#4079ff> sono soddisfatti per iniziare la Partita?"
@@ -252,7 +291,7 @@ minidropsfiller:
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
   gui:
-    title: "<#4079ff>Filler <57c9fa>%id%"
+    title: "<#4079ff>Filler <#57c9fa>%id%"
     clear:
       - "<#4079ff>Pulisci"
       - "<#57c9fa>Rimuove definitivamente tutti i Drop che hanno probabilità 0"
@@ -303,7 +342,7 @@ minidropgroup:
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
   gui:
-    title: "<#4079ff>Drop <57c9fa>%id%"
+    title: "<#4079ff>Drop <#57c9fa>%id%"
     chance_info:
       - "<#4079ff>Modificatore del Peso:"
       - "<#57c9fa>Il peso è <#ffffb3>%weight%</#ffffb3> (<#ffffb3>%chance%</#ffffb3> % di essere pescato)"

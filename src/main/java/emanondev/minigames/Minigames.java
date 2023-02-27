@@ -76,6 +76,7 @@ public final class Minigames extends CorePlugin {
         this.registerCommand(new MiniDropGroupCommand());
         this.registerCommand(new MiniDropsFillerCommand());
         this.registerCommand(new MiniArenaBuilderCommand());
+        this.registerCommand(new MiniArenaCommand());
         this.registerCommand(new MiniOptionCommand());
         this.registerCommand(new MiniGameCommand());
         this.registerCommand(new FastJoinCommand());
