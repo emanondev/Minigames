@@ -79,13 +79,6 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         };
     }
 
-    /*
-    @Override
-    @Nullable
-    public String getCurrentActionMessage() {
-        return Minigames.get().getLanguageConfig(getBuilder()).getString("race.arenabuilder.actionbar.phase" + phase);
-    }*/
-
     @Override
     public void handleCommand(@NotNull Player player, String label, @NotNull String[] args) {
         if (args.length == 0) {

@@ -16,6 +16,7 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
     private final String schematicName;
     private final LocationOffset3D spectatorsOffset;
     private String displayName;
+    private Clipboard schematicCache;
 
     /*
      * schematic: (name)
@@ -28,8 +29,6 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         spectatorsOffset = LocationOffset3D.fromString((String) map.get("spectatorSpawnOffset"));
         this.displayName = (String) map.get("displayName");
     }
-
-    private Clipboard schematicCache;
 
     @Override
     public Clipboard getSchematic() {

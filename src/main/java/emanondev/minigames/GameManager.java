@@ -28,19 +28,40 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.BoundingBox;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("rawtypes")
 public class GameManager extends Manager<MGame> implements Listener, ConsoleLogger {
 
     private static GameManager instance;
+    private final List<List<MGame>> gameTickList;
+
+    private final BukkitTask gameTick = new BukkitRunnable() {
+        private int i = 0;
+
+        public void run() {
+            for (MGame game : gameTickList.get(i % 20))
+                try {
+                    switch (game.getPhase()) {
+                        case END -> game.gameEndTimer();
+                        case PLAYING -> game.gamePlayingTimer();
+                        case COLLECTING_PLAYERS -> game.gameCollectingPlayersTimer();
+                        case PRE_START -> game.gamePreStartTimer();
+                        case RESTART -> game.gameRestartTimer();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            i++;
+        }
+    }.runTaskTimer(Minigames.get(), 20L, 1L);
 
     public static @NotNull GameManager get() {
         return instance;
@@ -56,6 +77,9 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         if (instance != null)
             throw new IllegalStateException();
         instance = this;
+        this.gameTickList = new ArrayList<>(20);
+        for (int i = 0; i < 20; i++)
+            this.gameTickList.add(new ArrayList<>());
     }
 
 
@@ -97,6 +121,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         }
         //throw new IllegalStateException("location"); //may just move it
         super.register(id, game, config);
+        Collections.min(gameTickList, Comparator.comparingInt(List::size)).add(game);
         if (save)
             save(game);
         logTetraStar(ChatColor.DARK_RED, "D Registered Game &e" + id + "&f of type &e" + game.getMinigameType().getType()
@@ -107,13 +132,19 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                 (game.getGameLocation().z + mArena.getSchematic().getDimensions().getBlockZ()) : ""));
     }
 
+
+    public void delete(String id) {
+        @Nullable MGame game = get(id);
+        super.delete(id);
+        if (game != null) {
+            gameTickList.forEach(l -> l.remove(game));
+        }
+    }
+
     /**
      * Generate a new Location for selected arena on selected world
-     *
-     * @param arena
-     * @param world
-     * @return
      */
+    @Contract("_, _ -> new")
     public @NotNull BlockLocation3D generateLocation(@NotNull MArena arena, @Nullable World world) {
         int counter = 0;
         int offset = 500;
@@ -485,6 +516,13 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                     game.onGamerCombustEvent(event, player);
             }
         }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    private void event(PlayerPickupArrowEvent event) {
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
+        if (game != null && !game.isGamer(event.getPlayer()))
+            event.setCancelled(true);
     }
 
     @Override

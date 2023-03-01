@@ -26,6 +26,8 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     private final Map<DyeColor, T> teams = new EnumMap<>(DyeColor.class);
     private final HashSet<Chunk> clearedEntitiesBefore = new HashSet<>();
 
+    private BoundingBox boxCache;
+
     private static final double MARGIN_WORLD_BORDER_RESTRICTION = 0.25;
     private static final int SEE_WORLD_BORDER_DISTANCE = 6;
     private static final int CLEAR_MARGIN = 128;
@@ -111,9 +113,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             wb.setSize(size);
             wb.setCenter(box.getMinX() + size / 2, box.getMinZ() + size / 2);
             borders.add(wb);
-            //MessageUtil.debug(getId() + " box " + wb.getCenter().getX() + " " + wb.getCenter().getZ() + " size " + wb.getSize());
         }
-
         hiddenBorderArea = box.clone().expand(-SEE_WORLD_BORDER_DISTANCE, 999, -SEE_WORLD_BORDER_DISTANCE);
     }
 
@@ -173,8 +173,6 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         }
         return null;
     }
-
-    private BoundingBox boxCache;
 
     @NotNull
     @Contract("-> new")

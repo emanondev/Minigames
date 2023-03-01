@@ -9,7 +9,6 @@ items:
 generic:
   obtain_points: "&a[Game] Hai ottenuto &e%amount% &apunti!"
   game:
-    game_interrupted: "&c[Game] Partita interrotta"
   gui:
     kitselector_title: "&eScegli il Kit"
     kitselector_description:
@@ -26,6 +25,7 @@ skywars:
       - "<#57c9fa>%arena%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
   game:
+    game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
     collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
     collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"

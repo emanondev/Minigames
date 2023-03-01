@@ -4,6 +4,7 @@ import emanondev.core.CorePlugin;
 import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
 import emanondev.core.YMLSection;
+import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.Configurations;
 import emanondev.minigames.GameManager;
 import org.bukkit.ChatColor;
@@ -13,6 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public abstract class MType<A extends MArena, O extends MOption> {
+
+    public final SimpleMessage GAME_START_MESSAGE;
+    public final SimpleMessage GAME_END_MESSAGE;
+    public final SimpleMessage PRESTART_COOLDOWN_BAR;
+    public final SimpleMessage COLLECTINGPLAYERS_COOLDOWN_BAR;
+    public final SimpleMessage END_COOLDOWN_BAR;
+    public final SimpleMessage COLLECTINGPLAYERS_NO_COOLDOWN_BAR;
+    public final SimpleMessage GAME_INTERRUPTED_MESSAGE;
 
     private final String type;
     private final YMLSection section;
@@ -28,6 +37,16 @@ public abstract class MType<A extends MArena, O extends MOption> {
         this.optionClazz = optionClazz;
         this.section = GameManager.get().getSection(this);
         this.plugin = plugin;
+        this.GAME_INTERRUPTED_MESSAGE = new SimpleMessage(getPlugin(),getType()+".game.game_interrupted");
+        this.COLLECTINGPLAYERS_COOLDOWN_BAR = new SimpleMessage(getPlugin(), getType() + ".game.collectingplayers_cooldown_bar");
+        this.END_COOLDOWN_BAR = new SimpleMessage(getPlugin(), getType() + ".game.end_cooldown_bar");
+        this.COLLECTINGPLAYERS_NO_COOLDOWN_BAR = new SimpleMessage(getPlugin(), getType() + ".game.collectingplayers_no_cooldown_bar");
+        this.PRESTART_COOLDOWN_BAR = new SimpleMessage(getPlugin(), getType() + ".game.prestart_cooldown_bar");
+        this.GAME_START_MESSAGE = new SimpleMessage(getPlugin(),getType()+".game.game_start");
+        this.GAME_END_MESSAGE = new SimpleMessage(getPlugin(),getType()+".game.game_end");
+
+
+
     }
 
     @NotNull
@@ -73,4 +92,5 @@ public abstract class MType<A extends MArena, O extends MOption> {
     public final CorePlugin getPlugin() {
         return plugin;
     }
+
 }

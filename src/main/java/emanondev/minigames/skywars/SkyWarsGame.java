@@ -80,7 +80,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
         for (SkyWarsTeam team : teams)
             if (team.addUser(player)) {
-                new DMessage(Minigames.get(), player).appendLang("skywars.game.assign_team",
+                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType()+".game.assign_team",
                         "%color%", team.getColor().name());
                 return;
             }

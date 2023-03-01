@@ -6,6 +6,7 @@ import emanondev.core.VaultEconomyHandler;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.PagedListFGui;
 import emanondev.core.message.DMessage;
+import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
@@ -21,8 +22,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -39,7 +38,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private int endCountdown = -1;
     private int preStartCountdown = -1;
 
-    private BukkitTask timer;
+    //private BukkitTask timer;
     //private final HashSet<Player> collectedPlayers = new HashSet<>();
     private BlockLocation3D loc;
     private Phase phase = Phase.STOPPED;
@@ -129,7 +128,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             team.clear();
         phase = Phase.COLLECTING_PLAYERS;
         gameCollectingPlayers();
-        timer = new BukkitRunnable() {
+        //moved to gameManager
+        /*timer = new BukkitRunnable() {
             public void run() {
                 switch (phase) {
                     case END -> gameEndTimer();
@@ -143,7 +143,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                     default -> new IllegalStateException().printStackTrace();
                 }
             }
-        }.runTaskTimer(Minigames.get(), 20L, 20L);
+        }.runTaskTimer(Minigames.get(), 20L, 20L);*/
     }
 
 
@@ -178,14 +178,13 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                         "%max_players%", String.valueOf(getMaxGamers())};
                 SoundInfo tick = Configurations.getCollectingPlayersCooldownTickSound();
                 for (Player player : getGamers()) {
-                    new DMessage(getMinigameType().getPlugin(), player).appendLang(getMinigameType().getType() + ".game.collectingplayers_cooldown_bar", args)
-                            .sendActionBar();
+                    getMinigameType().COLLECTINGPLAYERS_COOLDOWN_BAR.sendActionBar(player, args);
                     tick.play(player);
                 }
                 return;
             }
             phase = Phase.PRE_START;
-            getGamers().forEach(MessageUtil::sendEmptyActionBarMessage);
+            getGamers().forEach(SimpleMessage::sendEmptyActionBarMessage);
             gamePreStart();
             return;
         }
@@ -193,8 +192,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         String[] args = new String[]{
                 "%current_players%", String.valueOf(getGamers().size()),
                 "%max_players%", String.valueOf(getMaxGamers())};
-        getGamers().forEach(player -> new DMessage(getMinigameType().getPlugin(), player).appendLang(
-                getMinigameType().getType() + ".game.collectingplayers_no_cooldown_bar", args).sendActionBar());
+        getGamers().forEach(player -> getMinigameType().COLLECTINGPLAYERS_NO_COOLDOWN_BAR.sendActionBar(player, args));
     }
 
     @Override
@@ -211,10 +209,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         String[] args = new String[]{"%cooldown%", String.valueOf(preStartCountdown)};
         SoundInfo tick = Configurations.getPreStartPhaseCooldownTickSound();
         for (Player player : getGamers()) {
-            new DMessage(getMinigameType().getPlugin(), player).appendLang(getMinigameType().getType() + ".game.prestart_cooldown_bar", args)
-                    .sendActionBar();
-
-            MessageUtil.sendSubTitle(player, getMinigameType().getType() + ".game.prestart_cooldown_bar", args);
+            getMinigameType().PRESTART_COOLDOWN_BAR.sendActionBar(player, args);
+            getMinigameType().PRESTART_COOLDOWN_BAR.sendAsSubTitle(player, 0, 25, 0, args);
             tick.play(player);
         }
         if (preStartCountdown <= 0) {
@@ -223,8 +219,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 this.gameRestart();
                 return;
             }
-            getGamers().forEach(MessageUtil::sendEmptyActionBarMessage);
-            getGamers().forEach(MessageUtil::clearTitle);
+            getGamers().forEach(SimpleMessage::sendEmptyActionBarMessage);
+            getGamers().forEach(SimpleMessage::clearTitle);
             phase = Phase.PLAYING;
             gameStart();
         }
@@ -262,7 +258,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (phase != Phase.PLAYING)
             throw new IllegalStateException();
         for (Player player : getGamers()) {
-            MessageUtil.sendMessage(player, "skywars.game.game_start");
+            getMinigameType().GAME_START_MESSAGE.send(player);
             getMinigameType().applyDefaultPlayerSnapshot(player); //TODO again()
         }
         VaultEconomyHandler ecoHandler = new VaultEconomyHandler();
@@ -298,7 +294,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gameEnd");
         if (this.phase != Phase.PLAYING)
             throw new IllegalStateException();
-        getGamers().forEach(player -> MessageUtil.sendMessage(player, "skywars.game.game_end"));//TODO
+        getGamers().forEach(player -> getMinigameType().GAME_END_MESSAGE.send(player));
         endCountdown = getOption().getEndPhaseCooldownMax();
         resetScores();
         this.phase = Phase.END;
@@ -317,7 +313,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 fire.setFireworkMeta(meta);
                 Bukkit.getScheduler().runTaskLater(Minigames.get(), fire::detonate, 2L);
                 String[] args = new String[]{"%cooldown%", String.valueOf(endCountdown)};
-                MessageUtil.sendActionBarMessage(player, getMinigameType().getType() + ".game.end_cooldown_bar", args);
+                getMinigameType().END_COOLDOWN_BAR.sendActionBar(player, args);
             }
             endCountdown--;
         }
@@ -330,7 +326,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gameClose");
         new HashSet<>(getSpectators()).forEach(spectator -> GameManager.get().quitGame(spectator));
         new HashSet<>(getGamers()).forEach(player -> GameManager.get().quitGame(player));
-        timer.cancel();
+        //timer.cancel();
         phase = Phase.RESTART;
         registerAsListener(false);
         gameRestart();
@@ -341,16 +337,16 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gameAbort");
         for (Player spectator : new HashSet<>(getSpectators())) { //bad
             GameManager.get().quitGame(spectator);
-            MessageUtil.sendMessage(spectator, "generic.game.game_interrupted");
+            getMinigameType().GAME_INTERRUPTED_MESSAGE.send(spectator);
         }
         for (Player player : new HashSet<>(getGamers())) {//bad
             GameManager.get().quitGame(player);
-            MessageUtil.sendMessage(player, "generic.game.game_interrupted");
+            getMinigameType().GAME_INTERRUPTED_MESSAGE.send(player);
         }
         if (phase == Phase.STOPPED)
             return;
         phase = Phase.STOPPED;
-        timer.cancel();
+        //timer.cancel();
         registerAsListener(false);
     }
 
@@ -562,7 +558,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     public void onGamerPvpDamage(@NotNull EntityDamageByEntityEvent event, @NotNull Player p, @NotNull Player damager, boolean directDamage) {
         if (p.equals(damager))
             return;
-        if (event.getDamager() instanceof Player && getTeam(p).equals(getTeam(damager)))
+        if (event.getDamager() instanceof Player && Objects.equals(getTeam(p), getTeam(damager)))
             event.setCancelled(true);
     }
 
@@ -699,7 +695,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     private @NotNull Gui getTeamSelectorGui(@NotNull Player player) {
         PagedListFGui<T> gui = new PagedListFGui<>(
-                MessageUtil.getMessage(player, "generic.gui.teamselector_title"), 3,
+                new DMessage(getMinigameType().getPlugin(), player).appendLang("generic.gui.teamselector_title").toLegacy(), 3,
                 player, null, Minigames.get(), false,
                 (evt, team) -> {
                     if (team.containsUser(player))
@@ -735,7 +731,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     private PagedListFGui<Kit> getKitSelectorGui(Player player) {
         PagedListFGui<Kit> gui = new PagedListFGui<>(
-                MessageUtil.getMessage(player, "generic.gui.kitselector_title"), 3,
+                new DMessage(getMinigameType().getPlugin(), player).appendLang("generic.gui.kitselector_title").toLegacy(), 3,
                 player, null, Minigames.get(), true,
                 (evt, kit) -> {
                     MessageUtil.debug(player.getName() + " selected kit " + kit.getId());
@@ -745,8 +741,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                         kitPreference.put(player, kit.getId());
                     return true;
                 }, (kit) -> new ItemBuilder(Material.IRON_CHESTPLATE).setDescription(//TODO
-                Minigames.get().getLanguageConfig(player).loadMultiMessage("generic.gui.kitselector_description",
-                        new ArrayList<>(), "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" :
+                new DMessage(getMinigameType().getPlugin(), player).appendLangList("generic.gui.kitselector_description",
+                        "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" :
                                 String.valueOf(kit.getPrice()))
         ).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
                 kit.getId()
