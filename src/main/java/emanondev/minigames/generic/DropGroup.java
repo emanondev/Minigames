@@ -39,7 +39,6 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
     @NotNull
     @Override
     public Map<String, Object> serialize() {
-        Minigames.get().logTetraStar(ChatColor.RED, "serialize ");
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         List<ItemStack> items = drops.getItems();
         for (int i = 0; i < items.size(); i++) {
@@ -47,7 +46,6 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
             map.putIfAbsent(key, new ArrayList<String>());
             ((ArrayList<String>) map.get(key)).add(GsonUtil.toJson(items.get(i)));
         }
-        Minigames.get().logTetraStar(ChatColor.RED, "mapsize: " + map.size());
         return map;
     }
 

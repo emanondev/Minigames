@@ -35,6 +35,7 @@ public class MiniGameCommand extends CoreCommandPlus {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
             case 1 -> this.complete(args[0], List.of("create", "list", "delete","tp"));
@@ -137,6 +138,7 @@ public class MiniGameCommand extends CoreCommandPlus {
 
 
     //create id type arena option
+    @SuppressWarnings("unchecked")
     private void create(CommandSender sender, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
@@ -183,6 +185,7 @@ public class MiniGameCommand extends CoreCommandPlus {
         @SuppressWarnings("rawtypes")
         MGame mGame = mType.createGame(arena.getId(), option.getId());
         GameManager.get().register(id, mGame, player);
+        mGame.gameInitialize();
         sendMsg(player, "minigame.success.create", UtilsString.merge(mGame.getPlaceholders(), "%alias%", label));
     }
 

@@ -64,11 +64,6 @@ public class MiniDropGroupCommand extends CoreCommand {
         sendMsgList(sender, "minidropgroup.help", "%alias%", label);
     }
 
-    /*
-    private void info(CommandSender sender, String label, String[] args) {
-        sendMsgList(sender, "minidropgroup.info", "%alias%", label);
-    }*/
-
     private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
             sendMsg(sender, "minidropgroup.error.delete_params", "%alias%", label);

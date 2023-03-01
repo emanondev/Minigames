@@ -10,11 +10,11 @@ import java.util.Set;
 
 public abstract class Stat<T> {
 
-    public final String id;
+    public final String pathEnd;
 
     public Stat(@NotNull String id) {
         UtilsString.isValidID(id);
-        this.id = id.toLowerCase(Locale.ENGLISH);
+        this.pathEnd = id.toLowerCase(Locale.ENGLISH);
     }
 
     protected abstract @NotNull YMLConfig getConfig();
@@ -61,26 +61,26 @@ public abstract class Stat<T> {
         return getLastThreeMonths(getId(target));
     }
 
-    public void add(@NotNull String id, int amount) {
-        add(id, Calendar.getInstance(), amount);
+    public void add(@NotNull String targetId, int amount) {
+        add(targetId, Calendar.getInstance(), amount);
     }
 
-    public void add(@NotNull String id, @NotNull Calendar day, int amount) {
-        String path = id + ".permanent." + id;
+    public void add(@NotNull String targetId, @NotNull Calendar day, int amount) {
+        String path = targetId + ".permanent." + pathEnd;
         getConfig().set(path, getConfig().getInt(path, 0) + amount);
-        path = id + ".temp." + day.get(Calendar.YEAR) + "." +
+        path = targetId + ".temp." + day.get(Calendar.YEAR) + "." +
                 day.get(Calendar.MONTH) + "." + day.get(Calendar.DAY_OF_MONTH)
-                + "." + id;
+                + "." + this.pathEnd;
         getConfig().set(path, getConfig().getInt(path, 0) + amount);
     }
 
-    private int getTotal(@NotNull String id) {
-        String path = id + ".permanent." + id;
+    private int getTotal(@NotNull String targetId) {
+        String path = targetId + ".permanent." + pathEnd;
         return getConfig().getInt(path, 0);
     }
 
-    private int getToday(@NotNull String id) {
-        return getDay(id, Calendar.getInstance());
+    private int getToday(@NotNull String targetId) {
+        return getDay(targetId, Calendar.getInstance());
     }
 
     private int getYesterday(@NotNull String id) {
@@ -89,28 +89,28 @@ public abstract class Stat<T> {
         return getDay(id, yesterday);
     }
 
-    private int getDay(@NotNull String id, @NotNull Calendar day) {
-        String path = id + ".temp." + day.get(Calendar.YEAR) + "." +
+    private int getDay(@NotNull String targetId, @NotNull Calendar day) {
+        String path = targetId + ".temp." + day.get(Calendar.YEAR) + "." +
                 day.get(Calendar.MONTH) + "." + day.get(Calendar.DAY_OF_MONTH)
-                + "." + id;
+                + "." + pathEnd;
         if (!getConfig().contains(path))
             return 0;
         return getConfig().getInt(path, 0);
     }
 
 
-    private int getCurrentWeek(@NotNull String id) {
+    private int getCurrentWeek(@NotNull String targetId) {
         Calendar day = Calendar.getInstance();
         int week = day.getWeekYear();
         int counter = 0;
         while (day.getWeekYear() == week) {
-            counter += getDay(id, day);
+            counter += getDay(targetId, day);
             day.add(Calendar.DAY_OF_MONTH, -1);
         }
         return counter;
     }
 
-    private int getLastWeek(@NotNull String id) {
+    private int getLastWeek(@NotNull String targetId) {
         Calendar day = Calendar.getInstance();
         int week = day.getWeekYear();
         while (day.getWeekYear() == week) {
@@ -119,40 +119,40 @@ public abstract class Stat<T> {
         week = day.getWeekYear();
         int counter = 0;
         while (day.getWeekYear() == week) {
-            counter += getDay(id, day);
+            counter += getDay(targetId, day);
             day.add(Calendar.DAY_OF_MONTH, -1);
         }
         return counter;
     }
 
-    private int getCurrentMonth(@NotNull String id) {
-        return getMonth(id, Calendar.getInstance());
+    private int getCurrentMonth(@NotNull String targetId) {
+        return getMonth(targetId, Calendar.getInstance());
     }
 
-    private int getLastMonth(@NotNull String id) {
+    private int getLastMonth(@NotNull String targetId) {
         Calendar lastMonth = Calendar.getInstance();
         lastMonth.add(Calendar.MONTH, -1);
-        return getMonth(id, lastMonth);
+        return getMonth(targetId, lastMonth);
     }
 
-    private int getLastThreeMonths(@NotNull String id) {
+    private int getLastThreeMonths(@NotNull String targetId) {
         Calendar m1 = Calendar.getInstance();
         m1.add(Calendar.MONTH, -1);
         Calendar m2 = Calendar.getInstance();
         m2.add(Calendar.MONTH, -2);
-        return getMonth(id, Calendar.getInstance()) + getMonth(id, m1) + getMonth(id, m2);
+        return getMonth(targetId, Calendar.getInstance()) + getMonth(targetId, m1) + getMonth(targetId, m2);
     }
 
-    private int getMonth(@NotNull String id, @NotNull Calendar calendar) {
-        String prePath = id + ".temp." + calendar.get(Calendar.YEAR) + "." +
+    private int getMonth(@NotNull String targetId, @NotNull Calendar calendar) {
+        String prePath = targetId + ".temp." + calendar.get(Calendar.YEAR) + "." +
                 calendar.get(Calendar.MONTH);
         if (!getConfig().contains(prePath))
             return 0;
         Set<String> days = getConfig().getKeys(prePath);
         int val = 0;
         for (String day : days)
-            if (getConfig().contains(prePath + "." + day + "." + id))
-                val += getConfig().getInt(prePath + "." + day + "." + id, 0);
+            if (getConfig().contains(prePath + "." + day + "." + pathEnd))
+                val += getConfig().getInt(prePath + "." + day + "." + pathEnd, 0);
         return val;
     }
 }

@@ -2,6 +2,7 @@ package emanondev.minigames.generic;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import emanondev.core.util.WorldEditUtility;
+import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
     public Clipboard getSchematic() {
         if (schematicCache != null)
             return schematicCache;
-        File file = new File(Minigames.get().getDataFolder(), "schematics" + File.separatorChar + schematicName);
+        File file = new File(ArenaManager.get().getSchematicsFolder(), schematicName);
         if (!file.isFile())
             throw new IllegalStateException("selected schematic do not exist");
         schematicCache = WorldEditUtility.load(file);

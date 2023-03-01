@@ -1,5 +1,6 @@
 package emanondev.minigames.generic;
 
+import emanondev.core.message.DMessage;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -30,18 +31,6 @@ import java.util.*;
 public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends ConfigurationSerializable, Cloneable, Registrable {
 
     @NotNull BlockLocation3D getGameLocation();
-
-    //@NotNull Set<Player> getCollectedPlayers();
-
-    //boolean isCollectedPlayer(@NotNull Player player);
-
-    //boolean addCollectedPlayer(@NotNull Player player);
-
-    //void onCollectedPlayerAdded(@NotNull Player player);
-
-    //boolean canAddCollectedPlayer(@NotNull Player player);
-
-    //boolean removeCollectedPlayer(@NotNull Player player);
 
     @Nullable T getTeam(@NotNull OfflinePlayer player);
 
@@ -317,11 +306,8 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     default ItemStack getGameSelectorItem(Player player) {
         return getMinigameType().getGameSelectorBaseItem().setAmount(Math.max(1, getGamers().size()))
-                .setMiniDescription(
-                        getMinigameType().getPlugin().getLanguageConfig(player).loadMultiMessage(getMinigameType().getType() + ".gui.selector",
-                                new ArrayList<>(), true, "%arena_name%", getArena().getDisplayName()
-                                , "%players%", String.valueOf(getGamers().size())
-                                , "%max_players%", String.valueOf(getMaxGamers()))
+                .setDescription(new DMessage(getMinigameType().getPlugin(),player).appendLangList(
+                        getMinigameType().getType() + ".gui.selector", getPlaceholders())
                 ).build();
     }
 

@@ -29,8 +29,8 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
 
     @Override
     @NotNull
-    public SkyWarsArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id) {
-        return new SkyWarsArenaBuilder(uuid, id);
+    public SkyWarsArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id,@NotNull String label) {
+        return new SkyWarsArenaBuilder(uuid, id, label);
     }
 
     @Override
@@ -77,5 +77,8 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
 
     public double getSnowballPush() {
         return this.getSection().loadDouble("game.snowball_push", 0.5D);
+    }
+    public double getSnowballVerticalPush() {
+        return this.getSection().loadDouble("game.snowball_vertical_push", 0.3D);
     }
 }

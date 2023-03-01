@@ -24,6 +24,12 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     private final List<BoundingBox> cacheArea = new ArrayList<>();
     private final HashMap<Player, Integer> bordersId = new HashMap<>();
     private final BoundingBox hiddenBorderArea;
+    private final Map<DyeColor, T> teams = new EnumMap<>(DyeColor.class);
+    private final HashSet<Chunk> clearedEntitiesBefore = new HashSet<>();
+
+    private static final double MARGIN_WORLD_BORDER_RESTRICTION = 0.25;
+    private static final int SEE_WORLD_BORDER_DISTANCE = 6;
+    private static final int CLEAR_MARGIN = 128;
 
     private int getClosestBorder(Vector loc) {
         BoundingBox box = getBoundingBox();
@@ -93,7 +99,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
                         , i >= 2 ? box.getMinX() : box.getMaxX()
                         , Integer.MAX_VALUE
                         , i % 2 != 0 ? box.getMinZ() : box.getMaxZ()));
-                MessageUtil.debug(getId() + " box " + wb.getCenter().getX() + " " + wb.getCenter().getZ() + " size " + wb.getSize());
+                //MessageUtil.debug(getId() + " box " + wb.getCenter().getX() + " " + wb.getCenter().getZ() + " size " + wb.getSize());
 
             }
             WorldBorder wb = Bukkit.createWorldBorder();
@@ -106,16 +112,11 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             wb.setSize(size);
             wb.setCenter(box.getMinX() + size / 2, box.getMinZ() + size / 2);
             borders.add(wb);
-            MessageUtil.debug(getId() + " box " + wb.getCenter().getX() + " " + wb.getCenter().getZ() + " size " + wb.getSize());
+            //MessageUtil.debug(getId() + " box " + wb.getCenter().getX() + " " + wb.getCenter().getZ() + " size " + wb.getSize());
         }
 
         hiddenBorderArea = box.clone().expand(-SEE_WORLD_BORDER_DISTANCE, 999, -SEE_WORLD_BORDER_DISTANCE);
     }
-
-    private static final double MARGIN_WORLD_BORDER_RESTRICTION = 0.25;
-    private static final int SEE_WORLD_BORDER_DISTANCE = 6;
-
-    private static final int CLEAR_MARGIN = 128;
 
     @Override
     public void gameInitialize() {
@@ -189,10 +190,8 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
 
     @Override
     public boolean containsLocation(@NotNull Location loc) {
-        return loc.getWorld().getName().equals(this.getWorld().getName()) && (boxCache == null ? getBoundingBox().contains(loc.toVector()) : boxCache.contains(loc.toVector()));
+        return Objects.equals(loc.getWorld(),this.getWorld()) && (boxCache == null ? getBoundingBox().contains(loc.toVector()) : boxCache.contains(loc.toVector()));
     }
-
-    private final Map<DyeColor, T> teams = new EnumMap<>(DyeColor.class);
 
     @Override
     public @NotNull Collection<T> getTeams() {
@@ -211,7 +210,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
 
 
     public void onGamerTeleport(@NotNull PlayerTeleportEvent event) {
-        if (!event.getTo().getWorld().equals(event.getFrom().getWorld())) {
+        if (Objects.equals(event.getTo().getWorld(),event.getFrom().getWorld())) {
             onFakeGamerDeath(event.getPlayer(), null, false);
             return; //teleported away by something ?
         }
@@ -283,12 +282,10 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     }
 
     public boolean overlaps(@NotNull Chunk chunk) {
-        return getWorld().equals(chunk.getWorld()) && getBoundingBox().overlaps(
+        return Objects.equals(getWorld(),chunk.getWorld()) && getBoundingBox().overlaps(
                 new BoundingBox(chunk.getX() * 16, chunk.getWorld().getMinHeight(), chunk.getZ() * 16
                         , (chunk.getX() + 1) * 16, chunk.getWorld().getMaxHeight(), (chunk.getZ() + 1) * 16));
     }
-
-    private final HashSet<Chunk> clearedEntitiesBefore = new HashSet<>();
 
     @Override
     public void onChunkEntitiesLoad(@NotNull Chunk chunk) {

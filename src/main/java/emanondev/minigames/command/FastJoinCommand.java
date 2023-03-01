@@ -37,6 +37,7 @@ public class FastJoinCommand extends CoreCommand {
 
         switch (args.length) {
             case 0 -> {
+                @SuppressWarnings("rawtypes")
                 List<MGame> available = new ArrayList<>(GameManager.get().getAll().values());
                 available.removeIf((m) -> switch (m.getPhase()) {
                     case STOPPED, END, RESTART -> true;
@@ -51,6 +52,7 @@ public class FastJoinCommand extends CoreCommand {
                 sendMsg(player, "join.error.no_available_game", "%alias%", label);
             }
             case 1 -> {
+                @SuppressWarnings("rawtypes")
                 MType type = MinigameTypes.get().getType(args[0]);
                 if (type == null) {
                     sendMsg(player, "join.error.invalid_type", "%type%", args[0], "%alias%", label);

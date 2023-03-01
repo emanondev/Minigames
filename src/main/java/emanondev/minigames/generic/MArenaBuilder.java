@@ -1,8 +1,10 @@
 package emanondev.minigames.generic;
 
 import emanondev.core.UtilsString;
-import emanondev.core.message.MessageComponent;
+import emanondev.core.message.DMessage;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
+import org.bouncycastle.jcajce.util.MessageDigestUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.boss.BarColor;
@@ -22,27 +24,39 @@ public abstract class MArenaBuilder {
     private final BukkitTask timerRunnable;
     private final String id;
     private final BossBar bar = Bukkit.createBossBar(" ", BarColor.RED, BarStyle.SOLID);
+    private final String label;
     private int phase = 1;
 
-    public MArenaBuilder(@NotNull UUID user, @NotNull String id) {
+    public String getLabel(){
+        return label;
+    }
+
+    public MArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
         this.builder = user;
         if (!UtilsString.isLowcasedValidID(id))
             throw new IllegalArgumentException();
         this.id = id.toLowerCase();
+        this.label = label;
         timerRunnable = Bukkit.getScheduler().runTaskTimer(Minigames.get(), new Runnable() {
-            private int timerTick = 0;
+           // private int timerTick = 1;
 
             @Override
             public void run() {
-                Player p = Bukkit.getPlayer(builder);
-                if (p != null && p.isOnline()) {
+                Player p = getBuilder();
+                if (p != null && p.isOnline() && p.isValid()) {
                     //TODO message repeat, bossbar, actionbar
+                    bar.addPlayer(p);
+                    onTimerCall(/*timerTick*/);
+                    //timerTick += 1;
                 }
-                onTimerCall(timerTick);
-                timerTick += 1;
             }
         }, 10, 5);
-
+        setPhaseRaw(1);
+        /*Player p = getBuilder();
+        if (p != null) {
+            bar.addPlayer(p);
+            getRepeatedMessage().send();
+        }*/
     }
 
     protected int getPhase() {
@@ -51,11 +65,13 @@ public abstract class MArenaBuilder {
 
     protected void setPhaseRaw(int phase) {
         this.phase = phase;
-        bar.setTitle(getCurrentBossBarMessage());
-        /*if (getBuilder() != null)
-            new MessageComponent(Minigames.get(), getBuilder()).append(getCurrentActionMessage()).sendActionBar();*/
+        bar.setTitle(getCurrentBossBarMessage().toLegacy());
         onPhaseStart();
-        new MessageComponent(Minigames.get(), getBuilder()).append(getRepeatedMessage()).send();
+        Player p = getBuilder();
+        if (p != null) {
+            bar.addPlayer(p);
+            getRepeatedMessage().send();
+        }
     }
 
     protected abstract void onPhaseStart();
@@ -76,11 +92,9 @@ public abstract class MArenaBuilder {
         return builder.equals(player.getUniqueId());
     }
 
-    //public abstract @Nullable String getCurrentActionMessage();
+    public abstract @NotNull DMessage getCurrentBossBarMessage();
 
-    public abstract @NotNull String getCurrentBossBarMessage();
-
-    public abstract @NotNull String getRepeatedMessage();
+    public abstract @NotNull DMessage getRepeatedMessage();
 
     public abstract void handleCommand(Player sender, String label, @NotNull String[] args);
 
@@ -96,8 +110,6 @@ public abstract class MArenaBuilder {
     /**
      * Timer Runnable call
      * Note: this funcion is called 4 times each second (every 5 game ticks)
-     *
-     * @param timerTick increasing value
      */
-    public abstract void onTimerCall(int timerTick);
+    public abstract void onTimerCall(/*int timerTick*/);
 }

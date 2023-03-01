@@ -1,8 +1,10 @@
 package emanondev.minigames.skywars;
 
 import emanondev.core.UtilsInventory;
+import emanondev.core.message.DMessage;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
+import emanondev.minigames.Minigames;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
@@ -78,7 +80,8 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
         for (SkyWarsTeam team : teams)
             if (team.addUser(player)) {
-                MessageUtil.sendMessage(player, "skywars.game.assign_team", "%color%", team.getColor().name());
+                new DMessage(Minigames.get(),player).appendLang("skywars.game.assign_team",
+                        "%color%", team.getColor().name());
                 return;
             }
         throw new IllegalStateException("unable to add user to a party");
@@ -136,9 +139,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 if (!(event.getBlock().getState() instanceof Chest cHolder))
                     return;
                 onFillChest(cHolder.getBlockInventory());
-                /** not dropped
-                 if (cHolder.update(false, false))
-                 Minigames.get().logTetraStar(ChatColor.DARK_RED, "D updated broken chest debug");*/
                 Location dropLoc = event.getBlock().getLocation().add(0.5, 0.5, 0.5);
                 for (ItemStack item : cHolder.getBlockInventory().getContents())
                     if (!UtilsInventory.isAirOrNull(item))
@@ -221,12 +221,15 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         if (event.getEntity() instanceof Snowball) { //adds push
             if (!getPhase().equals(Phase.PLAYING))
                 return;
+            if (!(event.getHitEntity() instanceof Player hitted))
+                return;
             if (event.getEntity().getShooter() instanceof Player launcher &&
-                    getTeam(launcher).equals(getTeam((Player) event.getHitEntity())))
+                    Objects.equals(getTeam(launcher), getTeam(hitted)))
                 return;
             double push = getMinigameType().getSnowballPush();
-            if (push != 0)
-                event.getHitEntity().setVelocity(event.getEntity().getVelocity().normalize().multiply(push));
+            if (push != 0) {
+                event.getHitEntity().setVelocity(event.getEntity().getVelocity().setY(0).normalize().multiply(push).setY(getMinigameType().getSnowballVerticalPush()));
+            }
         }
     }
 

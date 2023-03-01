@@ -5,11 +5,11 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsCommand;
-import emanondev.core.YMLSection;
-import emanondev.core.message.MessageComponent;
+import emanondev.core.UtilsString;
+import emanondev.core.message.DMessage;
+import emanondev.core.message.SimpleMessage;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.UtilColor;
 import emanondev.minigames.generic.SchematicArenaBuilder;
@@ -29,6 +29,8 @@ import java.util.*;
 
 public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
 
+    private static final SimpleMessage ERR_UNKNOWN_ACTION = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.unknown_action");
+    private static final SimpleMessage ERR_OUTSIDE_AREA = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.unknown_action");
     private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
     private LocationOffset3D spectatorsOffset;
 
@@ -38,83 +40,83 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
     private static final int PHASE_SET_SPECTATOR_SPAWN = 4;
     private static final int PHASE_SET_SPECTATOR_SPAWN_OR_NEXT = 5;
 
-    public SkyWarsArenaBuilder(@NotNull UUID user, @NotNull String id) {
-        super(user, id);
+    public SkyWarsArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
+        super(user, id, label);
     }
 
     @Override
     protected void onPhaseStart() {
-
+        timerTick=0;
     }
 
     @Override
-    public @NotNull String getCurrentBossBarMessage() {
-        return Minigames.get().getLanguageConfig(getBuilder()).getString("skywars.arenabuilder.bossbar.phase" + getPhase(), "");
+    public @NotNull DMessage getCurrentBossBarMessage() {
+        return new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.bossbar.phase" + getPhase(),"%alias%",getLabel());
     }
 
     @Override
-    public @NotNull String getRepeatedMessage() {
+    public @NotNull DMessage getRepeatedMessage() {
         return switch (getPhase()) {
             case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
-                YMLSection sect = Minigames.get().getLanguageConfig(getBuilder()).loadSection("skywars.arenabuilder.repeatmessage");
-                StringBuilder teamSet = new StringBuilder();
+                //YMLSection sect = Minigames.get().getLanguageConfig(getBuilder()).loadSection("arenabuilder.skywars.repeatmessage");
+                DMessage teamSet = new DMessage(Minigames.get(), getBuilder());
                 for (DyeColor color : DyeColor.values())
                     if (!spawnLocations.containsKey(color))
-                        teamSet.append(sect.loadMessage("setteamcolor", "", (CommandSender) null, "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color)));
-                StringBuilder teamDelete = new StringBuilder();
+                        teamSet.appendLang("arenabuilder.skywars.repeatmessage.setteamcolor", "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color),"%alias%",getLabel());
+                DMessage teamDelete = new DMessage(Minigames.get(), getBuilder());
                 for (DyeColor color : spawnLocations.keySet())
-                    teamDelete.append(sect.loadMessage("deleteteamcolor", "", (CommandSender) null, "%color%", color.name()));
-                yield sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
+                    teamDelete.appendLang("arenabuilder.skywars.repeatmessage.deleteteamcolor", "%color%", color.name(),"%hexa%", UtilColor.getColorHexa(color),"%alias%",getLabel());
+                yield new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.repeatmessage.phase" + getPhase()
                         , "%setteamsspawn%", teamSet.toString()
-                        , "%deleteteamsspawn%", teamDelete.toString());
+                        , "%deleteteamsspawn%", teamDelete.toString(),"%alias%",getLabel());
             }
-            default -> Minigames.get().getLanguageConfig(getBuilder()).getString("skywars.arenabuilder.repeatmessage.phase" + getPhase(), "");
+            default -> new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.repeatmessage.phase" + getPhase(),"%alias%",getLabel());
         };
     }
 
     @Override
-    public void handleCommand(@NotNull Player player, String label,@NotNull String[] args) {
+    public void handleCommand(@NotNull Player player, String label, @NotNull String[] args) {
         if (args.length == 0) {
-            MessageUtil.sendMessage(player, "skywars.arenabuilder.error.unknown_action");
+            ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
             return;
         }
         try {
             switch (getPhase()) {
                 case PHASE_SELECT_AREA -> {
                     if (!args[0].equalsIgnoreCase("selectarea")) {
-                        MessageUtil.sendMessage(player, "skywars.arenabuilder.error.unknown_action");
+                        ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
                         return;
                     }
                     try {
                         setArea(player);
-                        MessageUtil.sendMessage(player, "skywars.arenabuilder.success.select_area",
+                        sendMsg(player, "arenabuilder.skywars.success.select_area",
                                 "%world%", getWorld().getName(),
                                 "%x1%", String.valueOf((int) getArea().getMinX()),
                                 "%x2%", String.valueOf((int) getArea().getMaxX()),
                                 "%y1%", String.valueOf((int) getArea().getMinY()),
                                 "%y2%", String.valueOf((int) getArea().getMaxY()),
                                 "%z1%", String.valueOf((int) getArea().getMinZ()),
-                                "%z2%", String.valueOf((int) getArea().getMaxZ()));
+                                "%z2%", String.valueOf((int) getArea().getMaxZ()), "%alias%", label);
 
                         setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
                     } catch (IncompleteRegionException e) {
-                        MessageUtil.sendMessage(player, "skywars.arenabuilder.error.unselected_area");
+                        sendMsg(player, "arenabuilder.skywars.error.unselected_area", "%alias%", label);
                     }
                 }
                 case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
                     switch (args[0].toLowerCase(Locale.ENGLISH)) {
                         case "next" -> {
                             if (spawnLocations.size() >= 2) {
-                                //MessageUtil.sendMessage(player, "skywars.arenabuilder.success.next");
+                                //MessageUtil.sendMessage(player, "arenabuilder.skywars.success.next");
                                 setPhaseRaw(SkyWarsArenaBuilder.PHASE_SET_SPECTATOR_SPAWN);
                                 return;
                             } else {
-                                MessageUtil.sendMessage(player, "skywars.arenabuilder.error.unknown_action");
+                                ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
                             }
                         }
                         case "setteamspawn" -> {
                             if (!this.isInside(player.getLocation())) {
-                                MessageUtil.sendMessage(player, "skywars.arenabuilder.error.outside_area");
+                                ERR_OUTSIDE_AREA.send(player, "%alias%", label);
                                 return;
                             }
                             //TODO check color value
@@ -122,55 +124,55 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
                             LocationOffset3D loc = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
                             boolean override = spawnLocations.containsKey(color);
                             spawnLocations.put(color, loc);
-                            MessageUtil.sendMessage(player, override ? "skywars.arenabuilder.success.override_team_spawn"
-                                    : "skywars.arenabuilder.success.set_team_spawn", "%color%", color.name());
+                            sendMsg(player, override ? "arenabuilder.skywars.success.override_team_spawn"
+                                    : "arenabuilder.skywars.success.set_team_spawn", "%color%", color.name(), "%alias%", label);
                             if (getPhase() == PHASE_SET_TEAM_SPAWNS && spawnLocations.size() >= 2)
                                 setPhaseRaw(PHASE_SET_TEAM_SPAWNS_OR_NEXT);
                             else
-                                new MessageComponent(Minigames.get(), getBuilder()).append(getRepeatedMessage()).send();
+                                getRepeatedMessage().send();
                             return;
                         }
                         case "deleteteamspawn" -> {
                             //TODO check color value
                             DyeColor color = DyeColor.valueOf(args[1].toUpperCase());
                             spawnLocations.remove(color);
-                            MessageUtil.sendMessage(player, "skywars.arenabuilder.success.deleted_team_spawn",
-                                    "%color%", color.name());
+                            sendMsg(player, "arenabuilder.skywars.success.deleted_team_spawn",
+                                    "%color%", color.name(), "%alias%", label);
                             if (getPhase() == PHASE_SET_TEAM_SPAWNS_OR_NEXT && spawnLocations.size() < 2)
                                 setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
                             else
-                                new MessageComponent(Minigames.get(), getBuilder()).append(getRepeatedMessage()).send();
+                                getRepeatedMessage().send();
                             return;
                         }
                     }
-                    MessageUtil.sendMessage(player, "skywars.arenabuilder.error.unknown_action");
+                    ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
                 }
                 case PHASE_SET_SPECTATOR_SPAWN, PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> {
                     switch (args[0].toLowerCase(Locale.ENGLISH)) {
                         case "next" -> {
                             if (spectatorsOffset != null) {
-                                MessageUtil.sendMessage(player, "skywars.arenabuilder.success.completed",
-                                        "%name%", getId());
-                                //TODO
                                 ArenaManager.get().onArenaBuilderCompletedArena(this);
+                                sendMsg(player, "arenabuilder.skywars.success.completed",
+                                        UtilsString.merge(ArenaManager.get().get(getId()).getPlaceholders(), "%alias%", label));
+                                //TODO
                                 return;
                             }
                         }
                         case "setspectatorspawn" -> {
                             if (!this.isInside(player.getLocation())) {
-                                MessageUtil.sendMessage(player, "skywars.arenabuilder.error.outside_area");
+                                ERR_OUTSIDE_AREA.send(player, "%alias%", label);
                                 return;
                             }
                             boolean override = spectatorsOffset != null;
                             spectatorsOffset = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
-                            MessageUtil.sendMessage(player, override ? "skywars.arenabuilder.success.override_spectators_spawn"
-                                    : "skywars.arenabuilder.success.set_spectators_spawn");
+                            sendMsg(player, override ? "arenabuilder.skywars.success.override_spectators_spawn"
+                                    : "arenabuilder.skywars.success.set_spectators_spawn", "%alias%", label);
                             if (getPhase() == PHASE_SET_SPECTATOR_SPAWN)
                                 setPhaseRaw(PHASE_SET_SPECTATOR_SPAWN_OR_NEXT);
                             return;
                         }
                     }
-                    MessageUtil.sendMessage(player, "skywars.arenabuilder.error.unknown_action");
+                    ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
                 }
                 default -> new IllegalStateException().printStackTrace();
             }
@@ -207,14 +209,14 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
         Map<String, Object> map = new LinkedHashMap<>();
 
         String schemName = Bukkit.getOfflinePlayer(getUser()).getName() + "_" + getId();
-        File schemFile = new File(Minigames.get().getDataFolder(), "schematics/" + schemName);
+        File schemFile = new File(ArenaManager.get().getSchematicsFolder(), schemName);
         String schemNameFinal = schemName;
 
         //avoid overriding existing schematics
         int counter = 1;
         while (schemFile.exists()) {
             schemNameFinal = schemName + "_" + counter;
-            schemFile = new File(Minigames.get().getDataFolder(), "schematics/" + schemNameFinal);
+            schemFile = new File(ArenaManager.get().getSchematicsFolder(), schemNameFinal);
             counter++;
         }
 
@@ -236,15 +238,17 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
         return new SkyWarsArena(map);
     }
 
+    private int timerTick=0;
 
     @Override
-    public void onTimerCall(int timerTick) {
+    public void onTimerCall() {
         Player p = getBuilder();
         if (p == null || !p.isOnline())
             return;
-        if (timerTick % 3 == 0) { //every 15 game ticks
-            Vector min;
-            Vector max;
+        timerTick++;
+        if (timerTick % 2 == 0) { //every 15 game ticks
+            Vector min = null;
+            Vector max = null;
 
             if (getPhase() > PHASE_SELECT_AREA) {
                 min = getArea().getMin();
@@ -259,44 +263,64 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
                             sel.getMaximumPoint().getZ());
                     min = area.getMin();
                     max = area.getMax();
+                } catch (IncompleteRegionException ignored) {
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return;
                 }
             }
+            if (min != null) {
+                markBox(min, max, p);
+                markSpawns(min, p,timerTick%4==0);
+            }
+        }
+        if (timerTick % 180 == 0) { //every 45 seconds
+            getRepeatedMessage().send();
+        }
+    }
 
-            for (int i = min.getBlockX(); i <= max.getBlockX(); i++) {
-                p.spawnParticle(Particle.COMPOSTER, i, min.getY(), min.getZ(), 1);
-                p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, min.getZ(), 1);
-                p.spawnParticle(Particle.COMPOSTER, i, min.getY(), max.getZ() + 1, 1);
-                p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, max.getZ() + 1, 1);
-            }
-            for (int i = min.getBlockY(); i <= max.getBlockY(); i++) {
-                p.spawnParticle(Particle.COMPOSTER, min.getX(), i, min.getZ(), 1);
-                p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, i, min.getZ(), 1);
-                p.spawnParticle(Particle.COMPOSTER, min.getX(), i, max.getZ() + 1, 1);
-                p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, i, max.getZ() + 1, 1);
-            }
-            for (int i = min.getBlockZ(); i <= max.getBlockZ(); i++) {
-                p.spawnParticle(Particle.COMPOSTER, min.getX(), min.getY(), i, 1);
-                p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, min.getY(), i, 1);
-                p.spawnParticle(Particle.COMPOSTER, min.getX(), max.getY() + 1, i, 1);
-                p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, max.getY() + 1, i, 1);
-            }
-            for (int i = 0; i < 8; i++) {
-                double xOffset = min.getX() + 0.4 * Math.sin(i * Math.PI / 4);
-                double zOffset = min.getZ() + 0.4 * Math.cos(i * Math.PI / 4);
-                double yOffset = min.getY() + 0.05D;
-                spawnLocations.forEach((k, v) ->
-                        p.spawnParticle(Particle.REDSTONE, v.x + xOffset, v.y + yOffset,
-                                v.z + zOffset, 1, new Particle.DustOptions(k.getColor(), 1F)));
-                if (spectatorsOffset != null)
-                    p.spawnParticle(Particle.WAX_ON, spectatorsOffset.x + xOffset,
-                            spectatorsOffset.y + yOffset, spectatorsOffset.z + zOffset, 1);
-            }
+    private void markBox(Vector min, Vector max, Player p) {
+        for (int i = min.getBlockX(); i <= max.getBlockX(); i++) {
+            p.spawnParticle(Particle.COMPOSTER, i, min.getY(), min.getZ(), 1);
+            p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, min.getZ(), 1);
+            p.spawnParticle(Particle.COMPOSTER, i, min.getY(), max.getZ() + 1, 1);
+            p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, max.getZ() + 1, 1);
         }
-        if (timerTick % 60 == 0) { //every 15 seconds
-            new MessageComponent(Minigames.get(), getBuilder()).append(getRepeatedMessage()).send();
+        for (int i = min.getBlockY(); i <= max.getBlockY(); i++) {
+            p.spawnParticle(Particle.COMPOSTER, min.getX(), i, min.getZ(), 1);
+            p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, i, min.getZ(), 1);
+            p.spawnParticle(Particle.COMPOSTER, min.getX(), i, max.getZ() + 1, 1);
+            p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, i, max.getZ() + 1, 1);
         }
+        for (int i = min.getBlockZ(); i <= max.getBlockZ(); i++) {
+            p.spawnParticle(Particle.COMPOSTER, min.getX(), min.getY(), i, 1);
+            p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, min.getY(), i, 1);
+            p.spawnParticle(Particle.COMPOSTER, min.getX(), max.getY() + 1, i, 1);
+            p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, max.getY() + 1, i, 1);
+        }
+    }
+
+    private void markSpawns(Vector offset, Player p, boolean even) {
+        double yOffset = offset.getY() + 0.05D;
+        for (int i = 0; i < 8; i++) {
+            double degree = (even ? 0 : 0.5 + i) * Math.PI / 4;
+            double xOffset = offset.getX() + 0.4 * Math.sin(degree);
+            double zOffset = offset.getZ() + 0.4 * Math.cos(degree);
+            spawnLocations.forEach((k, v) ->
+                    p.spawnParticle(Particle.REDSTONE, v.x + xOffset, v.y + yOffset,
+                            v.z + zOffset, 1, new Particle.DustOptions(k.getColor(), 1F)));
+            if (spectatorsOffset != null)
+                p.spawnParticle(Particle.WAX_ON, spectatorsOffset.x + xOffset,
+                        spectatorsOffset.y + yOffset, spectatorsOffset.z + zOffset, 1);
+        }
+    }
+
+    private void sendMsg(CommandSender target, String path, String... holders) {
+        new DMessage(Minigames.get(), target).appendLang(path, holders).send();
+    }
+
+    private void sendMsgList(CommandSender target, String path, String... holders) {
+        new DMessage(Minigames.get(), target).appendLangList(path, holders).send();
     }
 }
 

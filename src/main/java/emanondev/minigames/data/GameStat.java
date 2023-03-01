@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.HashMap;
 
+@SuppressWarnings("rawtypes")
 public class GameStat extends Stat<MGame> {
 
     private static final YMLConfig conf = Minigames.get().getConfig("data" + File.separator + "game_data.yml");

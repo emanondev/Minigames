@@ -6,7 +6,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsCommand;
 import emanondev.core.YMLSection;
-import emanondev.core.message.MessageComponent;
+import emanondev.core.message.DMessage;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.MessageUtil;
@@ -32,8 +32,8 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
     private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
     private LocationOffset3D spectatorsOffset;
 
-    public EggWarsArenaBuilder(@NotNull UUID user, @NotNull String id) {
-        super(user, id);
+    public EggWarsArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
+        super(user, id, label);
     }
 
     @Override
@@ -49,12 +49,12 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
 
 
     @Override
-    public @NotNull String getCurrentBossBarMessage() {
-        return Minigames.get().getLanguageConfig(getBuilder()).getString("eggwars.arenabuilder.bossbar.phase" + getPhase(), "");
+    public @NotNull DMessage getCurrentBossBarMessage() {
+        return new DMessage(Minigames.get(), getBuilder()).appendLang("eggwars.arenabuilder.bossbar.phase" + getPhase());
     }
 
     @Override
-    public @NotNull String getRepeatedMessage() {
+    public @NotNull DMessage getRepeatedMessage() {
         return switch (getPhase()) {
             case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
                 YMLSection sect = Minigames.get().getLanguageConfig(getBuilder()).loadSection("eggwars.arenabuilder.repeatmessage");
@@ -65,11 +65,12 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
                 StringBuilder teamDelete = new StringBuilder();
                 for (DyeColor color : spawnLocations.keySet())
                     teamDelete.append(sect.loadMessage("deleteteamcolor", "", (CommandSender) null, "%color%", color.name()));
-                yield sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
+                yield new DMessage(Minigames.get(), getBuilder()).append(sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
                         , "%setteamsspawn%", teamSet.toString()
-                        , "%deleteteamsspawn%", teamDelete.toString());
+                        , "%deleteteamsspawn%", teamDelete.toString()));
             }
-            default -> Minigames.get().getLanguageConfig(getBuilder()).getString("eggwars.arenabuilder.repeatmessage.phase" + getPhase(), "");
+            default -> new DMessage(Minigames.get(), getBuilder()).append(
+                    Minigames.get().getLanguageConfig(getBuilder()).getString("eggwars.arenabuilder.repeatmessage.phase" + getPhase(), ""));
         };
     }
     /*
@@ -220,13 +221,14 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
         map.put("teams", teams);
         return new EggWarsArena(map);
     }
-
+    private int timerTick=0;
 
     @Override
-    public void onTimerCall(int timerTick) {
+    public void onTimerCall() {
         Player p = getBuilder();
         if (p == null || !p.isOnline())
             return;
+        timerTick++;
         if (timerTick % 3 == 0) { //every 15 game ticks
             Vector min;
             Vector max;
@@ -280,7 +282,7 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
             }
         }
         if (timerTick % 60 == 0) { //every 15 seconds
-            new MessageComponent(Minigames.get(), getBuilder()).append(getRepeatedMessage()).send();
+            getRepeatedMessage().send();
         }
     }
 

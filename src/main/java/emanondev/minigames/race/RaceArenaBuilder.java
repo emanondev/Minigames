@@ -6,6 +6,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsCommand;
 import emanondev.core.YMLSection;
+import emanondev.core.message.DMessage;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.MessageUtil;
@@ -36,8 +37,8 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     private final List<BoundingBox> fallAreas = new ArrayList<>();
     private BoundingBox endArea;
 
-    public RaceArenaBuilder(@NotNull UUID user, @NotNull String id) {
-        super(user, id);
+    public RaceArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
+        super(user, id, label);
     }
 
     private static final int PHASE_SELECT_AREA = 1;
@@ -53,12 +54,12 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     }
 
     @Override
-    public @NotNull String getCurrentBossBarMessage() {
-        return Minigames.get().getLanguageConfig(getBuilder()).getString("skywars.arenabuilder.bossbar.phase" + getPhase(), "");
+    public @NotNull DMessage getCurrentBossBarMessage() {
+        return new DMessage(Minigames.get(),getBuilder()).appendLang("skywars.arenabuilder.bossbar.phase" + getPhase());
     }
 
     @Override
-    public @NotNull String getRepeatedMessage() {
+    public @NotNull DMessage getRepeatedMessage() {
         return switch (getPhase()) {
             case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
                 YMLSection sect = Minigames.get().getLanguageConfig(getBuilder()).loadSection("skywars.arenabuilder.repeatmessage");
@@ -69,11 +70,12 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                 StringBuilder teamDelete = new StringBuilder();
                 for (DyeColor color : spawnLocations.keySet())
                     teamDelete.append(sect.loadMessage("deleteteamcolor", "", (CommandSender) null, "%color%", color.name()));
-                yield sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
+                yield new DMessage(Minigames.get(),getBuilder()).append(sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
                         , "%setteamsspawn%", teamSet.toString()
-                        , "%deleteteamsspawn%", teamDelete.toString());
+                        , "%deleteteamsspawn%", teamDelete.toString()));
             }
-            default -> Minigames.get().getLanguageConfig(getBuilder()).getString("skywars.arenabuilder.repeatmessage.phase" + getPhase(), "");
+            default -> new DMessage(Minigames.get(),getBuilder()).append(
+                    Minigames.get().getLanguageConfig(getBuilder()).getString("skywars.arenabuilder.repeatmessage.phase" + getPhase(), ""));
         };
     }
 
@@ -358,11 +360,14 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     }
 
 
+    private int timerTick=0;
+
     @Override
-    public void onTimerCall(int timerTick) {
+    public void onTimerCall() {
         Player p = getBuilder();
         if (p == null || !p.isOnline())
             return;
+        timerTick++;
         org.bukkit.util.Vector min;
         Vector max;
 

@@ -29,8 +29,8 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
 
     @Override
     @NotNull
-    public EggWarsArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id) {
-        return new EggWarsArenaBuilder(uuid, id);
+    public EggWarsArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id, @NotNull String label) {
+        return new EggWarsArenaBuilder(uuid, id, label);
     }
 
     @Override

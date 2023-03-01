@@ -27,6 +27,7 @@ public class LeaveCommand extends CoreCommand {
             this.playerOnlyNotify(sender);
             return;
         }
+        @SuppressWarnings("rawtypes")
         MGame game = GameManager.get().getCurrentGame(player);
         if (game == null) {
             sendMsg(player, "leave.error.not_inside_game", "%alias%", label);

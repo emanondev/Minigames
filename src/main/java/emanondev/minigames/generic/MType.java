@@ -53,7 +53,7 @@ public abstract class MType<A extends MArena, O extends MOption> {
     }
 
     @NotNull
-    public abstract MArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id);
+    public abstract MArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id, @NotNull String label);
 
     @NotNull
     public abstract MOption createDefaultOptions();

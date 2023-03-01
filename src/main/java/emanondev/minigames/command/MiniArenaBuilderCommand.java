@@ -79,12 +79,13 @@ public class MiniArenaBuilderCommand extends CoreCommand {
                     "%who%", Bukkit.getOfflinePlayer(arenaBuilder.getUser()).getName());
             return;
         }
+        @SuppressWarnings("rawtypes")
         MType type = MinigameTypes.get().getType(args[2]);
         if (type == null) {
             sendMsg(sender, "miniarenabuilder.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
             return;
         }
-        if (!MAN.registerBuilder(sender.getUniqueId(), id, type))
+        if (!MAN.registerBuilder(sender.getUniqueId(), id, label, type))
             sendMsg(sender, "miniarenabuilder.error.invalid_id", "%id%", id, "%alias%", label);
         //else //handled by the ArenaBuilder
         //  sendMsg(sender, "miniarenabuilder.success.create", "%alias%", label);
@@ -100,6 +101,7 @@ public class MiniArenaBuilderCommand extends CoreCommand {
     }
 
 
+    //cmd create <id> <type>
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @Nullable Location location) {
         if (!(sender instanceof Player who))
@@ -109,7 +111,7 @@ public class MiniArenaBuilderCommand extends CoreCommand {
             return switch (args.length) {
                 case 1 -> complete(args[0], List.of("create"));
                 case 3 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                    case "create" -> complete(args[1], MinigameTypes.get().getTypes(), MType::getType, (t) -> true);
+                    case "create" -> complete(args[2], MinigameTypes.get().getTypes(), MType::getType, (t) -> true);
                     default -> Collections.emptyList();
                 };
                 default -> Collections.emptyList();

@@ -1,17 +1,17 @@
 package emanondev.minigames;
 
-import emanondev.core.MessageBuilder;
-import emanondev.core.UtilsCommand;
 import emanondev.core.UtilsString;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MArenaBuilder;
 import emanondev.minigames.generic.MType;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ArenaManager extends Manager<MArena> {
 
@@ -36,10 +36,10 @@ public class ArenaManager extends Manager<MArena> {
         return map;
     }
 
-    public boolean registerBuilder(@NotNull UUID who, @NotNull String id, @NotNull MType<?, ?> type) {
-        if (!UtilsString.isLowcasedValidID(id)||get(id) != null||builders.containsKey(who))
+    public boolean registerBuilder(@NotNull UUID who, @NotNull String id, @NotNull String label, @NotNull MType<?, ?> type) {
+        if (!UtilsString.isLowcasedValidID(id) || get(id) != null || builders.containsKey(who))
             return false;
-        builders.put(who, type.getArenaBuilder(who, id));
+        builders.put(who, type.getArenaBuilder(who, id, label));
         return true;
     }
 
@@ -48,7 +48,9 @@ public class ArenaManager extends Manager<MArena> {
         val.abort();
     }
 
-
+    public File getSchematicsFolder() {
+        return new File(Minigames.get().getDataFolder(), "schematics");
+    }
 
     public void onArenaBuilderCompletedArena(@NotNull MArenaBuilder builder) {
         MArena arena = builder.build();
@@ -58,24 +60,24 @@ public class ArenaManager extends Manager<MArena> {
         builder.abort();
     }
 
-    public boolean isBuilding(OfflinePlayer player){
+    public boolean isBuilding(OfflinePlayer player) {
         return isBuilding(player.getUniqueId());
     }
 
-    public MArenaBuilder getBuildingArena(OfflinePlayer player){
+    public MArenaBuilder getBuildingArena(OfflinePlayer player) {
         return getBuildingArena(player.getUniqueId());
     }
 
-    public boolean isBuilding(UUID player){
+    public boolean isBuilding(UUID player) {
         return builders.containsKey(player);
     }
 
-    public MArenaBuilder getBuildingArena(UUID player){
+    public MArenaBuilder getBuildingArena(UUID player) {
         return builders.get(player);
     }
 
     public MArenaBuilder getBuildingArenaById(String id) {
-        for (MArenaBuilder ab:builders.values())
+        for (MArenaBuilder ab : builders.values())
             if (ab.getId().equalsIgnoreCase(id))
                 return ab;
         return null;

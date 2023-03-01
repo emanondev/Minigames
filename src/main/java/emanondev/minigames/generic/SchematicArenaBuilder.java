@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class SchematicArenaBuilder extends MArenaBuilder {
@@ -20,18 +21,13 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
     //protected int phase = 1;
 
 
-    public SchematicArenaBuilder(@NotNull UUID user, @NotNull String id) {
-        super(user, id);
+    public SchematicArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
+        super(user, id, label);
     }
 
 
     public boolean isInside(@NotNull Location loc) {
-        return loc.getWorld().equals(world) && area.contains(loc.toVector());
-    }
-
-    @Override
-    public MArena build() {
-        return null;
+        return Objects.equals(loc.getWorld(),world) && area.contains(loc.toVector());
     }
 
     protected void setArea(@NotNull Player player) throws IncompleteRegionException {

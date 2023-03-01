@@ -21,10 +21,6 @@ public class MessageUtil {
         return Minigames.get().getLanguageConfig(player).getTrackMessage(path, player, holders);
     }
 
-    public static @NotNull String getString(@NotNull CommandSender player, @NotNull String path, String... holders) {
-        return UtilsString.fix(Minigames.get().getLanguageConfig(player).getTrackString(path), player instanceof Player ? (Player) player : null, false, holders);
-    }
-
     public static void sendMessage(@NotNull CommandSender player, @NotNull String path, String... holders) {
         new MessageComponent(Minigames.get(), player).append(getMessage(player, path, holders)).send();
     }

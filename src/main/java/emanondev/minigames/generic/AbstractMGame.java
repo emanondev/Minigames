@@ -5,6 +5,7 @@ import emanondev.core.SoundInfo;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.PagedListFGui;
+import emanondev.core.message.DMessage;
 import emanondev.minigames.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
@@ -69,8 +70,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             loc = GameManager.get().generateLocation(arena, getWorld());
         }
         MessageUtil.debug(getId() + " location " + loc);
-        MessageUtil.debug(getId() + " location " + loc.worldName);
-        MessageUtil.debug(getId() + " location " + loc.getWorld());
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.objective = scoreboard.registerNewObjective("game", "dummy", getObjectiveDisplayName(), RenderType.INTEGER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -161,7 +160,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void gameCollectingPlayersTimer() {
-        //Minigames.get().logTetraStar(ChatColor.DARK_RED,"D "+getId()+" gameCollectingPlayersTimer");
         if (phase != Phase.COLLECTING_PLAYERS)
             throw new IllegalStateException();
         if (this.gameCanPreStart()) {
@@ -180,7 +178,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                         "%max_players%", String.valueOf(getMaxGamers())};
                 SoundInfo tick = Configurations.getCollectingPlayersCooldownTickSound();
                 for (Player player : getGamers()) {
-                    MessageUtil.sendActionBarMessage(player, getMinigameType().getType() + ".game.collectingplayers_cooldown_bar", args);
+                    new DMessage(getMinigameType().getPlugin(),player).appendLang(getMinigameType().getType() + ".game.collectingplayers_cooldown_bar", args)
+                            .sendActionBar();
                     tick.play(player);
                 }
                 return;
@@ -194,8 +193,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         String[] args = new String[]{
                 "%current_players%", String.valueOf(getGamers().size()),
                 "%max_players%", String.valueOf(getMaxGamers())};
-        getGamers().forEach(player -> MessageUtil.sendActionBarMessage(player,
-                getMinigameType().getType() + ".game.collectingplayers_no_cooldown_bar", args));
+        getGamers().forEach(player -> new DMessage(getMinigameType().getPlugin(),player).appendLang(
+                getMinigameType().getType() + ".game.collectingplayers_no_cooldown_bar", args).sendActionBar());
     }
 
     @Override
@@ -212,7 +211,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         String[] args = new String[]{"%cooldown%", String.valueOf(preStartCountdown)};
         SoundInfo tick = Configurations.getPreStartPhaseCooldownTickSound();
         for (Player player : getGamers()) {
-            MessageUtil.sendActionBarMessage(player, getMinigameType().getType() + ".game.prestart_cooldown_bar", args);
+            new DMessage(getMinigameType().getPlugin(),player).appendLang(getMinigameType().getType() + ".game.prestart_cooldown_bar", args)
+                    .sendActionBar();
+
             MessageUtil.sendSubTitle(player, getMinigameType().getType() + ".game.prestart_cooldown_bar", args);
             tick.play(player);
         }
