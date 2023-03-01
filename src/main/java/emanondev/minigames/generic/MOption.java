@@ -41,4 +41,5 @@ public interface MOption extends ConfigurationSerializable, Cloneable, Registrab
     default Gui getEditorGui(Player player) {
         return getEditorGui(player, null);
     }
+
 }

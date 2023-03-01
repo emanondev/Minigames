@@ -11,6 +11,7 @@ import emanondev.minigames.generic.MType;
 import emanondev.minigames.generic.Perms;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +43,7 @@ public class MiniOptionCommand extends CoreCommand {
         }
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "create" -> create(sender, label, args);
+            case "clone" -> clone(sender, label, args);
             case "gui" -> gui(sender, label, args);
             case "list" -> list(sender, label, args);
             case "delete" -> delete(sender, label, args);
@@ -52,9 +54,9 @@ public class MiniOptionCommand extends CoreCommand {
     @Override
     public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("create", "gui", "list", "delete"));
+            case 1 -> this.complete(args[0], List.of("create", "gui", "list", "delete", "clone"));
             case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case "gui", "delete" -> this.complete(args[1], OptionManager.get().getAll().keySet());
+                case "gui", "delete", "clone" -> this.complete(args[1], OptionManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             case 3 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
@@ -68,6 +70,39 @@ public class MiniOptionCommand extends CoreCommand {
     private void help(CommandSender sender, String label, String[] args) {
         sendMsgList(sender, "minioption.help", "%alias%", label);
     }
+
+
+    private void clone(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 2) {
+            sendMsg(sender, "minioption.error.clone_params", "%alias%", label);
+            return;
+        }
+        String idOld = args[1].toLowerCase(Locale.ENGLISH);
+        MOption group = OptionManager.get().get(idOld);
+        if (group == null) {
+            sendMsg(sender, "minioption.error.id_not_found", "%id%", idOld, "%alias%", label);
+            return;
+        }
+        String idNew = args[1].toLowerCase(Locale.ENGLISH);
+        MOption groupNew = OptionManager.get().get(idOld);
+        if (groupNew != null) {
+            sendMsg(sender, "minioption.error.id_already_used", "%id%", idNew, "%alias%", label);
+            return;
+        }
+
+        try {
+            OptionManager.get().register(idNew, (MOption) ConfigurationSerialization.deserializeObject(
+                    group.serialize(), group.getClass()), player);
+            sendMsg(sender, "minioption.success.clone", "%newid%", idNew, "%oldid%", idOld, "%alias%", label);
+        } catch (IllegalArgumentException e) {
+            sendMsg(sender, "minioption.error.invalid_id", "%id%", idNew, "%alias%", label);
+        }
+    }
+
 
     private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {

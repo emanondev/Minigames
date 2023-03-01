@@ -107,7 +107,7 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
         return gui;
     }
 
-    public PagedMapGui craftEditor(Player target, Gui parent) {
+    private PagedMapGui craftEditor(Player target, Gui parent) {
         return new PagedMapGui(
                 new DMessage(Minigames.get(), target).appendLang("minioption.gui.title", getPlaceholders()).toLegacy(),
                 6, target, parent, Minigames.get());

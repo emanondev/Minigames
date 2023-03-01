@@ -1,5 +1,6 @@
 package emanondev.minigames.skywars;
 
+import emanondev.core.SoundInfo;
 import emanondev.core.UtilsInventory;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.MessageUtil;
@@ -10,10 +11,7 @@ import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.generic.DropsFiller;
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -21,6 +19,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
@@ -28,6 +27,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -80,7 +80,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
         for (SkyWarsTeam team : teams)
             if (team.addUser(player)) {
-                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType()+".game.assign_team",
+                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
                         "%color%", team.getColor().name());
                 return;
             }
@@ -168,7 +168,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     }
 
     protected void onFillChest(Inventory inventory) {
-        DropsFiller filler = getOption().getFiller();
+        DropsFiller filler = getOption().getChestsFiller();
         if (filler != null)
             filler.fillInventory(inventory);
     }
@@ -291,14 +291,21 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 if (!UtilsInventory.isAirOrNull(item))
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
+        new SoundInfo(Sound.ENTITY_PLAYER_DEATH, 1, 1, false).play(player);
         SkyWarsTeam team = getTeam(player);
         switchToSpectator(player);
+        new SoundInfo(Sound.ENTITY_GHAST_DEATH, 1, 1, true).play(player); //self death notify
+        //TODO add message
         if (team != null && team.hasLost())
             setScore(team.getName(), -1);
         if (killer != null && isGamer(killer)) {
             PlayerStat.SKYWARS_KILLS.add(killer, 1);
+
             getMinigameType().applyKillPoints(killer);
-            //TODO prize?
+            if (getOption().getKillRewardFiller() != null) {
+                UtilsInventory.giveAmount(player, getMinigameType().getKillRewardItem(), 1, UtilsInventory.ExcessManage.DROP_EXCESS);
+            }
+
             team = getTeam(killer);
             if (team != null)
                 addScore(team.getName(), 1);
@@ -337,6 +344,28 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     public boolean canAddGamer(@NotNull Player player) {
         return getPhase() != Phase.PLAYING && super.canAddGamer(player);
+    }
+
+    @Override
+    public void onGamerInteract(@NotNull PlayerInteractEvent event) {
+        super.onGamerInteract(event);
+        if (getPhase() != Phase.PLAYING)
+            return;
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
+        DropsFiller filler = getOption().getKillRewardFiller();
+        if (filler == null)
+            return;
+        ItemStack item = event.getItem();
+        if (UtilsInventory.isAirOrNull(item))
+            return;
+        if (!item.isSimilar(getMinigameType().getKillRewardItem()))
+            return;
+        event.setCancelled(true); //TODO feedback
+        new SoundInfo(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1, 1, true).play(event.getPlayer());
+        item.setAmount(item.getAmount() - 1);
+        event.getPlayer().getInventory().setItem(event.getHand(), item);
+        filler.getDrops().forEach((d) -> UtilsInventory.giveAmount(event.getPlayer(), d, d.getAmount(), UtilsInventory.ExcessManage.DROP_EXCESS));
     }
 
 }

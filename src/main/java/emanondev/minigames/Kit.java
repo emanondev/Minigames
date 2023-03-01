@@ -1,12 +1,20 @@
 package emanondev.minigames;
 
+import emanondev.core.ItemBuilder;
 import emanondev.core.PlayerSnapshot;
+import emanondev.core.gui.Gui;
+import emanondev.core.gui.ItemEditorFButton;
+import emanondev.core.gui.LongEditorFButton;
+import emanondev.core.gui.PagedMapGui;
+import emanondev.core.message.DMessage;
 import emanondev.minigames.generic.ARegistrable;
 import emanondev.minigames.generic.Registrable;
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +24,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
 
     private final PlayerSnapshot snap;
     private int price;
+    private ItemStack guiSelectorItem;
 
     public Kit(@NotNull Map<String, Object> map) {
         this.snap = (PlayerSnapshot) map.get("snap");
@@ -68,6 +77,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("snap", this.snap);
         map.put("price", this.price);
+        map.put("gui_selector_item", this.guiSelectorItem);
         return map;
     }
 
@@ -77,12 +87,58 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
 
     public String[] getPlaceholders() {
         return new String[]{
-                "%price%", String.valueOf(price), "%id%", getId()
+                "%price%", price == 0 ? "-free-" : String.valueOf(price), "%id%", getId()
         };
     }
 
+
     public void setPrice(int val) {
         this.price = Math.max(0, val);
+        KitManager.get().save(this);
+    }
+
+    public Gui getEditorGui(@NotNull Player target, @Nullable Gui parent) {
+        PagedMapGui gui = new PagedMapGui(
+                new DMessage(Minigames.get(), target).appendLang("minikit.gui.title", getPlaceholders()).toLegacy(),
+                6, target, parent, Minigames.get());
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
+                () -> (long) getPrice(),
+                (v) -> {
+                    setPrice(v.intValue());
+                    KitManager.get().save(Kit.this);
+                },
+                () -> new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setDescription(
+                        new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                                "minikit.gui.price", "%value%", String.valueOf(getPrice()))).build()));
+        gui.addButton(new ItemEditorFButton(gui,
+                () -> getGuiSelectorItemRaw().build(),
+                () -> getGuiSelectorItemRaw().build(),
+                this::setGuiSelectorItem, (event) -> gui.open(target)));
+
+
+        return gui;
+    }
+
+    public Gui getEditorGui(@NotNull Player player) {
+        return getEditorGui(player, null);
+    }
+
+    public ItemBuilder getGuiSelectorItemRaw() {
+        return (this.guiSelectorItem == null ? new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty() :
+                new ItemBuilder(this.guiSelectorItem));
+    }
+
+    public ItemBuilder getGuiSelectorItem(Player target) {
+        return getGuiSelectorItemRaw().setDescription(new DMessage(Minigames.get(), target)
+                .appendLangList("generic.gui.kitselector_description",
+                        getPlaceholders()));
+    }
+
+    public void setGuiSelectorItem(ItemStack item) {
+        if (item == null)
+            guiSelectorItem = null;
+        else
+            guiSelectorItem = new ItemBuilder(item).setGuiProperty().build();
         KitManager.get().save(this);
     }
 }

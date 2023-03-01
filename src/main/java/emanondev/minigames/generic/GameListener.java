@@ -9,7 +9,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.jetbrains.annotations.NotNull;

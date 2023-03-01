@@ -44,6 +44,7 @@ public class MiniKitCommand extends CoreCommand {
             case "update" -> update(sender, label, args);
             case "apply" -> apply(sender, label, args);
             case "price" -> price(sender, label, args);
+            case "gui" -> gui(sender, label, args);
             case "list" -> list(sender, label, args);
             case "delete" -> delete(sender, label, args);
             default -> help(sender, label, args);
@@ -53,13 +54,31 @@ public class MiniKitCommand extends CoreCommand {
     @Override
     public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("create", "update", "apply", "list", "delete", "price"));
+            case 1 -> this.complete(args[0], List.of("create", "update", "apply", "list", "delete", "price", "gui"));
             case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
                 case "update", "apply", "delete", "price" -> this.complete(args[1], KitManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             default -> Collections.emptyList();
         };
+    }
+
+
+    private void gui(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 1) {
+            sendMsg(player, "minikit.error.gui_params", "%alias%", label);
+            return;
+        }
+        Kit group = KitManager.get().get(args[1]);
+        if (group == null) {
+            sendMsg(player, "minikit.error.id_not_found", "%alias%", label, "%id%", args[1]);
+            return;
+        }
+        group.getEditorGui(player).open(player);
     }
 
     private void price(CommandSender sender, String label, String[] args) {

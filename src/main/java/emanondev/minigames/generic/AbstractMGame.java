@@ -1,6 +1,5 @@
 package emanondev.minigames.generic;
 
-import emanondev.core.ItemBuilder;
 import emanondev.core.SoundInfo;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.core.gui.Gui;
@@ -512,6 +511,10 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     public void onSpectatorRemoved(@NotNull Player player) {
         for (Player gamer : getGamers())
             gamer.showPlayer(Minigames.get(), player);
+        for (Player spectator : getSpectators()) {
+            spectator.showPlayer(Minigames.get(), player);
+            player.showPlayer(Minigames.get(), spectator);
+        }
     }
 
 
@@ -630,6 +633,11 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         Configurations.applyGameSpectatorSnapshot(player);
         for (Player gamer : getGamers())
             gamer.hidePlayer(Minigames.get(), player);
+        for (Player spectator : getSpectators()) {
+            spectator.showPlayer(Minigames.get(), player);
+            player.showPlayer(Minigames.get(), spectator);
+        }
+        //TODO clock
         player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
     }
 
@@ -725,6 +733,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void onSpectatorInteract(@NotNull PlayerInteractEvent event) {
         event.setCancelled(true);
+        //TODO clock
         if (event.getPlayer().getInventory().getHeldItemSlot() == 8) //only if you can choose a kit
             GameManager.get().quitGame(event.getPlayer());
     }
@@ -740,13 +749,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                     else
                         kitPreference.put(player, kit.getId());
                     return true;
-                }, (kit) -> new ItemBuilder(Material.IRON_CHESTPLATE).setDescription(//TODO
-                new DMessage(getMinigameType().getPlugin(), player).appendLangList("generic.gui.kitselector_description",
-                        "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" :
-                                String.valueOf(kit.getPrice()))
-        ).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                }, (kit) -> kit.getGuiSelectorItem(player).addEnchantment(Enchantment.DURABILITY,
                 kit.getId()
-                        .equals(kitPreference.get(player)) ? 1 : 0).setGuiProperty().build());
+                        .equals(kitPreference.get(player)) ? 1 : 0).build());
         gui.addElements(getOption().getKits());
         gui.updateInventory();
         return gui;

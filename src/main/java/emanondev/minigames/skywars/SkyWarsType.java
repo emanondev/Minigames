@@ -12,7 +12,9 @@ import emanondev.minigames.generic.MOption;
 import emanondev.minigames.generic.MType;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -81,5 +83,9 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
 
     public double getSnowballVerticalPush() {
         return this.getSection().loadDouble("game.snowball_vertical_push", 0.3D);
+    }
+
+    public ItemStack getKillRewardItem() { //TODO description
+        return new ItemBuilder(Material.MAGMA_CREAM).setGuiProperty().addEnchantment(Enchantment.DURABILITY, 1).build();
     }
 }

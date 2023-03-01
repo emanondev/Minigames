@@ -86,6 +86,7 @@ public class Configurations {
     }
 
     @NotNull
+    @Deprecated
     private static ItemBuilder getItem(@NotNull Player player, @NotNull String path, @Nullable String pathText, String... holders) {
         YMLConfig conf = Minigames.get().getConfig("configurations" + File.separator + "items.yml");
         ItemBuilder b = conf.contains(path) ? conf.getGuiItem(path, new ItemBuilder(Material.STONE)) : null;

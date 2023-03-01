@@ -37,14 +37,13 @@ public abstract class MType<A extends MArena, O extends MOption> {
         this.optionClazz = optionClazz;
         this.section = GameManager.get().getSection(this);
         this.plugin = plugin;
-        this.GAME_INTERRUPTED_MESSAGE = new SimpleMessage(getPlugin(),getType()+".game.game_interrupted");
+        this.GAME_INTERRUPTED_MESSAGE = new SimpleMessage(getPlugin(), getType() + ".game.game_interrupted");
         this.COLLECTINGPLAYERS_COOLDOWN_BAR = new SimpleMessage(getPlugin(), getType() + ".game.collectingplayers_cooldown_bar");
         this.END_COOLDOWN_BAR = new SimpleMessage(getPlugin(), getType() + ".game.end_cooldown_bar");
         this.COLLECTINGPLAYERS_NO_COOLDOWN_BAR = new SimpleMessage(getPlugin(), getType() + ".game.collectingplayers_no_cooldown_bar");
         this.PRESTART_COOLDOWN_BAR = new SimpleMessage(getPlugin(), getType() + ".game.prestart_cooldown_bar");
-        this.GAME_START_MESSAGE = new SimpleMessage(getPlugin(),getType()+".game.game_start");
-        this.GAME_END_MESSAGE = new SimpleMessage(getPlugin(),getType()+".game.game_end");
-
+        this.GAME_START_MESSAGE = new SimpleMessage(getPlugin(), getType() + ".game.game_start");
+        this.GAME_END_MESSAGE = new SimpleMessage(getPlugin(), getType() + ".game.game_end");
 
 
     }

@@ -184,7 +184,10 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     void gameEndTimer();
 
 
-    default void gameRestartTimer(){};
+    default void gameRestartTimer() {
+    }
+
+    ;
 
     /**
      * teleport everyone away players
