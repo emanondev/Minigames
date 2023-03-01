@@ -137,7 +137,7 @@ public class MiniDropGroupCommand extends CoreCommand {
             }
         }
         group.addWeight(item, weight);
-        sendMsg(player, "minidropgroup.success.addhand", "%alias%", label, "%weight%", String.valueOf(weight), "%id%",id);
+        sendMsg(player, "minidropgroup.success.addhand", "%alias%", label, "%weight%", String.valueOf(weight), "%id%", id);
     }
 
     private void addchest(CommandSender sender, String label, String[] args) {
@@ -206,7 +206,7 @@ public class MiniDropGroupCommand extends CoreCommand {
 
         for (ItemStack item : items)
             group.addWeight(item, weight);
-        sendMsg(player, "minidropgroup.success.addchest", "%alias%", label, "%weight%", String.valueOf(weight), "%items%", String.valueOf(items.size()), "%id%",id);
+        sendMsg(player, "minidropgroup.success.addchest", "%alias%", label, "%weight%", String.valueOf(weight), "%items%", String.valueOf(items.size()), "%id%", id);
     }
 
     private void list(CommandSender sender, String label, String[] args) {

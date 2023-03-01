@@ -27,7 +27,7 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
 
 
     public boolean isInside(@NotNull Location loc) {
-        return Objects.equals(loc.getWorld(),world) && area.contains(loc.toVector());
+        return Objects.equals(loc.getWorld(), world) && area.contains(loc.toVector());
     }
 
     protected void setArea(@NotNull Player player) throws IncompleteRegionException {

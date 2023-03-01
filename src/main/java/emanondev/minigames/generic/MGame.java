@@ -25,7 +25,10 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 
 public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends ConfigurationSerializable, Cloneable, Registrable {
@@ -306,7 +309,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     default ItemStack getGameSelectorItem(Player player) {
         return getMinigameType().getGameSelectorBaseItem().setAmount(Math.max(1, getGamers().size()))
-                .setDescription(new DMessage(getMinigameType().getPlugin(),player).appendLangList(
+                .setDescription(new DMessage(getMinigameType().getPlugin(), player).appendLangList(
                         getMinigameType().getType() + ".gui.selector", getPlaceholders())
                 ).build();
     }

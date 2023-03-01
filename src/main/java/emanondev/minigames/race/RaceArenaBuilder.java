@@ -55,7 +55,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
 
     @Override
     public @NotNull DMessage getCurrentBossBarMessage() {
-        return new DMessage(Minigames.get(),getBuilder()).appendLang("skywars.arenabuilder.bossbar.phase" + getPhase());
+        return new DMessage(Minigames.get(), getBuilder()).appendLang("skywars.arenabuilder.bossbar.phase" + getPhase());
     }
 
     @Override
@@ -70,11 +70,11 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                 StringBuilder teamDelete = new StringBuilder();
                 for (DyeColor color : spawnLocations.keySet())
                     teamDelete.append(sect.loadMessage("deleteteamcolor", "", (CommandSender) null, "%color%", color.name()));
-                yield new DMessage(Minigames.get(),getBuilder()).append(sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
+                yield new DMessage(Minigames.get(), getBuilder()).append(sect.loadMessage("phase" + getPhase(), "", (CommandSender) null
                         , "%setteamsspawn%", teamSet.toString()
                         , "%deleteteamsspawn%", teamDelete.toString()));
             }
-            default -> new DMessage(Minigames.get(),getBuilder()).append(
+            default -> new DMessage(Minigames.get(), getBuilder()).append(
                     Minigames.get().getLanguageConfig(getBuilder()).getString("skywars.arenabuilder.repeatmessage.phase" + getPhase(), ""));
         };
     }
@@ -360,7 +360,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     }
 
 
-    private int timerTick=0;
+    private int timerTick = 0;
 
     @Override
     public void onTimerCall() {

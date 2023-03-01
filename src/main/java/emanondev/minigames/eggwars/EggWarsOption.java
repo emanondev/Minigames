@@ -7,7 +7,6 @@ import emanondev.core.gui.ResearchFButton;
 import emanondev.minigames.*;
 import emanondev.minigames.generic.AbstractMOption;
 import emanondev.minigames.generic.DropsFiller;
-import emanondev.minigames.skywars.SkyWarsOption;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.InventoryClickEvent;

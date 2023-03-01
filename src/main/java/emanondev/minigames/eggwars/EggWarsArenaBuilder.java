@@ -221,7 +221,8 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
         map.put("teams", teams);
         return new EggWarsArena(map);
     }
-    private int timerTick=0;
+
+    private int timerTick = 0;
 
     @Override
     public void onTimerCall() {

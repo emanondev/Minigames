@@ -2,9 +2,7 @@ package emanondev.minigames.generic;
 
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
-import org.bouncycastle.jcajce.util.MessageDigestUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.boss.BarColor;
@@ -27,7 +25,7 @@ public abstract class MArenaBuilder {
     private final String label;
     private int phase = 1;
 
-    public String getLabel(){
+    public String getLabel() {
         return label;
     }
 
@@ -38,7 +36,7 @@ public abstract class MArenaBuilder {
         this.id = id.toLowerCase();
         this.label = label;
         timerRunnable = Bukkit.getScheduler().runTaskTimer(Minigames.get(), new Runnable() {
-           // private int timerTick = 1;
+            // private int timerTick = 1;
 
             @Override
             public void run() {

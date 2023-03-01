@@ -46,12 +46,12 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
 
     @Override
     protected void onPhaseStart() {
-        timerTick=0;
+        timerTick = 0;
     }
 
     @Override
     public @NotNull DMessage getCurrentBossBarMessage() {
-        return new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.bossbar.phase" + getPhase(),"%alias%",getLabel());
+        return new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.bossbar.phase" + getPhase(), "%alias%", getLabel());
     }
 
     @Override
@@ -62,15 +62,15 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
                 DMessage teamSet = new DMessage(Minigames.get(), getBuilder());
                 for (DyeColor color : DyeColor.values())
                     if (!spawnLocations.containsKey(color))
-                        teamSet.appendLang("arenabuilder.skywars.repeatmessage.setteamcolor", "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color),"%alias%",getLabel());
+                        teamSet.appendLang("arenabuilder.skywars.repeatmessage.setteamcolor", "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color), "%alias%", getLabel());
                 DMessage teamDelete = new DMessage(Minigames.get(), getBuilder());
                 for (DyeColor color : spawnLocations.keySet())
-                    teamDelete.appendLang("arenabuilder.skywars.repeatmessage.deleteteamcolor", "%color%", color.name(),"%hexa%", UtilColor.getColorHexa(color),"%alias%",getLabel());
+                    teamDelete.appendLang("arenabuilder.skywars.repeatmessage.deleteteamcolor", "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color), "%alias%", getLabel());
                 yield new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.repeatmessage.phase" + getPhase()
                         , "%setteamsspawn%", teamSet.toString()
-                        , "%deleteteamsspawn%", teamDelete.toString(),"%alias%",getLabel());
+                        , "%deleteteamsspawn%", teamDelete.toString(), "%alias%", getLabel());
             }
-            default -> new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.repeatmessage.phase" + getPhase(),"%alias%",getLabel());
+            default -> new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
         };
     }
 
@@ -238,7 +238,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
         return new SkyWarsArena(map);
     }
 
-    private int timerTick=0;
+    private int timerTick = 0;
 
     @Override
     public void onTimerCall() {
@@ -271,7 +271,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
             }
             if (min != null) {
                 markBox(min, max, p);
-                markSpawns(min, p,timerTick%4==0);
+                markSpawns(min, p, timerTick % 4 == 0);
             }
         }
         if (timerTick % 180 == 0) { //every 45 seconds

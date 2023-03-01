@@ -36,8 +36,8 @@ public class MiniArenaCommand extends CoreCommand {
             return;
         }
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
-  //          case "create" -> create(sender, label, args);
-  //          case "gui" -> gui(sender, label, args);
+            //          case "create" -> create(sender, label, args);
+            //          case "gui" -> gui(sender, label, args);
             case "list" -> list(sender, label, args);
             case "delete" -> delete(sender, label, args);
             default -> help(sender, label, args);
@@ -49,7 +49,7 @@ public class MiniArenaCommand extends CoreCommand {
         return switch (args.length) {
             case 1 -> this.complete(args[0], List.of("list", "delete"));
             case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case  "delete" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
+                case "delete" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             default -> Collections.emptyList();

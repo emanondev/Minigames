@@ -11,7 +11,6 @@ import emanondev.core.gui.PagedMapGui;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.DropGroupManager;
 import emanondev.minigames.Minigames;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;

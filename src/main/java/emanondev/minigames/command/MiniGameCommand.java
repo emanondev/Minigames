@@ -8,7 +8,6 @@ import emanondev.minigames.generic.*;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,9 +15,6 @@ import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-
-import static org.bukkit.ChatColor.AQUA;
-import static org.bukkit.ChatColor.YELLOW;
 
 public class MiniGameCommand extends CoreCommandPlus {
 
@@ -38,7 +34,7 @@ public class MiniGameCommand extends CoreCommandPlus {
     @SuppressWarnings("unchecked")
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("create", "list", "delete","tp"));
+            case 1 -> this.complete(args[0], List.of("create", "list", "delete", "tp"));
             case 2 -> switch (args[0].toLowerCase()) {
                 case "list" -> this.complete(args[1], MinigameTypes.get().getTypesId());
                 case "delete", "tp", "stop", "reset" -> this.complete(args[1], GameManager.get().getAll().keySet());
@@ -89,28 +85,28 @@ public class MiniGameCommand extends CoreCommandPlus {
     }
 
     private void tp(CommandSender sender, String label, String[] args) {
-        sendMsg(sender,"not_implemented");
+        sendMsg(sender, "not_implemented");
     }
 
     private void stop(CommandSender sender, String label, String[] args) {
-        sendMsg(sender,"not_implemented");
+        sendMsg(sender, "not_implemented");
     }
 
     private void reset(CommandSender sender, String label, String[] args) {
-        sendMsg(sender,"not_implemented");
+        sendMsg(sender, "not_implemented");
     }
 
     private void delete(CommandSender sender, String label, String[] args) {
-        sendMsg(sender,"not_implemented");
+        sendMsg(sender, "not_implemented");
     }
 
     //minigame list [type]
     private void list(CommandSender sender, String label, String[] args) {
         @SuppressWarnings("rawtypes")
         MType type = null;
-        if (args.length>1){
+        if (args.length > 1) {
             type = MinigameTypes.get().getType(args[1]);
-            if (type==null){
+            if (type == null) {
                 sendMsg(sender, "minigame.error.invalid_minigametype", "%type%", args[1], "%alias%", label);
                 return;
             }
@@ -121,7 +117,7 @@ public class MiniGameCommand extends CoreCommandPlus {
         Color color1 = new Color(66, 233, 245);
         Color color2 = new Color(66, 179, 245);
         for (@SuppressWarnings("rawtypes") MGame game : GameManager.get().getAll().values()) {
-            if (type==null || game.getMinigameType().equals(type)) {
+            if (type == null || game.getMinigameType().equals(type)) {
                 msg.appendHover(
                         new DMessage(getPlugin(), sender).appendLangList("minigame.success.list_info",
                                 UtilsString.merge(game.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)

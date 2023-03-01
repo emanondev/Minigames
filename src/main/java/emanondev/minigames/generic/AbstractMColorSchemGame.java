@@ -2,7 +2,6 @@ package emanondev.minigames.generic;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import emanondev.core.util.WorldEditUtility;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -190,7 +189,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
 
     @Override
     public boolean containsLocation(@NotNull Location loc) {
-        return Objects.equals(loc.getWorld(),this.getWorld()) && (boxCache == null ? getBoundingBox().contains(loc.toVector()) : boxCache.contains(loc.toVector()));
+        return Objects.equals(loc.getWorld(), this.getWorld()) && (boxCache == null ? getBoundingBox().contains(loc.toVector()) : boxCache.contains(loc.toVector()));
     }
 
     @Override
@@ -210,7 +209,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
 
 
     public void onGamerTeleport(@NotNull PlayerTeleportEvent event) {
-        if (Objects.equals(event.getTo().getWorld(),event.getFrom().getWorld())) {
+        if (Objects.equals(event.getTo().getWorld(), event.getFrom().getWorld())) {
             onFakeGamerDeath(event.getPlayer(), null, false);
             return; //teleported away by something ?
         }
@@ -282,7 +281,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     }
 
     public boolean overlaps(@NotNull Chunk chunk) {
-        return Objects.equals(getWorld(),chunk.getWorld()) && getBoundingBox().overlaps(
+        return Objects.equals(getWorld(), chunk.getWorld()) && getBoundingBox().overlaps(
                 new BoundingBox(chunk.getX() * 16, chunk.getWorld().getMinHeight(), chunk.getZ() * 16
                         , (chunk.getX() + 1) * 16, chunk.getWorld().getMaxHeight(), (chunk.getZ() + 1) * 16));
     }

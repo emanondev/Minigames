@@ -178,7 +178,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                         "%max_players%", String.valueOf(getMaxGamers())};
                 SoundInfo tick = Configurations.getCollectingPlayersCooldownTickSound();
                 for (Player player : getGamers()) {
-                    new DMessage(getMinigameType().getPlugin(),player).appendLang(getMinigameType().getType() + ".game.collectingplayers_cooldown_bar", args)
+                    new DMessage(getMinigameType().getPlugin(), player).appendLang(getMinigameType().getType() + ".game.collectingplayers_cooldown_bar", args)
                             .sendActionBar();
                     tick.play(player);
                 }
@@ -193,7 +193,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         String[] args = new String[]{
                 "%current_players%", String.valueOf(getGamers().size()),
                 "%max_players%", String.valueOf(getMaxGamers())};
-        getGamers().forEach(player -> new DMessage(getMinigameType().getPlugin(),player).appendLang(
+        getGamers().forEach(player -> new DMessage(getMinigameType().getPlugin(), player).appendLang(
                 getMinigameType().getType() + ".game.collectingplayers_no_cooldown_bar", args).sendActionBar());
     }
 
@@ -211,7 +211,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         String[] args = new String[]{"%cooldown%", String.valueOf(preStartCountdown)};
         SoundInfo tick = Configurations.getPreStartPhaseCooldownTickSound();
         for (Player player : getGamers()) {
-            new DMessage(getMinigameType().getPlugin(),player).appendLang(getMinigameType().getType() + ".game.prestart_cooldown_bar", args)
+            new DMessage(getMinigameType().getPlugin(), player).appendLang(getMinigameType().getType() + ".game.prestart_cooldown_bar", args)
                     .sendActionBar();
 
             MessageUtil.sendSubTitle(player, getMinigameType().getType() + ".game.prestart_cooldown_bar", args);
