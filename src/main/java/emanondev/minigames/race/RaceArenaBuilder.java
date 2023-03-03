@@ -303,7 +303,6 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                         } catch (IncompleteRegionException e) {
                             sendMsg(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
                         }
-                        //TODO notify
                     }
                     default -> ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
                 }
@@ -506,15 +505,16 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         double yOffset = offset.getY() + 0.05D;
         for (int j = 0; j < checkPointsRespawn.size(); j++) {
             for (int i = 0; i < 8; i++) {
-                double degree = (even ? 0 : 0.5 + i) * Math.PI / 4;
+                double degree = ((even ? 0 : 0.5) + i) * Math.PI / 4;
                 double xOffset = offset.getX() + 0.4 * Math.sin(degree);
                 double zOffset = offset.getZ() + 0.4 * Math.cos(degree);
                 p.spawnParticle(Particle.REDSTONE,
                         checkPointsRespawn.get(j).x + xOffset, checkPointsRespawn.get(j).y + yOffset,
                         checkPointsRespawn.get(j).z + zOffset, 1, new Particle.DustOptions(getCheckpointColor(j), 0.5F));
-                p.spawnParticle(Particle.HEART, checkPointsRespawn.get(j).x + offset.getX(), checkPointsRespawn.get(j).y + yOffset + 1,
-                        checkPointsRespawn.get(j).z + offset.getY(), i + 1, 0.1, 1, 0.1);
             }
+            if (even)
+            p.spawnParticle(Particle.HEART, checkPointsRespawn.get(j).x + offset.getX(), checkPointsRespawn.get(j).y + yOffset + 1,
+                    checkPointsRespawn.get(j).z + offset.getZ(), j + 1, 0.1, 1, 0.1);
         }
     }
 
@@ -543,7 +543,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     private void markSpawns(Vector offset, Player p, boolean even) {
         double yOffset = offset.getY() + 0.05D;
         for (int i = 0; i < 8; i++) {
-            double degree = (even ? 0 : 0.5 + i) * Math.PI / 4;
+            double degree = ((even ? 0 : 0.5) + i) * Math.PI / 4;
             double xOffset = offset.getX() + 0.4 * Math.sin(degree);
             double zOffset = offset.getZ() + 0.4 * Math.cos(degree);
             spawnLocations.forEach((k, v) ->

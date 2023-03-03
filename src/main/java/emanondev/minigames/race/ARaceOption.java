@@ -28,9 +28,6 @@ public class ARaceOption extends AbstractMOption {
     private String kitId;
     private int perTeamMaxPlayers;
 
-    public ARaceOption() {
-        this(new HashMap<>());
-    }
     public ARaceOption(@NotNull Map<String, Object> map) {
         super(map);
         perTeamMaxPlayers = Math.max(1, (int) map.getOrDefault("maxPlayersPerTeam", 1));

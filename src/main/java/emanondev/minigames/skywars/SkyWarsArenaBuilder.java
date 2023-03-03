@@ -301,7 +301,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
     private void markSpawns(Vector offset, Player p, boolean even) {
         double yOffset = offset.getY() + 0.05D;
         for (int i = 0; i < 8; i++) {
-            double degree = (even ? 0 : 0.5 + i) * Math.PI / 4;
+            double degree = ((even ? 0 : 0.5) + i) * Math.PI / 4;
             double xOffset = offset.getX() + 0.4 * Math.sin(degree);
             double zOffset = offset.getZ() + 0.4 * Math.cos(degree);
             spawnLocations.forEach((k, v) ->

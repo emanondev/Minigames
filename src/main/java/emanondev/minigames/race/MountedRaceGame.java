@@ -5,8 +5,6 @@ import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.ColoredTeam;
-import emanondev.minigames.skywars.SkyWarsTeam;
-import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -16,16 +14,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>,RaceOption>{
+public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, MountedRaceOption> {
 
-    public RaceGame(@NotNull Map<String, Object> map) {
+    public MountedRaceGame(@NotNull Map<String, Object> map) {
         super(map);
     }
 
 
     @Override
-    public @NotNull RaceType getMinigameType() {
-        return MinigameTypes.RACE;
+    public @NotNull MountedRaceType getMinigameType() {
+        return MinigameTypes.MOUNTED_RACE;
     }
 
     @Override
@@ -59,25 +57,10 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>,RaceOption>{
 
     @Override
     public void checkGameEnd() {
-        if (getGamers().size()<=1)
+        if (getGamers().size() <= 1)
             this.gameEnd();
     }
 
-    @Override //TODO
-    public boolean gameCanPreStart() {
-        return getGamers().size() >= 1;
-    }
-
-    @Override //TODO
-    public boolean gameCanStart() {
-        int counter = 0;
-        for (ARaceTeam<RaceGame> team : getTeams())
-            if (getGamers(team).size() > 0)
-                counter++;
-        return counter >= 1;
-    }
-
-    /*
     @Override
     public boolean gameCanPreStart() {
         return getGamers().size() >= 2;
@@ -86,9 +69,9 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>,RaceOption>{
     @Override
     public boolean gameCanStart() {
         int counter = 0;
-        for (ARaceTeam<RaceGame> team : getTeams())
+        for (ARaceTeam<MountedRaceGame> team : getTeams())
             if (getGamers(team).size() > 0)
                 counter++;
         return counter >= 2;
-    }*/
+    }
 }

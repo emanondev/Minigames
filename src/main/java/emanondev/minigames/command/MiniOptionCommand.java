@@ -3,12 +3,11 @@ package emanondev.minigames.command;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
-import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.Minigames;
-import emanondev.minigames.OptionManager;
+import emanondev.minigames.*;
 import emanondev.minigames.generic.MOption;
 import emanondev.minigames.generic.MType;
 import emanondev.minigames.generic.Perms;
+import emanondev.minigames.generic.Registrable;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -17,9 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 
 public class MiniOptionCommand extends CoreCommand {
 
@@ -154,11 +152,14 @@ public class MiniOptionCommand extends CoreCommand {
         boolean color = true;
         Color color1 = new Color(66, 233, 245);
         Color color2 = new Color(66, 179, 245);
-        for (MOption drop : OptionManager.get().getAll().values()) {
+
+        ArrayList<MOption> list = new ArrayList<>(OptionManager.get().getAll().values());
+        list.sort(Comparator.comparing(Registrable::getId));
+        for (MOption option : list) {
             msg.appendHover(
                     new DMessage(getPlugin(), sender).appendLangList("minioption.success.list_info",
-                            UtilsString.merge(drop.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
-                            .appendRunCommand("/" + label + " gui " + drop.getId(), drop.getId())).append(" ");
+                            UtilsString.merge(option.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
+                            .appendRunCommand("/" + label + " gui " + option.getId(), option.getId())).append(" ");
             color = !color;
         }
         msg.send();

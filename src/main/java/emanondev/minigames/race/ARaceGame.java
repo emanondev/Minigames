@@ -2,6 +2,7 @@ package emanondev.minigames.race;
 
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -53,7 +54,6 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
 
 
     /**
-     * @param player
      * @return -1 for no checkpoints or checkpoint number starting from 0
      */
     public int getCurrentCheckpoint(UUID player) {
@@ -174,11 +174,16 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
 
 
     public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
-        BoundingBox box = event.getPlayer().getBoundingBox();
-        if (finishArea.overlaps(box)) { //TODO CHECKPOINTS POLICY
-            currentCheckpoint.remove(event.getPlayer().getUniqueId());
-            //TODO finish!!!
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
             return;
+
+        BoundingBox box = event.getPlayer().getBoundingBox();
+        if (getPhase() == Phase.PLAYING) {
+            if (finishArea.overlaps(box)) { //TODO CHECKPOINTS POLICY
+                currentCheckpoint.remove(event.getPlayer().getUniqueId());
+                onGamerReachRaceFinishArea(event.getPlayer());
+                return;
+            }
         }
         for (int i = getCurrentCheckpoint(event.getPlayer()) + 1; 1 < checkpointsAreas.size(); i++) //CHECKPOINTS POLICY
             if (checkpointsAreas.get(i).overlaps(box)) {
@@ -191,14 +196,18 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
                 onGamerFallOutsideArena(event);
                 return;
             }
+
     }
+
+    protected abstract void onGamerReachRaceFinishArea(Player player);
+
     /**
      * Handle block break done by one of playingPlayers
      */
     @Override
     public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
         //if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
-            event.setCancelled(true);
+        event.setCancelled(true);
     }
 
     /**
@@ -207,8 +216,25 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
     @Override
     public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
         //if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
-            event.setCancelled(true);
+        event.setCancelled(true);
     }
     //TODO blockbucket
+
+
+
+    @Override
+    @SuppressWarnings({"unchecked","rawtypes"})
+    protected @NotNull T craftTeam(@NotNull DyeColor color) {
+        return (T) new ARaceTeam(this, color);
+    }
+
+    @Override
+    public boolean canSwitchToSpectator(Player player) {
+        return true;
+    }
+    @Override
+    public boolean joinGameAsGamer(@NotNull Player player) {
+        return addGamer(player);
+    }
 
 }

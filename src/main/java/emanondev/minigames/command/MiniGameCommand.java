@@ -12,9 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class MiniGameCommand extends CoreCommandPlus {
 
@@ -116,7 +115,10 @@ public class MiniGameCommand extends CoreCommandPlus {
         boolean color = true;
         Color color1 = new Color(66, 233, 245);
         Color color2 = new Color(66, 179, 245);
-        for (@SuppressWarnings("rawtypes") MGame game : GameManager.get().getAll().values()) {
+        @SuppressWarnings("rawtypes")
+        ArrayList<MGame> list = new ArrayList<>(GameManager.get().getAll().values());
+        list.sort(Comparator.comparing(Registrable::getId));
+        for (@SuppressWarnings("rawtypes") MGame game : list) {
             if (type == null || game.getMinigameType().equals(type)) {
                 msg.appendHover(
                         new DMessage(getPlugin(), sender).appendLangList("minigame.success.list_info",

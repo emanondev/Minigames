@@ -3,10 +3,13 @@ package emanondev.minigames.command;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
+import emanondev.minigames.GameManager;
 import emanondev.minigames.Kit;
 import emanondev.minigames.KitManager;
 import emanondev.minigames.Minigames;
+import emanondev.minigames.generic.MGame;
 import emanondev.minigames.generic.Perms;
+import emanondev.minigames.generic.Registrable;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,9 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 
 public class MiniKitCommand extends CoreCommand {
     /*
@@ -192,7 +194,9 @@ public class MiniKitCommand extends CoreCommand {
         boolean color = true;
         Color color1 = new Color(66, 233, 245);
         Color color2 = new Color(66, 179, 245);
-        for (Kit kit : KitManager.get().getAll().values()) {
+        ArrayList<Kit> list = new ArrayList<>(KitManager.get().getAll().values());
+        list.sort(Comparator.comparing(Registrable::getId));
+        for (Kit kit : list) {
             msg.appendHover(
                     new DMessage(getPlugin(), sender).appendLangList("minikit.success.list_info",
                             UtilsString.merge(kit.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)

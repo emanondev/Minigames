@@ -214,7 +214,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
         if (preStartCountdown <= 0) {
             if (!gameCanStart()) { //some idiot disconnected //TODO back to Collecting Players (?)
-                this.gameAbort();
+                this.gameAbort(); //TODO here!!
                 this.gameRestart();
                 return;
             }
@@ -334,6 +334,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void gameAbort() {
         MessageUtil.debug(getId() + " gameAbort");
+        new IllegalStateException("debug").printStackTrace(); //TODO
         for (Player spectator : new HashSet<>(getSpectators())) { //bad
             GameManager.get().quitGame(spectator);
             getMinigameType().GAME_INTERRUPTED_MESSAGE.send(spectator);

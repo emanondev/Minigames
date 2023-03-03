@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ARaceTeam extends ColoredTeam {
+public class ARaceTeam<T extends ARaceGame> extends ColoredTeam {
 
-    public ARaceTeam(@NotNull ARaceGame game, @NotNull DyeColor color) {
+    public ARaceTeam(@NotNull T game, @NotNull DyeColor color) {
         super(game, color);
     }
 
@@ -28,6 +28,11 @@ public class ARaceTeam extends ColoredTeam {
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public T getGame() {
+        return (T) super.getGame();
     }
 
 }

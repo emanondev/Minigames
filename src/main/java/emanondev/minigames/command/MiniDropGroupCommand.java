@@ -5,9 +5,12 @@ import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.DropGroupManager;
+import emanondev.minigames.Kit;
+import emanondev.minigames.KitManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.DropGroup;
 import emanondev.minigames.generic.Perms;
+import emanondev.minigames.generic.Registrable;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -21,10 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 
 public class MiniDropGroupCommand extends CoreCommand {
 
@@ -214,7 +215,9 @@ public class MiniDropGroupCommand extends CoreCommand {
         boolean color = true;
         Color color1 = new Color(66, 233, 245);
         Color color2 = new Color(66, 179, 245);
-        for (DropGroup drop : DropGroupManager.get().getAll().values()) {
+        ArrayList<DropGroup> list = new ArrayList<>(DropGroupManager.get().getAll().values());
+        list.sort(Comparator.comparing(Registrable::getId));
+        for (DropGroup drop : list) {
             msg.appendHover(
                     new DMessage(getPlugin(), sender).appendLangList("minidropgroup.success.list_info",
                             UtilsString.merge(drop.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)

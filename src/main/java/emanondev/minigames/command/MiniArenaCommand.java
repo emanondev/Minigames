@@ -4,18 +4,20 @@ import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.ArenaManager;
+import emanondev.minigames.FillerManager;
 import emanondev.minigames.Minigames;
+import emanondev.minigames.generic.DropsFiller;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.Perms;
+import emanondev.minigames.generic.Registrable;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 
 public class MiniArenaCommand extends CoreCommand {
 
@@ -81,7 +83,9 @@ public class MiniArenaCommand extends CoreCommand {
         boolean color = true;
         Color color1 = new Color(66, 233, 245);
         Color color2 = new Color(66, 179, 245);
-        for (MArena arena : ArenaManager.get().getAll().values()) {
+        ArrayList<MArena> list = new ArrayList<>(ArenaManager.get().getAll().values());
+        list.sort(Comparator.comparing(Registrable::getId));
+        for (MArena arena : list) {
             msg.appendHover(
                     new DMessage(getPlugin(), sender).appendLangList("miniarena.success.list_info",
                             UtilsString.merge(arena.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
