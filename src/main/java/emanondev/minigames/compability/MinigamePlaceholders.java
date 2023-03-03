@@ -43,7 +43,7 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
                         case "players" -> String.valueOf(game.getGamers().size());
                         case "spectators" -> String.valueOf(game.getMaxGamers());
                         case "maxplayers" -> String.valueOf(game.getSpectators());
-                        case "phase" -> game.getPhase().name(); //TODO translate that
+                        case "phase" -> game.getPhase().getTranslatedName(player.isOnline()?player.getPlayer():null);
                         default -> {
                             Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% time unit " + args[1] + " doesn't match with existing ones");
                             yield "0";

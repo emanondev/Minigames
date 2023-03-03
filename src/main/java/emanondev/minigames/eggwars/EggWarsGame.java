@@ -329,7 +329,7 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
 
 
     @Override
-    public void onGamerHitByProjectile(ProjectileHitEvent event) {
+    public void onGamerHitByProjectile(@NotNull ProjectileHitEvent event) {
         if (event.getEntity() instanceof Snowball) { //adds push
             if (!getPhase().equals(Phase.PLAYING))
                 return;

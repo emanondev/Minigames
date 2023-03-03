@@ -559,9 +559,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void onGamerPvpDamage(@NotNull EntityDamageByEntityEvent event, @NotNull Player p, @NotNull Player damager, boolean directDamage) {
-        if (p.equals(damager))
+        if (p.equals(damager)) //TODO cant arrowhit himself
             return;
-        if (event.getDamager() instanceof Player && Objects.equals(getTeam(p), getTeam(damager)))
+        if (event.getDamager() instanceof Player && Objects.equals(getTeam(p), getTeam(damager))) //TODO flag?
             event.setCancelled(true);
     }
 
@@ -666,7 +666,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             event.setCancelled(true);
     }
 
-    public void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player player) {
+    public void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player hitPlayer) {
         if (getPhase() != Phase.PLAYING)
             event.setCancelled(true);
     }

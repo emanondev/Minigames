@@ -107,7 +107,7 @@ public class SkyWarsOption extends AbstractMOption {
 
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.kit_selector", "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", kits)
+                        "minioption.gui.kits_selector", "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", kits)
                 )).build(),
                 (String base, Kit kit) -> kit.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, Kit kit) -> {

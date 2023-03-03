@@ -166,7 +166,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     protected abstract @NotNull T craftTeam(@NotNull DyeColor color);
 
     @Override
-    public @Nullable T getTeam(@NotNull OfflinePlayer player) {
+    public @Nullable T getTeam(@NotNull UUID player) {
         for (T team : teams.values()) {
             if (team.containsUser(player))
                 return team;

@@ -1,6 +1,7 @@
 package emanondev.minigames.generic;
 
 import emanondev.core.message.DMessage;
+import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -8,6 +9,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -25,17 +27,19 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
 public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends ConfigurationSerializable, Cloneable, Registrable {
 
     @NotNull BlockLocation3D getGameLocation();
 
-    @Nullable T getTeam(@NotNull OfflinePlayer player);
+    @Nullable
+    default T getTeam(@NotNull OfflinePlayer player){
+        return getTeam(player.getUniqueId());
+    }
+
+    @Nullable T getTeam(@NotNull UUID player);
 
     @NotNull Collection<T> getTeams();
 
@@ -255,17 +259,17 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      */
     void onFakeGamerDeath(@NotNull Player dead, @Nullable Player killer, boolean direct);
 
-    void onGamerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player p);
+    void onGamerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player regainPlayer);
 
     void onEntityDeath(@NotNull EntityDeathEvent event);
 
     void onGamerDamaging(@NotNull EntityDamageByEntityEvent event, @NotNull Player damager, boolean direct);
 
-    void onGamerPvpDamage(@NotNull EntityDamageByEntityEvent event, @NotNull Player p, @NotNull Player damager, boolean direct);
+    void onGamerPvpDamage(@NotNull EntityDamageByEntityEvent event, @NotNull Player hitPlayer, @NotNull Player damager, boolean direct);
 
     void onGameEntityDamaged(@NotNull EntityDamageEvent event);
 
-    void onGamerDamaged(@NotNull EntityDamageEvent event, Player p);
+    void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player hitPlayer);
 
     void onCreatureSpawn(@NotNull CreatureSpawnEvent event);
 
@@ -311,7 +315,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     void onGamerCombustEvent(@NotNull EntityCombustEvent event, @NotNull Player player);
 
-    void onGamerHitByProjectile(ProjectileHitEvent event);
+    void onGamerHitByProjectile(@NotNull ProjectileHitEvent event);
 
     default ItemStack getGameSelectorItem(Player player) {
         return getMinigameType().getGameSelectorBaseItem().setAmount(Math.max(1, getGamers().size()))
@@ -340,6 +344,10 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         PRE_START,
         PLAYING,
         RESTART,
-        END
+        END;
+
+        public String getTranslatedName(CommandSender target) {
+            return Minigames.get().getLanguageConfig(target).getString("generic.phase_name."+this.name().toLowerCase(Locale.ENGLISH));
+        }
     }
 }

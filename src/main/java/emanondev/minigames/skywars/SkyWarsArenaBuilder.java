@@ -30,7 +30,7 @@ import java.util.*;
 public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
 
     private static final SimpleMessage ERR_UNKNOWN_ACTION = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.unknown_action");
-    private static final SimpleMessage ERR_OUTSIDE_AREA = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.unknown_action");
+    private static final SimpleMessage ERR_OUTSIDE_ARENA = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.outside_arena");
     private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
     private LocationOffset3D spectatorsOffset;
 
@@ -58,7 +58,6 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
     public @NotNull DMessage getRepeatedMessage() {
         return switch (getPhase()) {
             case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
-                //YMLSection sect = Minigames.get().getLanguageConfig(getBuilder()).loadSection("arenabuilder.skywars.repeatmessage");
                 DMessage teamSet = new DMessage(Minigames.get(), getBuilder());
                 for (DyeColor color : DyeColor.values())
                     if (!spawnLocations.containsKey(color))
@@ -116,7 +115,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
                         }
                         case "setteamspawn" -> {
                             if (!this.isInside(player.getLocation())) {
-                                ERR_OUTSIDE_AREA.send(player, "%alias%", label);
+                                ERR_OUTSIDE_ARENA.send(player, "%alias%", label);
                                 return;
                             }
                             //TODO check color value
@@ -154,13 +153,12 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
                                 ArenaManager.get().onArenaBuilderCompletedArena(this);
                                 sendMsg(player, "arenabuilder.skywars.success.completed",
                                         UtilsString.merge(ArenaManager.get().get(getId()).getPlaceholders(), "%alias%", label));
-                                //TODO
                                 return;
                             }
                         }
                         case "setspectatorspawn" -> {
                             if (!this.isInside(player.getLocation())) {
-                                ERR_OUTSIDE_AREA.send(player, "%alias%", label);
+                                ERR_OUTSIDE_ARENA.send(player, "%alias%", label);
                                 return;
                             }
                             boolean override = spectatorsOffset != null;

@@ -36,7 +36,7 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
     }
 
     @Override
-    public @NotNull MOption createDefaultOptions() {
+    public @NotNull SkyWarsOption createDefaultOptions() {
         return new SkyWarsOption();
     }
 

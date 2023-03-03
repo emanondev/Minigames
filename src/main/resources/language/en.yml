@@ -7,6 +7,14 @@ items:
   game_leave:
     - "&cAbbandona la partita"
 generic:
+  phase_name:
+    stopped: Closed
+    collecting_players: Ready
+    pre_start: Ready
+    playing: Playing
+    restart: Restarting
+    end: Restarting
+
   obtain_points: "&a[Game] Hai ottenuto &e%amount% &apunti!"
   gui:
     kitselector_title: "<#4079ff>Scegli il Kit"
@@ -51,7 +59,7 @@ arenabuilder:
     error:
       unselected_area: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Devi selezionare l'area con worldedit"
       unknown_action: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Azione non valida"
-      outside_area: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Devi selezionare un punto all'interno dell'arena"
+      outside_arena: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Devi selezionare un punto all'interno dell'arena"
       invalid_color: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Colore non valido"
     success:
       select_area: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai selezionato l'area dell'arena (&e%world% %x1%:%x2% %y1%:%y2% %z1%:%z2%&a)"
@@ -75,6 +83,57 @@ arenabuilder:
       phase3: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona i team spawn | Procedi"
       phase4: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona lo spawn degli spettatori"
       phase5: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona lo spawn degli spettatori | Procedi"
+  race:
+    error:
+      unselected_area: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Devi selezionare l'area con worldedit"
+      unknown_action: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Azione non valida"
+      outside_arena: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Devi selezionare un punto all'interno dell'arena"
+      invalid_color: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Colore non valido"
+      selected_area_outside_arena: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> L'area selezionata si trova all'esterno dell'arena"
+      selected_area_too_big: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Hai selezionato un'area troppo grande"
+      selected_area_overlapping_checkpoint: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> L'area selezionata si sovrappone all'area di un checkpoint"
+      selected_area_overlapping_finish_area: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> L'area selezionata si sovrappone all'area di arrivo"
+      outside_checkpoint_area: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Il punto di respawn dev'essere all'interno dell'area del checkpoint"
+    warn:
+      selected_area_very_big: "<gradient:#ff9100:#ffb224:#edd48e>[ArenaBuilder]</gradient><#ffb224> Attenzione! L'area selezionata è molto grande sei sicuro?"
+      selected_area_very_small: "<gradient:#ff9100:#ffb224:#edd48e>[ArenaBuilder]</gradient><#ffb224> Attenzione! L'area selezionata è molto piccola sei sicuro?"
+    success:
+      select_area: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai selezionato l'area dell'arena (&e%world% %x1%:%x2% %y1%:%y2% %z1%:%z2%&a)"
+      override_team_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai cambiato lo spawn per il team &e%color%"
+      set_team_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai impostato lo spawn per il team &e%color%"
+      delete_team_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai rimosso lo spawn per il team &e%color%"
+      set_spectators_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai impostato lo spawn per gli spettatori"
+      override_spectators_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai cambiato lo spawn per gli spettatori"
+      completed: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Schematic salvata, Arena <#ffffb3>%id%</#ffffb3> Creata"
+      cleared_checkpoints: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Checkpoint azzerati"
+      select_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Area checkpoint aggiunta"
+      undo_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Rimosso l'ultimo checkpoint impostato"
+      set_checkpoint_respawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Impostato il punto di respawn del checkpoint"
+      select_finisharea: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Impostata l'area di fine percorso"
+      select_fallingzone: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Aggiunta l'area di caduta"
+      deleted_last_fallingzone: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Rimossa l'ultima area di caduta impostata"
+    repeatmessage:
+      phase1: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona l'area dell'arena con worldedit <u><#ffffb3><click:run_command:'//wand'><hover:show_text:\"<#acfad1>Ottieni l'ascia worldedit per selezionare\">[//wand]</hover></click></#ffffb3></u>\nImposta l'area dell'arena <u><#ffffb3><click:run_command:'/arenabuilder selectarea'><hover:show_text:\"<#acfad1>Imposta la regione worldedit\nselezionata come l'area dell'arena\ne procedi alla prossima fase\">[Conferma]</hover></click></#ffffb3></u>"
+      phase2: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta lo spawn per i vari team:\nImposta: <#ffffb3>%setteamsspawn%</#ffffb3>\nCancella: <#ffffb3>%deleteteamsspawn%</#ffffb3>"
+      phase3: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta lo spawn per i vari team:\nImposta: <#ffffb3>%setteamsspawn%</#ffffb3>\nCancella: <#ffffb3>%deleteteamsspawn%</#ffffb3>\nProcedi alla prossima fase <#ffffb3><hover:show_text:'<#acfad1>Conferma definitivamente le posizioni di spawn selezionate\ne continua il settaggio dell''arena'><click:run_command:'/arenabuilder next'><u>[Conferma]</u></click></hover></#ffffb3>"
+      phase4: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta lo spawn per gli spettatori: <u><#ffffb3><click:run_command:'/arenabuilder setspectatorspawn'><hover:show_text:\"<#acfad1>Imposta lo spawn per gli spettatori\nnella tua posizione corrente\">[imposta]</hover></click></#ffffb3></u>"
+      phase5: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Cambia lo spawn per gli spettatori: <u><#ffffb3><click:run_command:'/arenabuilder setspectatorspawn'><hover:show_text:\"<#acfad1>Imposta lo spawn per gli spettatori\nnella tua posizione corrente\">[imposta]</hover></click></#ffffb3></u>\noppure completa l'arena: <u><#ffffb3><click:run_command:'/arenabuilder next'><hover:show_text:\"<#acfad1>Conferma e crea l'arena corrente\">[Completa]</hover></click></#ffffb3></u>"
+      setteamcolor: "<hover:show_text:\"<#acfad1>Imposta lo spawn per il team colore <%hexa%>%color%</%hexa%>\nnella tua posizione corrente\"><click:run_command:'/arenabuilder setteamspawn %color%'><u>[<%hexa%>%color%</%hexa%>]</u></click></hover> "
+      deleteteamcolor: "<hover:show_text:\"<#acfad1>Cancella lo spawn per il team colore <%hexa%>%color%</%hexa%>\"><click:run_command:'/arenabuilder deleteteamspawn %color%'><u>[<%hexa%>%color%</%hexa%>]</u></click></hover> "
+      phase6: #TODO
+      phase7:
+      phase8:
+      phase9:
+    bossbar:
+      phase1: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona l'area dell'arena"
+      phase2: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona il team spawn"
+      phase3: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona i team spawn | Procedi"
+      phase4: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona lo spawn degli spettatori"
+      phase5: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona lo spawn degli spettatori | Procedi"
+      phase6: #TODO
+      phase7:
+      phase8:
+      phase9:
 miniarena:
   error:
     id_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><id></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non esiste</hover>"
@@ -165,7 +224,7 @@ minioption:
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
   gui: #TODO refine this section
-    title: "<#4079ff>Filler <#57c9fa>%id% <#4079ff>(<#57c9fa>%type%<#4079ff>)"
+    title: "<#4079ff>Option <#57c9fa>%id% <#4079ff>(<#57c9fa>%type%<#4079ff>)"
     collecting_players_phase_max_cooldown:
       - "<#4079ff>Quanti secondi dopo che i requisiti minimi"
       - "<#4079ff> sono soddisfatti per iniziare la Partita?"
@@ -192,7 +251,7 @@ minioption:
       - "<#4079ff>Permetti ai giocatori di assistere alla partita?"
       - "<#57c9fa>Valore: <#ffffb3>%value%"
       - ""
-      - "<#57c9fa>[&fClick<#57c9fa>] &fQualsiasi <#57c9fa>-> &fAlterna"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Alterna"
     team_max_players:
       - "<#4079ff>Numero massimo di giocatori per Team"
       - "<#57c9fa>Valore: <#ffffb3>%value%"
@@ -201,40 +260,74 @@ minioption:
       - "<#57c9fa>Contiene <#ffffb3>%size%<#57c9fa> oggetti salvati"
       - ""
       - "<#b3b3b3>Serve a riempire le casse nell'arena"
-      - "<#57c9fa>[&fClick<#57c9fa>] &fQualsiasi <#57c9fa>-> &fCambia/Imposta"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Cambia/Imposta"
     killrewardfiller_selector:
       - "<#4079ff>Filler <#ffffb3>%id%"
       - "<#57c9fa>Contiene <#ffffb3>%size%<#57c9fa> oggetti salvati"
       - ""
       - "<#b3b3b3>Serve a impostare i premi per uccisione"
-      - "<#57c9fa>[&fClick<#57c9fa>] &fQualsiasi <#57c9fa>-> &fCambia/Imposta"
-    kit_selector:
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Cambia/Imposta"
+    kits_selector:
       - "<#4079ff>Seleziona kit"
       - "<#57c9fa>Kit abilitati:"
       - "<#ffffb3>%selected%"
       - "<#b3b3b3>I kit abilitati possono essere selezionati"
       - "<#b3b3b3> dai giocatori prima della partita"
-      - "<#57c9fa>[&fClick<#57c9fa>] &fAny <#57c9fa>-> &fCambia/Imposta"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Cambia/Imposta"
+    kit_selector:
+      - "<#4079ff>Seleziona il kit"
+      - "<#57c9fa>Kit scelto: <#ffffb3>%selected%"
+      - "<#b3b3b3>Il kit sarà applicato ai giocatori all'inizio"
+      - "<#b3b3b3> della partita ed ogni volta che tornano ad"
+      - "<#b3b3b3> un checkpoint"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Cambia/Imposta"
     kit_description:
       - "<#4079ff>Kit <#ffffb3>%id%"
       - "<#57c9fa>Prezzo: <#ffffb3>%price%"
       - ""
       - "<#b3b3b3>Puoi vedere il contenuto con /minikit apply %id%"
-      - "<#57c9fa>[&fClick<#57c9fa>] &fAny <#57c9fa>-> &fSeleziona"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Seleziona"
     chestsfiller_description:
       - "<#4079ff>Filler <#ffffb3>%id%"
       - "<#57c9fa>Contiene <#ffffb3>%size%<#57c9fa> oggetti salvati"
       - ""
       - "<#b3b3b3>Serve a riempire le casse nell'arena"
       - "<#b3b3b3>Puoi vedere il contenuto con /minifiller show %id%"
-      - "<#57c9fa>[&fClick<#57c9fa>] &fAny <#57c9fa>-> &fSeleziona"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Seleziona"
     killrewardfiller_description:
       - "<#4079ff>Filler <#ffffb3>%id%"
       - "<#57c9fa>Contiene <#ffffb3>%size%<#57c9fa> oggetti salvati"
       - ""
       - "<#b3b3b3>Serve a impostare i premi per uccisione"
       - "<#b3b3b3>Puoi vedere il contenuto con /minifiller show %id%"
-      - "<#57c9fa>[&fClick<#57c9fa>] &fAny <#57c9fa>-> &fSeleziona"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Seleziona"
+    allow_pvp:
+      - "<#4079ff>PvP"
+      - "<#57c9fa>Attivo: <#ffffb3>%value%"
+      - ""
+      - "<#b3b3b3>Decidi se è possibile colpire gli avversari"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Alterna"
+    allow_pve:
+      - "<#4079ff>PvE"
+      - "<#57c9fa>Attivo: <#ffffb3>%value%"
+      - ""
+      - "<#b3b3b3>Decidi se è possibile colpire le entità"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Alterna"
+    allow_fall_damage:
+      - "<#4079ff>Danno da Caduta"
+      - "<#57c9fa>Attivo: <#ffffb3>%value%"
+      - ""
+      - "<#b3b3b3>Decidi se è possibile ricevere danno da caduta"
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Alterna"
+    allow_environment_damage:
+      - "<#4079ff>Danno da Ambiente"
+      - "<#57c9fa>Attivo: <#ffffb3>%value%"
+      - ""
+      - "<#b3b3b3>Decidi se è possibile ricevere danno dall'ambiente"
+      - "<#b3b3b3>Solitamente fuoco, freddo, cactus..."
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Alterna"
+
+
 join:
   error:
     game_not_available: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non puoi entrare in <#fab66e>%name%"

@@ -1,4 +1,4 @@
-package emanondev.minigames.skywars;
+package emanondev.minigames.race;
 
 import emanondev.minigames.generic.ColoredTeam;
 import org.bukkit.Bukkit;
@@ -8,10 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class SkyWarsTeam extends ColoredTeam {
+public class ARaceTeam extends ColoredTeam {
 
-
-    public SkyWarsTeam(@NotNull SkyWarsGame game, @NotNull DyeColor color) {
+    public ARaceTeam(@NotNull ARaceGame game, @NotNull DyeColor color) {
         super(game, color);
     }
 
@@ -31,8 +30,4 @@ public class SkyWarsTeam extends ColoredTeam {
         return true;
     }
 
-    @Override
-    public SkyWarsGame getGame() {
-        return (SkyWarsGame) super.getGame();
-    }
 }

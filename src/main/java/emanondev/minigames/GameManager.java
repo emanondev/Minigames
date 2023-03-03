@@ -154,7 +154,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             world = Bukkit.getWorld(getGlobalSection().getString("defaultWorld", ""));
         if (world == null)
             world = Bukkit.getWorlds().get(0);
-        while (!isValid && counter < 200) { //TODO
+        while (!isValid && counter < 500) {
             loc = new BlockLocation3D(world, 10000 + offset * counter, 0, 10000);
             isValid = isValidLocation(loc, arena, world);
             counter++;
@@ -215,7 +215,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
     /**
      * Returns the Game the player is currently on
      *
-     * @param player
      * @return the Game the player is currently on
      */
     @SuppressWarnings("rawtypes")

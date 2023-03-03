@@ -63,7 +63,7 @@ public final class Minigames extends CorePlugin {
 
         registerCommands();
 
-        //TODO
+        //TODO later remove testcommand
         this.registerCommand(new TestCommand());
 
         if (Hooks.isPAPIEnabled())
@@ -82,7 +82,7 @@ public final class Minigames extends CorePlugin {
         this.registerCommand(new FastJoinCommand());
         this.registerCommand(new JoinCommand());
         this.registerCommand(new LeaveCommand());
-        this.registerCommand(new SnapshotSupportCommand());
+        this.registerCommand(new SnapshotSupportCommand()); //TODO remove later
     }
 
     private void registerConfigurationSerializables() {
