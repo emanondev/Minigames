@@ -2,6 +2,7 @@ package emanondev.minigames.generic;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import emanondev.core.util.WorldEditUtility;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -207,7 +208,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
 
 
     public void onGamerTeleport(@NotNull PlayerTeleportEvent event) {
-        if (Objects.equals(event.getTo().getWorld(), event.getFrom().getWorld())) {
+        if (!Objects.equals(event.getTo().getWorld(), event.getFrom().getWorld())) {
             onFakeGamerDeath(event.getPlayer(), null, false);
             return; //teleported away by something ?
         }
@@ -237,6 +238,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     protected abstract void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event);
 
     public void teleportResetLocation(@NotNull Player player) {
+        MessageUtil.debug("resetting location " + player.getName() + " " + getPhase().name());
         switch (getPhase()) {
             case PRE_START, PLAYING -> player.teleport(getArena().getSpawnOffset(getTeam(player).getColor())
                     .add(getGameLocation()));

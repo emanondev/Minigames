@@ -1,9 +1,6 @@
 package emanondev.minigames.skywars;
 
 import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsCommand;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
@@ -17,10 +14,7 @@ import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Particle;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +35,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
     private static final int PHASE_SET_SPECTATOR_SPAWN_OR_NEXT = 5;
 
     public SkyWarsArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
-        super(user, id, label);
+        super(user, id, label, Minigames.get());
     }
 
     @Override
@@ -244,81 +238,30 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
         if (p == null || !p.isOnline())
             return;
         timerTick++;
-        if (timerTick % 2 == 0) { //every 15 game ticks
-            Vector min = null;
-            Vector max = null;
 
-            if (getPhase() > PHASE_SELECT_AREA) {
-                min = getArea().getMin();
-                max = getArea().getMax();
-            } else {
-                try {
-                    World world = p.getWorld();
-                    Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
-                            .getSelection(BukkitAdapter.adapt(world));
-                    BoundingBox area = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                            sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                            sel.getMaximumPoint().getZ());
-                    min = area.getMin();
-                    max = area.getMax();
-                } catch (IncompleteRegionException ignored) {
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-            }
-            if (min != null) {
-                markBox(min, max, p);
-                markSpawns(min, p, timerTick % 4 == 0);
-            }
-        }
         if (timerTick % 180 == 0) { //every 45 seconds
             getRepeatedMessage().send();
         }
-    }
 
-    private void markBox(Vector min, Vector max, Player p) {
-        for (int i = min.getBlockX(); i <= max.getBlockX(); i++) {
-            p.spawnParticle(Particle.COMPOSTER, i, min.getY(), min.getZ(), 1);
-            p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, min.getZ(), 1);
-            p.spawnParticle(Particle.COMPOSTER, i, min.getY(), max.getZ() + 1, 1);
-            p.spawnParticle(Particle.COMPOSTER, i, max.getY() + 1, max.getZ() + 1, 1);
+        if (timerTick % 2 == 0) { //every 15 game ticks
+            if (getPhase() <= PHASE_SELECT_AREA)
+                this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
+            else
+                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea());
+            if (getPhase() <= PHASE_SELECT_AREA)
+                return;
+            Vector min = getAreaMin();
+            if (!getArea().equals(getWorldEditSection(p)))
+                spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
+            spawnLocations.forEach((k, v) -> spawnParticleCircle(p,Particle.REDSTONE,min.getX()+v.x,min.getY()+v.y,min.getZ()+v.z,
+                    0.4,timerTick % 4 == 0, new Particle.DustOptions(k.getColor(), 1F)));
+            if (spectatorsOffset!=null) {
+                spawnParticleCircle(p, Particle.WAX_ON, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y, min.getZ() + spectatorsOffset.z,
+                        0.4, timerTick % 4 == 0);
+                if (timerTick % 4 == 0)
+                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y+1, min.getZ() + spectatorsOffset.z);
+            }
         }
-        for (int i = min.getBlockY(); i <= max.getBlockY(); i++) {
-            p.spawnParticle(Particle.COMPOSTER, min.getX(), i, min.getZ(), 1);
-            p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, i, min.getZ(), 1);
-            p.spawnParticle(Particle.COMPOSTER, min.getX(), i, max.getZ() + 1, 1);
-            p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, i, max.getZ() + 1, 1);
-        }
-        for (int i = min.getBlockZ(); i <= max.getBlockZ(); i++) {
-            p.spawnParticle(Particle.COMPOSTER, min.getX(), min.getY(), i, 1);
-            p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, min.getY(), i, 1);
-            p.spawnParticle(Particle.COMPOSTER, min.getX(), max.getY() + 1, i, 1);
-            p.spawnParticle(Particle.COMPOSTER, max.getX() + 1, max.getY() + 1, i, 1);
-        }
-    }
-
-    private void markSpawns(Vector offset, Player p, boolean even) {
-        double yOffset = offset.getY() + 0.05D;
-        for (int i = 0; i < 8; i++) {
-            double degree = ((even ? 0 : 0.5) + i) * Math.PI / 4;
-            double xOffset = offset.getX() + 0.4 * Math.sin(degree);
-            double zOffset = offset.getZ() + 0.4 * Math.cos(degree);
-            spawnLocations.forEach((k, v) ->
-                    p.spawnParticle(Particle.REDSTONE, v.x + xOffset, v.y + yOffset,
-                            v.z + zOffset, 1, new Particle.DustOptions(k.getColor(), 1F)));
-            if (spectatorsOffset != null)
-                p.spawnParticle(Particle.WAX_ON, spectatorsOffset.x + xOffset,
-                        spectatorsOffset.y + yOffset, spectatorsOffset.z + zOffset, 1);
-        }
-    }
-
-    private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(Minigames.get(), target).appendLang(path, holders).send();
-    }
-
-    private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(Minigames.get(), target).appendLangList(path, holders).send();
     }
 }
 

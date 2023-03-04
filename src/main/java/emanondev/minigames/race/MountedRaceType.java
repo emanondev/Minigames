@@ -6,16 +6,14 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MOption;
-import emanondev.minigames.generic.MType;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 
-public class MountedRaceType extends MType<RaceArena, MountedRaceOption> {
+public class MountedRaceType extends ARaceType<MountedRaceOption> {
 
 
     public MountedRaceType() {
@@ -23,11 +21,6 @@ public class MountedRaceType extends MType<RaceArena, MountedRaceOption> {
         ConfigurationSerialization.registerClass(RaceArena.class);
         ConfigurationSerialization.registerClass(MountedRaceOption.class);
         ConfigurationSerialization.registerClass(MountedRaceGame.class);
-    }
-
-    @Override
-    public @NotNull RaceArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id, @NotNull String label) {
-        return new RaceArenaBuilder(uuid, id, label);
     }
 
     @Override

@@ -35,7 +35,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     @NotNull BlockLocation3D getGameLocation();
 
     @Nullable
-    default T getTeam(@NotNull OfflinePlayer player){
+    default T getTeam(@NotNull OfflinePlayer player) {
         return getTeam(player.getUniqueId());
     }
 
@@ -60,7 +60,9 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     @NotNull MType<A, O> getMinigameType();
 
-    boolean canSwitchToSpectator(Player player);
+    default boolean canSwitchToSpectator(Player player) {
+        return getOption().getAllowSpectators();
+    }
 
     boolean addSpectator(@NotNull Player player);
 
@@ -347,7 +349,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         END;
 
         public String getTranslatedName(CommandSender target) {
-            return Minigames.get().getLanguageConfig(target).getString("generic.phase_name."+this.name().toLowerCase(Locale.ENGLISH));
+            return Minigames.get().getLanguageConfig(target).getString("generic.phase_name." + this.name().toLowerCase(Locale.ENGLISH));
         }
     }
 }

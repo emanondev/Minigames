@@ -25,13 +25,13 @@ public class LocationOffset3D implements ConfigurationSerializable {
     }
 
     @NotNull
-    @Contract ("_ -> new")
+    @Contract("_ -> new")
     public static LocationOffset3D fromLocation(@NotNull Location loc) {
         return new LocationOffset3D(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
     }
 
     @NotNull
-    @Contract ("_ -> new")
+    @Contract("_ -> new")
     public Location add(@NotNull BlockLocation3D bLoc) {
         return new Location(bLoc.getWorld(), bLoc.x + x, bLoc.y + y, bLoc.z + z, yaw, pitch);
     }
@@ -57,7 +57,7 @@ public class LocationOffset3D implements ConfigurationSerializable {
     }
 
     @NotNull
-    @Contract ("_ -> new")
+    @Contract("_ -> new")
     public static LocationOffset3D fromString(@NotNull String from) {
         String[] args = from.split(":");
         return new LocationOffset3D(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2])

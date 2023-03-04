@@ -135,6 +135,9 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
 
     public void delete(String id) {
         @Nullable MGame game = get(id);
+        if (game != null) {
+            game.gameAbort();
+        }
         super.delete(id);
         if (game != null) {
             gameTickList.forEach(l -> l.remove(game));
@@ -183,15 +186,13 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                     Clipboard clip2 = schemArena2.getSchematic();
                     BlockVector3 dim2 = clip2.getDimensions();
                     BlockLocation3D loc2 = game.getGameLocation();
-                    logTetraStar(ChatColor.DARK_RED, "D Box1  &e" + box.getMinX() + " " + box.getMinY() + " " + box.getMinZ() + " to " + box.getMaxX() + " " + box.getMaxY() + " " + box.getMaxZ()
-                    );
+                    logTetraStar(ChatColor.DARK_RED, "D Box1  &e" + box.getMinX() + " " + box.getMinY() + " " + box.getMinZ() + " to " + box.getMaxX() + " " + box.getMaxY() + " " + box.getMaxZ());
 
                     BoundingBox box2 = new BoundingBox(
                             loc2.x, loc2.y, loc2.z,
                             loc2.x + dim2.getX(), loc2.y + dim2.getY(), loc2.z + dim2.getZ());
 
-                    logTetraStar(ChatColor.DARK_RED, "D Box2  &e" + box2.getMinX() + " " + box2.getMinY() + " " + box2.getMinZ() + " to " + box2.getMaxX() + " " + box2.getMaxY() + " " + box2.getMaxZ()
-                    );
+                    logTetraStar(ChatColor.DARK_RED, "D Box2  &e" + box2.getMinX() + " " + box2.getMinY() + " " + box2.getMinZ() + " to " + box2.getMaxX() + " " + box2.getMaxY() + " " + box2.getMaxZ());
                     if (box.overlaps(box2))
                         return false;
                 } else
@@ -528,4 +529,5 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
     public void log(String s) {
         Minigames.get().log("(GameManager) " + s);
     }
+
 }

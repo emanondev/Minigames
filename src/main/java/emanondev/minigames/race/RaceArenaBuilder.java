@@ -15,7 +15,6 @@ import emanondev.minigames.UtilColor;
 import emanondev.minigames.generic.SchematicArenaBuilder;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.*;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -54,7 +53,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     private int timerTick = 0;
 
     public RaceArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
-        super(user, id, label);
+        super(user, id, label, Minigames.get());
     }
 
 
@@ -197,14 +196,14 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
                                     .getSelection(BukkitAdapter.adapt(world));
                             BoundingBox checkPointArea = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                                    sel.getMaximumPoint().getZ());
+                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX() + 1, sel.getMaximumPoint().getY() + 1,
+                                    sel.getMaximumPoint().getZ() + 1);
                             if (!checkPointArea.overlaps(getArea())) {
                                 ERR_SELECTED_AREA_OUTSIDE_ARENA.send(player, "%alias%", label);
 
                                 return;
                             }
-                            checkPointArea.intersection(getArea()); //minimize
+                            checkPointArea.intersection(getArea().clone().expand(0, 1, 0)); //minimize
                             if (this.getArea().getVolume() == checkPointArea.getVolume()) {
                                 ERR_SELECTED_AREA_TOO_BIG.send(player, "%alias%", label);
                                 return;
@@ -229,7 +228,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                                     "%y1%", String.valueOf((int) checkPointArea.getMinY()),
                                     "%y2%", String.valueOf((int) checkPointArea.getMaxY()),
                                     "%z1%", String.valueOf((int) checkPointArea.getMinZ()),
-                                    "%z2%", String.valueOf((int) checkPointArea.getMaxZ()), "%alias%", label);
+                                    "%z2%", String.valueOf((int) checkPointArea.getMaxZ()), "%number%", String.valueOf(checkPoints.size()), "%alias%", label);
                             checkPoints.add(checkPointArea);
                             setPhaseRaw(PHASE_CHECKPOINT_SPAWN);
                         } catch (IncompleteRegionException e) {
@@ -253,7 +252,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             return;
                         }
                         checkPointsRespawn.add(LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin())));
-                        sendMsg(player, "race.arenabuilder.success.set_checkpoint_respawn", "%alias%", label);
+                        sendMsg(player, "race.arenabuilder.success.set_checkpoint_respawn", "%number%", String.valueOf(checkPoints.size()), "%alias%", label);
                         setPhaseRaw(PHASE_CHECKPOINT_AREA_OR_NEXT);
                     }
                     default -> ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
@@ -267,13 +266,13 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
                                     .getSelection(BukkitAdapter.adapt(world));
                             BoundingBox finishArea = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                                    sel.getMaximumPoint().getZ());
+                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX() + 1, sel.getMaximumPoint().getY() + 1,
+                                    sel.getMaximumPoint().getZ() + 1);
                             if (!finishArea.overlaps(getArea())) {
                                 ERR_SELECTED_AREA_OUTSIDE_ARENA.send(player, "%alias%", label);
                                 return;
                             }
-                            finishArea.intersection(getArea()); //minimize
+                            finishArea.intersection(getArea().clone().expand(0, 1, 0)); //minimize
                             if (this.getArea().getVolume() == finishArea.getVolume()) {
                                 ERR_SELECTED_AREA_TOO_BIG.send(player, "%alias%", label);
                                 return;
@@ -324,36 +323,37 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             World world = player.getWorld();
                             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
                                     .getSelection(BukkitAdapter.adapt(world));
-                            BoundingBox finishArea = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                                    sel.getMaximumPoint().getZ());
-                            if (!finishArea.overlaps(getArea())) {
+                            BoundingBox fallArea = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
+                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX() + 1, sel.getMaximumPoint().getY() + 1,
+                                    sel.getMaximumPoint().getZ() + 1);
+                            if (!fallArea.overlaps(getArea())) {
                                 ERR_SELECTED_AREA_OUTSIDE_ARENA.send(player, "%alias%", label);
                                 return;
                             }
-                            finishArea.intersection(getArea()); //minimize
-                            if (this.getArea().getVolume() == finishArea.getVolume()) {
+                            fallArea.intersection(getArea().clone().expand(0, 1, 0)); //minimize
+                            if (this.getArea().getVolume() == fallArea.getVolume()) {
                                 ERR_SELECTED_AREA_TOO_BIG.send(player, "%alias%", label);
                                 return;
                             }
                             for (BoundingBox box : checkPoints)
-                                if (finishArea.overlaps(box)) {
+                                if (fallArea.overlaps(box)) {
                                     ERR_SELECTED_AREA_OVERLAPPING_CHECKPOINT.send(player, "%alias%", label);
 
                                     return;
                                 }
-                            if (finishArea.overlaps(this.endArea)) {
+                            if (fallArea.overlaps(this.endArea)) {
                                 ERR_SELECTED_AREA_OVERLAPPING_FINISH_AREA.send(player, "%alias%", label);
                                 return;
                             }
+                            fallAreas.add(fallArea);
                             sendMsg(player, "arenabuilder.race.success.select_fallingzone",
                                     "%world%", getWorld().getName(),
-                                    "%x1%", String.valueOf((int) finishArea.getMinX()),
-                                    "%x2%", String.valueOf((int) finishArea.getMaxX()),
-                                    "%y1%", String.valueOf((int) finishArea.getMinY()),
-                                    "%y2%", String.valueOf((int) finishArea.getMaxY()),
-                                    "%z1%", String.valueOf((int) finishArea.getMinZ()),
-                                    "%z2%", String.valueOf((int) finishArea.getMaxZ()), "%alias%", label);
+                                    "%x1%", String.valueOf((int) fallArea.getMinX()),
+                                    "%x2%", String.valueOf((int) fallArea.getMaxX()),
+                                    "%y1%", String.valueOf((int) fallArea.getMinY()),
+                                    "%y2%", String.valueOf((int) fallArea.getMaxY()),
+                                    "%z1%", String.valueOf((int) fallArea.getMinZ()),
+                                    "%z2%", String.valueOf((int) fallArea.getMaxZ()), "%number%", String.valueOf(fallAreas.size()), "%alias%", label);
                         } catch (IncompleteRegionException e) {
                             sendMsg(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
                         }
@@ -452,115 +452,44 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         if (p == null || !p.isOnline())
             return;
         timerTick++;
-        if (timerTick % 2 == 0) { //every 15 game ticks
-            Vector min = null;
-            Vector max = null;
 
-            if (getPhase() > PHASE_SELECT_AREA) {
-                min = getArea().getMin();
-                max = getArea().getMax();
-            } else {
-                try {
-                    World world = p.getWorld();
-                    Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
-                            .getSelection(BukkitAdapter.adapt(world));
-                    BoundingBox area = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                            sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                            sel.getMaximumPoint().getZ());
-                    min = area.getMin();
-                    max = area.getMax();
-                } catch (IncompleteRegionException ignored) {
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-            }
-            if (min != null) {
-                markBox(min, max, p, Particle.COMPOSTER, null);
-                markSpawns(min, p, timerTick % 4 == 0);
-                markCheckPoints(min, p, timerTick % 4 == 0);
-                markFinishArea(p);
-                markFallAreas(p);
-            }
-        }
         if (timerTick % 180 == 0) { //every 45 seconds
             getRepeatedMessage().send();
         }
-    }
-
-    private void markFallAreas(Player p) {
-        for (BoundingBox fallArea : fallAreas) markBox(fallArea.getMin(), fallArea.getMax(), p, Particle.FLAME, null);
-    }
-
-    private void markFinishArea(Player p) {
-        if (endArea != null)
-            markBox(endArea.getMin(), endArea.getMax(), p, Particle.REDSTONE, new Particle.DustOptions(
-                    getCheckpointColor(checkPoints.size()), 2F));
-    }
-
-    private void markCheckPoints(Vector offset, Player p, boolean even) {
-        for (int i = 0; i < checkPoints.size(); i++) {
-            markBox(checkPoints.get(i).getMin(), checkPoints.get(i).getMax(), p, Particle.REDSTONE, new Particle.DustOptions(getCheckpointColor(i), 1F));
-        }
-        double yOffset = offset.getY() + 0.05D;
-        for (int j = 0; j < checkPointsRespawn.size(); j++) {
-            for (int i = 0; i < 8; i++) {
-                double degree = ((even ? 0 : 0.5) + i) * Math.PI / 4;
-                double xOffset = offset.getX() + 0.4 * Math.sin(degree);
-                double zOffset = offset.getZ() + 0.4 * Math.cos(degree);
-                p.spawnParticle(Particle.REDSTONE,
-                        checkPointsRespawn.get(j).x + xOffset, checkPointsRespawn.get(j).y + yOffset,
-                        checkPointsRespawn.get(j).z + zOffset, 1, new Particle.DustOptions(getCheckpointColor(j), 0.5F));
+        if (timerTick % 2 == 0) { //every 15 game ticks
+            if (getPhase() <= PHASE_SELECT_AREA)
+                this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
+            else
+                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea());
+            if (getPhase() <= PHASE_SELECT_AREA)
+                return;
+            Vector min = getAreaMin();
+            if (!getArea().equals(getWorldEditSection(p)))
+                spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
+            spawnLocations.forEach((k, v) -> spawnParticleCircle(p, Particle.REDSTONE, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
+                    0.4, timerTick % 4 == 0, new Particle.DustOptions(k.getColor(), 1F)));
+            if (spectatorsOffset != null) {
+                spawnParticleCircle(p, Particle.WAX_ON, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y, min.getZ() + spectatorsOffset.z,
+                        0.4, timerTick % 4 == 0);
+                if (timerTick % 4 == 0)
+                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y + 1, min.getZ() + spectatorsOffset.z);
             }
-            if (even)
-            p.spawnParticle(Particle.HEART, checkPointsRespawn.get(j).x + offset.getX(), checkPointsRespawn.get(j).y + yOffset + 1,
-                    checkPointsRespawn.get(j).z + offset.getZ(), j + 1, 0.1, 1, 0.1);
-        }
-    }
+            for (int i = 0; i < checkPoints.size(); i++) {
+                spawnParticleBoxEdges(p, Particle.REDSTONE, checkPoints.get(i), new Particle.DustOptions(getCheckpointColor(i), 1F));
+            }
+            for (int j = 0; j < checkPointsRespawn.size(); j++) {
+                spawnParticleCircle(p, Particle.REDSTONE, min.getX() + checkPointsRespawn.get(j).x, min.getY() +
+                                checkPointsRespawn.get(j).y, min.getZ() + checkPointsRespawn.get(j).z, 0.4,
+                        timerTick % 4 == 0, new Particle.DustOptions(getCheckpointColor(j), 0.5F));
+                if (timerTick % 4 == 0)
+                    for (int i = 0; i <= j; i++)
+                        spawnParticle(p, Particle.HEART, min.getX() + spectatorsOffset.x,
+                                min.getY() + spectatorsOffset.y + 0.5 + (0.5 * (i)), min.getZ() + spectatorsOffset.z);
+            }
+            spawnParticleBoxEdges(p, Particle.REDSTONE, endArea, new Particle.DustOptions(getCheckpointColor(checkPoints.size()), 2F));
 
-
-    private void markBox(Vector min, Vector max, Player p, Particle particle, Object data) {
-        for (int i = min.getBlockX(); i <= max.getBlockX(); i++) {
-            p.spawnParticle(particle, i, min.getY(), min.getZ(), 1, data);
-            p.spawnParticle(particle, i, max.getY() + 1, min.getZ(), 1, data);
-            p.spawnParticle(particle, i, min.getY(), max.getZ() + 1, 1, data);
-            p.spawnParticle(particle, i, max.getY() + 1, max.getZ() + 1, 1, data);
+            fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, Particle.FLAME, fallArea, null));
         }
-        for (int i = min.getBlockY(); i <= max.getBlockY(); i++) {
-            p.spawnParticle(particle, min.getX(), i, min.getZ(), 1, data);
-            p.spawnParticle(particle, max.getX() + 1, i, min.getZ(), 1, data);
-            p.spawnParticle(particle, min.getX(), i, max.getZ() + 1, 1, data);
-            p.spawnParticle(particle, max.getX() + 1, i, max.getZ() + 1, 1, data);
-        }
-        for (int i = min.getBlockZ(); i <= max.getBlockZ(); i++) {
-            p.spawnParticle(particle, min.getX(), min.getY(), i, 1, data);
-            p.spawnParticle(particle, max.getX() + 1, min.getY(), i, 1, data);
-            p.spawnParticle(particle, min.getX(), max.getY() + 1, i, 1, data);
-            p.spawnParticle(particle, max.getX() + 1, max.getY() + 1, i, 1, data);
-        }
-    }
-
-    private void markSpawns(Vector offset, Player p, boolean even) {
-        double yOffset = offset.getY() + 0.05D;
-        for (int i = 0; i < 8; i++) {
-            double degree = ((even ? 0 : 0.5) + i) * Math.PI / 4;
-            double xOffset = offset.getX() + 0.4 * Math.sin(degree);
-            double zOffset = offset.getZ() + 0.4 * Math.cos(degree);
-            spawnLocations.forEach((k, v) ->
-                    p.spawnParticle(Particle.REDSTONE, v.x + xOffset, v.y + yOffset,
-                            v.z + zOffset, 1, new Particle.DustOptions(k.getColor(), 1F)));
-            if (spectatorsOffset != null)
-                p.spawnParticle(Particle.WAX_ON, spectatorsOffset.x + xOffset,
-                        spectatorsOffset.y + yOffset, spectatorsOffset.z + zOffset, 1);
-        }
-    }
-
-    private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(Minigames.get(), target).appendLang(path, holders).send();
-    }
-
-    private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(Minigames.get(), target).appendLangList(path, holders).send();
     }
 
     private static Color getCheckpointColor(int i) {

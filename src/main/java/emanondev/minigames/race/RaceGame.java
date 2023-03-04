@@ -4,9 +4,9 @@ import emanondev.core.message.DMessage;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
+import emanondev.minigames.data.GameStat;
+import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.ColoredTeam;
-import emanondev.minigames.skywars.SkyWarsTeam;
-import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>,RaceOption>{
+public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>, RaceOption> {
 
     public RaceGame(@NotNull Map<String, Object> map) {
         super(map);
@@ -59,7 +59,7 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>,RaceOption>{
 
     @Override
     public void checkGameEnd() {
-        if (getGamers().size()<=1)
+        if (getGamers().size() <= 1)
             this.gameEnd();
     }
 
@@ -70,6 +70,12 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>,RaceOption>{
 
     @Override //TODO
     public boolean gameCanStart() {
+        MessageUtil.debug("Teams: " + getTeams().size());
+        for (ARaceTeam<RaceGame> team : getTeams()) {
+            MessageUtil.debug("Teams: " + team.getColor() + " name:" + team.getName() + " users: " + getGamers(team).size() + "/" + team.getUsers().size());
+        }
+
+
         int counter = 0;
         for (ARaceTeam<RaceGame> team : getTeams())
             if (getGamers(team).size() > 0)
@@ -91,4 +97,17 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>,RaceOption>{
                 counter++;
         return counter >= 2;
     }*/
+
+
+    public void gameStart() {
+        super.gameStart();
+        for (Player player : getGamers()) {
+            PlayerStat.RACE_PLAYED.add(player, 1);
+            PlayerStat.GAME_PLAYED.add(player, 1);
+        }
+        GameStat.PLAY_TIMES.add(this, 1);
+        getTeams().forEach(team -> {
+            if (!team.hasLost()) setScore(team.getName(), 0);
+        });
+    }
 }

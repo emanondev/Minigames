@@ -45,6 +45,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     public void gamePreStart() {
         //MessageUtil.debug(  getId() + " gamePREPreStart");
         //TODO assignTeams!
+
         List<Player> list = new ArrayList<>(this.getGamers());
         Collections.shuffle(list);
         list.forEach(this::onGamerAdded);
@@ -90,11 +91,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     @Override
     public void onGameEntityDamaged(@NotNull EntityDamageEvent event) {
 
-    }
-
-    @Override
-    public boolean canSwitchToSpectator(Player player) {
-        return getOption().getAllowSpectators();
     }
 
     public SkyWarsGame(@NotNull Map<String, Object> map) {
@@ -285,6 +281,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     }
 
     public void onFakeGamerDeath(@NotNull Player player, @Nullable Player killer, boolean direct) {
+        new IllegalStateException("debug "+getPhase()).printStackTrace();
         MessageUtil.debug(getId() + " onFakeGamerDeath " + player.getName() + " " + (killer == null ? "" : killer.getName()));
         if (containsLocation(player))
             for (ItemStack item : player.getInventory().getContents())

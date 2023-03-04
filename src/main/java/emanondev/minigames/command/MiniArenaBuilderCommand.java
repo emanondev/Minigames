@@ -94,10 +94,10 @@ public class MiniArenaBuilderCommand extends CoreCommand {
     private void abort(@NotNull Player sender, @NotNull String label, @NotNull String[] args) {
         if (MAN.isBuilding(sender)) {
             MAN.unregisterBuilder(sender.getUniqueId());
-            sendMsg(sender, "miniarenabuilder.success.create", "%alias%", label);
+            sendMsg(sender, "miniarenabuilder.success.abort", "%alias%", label);
             return;
         }
-        sendMsg(sender, "miniarenabuilder.error.not_building", "%alias%", label);
+        sendMsg(sender, "miniarenabuilder.error.not_creating", "%alias%", label);
     }
 
 

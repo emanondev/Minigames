@@ -1,7 +1,6 @@
 package emanondev.minigames.race;
 
 import emanondev.minigames.generic.AbstractMColorSchemGame;
-import emanondev.minigames.generic.ColoredTeam;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -20,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> extends AbstractMColorSchemGame<T, RaceArena, O> {
+public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> extends AbstractMColorSchemGame<T, RaceArena, O> {
 
     private final HashMap<UUID, Integer> currentCheckpoint = new HashMap<>();
     private final List<BoundingBox> checkpointsAreas = new ArrayList<>();
@@ -60,16 +59,6 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
         return currentCheckpoint.getOrDefault(player, -1);
     }
 
-    public Location getRespawnLocation(OfflinePlayer player) {
-        return getRespawnLocation(player.getUniqueId());
-    }
-
-    public Location getRespawnLocation(UUID player) {
-        int point = getCurrentCheckpoint(player);
-        return point == -1 ? getArena().getSpawnOffset(getTeam(player).getColor())
-                .add(getGameLocation()) : getArena().getCheckpointsRespawn().get(point).add(getGameLocation());
-    }
-
     public ARaceGame(@NotNull Map<String, Object> map) {
         super(map);
     }
@@ -98,9 +87,9 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
     @Override
     public void onGameEntityDamaged(@NotNull EntityDamageEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (getOption().getAllowFallDamage())
+            if (!getOption().getAllowFallDamage())
                 event.setCancelled(true);
-        } else if (getOption().getAllowEnvironmentDamage())
+        } else if (!getOption().getAllowEnvironmentDamage())
             event.setCancelled(true);
     }
 
@@ -115,16 +104,13 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
         }
     }
 
-    //public void onGamerPvpDamage(@NotNull EntityDamageByEntityEvent event, @NotNull Player p, @NotNull Player damager, boolean direct){
-    //
-    //}
-
     public void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player hitPlayer) {
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (getOption().getAllowFallDamage())
+            if (!getOption().getAllowFallDamage())
                 event.setCancelled(true);
-        } else if (getOption().getAllowEnvironmentDamage())
+        } else if (!getOption().getAllowEnvironmentDamage())
             event.setCancelled(true);
+        super.onGamerDamaged(event, hitPlayer);
     }
 
     @Override
@@ -140,7 +126,7 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
     @Override
     public void onFakeGamerDeath(@NotNull Player dead, @Nullable Player killer, boolean direct) {
         //TODO inc death counter
-        dead.teleport(getRespawnLocation(dead));
+        teleportResetLocation(dead);
         //TODO notify
     }
 
@@ -163,7 +149,7 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
                 if (isSpectator(event.getPlayer()))
                     teleportResetLocation(event.getPlayer());
             }
-            case PRE_START, COLLECTING_PLAYERS, END -> event.getPlayer().teleport(getRespawnLocation(event.getPlayer()));
+            case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
         }
     }
 
@@ -174,6 +160,9 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
 
 
     public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
+        super.onGamerMoveInsideArena(event);
+        if (isSpectator(event.getPlayer()))
+            return;
         if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
             return;
 
@@ -185,10 +174,13 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
                 return;
             }
         }
-        for (int i = getCurrentCheckpoint(event.getPlayer()) + 1; 1 < checkpointsAreas.size(); i++) //CHECKPOINTS POLICY
+        for (int i = getCurrentCheckpoint(event.getPlayer())+1; i < checkpointsAreas.size(); i++) //TODO CHECKPOINTS POLICY
             if (checkpointsAreas.get(i).overlaps(box)) {
+
                 //TODO notify
+                getMinigameType().REACHED_CHECKPOINT.send(event.getPlayer(), "%checkpoint%", String.valueOf(i + 1));
                 currentCheckpoint.put(event.getPlayer().getUniqueId(), i);
+                setScore(getTeam(event.getPlayer()).getName(), i + 1);
                 break;
             }
         for (BoundingBox fall : falloutAreas)
@@ -198,6 +190,8 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
             }
 
     }
+
+    public abstract @NotNull ARaceType<O> getMinigameType();
 
     protected abstract void onGamerReachRaceFinishArea(Player player);
 
@@ -221,20 +215,22 @@ public abstract class ARaceGame<T extends ColoredTeam, O extends ARaceOption> ex
     //TODO blockbucket
 
 
-
     @Override
-    @SuppressWarnings({"unchecked","rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected @NotNull T craftTeam(@NotNull DyeColor color) {
         return (T) new ARaceTeam(this, color);
     }
 
     @Override
-    public boolean canSwitchToSpectator(Player player) {
-        return true;
-    }
-    @Override
     public boolean joinGameAsGamer(@NotNull Player player) {
         return addGamer(player);
     }
 
+    public void teleportResetLocation(@NotNull Player player) {
+        int checkpoint = getCurrentCheckpoint(player);
+        if (checkpoint == -1)
+            super.teleportResetLocation(player);
+        else
+            player.teleport(getArena().getCheckpointsRespawn().get(checkpoint).add(getGameLocation()));
+    }
 }

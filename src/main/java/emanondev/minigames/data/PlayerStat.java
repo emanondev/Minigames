@@ -39,10 +39,11 @@ public class PlayerStat extends Stat<UUID> {
         return target.toString();
     }
 
-    public final static PlayerStat SKYWARS_KILLS = getStat("SKYWARS_KILLS");
-    public final static PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
-    public final static PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
-    public final static PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
+    public static final PlayerStat SKYWARS_KILLS = getStat("SKYWARS_KILLS");
+    public static final PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
+    public static final PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
+    public static final PlayerStat RACE_PLAYED = getStat("RACE_PLAYED");
+    public static final PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
 
 
     public void add(@NotNull OfflinePlayer target, int amount) {

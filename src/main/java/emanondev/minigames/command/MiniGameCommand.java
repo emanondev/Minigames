@@ -96,7 +96,18 @@ public class MiniGameCommand extends CoreCommandPlus {
     }
 
     private void delete(CommandSender sender, String label, String[] args) {
-        sendMsg(sender, "not_implemented");
+        if (args.length <= 1) {
+            sendMsg(sender, "minigame.error.delete_params", "%alias%", label);
+            return;
+        }
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        MGame group = GameManager.get().get(id);
+        if (group == null) {
+            sendMsg(sender, "minigame.error.id_not_found", "%id%", id, "%alias%", label);
+            return;
+        }
+        GameManager.get().delete(group);
+        sendMsg(sender, "minigame.success.delete", "%id%", id, "%alias%", label);
     }
 
     //minigame list [type]

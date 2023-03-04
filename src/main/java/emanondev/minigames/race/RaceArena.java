@@ -21,18 +21,18 @@ public class RaceArena extends AbstractMColorSchemArena {
         Map<String, ?> teamMap = (Map<String, ?>) map.get("teams");
         teamMap.forEach((k, v) -> spawnLocations.put(DyeColor.valueOf(k), LocationOffset3D.fromString((String) ((Map<String, ?>) v).get("spawnOffset"))));
         List<BoundingBox> checkpoints = (List<BoundingBox>) map.get("checkpoints");
-        if (checkpoints!=null)
+        if (checkpoints != null)
             this.checkpoints.addAll(checkpoints);
-        List<LocationOffset3D> checkpointsRespawn =  (List<LocationOffset3D>) map.get("checkpoints_respawn");
-        if (checkpointsRespawn!=null)
+        List<LocationOffset3D> checkpointsRespawn = (List<LocationOffset3D>) map.get("checkpoints_respawn");
+        if (checkpointsRespawn != null)
             this.checkpointsRespawn.addAll(checkpointsRespawn);
         this.finishArea = (BoundingBox) map.get("end_area");
-        if (finishArea==null)
+        if (finishArea == null)
             throw new IllegalStateException();
         List<BoundingBox> fallAreas = (List<BoundingBox>) map.get("fall_areas");
-        if (fallAreas!=null)
+        if (fallAreas != null)
             this.fallAreas.addAll(fallAreas);
-        if (checkpoints.size()!=checkpointsRespawn.size())
+        if (checkpoints.size() != checkpointsRespawn.size())
             throw new IllegalArgumentException();
     }
 
@@ -49,8 +49,8 @@ public class RaceArena extends AbstractMColorSchemArena {
         }
         map.put("checkpoints", checkpoints);
         map.put("checkpoints_respawn", checkpointsRespawn);
-        map.put("end_area",finishArea);
-        map.put("fall_areas",fallAreas);
+        map.put("end_area", finishArea);
+        map.put("fall_areas", fallAreas);
         return map;
     }
 
@@ -66,29 +66,29 @@ public class RaceArena extends AbstractMColorSchemArena {
         return spawnLocations.get(color);
     }
 
-    @Contract (" -> new")
-    public List<BoundingBox> getCheckpoints(){
+    @Contract(" -> new")
+    public List<BoundingBox> getCheckpoints() {
         List<BoundingBox> list = new ArrayList<>();
-        for (BoundingBox box:checkpoints)
+        for (BoundingBox box : checkpoints)
             list.add(box.clone());
         return list;
     }
 
-    @Contract (" -> new")
-    public List<BoundingBox> getFallAreas(){
+    @Contract(" -> new")
+    public List<BoundingBox> getFallAreas() {
         List<BoundingBox> list = new ArrayList<>();
-        for (BoundingBox box:fallAreas)
+        for (BoundingBox box : fallAreas)
             list.add(box.clone());
         return list;
     }
 
-    @Contract (" -> new")
-    public BoundingBox getFinishArea(){
+    @Contract(" -> new")
+    public BoundingBox getFinishArea() {
         return finishArea.clone();
     }
 
-    @Contract (" -> new")
-    public List<LocationOffset3D> getCheckpointsRespawn(){
+    @Contract(" -> new")
+    public List<LocationOffset3D> getCheckpointsRespawn() {
         return checkpointsRespawn;
     }
 }

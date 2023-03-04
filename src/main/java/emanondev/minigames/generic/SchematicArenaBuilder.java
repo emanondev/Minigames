@@ -4,10 +4,13 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
+import emanondev.core.CorePlugin;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -21,8 +24,8 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
     //protected int phase = 1;
 
 
-    public SchematicArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
-        super(user, id, label);
+    public SchematicArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label, @NotNull CorePlugin plugin) {
+        super(user, id, label, plugin);
     }
 
 
@@ -43,7 +46,25 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
         return area;
     }
 
+    public Vector getAreaMin(){
+        return getArea().getMin();
+    }
+
     public World getWorld() {
         return world;
     }
+
+    public BoundingBox getWorldEditSection(Player p){
+        try {
+            Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
+                    .getSelection(BukkitAdapter.adapt(p.getWorld()));
+            return new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
+                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
+                    sel.getMaximumPoint().getZ());
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+
 }

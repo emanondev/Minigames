@@ -5,8 +5,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,88 +14,26 @@ public abstract class ColoredTeam implements MTeam {
 
     private final HashSet<UUID> users = new HashSet<>();
     private final DyeColor color;
+    @SuppressWarnings("rawtypes")
     private final AbstractMGame game;
     private final Team team;
-    private final Objective objective;
     private final ChatColor chatColor;
-    private Score score;
 
-    public ColoredTeam(@NotNull AbstractMGame game, @NotNull DyeColor color) {
+    public ColoredTeam(@SuppressWarnings("rawtypes") @NotNull AbstractMGame game, @NotNull DyeColor color) {
         this.color = color;
         this.chatColor = ChatColor.of(new java.awt.Color(color.getColor().getRed(), color.getColor().getGreen(), color.getColor()
                 .getBlue()));
         this.game = game;
         this.team = game.getScoreboard().registerNewTeam(game.getId() + "_" + color.name().toLowerCase(Locale.ENGLISH));
-        team.setPrefix(chatColor.toString() + "[" + color.name() + "] " + ChatColor.WHITE);
-        this.objective = game.getObjective();
-        //this.score = objective.getScore(getSingleChatColor()  + this.color.name().toLowerCase(Locale.ENGLISH));
-        //score.setScore(0);
+        team.setPrefix(chatColor.toString() + "⬛ " + ChatColor.WHITE); //smaller ■
     }
 
     public ChatColor getChatColor() {
         return chatColor;
     }
 
-    /*
-    public org.bukkit.ChatColor getSingleChatColor() {
-        return switch (color) {
-            case RED -> org.bukkit.ChatColor.RED;
-            case ORANGE, BROWN -> org.bukkit.ChatColor.GOLD;
-            case BLUE -> org.bukkit.ChatColor.BLUE;
-            case BLACK -> org.bukkit.ChatColor.BLACK;
-            case GREEN -> org.bukkit.ChatColor.DARK_GREEN;
-            case LIME -> org.bukkit.ChatColor.GREEN;
-            case YELLOW -> org.bukkit.ChatColor.YELLOW;
-            case GRAY -> org.bukkit.ChatColor.DARK_GRAY;
-            case LIGHT_GRAY -> org.bukkit.ChatColor.GRAY;
-            case WHITE -> org.bukkit.ChatColor.WHITE;
-            case PURPLE -> org.bukkit.ChatColor.DARK_PURPLE;
-            case MAGENTA, PINK -> org.bukkit.ChatColor.LIGHT_PURPLE;
-            case CYAN -> org.bukkit.ChatColor.DARK_AQUA;
-            case LIGHT_BLUE -> org.bukkit.ChatColor.AQUA;
-        };
-    }*/
-
-    private String lastScoreName = null;
-
-    private String getScoreName() {
-        if (getGame().getMaxGamers() == 1)
-            return getUsersAmount() == 1 ? chatColor + Bukkit.getOfflinePlayer(getUsers().iterator().next()).getName()
-                    : (chatColor + this.color.name().toLowerCase(Locale.ENGLISH));
-        return chatColor + this.color.name().toLowerCase(Locale.ENGLISH);
-    }
-
-    /*
     @Override
-    public void setScore(int value) {
-        String scoreName = getScoreName();
-        if (lastScoreName != null && !lastScoreName.equals(scoreName)) {
-            objective.getScoreboard().resetScores(lastScoreName);
-            lastScoreName = scoreName;
-        } else if (lastScoreName == null)
-            lastScoreName = scoreName;
-        objective.getScore(scoreName).setScore(value);
-    }
-
-    @Override
-    public void addScore(int val) {
-        setScore(getScore() + val);
-    }
-
-    @Override
-    public int getScore() {
-        return lastScoreName == null ? 0 : objective.getScore(lastScoreName).getScore();
-    }
-
-    @Override
-    public void clearScore() {
-        if (lastScoreName != null) {
-            objective.getScoreboard().resetScores(lastScoreName);
-            lastScoreName = null;
-        }
-    }*/
-
-    @Override
+    @SuppressWarnings("rawtypes")
     public AbstractMGame getGame() {
         return game;
     }
@@ -110,7 +46,7 @@ public abstract class ColoredTeam implements MTeam {
     @Override
     public boolean removeUser(@NotNull OfflinePlayer user) {
         if (getGame().getMaxGamers() == 1) {
-            String score = getScoreName();
+            //String score = getScoreName();
             if (removeUser(user.getUniqueId())) {
                 return true;
             }
@@ -170,12 +106,14 @@ public abstract class ColoredTeam implements MTeam {
     @Override
     public void clear() {
         users.clear();
-        //this.clearScore();
     }
 
 
     @Override
     public String getName() {
+        if (game.getOption().getTeamMaxSize() == 1 && users.size() == 1)
+            for (UUID user : users)
+                return Bukkit.getOfflinePlayer(user).getName();
         return color.name().toLowerCase(Locale.ENGLISH);
     }
 }

@@ -3,7 +3,9 @@ package emanondev.minigames.command;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
-import emanondev.minigames.*;
+import emanondev.minigames.MinigameTypes;
+import emanondev.minigames.Minigames;
+import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MOption;
 import emanondev.minigames.generic.MType;
 import emanondev.minigames.generic.Perms;
@@ -16,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class MiniOptionCommand extends CoreCommand {
 

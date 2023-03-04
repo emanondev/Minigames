@@ -10,6 +10,7 @@ public class TimeRaceOption extends ARaceOption {
     public TimeRaceOption() {
         this(new HashMap<>());
     }
+
     public TimeRaceOption(@NotNull Map<String, Object> map) {
         super(map);
     }

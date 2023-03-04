@@ -88,11 +88,6 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
 
     }
 
-    @Override
-    public boolean canSwitchToSpectator(Player player) {
-        return getOption().getAllowSpectators();
-    }
-
     public EggWarsGame(@NotNull Map<String, Object> map) {
         super(map);
     }

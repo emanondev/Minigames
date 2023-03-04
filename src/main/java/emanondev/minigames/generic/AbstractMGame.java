@@ -127,22 +127,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             team.clear();
         phase = Phase.COLLECTING_PLAYERS;
         gameCollectingPlayers();
-        //moved to gameManager
-        /*timer = new BukkitRunnable() {
-            public void run() {
-                switch (phase) {
-                    case END -> gameEndTimer();
-                    case PLAYING -> gamePlayingTimer();
-                    case COLLECTING_PLAYERS -> gameCollectingPlayersTimer();
-                    case PRE_START -> gamePreStartTimer();
-                    case STOPPED -> {
-                        new IllegalStateException().printStackTrace();
-                        this.cancel();
-                    }
-                    default -> new IllegalStateException().printStackTrace();
-                }
-            }
-        }.runTaskTimer(Minigames.get(), 20L, 20L);*/
     }
 
 
@@ -165,6 +149,10 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             if (gamers.size() == getMaxGamers()) {
                 //fast start
                 phase = Phase.PRE_START;
+                for (Player gamer : getGamers()) {
+                    if (getTeam(gamer) == null)
+                        assignTeam(gamer);
+                }
                 gamePreStart();
                 return;
             }
@@ -183,7 +171,13 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 return;
             }
             phase = Phase.PRE_START;
-            getGamers().forEach(SimpleMessage::sendEmptyActionBarMessage);
+            for (Player gamer : getGamers()) {
+                if (getTeam(gamer) == null)
+                    assignTeam(gamer);
+            }
+            //getGamers().forEach(SimpleMessage::sendEmptyActionBarMessage);
+            // assign teams
+
             gamePreStart();
             return;
         }
@@ -200,6 +194,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (phase != Phase.PRE_START)
             throw new IllegalStateException();
         preStartCountdown = getOption().getPreStartPhaseCooldownMax();
+        for (Player gamer : gamers)
+            teleportResetLocation(gamer);
     }
 
     @Override
@@ -334,7 +330,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void gameAbort() {
         MessageUtil.debug(getId() + " gameAbort");
-        new IllegalStateException("debug").printStackTrace(); //TODO
         for (Player spectator : new HashSet<>(getSpectators())) { //bad
             GameManager.get().quitGame(spectator);
             getMinigameType().GAME_INTERRUPTED_MESSAGE.send(spectator);

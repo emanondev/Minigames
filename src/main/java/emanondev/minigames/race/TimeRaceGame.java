@@ -1,7 +1,6 @@
 package emanondev.minigames.race;
 
 import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.generic.MType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +11,7 @@ public class TimeRaceGame extends ARaceGame<ARaceTeam<TimeRaceGame>, TimeRaceOpt
     public TimeRaceGame(Map<String, Object> map) {
         super(map);
     }
+
     //TODO
     @Override
     protected void onGamerReachRaceFinishArea(Player player) {

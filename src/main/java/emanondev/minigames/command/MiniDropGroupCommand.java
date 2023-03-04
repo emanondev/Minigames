@@ -5,8 +5,6 @@ import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.DropGroupManager;
-import emanondev.minigames.Kit;
-import emanondev.minigames.KitManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.DropGroup;
 import emanondev.minigames.generic.Perms;
@@ -24,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class MiniDropGroupCommand extends CoreCommand {
 

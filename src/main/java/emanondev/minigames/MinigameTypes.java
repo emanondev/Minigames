@@ -27,9 +27,9 @@ public class MinigameTypes {
     @SuppressWarnings("rawtypes")
     private void register(@NotNull MType type) {
         if (!UtilsString.isLowcasedValidID(type.getType()))
-            throw new IllegalArgumentException("invalid id '"+type.getType()+"'");
+            throw new IllegalArgumentException("invalid id '" + type.getType() + "'");
         if (types.containsKey(type.getType()))
-            throw new IllegalArgumentException("duplicated id '"+type.getType()+"'");
+            throw new IllegalArgumentException("duplicated id '" + type.getType() + "'");
         types.put(type.getType(), type);
     }
 

@@ -1,22 +1,15 @@
 package emanondev.minigames;
 
-import emanondev.core.ItemBuilder;
 import emanondev.core.command.CoreCommand;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.List;
 
 public class TestCommand extends CoreCommand {
@@ -30,61 +23,51 @@ public class TestCommand extends CoreCommand {
 
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args) {
-        Player p = (Player) sender;
-        if (args.length == 0) {
+        if (!(sender instanceof Player p))
+            throw new IllegalStateException();
+        new BukkitRunnable() {
+            int i = 0;
 
-        }
-        delay = 0;
-        switch (args[0]) {
-            case "1" -> {
-                Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-                Objective obj = scoreboard.registerNewObjective("game", "dummy", "objDisplayName");
-                obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-                //Objective obj = scoreboard.getObjective(DisplaySlot.SIDEBAR);
-                Team t = scoreboard.registerNewTeam("red");
-                t.addPlayer(p);
-                t.addEntry(p.getName());
-                t.addEntry(p.getName() + "test");
-                t.setDisplayName("DisplayName");
-                t.setPrefix(ChatColor.RED + "[RED] " + ChatColor.WHITE);
-                //t.setColor(ChatColor.RED);
-                t.addEntry(p.getName());
-                obj.setDisplayName("ObjectiveDisplayName");
-                t.addEntry(p.getName());
-                obj.getScore(net.md_5.bungee.api.ChatColor.of(new Color(55, 92, 12)) + "Score1").setScore(1);
-                obj.getScore("Score2").setScore(2);
-                obj.getScore("Score3").setScore(3);
-                obj.getScore("Score4").setScore(3);
-                //t.addEntry(p.getName());
-                p.setScoreboard(scoreboard);
-
-                p.setScoreboard(scoreboard);
+            @Override
+            public void run() {
+                boolean done = false;
+                while (!done)
+                    try {
+                        if (i>=Particle.values().length) {
+                            this.cancel();
+                            return;
+                        }
+                        Location l = p.getEyeLocation().add(p.getLocation().getDirection().multiply(3));
+                        p.spawnParticle(Particle.values()[i/2], l, 1);
+                        if (i%2==0)
+                            p.sendMessage(Particle.values()[i/2].name());
+                        done = true;
+                    } catch (Exception e) {
+                        i++;
+                    }
+                i++;
             }
-            case "2" -> {
-                GameManager.get().getAll().forEach((k, g) -> {
-                    p.getInventory().addItem(g.getGameSelectorItem(p));
-                });
-                p.getInventory().addItem(new ItemBuilder(Material.SADDLE).setMiniDescription(List.of("aaddw", "adwdaw"))
-                        .build());
-            }
-            case "3" -> {
-
-            }
-        }
-    }
-
-    private void later(Runnable r) {
-        delay++;
-        long tmp = delay;
-        Bukkit.getScheduler().runTaskLater(getPlugin(), () ->
-        {
-            Bukkit.broadcastMessage("" + tmp);
-        }, delay * 50L);
-        Bukkit.getScheduler().runTaskLater(getPlugin(), r, delay * 50L);
+        }.runTaskTimer(Minigames.get(), 20, 20);
     }
 
     @Override
     public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return null;
+    }
+
+    protected void spawnParticle(Player p, Particle particle, double x, double y, double z) {
+        spawnParticle(p, particle, x, y, z, 1, null);
+    }
+
+    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, int count) {
+        spawnParticle(p, particle, x, y, z, count, null);
+    }
+
+    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, Object data) {
+        spawnParticle(p, particle, x, y, z, 0, data);
+    }
+
+    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, int count, Object data) {
+        p.spawnParticle(particle, x, y, z, count, 0, 0, 0, 0, data);
     }
 }

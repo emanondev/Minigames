@@ -10,6 +10,7 @@ public class TimeMountedRaceOption extends ARaceOption {
     public TimeMountedRaceOption() {
         this(new HashMap<>());
     }
+
     public TimeMountedRaceOption(@NotNull Map<String, Object> map) {
         super(map);
     }
