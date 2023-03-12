@@ -23,9 +23,9 @@ public class RaceArena extends AbstractMColorSchemArena {
         List<BoundingBox> checkpoints = (List<BoundingBox>) map.get("checkpoints");
         if (checkpoints != null)
             this.checkpoints.addAll(checkpoints);
-        List<LocationOffset3D> checkpointsRespawn = (List<LocationOffset3D>) map.get("checkpoints_respawn");
-        if (checkpointsRespawn != null)
-            this.checkpointsRespawn.addAll(checkpointsRespawn);
+        for (String loc:(List<String>) map.getOrDefault("checkpoints_respawn",Collections.emptyList())){
+            this.checkpointsRespawn.add(LocationOffset3D.fromString(loc));
+        }
         this.finishArea = (BoundingBox) map.get("end_area");
         if (finishArea == null)
             throw new IllegalStateException();
@@ -48,7 +48,9 @@ public class RaceArena extends AbstractMColorSchemArena {
             teams.put(color.name(), teamInfo);
         }
         map.put("checkpoints", checkpoints);
-        map.put("checkpoints_respawn", checkpointsRespawn);
+        ArrayList<String> raw = new ArrayList<>();
+        checkpointsRespawn.forEach((loc)->raw.add(loc.toString()));
+        map.put("checkpoints_respawn", raw);
         map.put("end_area", finishArea);
         map.put("fall_areas", fallAreas);
         return map;

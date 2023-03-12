@@ -4,6 +4,7 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
+import emanondev.core.CorePlugin;
 import emanondev.core.UtilsCommand;
 import emanondev.core.YMLSection;
 import emanondev.core.message.DMessage;
@@ -32,8 +33,8 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
     private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
     private LocationOffset3D spectatorsOffset;
 
-    public EggWarsArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
-        super(user, id, label);
+    public EggWarsArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label, @NotNull CorePlugin plugin) {
+        super(user, id, label, plugin);
     }
 
     @Override

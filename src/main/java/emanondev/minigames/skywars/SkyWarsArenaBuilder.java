@@ -247,7 +247,7 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
             if (getPhase() <= PHASE_SELECT_AREA)
                 this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
             else
-                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea());
+                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0,0,0,1,1,1));
             if (getPhase() <= PHASE_SELECT_AREA)
                 return;
             Vector min = getAreaMin();

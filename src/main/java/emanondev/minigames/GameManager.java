@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,6 +28,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
@@ -34,6 +36,8 @@ import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spigotmc.event.entity.EntityDismountEvent;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.*;
 
@@ -514,6 +518,41 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                     event.setCancelled(true);
                 else
                     game.onGamerCombustEvent(event, player);
+            }
+        }
+    }
+    @EventHandler(ignoreCancelled = true)
+    private void event(EntityMountEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
+            if (game != null) {
+                if (!game.isGamer(player))
+                    event.setCancelled(true);
+                else
+                    game.onGamerMountEvent(event, player);
+            }
+        }
+    }
+    @EventHandler(ignoreCancelled = true)
+    private void event(EntityDismountEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
+            if (game != null) {
+                if (!game.isGamer(player))
+                    event.setCancelled(true);
+                else
+                    game.onGamerDismountEvent(event, player);
+            }
+        }
+    }
+    @EventHandler(ignoreCancelled = true)
+    private void event(VehicleMoveEvent event) {
+        for (Entity e:event.getVehicle().getPassengers()) {
+            if (e instanceof Player player) {
+                @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
+                if (game != null&& game.isGamer(player))
+                        game.onGamerVehicleMoveEvent(event, player);
+
             }
         }
     }

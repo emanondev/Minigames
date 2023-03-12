@@ -20,12 +20,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spigotmc.event.entity.EntityDismountEvent;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.*;
 
@@ -339,6 +342,12 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
                 "%location%", this.getGameLocation().toString().replace(":", " ")
         };
     }
+
+    default void onGamerMountEvent(EntityMountEvent event, Player player){}
+
+    default void onGamerDismountEvent(EntityDismountEvent event, Player player){}
+
+    default void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player){};
 
     enum Phase {
         STOPPED,

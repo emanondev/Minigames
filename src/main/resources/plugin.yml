@@ -3,3 +3,7 @@ version: '${project.version}'
 main: emanondev.minigames.Minigames
 api-version: 1.18
 depend: [ DeepCore ]
+softdepend:
+  - WorldEdit
+  - FastAsyncWorldEdit
+  - AsyncWorldEdit

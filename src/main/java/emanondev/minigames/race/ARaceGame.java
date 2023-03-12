@@ -1,9 +1,11 @@
 package emanondev.minigames.race;
 
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
@@ -160,6 +162,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
 
     public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
+        MessageUtil.debug(getId() + " moveinsidearena " + event.getPlayer().getName());
         super.onGamerMoveInsideArena(event);
         if (isSpectator(event.getPlayer()))
             return;
@@ -177,7 +180,6 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
         for (int i = getCurrentCheckpoint(event.getPlayer())+1; i < checkpointsAreas.size(); i++) //TODO CHECKPOINTS POLICY
             if (checkpointsAreas.get(i).overlaps(box)) {
 
-                //TODO notify
                 getMinigameType().REACHED_CHECKPOINT.send(event.getPlayer(), "%checkpoint%", String.valueOf(i + 1));
                 currentCheckpoint.put(event.getPlayer().getUniqueId(), i);
                 setScore(getTeam(event.getPlayer()).getName(), i + 1);
@@ -185,10 +187,10 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             }
         for (BoundingBox fall : falloutAreas)
             if (fall.overlaps(box)) {
+                //TODO notify
                 onGamerFallOutsideArena(event);
                 return;
             }
-
     }
 
     public abstract @NotNull ARaceType<O> getMinigameType();
@@ -232,5 +234,13 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             super.teleportResetLocation(player);
         else
             player.teleport(getArena().getCheckpointsRespawn().get(checkpoint).add(getGameLocation()));
+    }
+
+
+    public void onQuitGame(@NotNull Player player) {
+        super.onQuitGame(player);
+        if (getGamers().size()==0 && getPhase()==Phase.PLAYING){
+            this.gameEnd();
+        }
     }
 }

@@ -18,6 +18,70 @@ import java.util.*;
 
 public class SkyWarsOption extends AbstractMOption {
 
+    public void setTeamMaxPlayers(int value) {
+        this.perTeamMaxPlayers = Math.max(1, Math.min(32, value));
+        OptionManager.get().save(this);
+    }
+
+    public void setChestFillerId(@Nullable String chestFillerId) {
+        this.chestFillerId = chestFillerId;
+        OptionManager.get().save(this);
+    }
+
+    public boolean hasKit(Kit kit){
+        return kit!=null && hasKitId(kit.getId());
+    }
+
+    private boolean hasKitId(String kit) {
+        return kit!=null && kits.contains(kit);
+    }
+
+    public void addKit(@NotNull Kit kit) {
+        addKitId(kit.getId());
+    }
+
+    public void removeKit(@NotNull Kit kit) {
+        removeKitId(kit.getId());
+    }
+
+    public void toggleKit(@NotNull Kit kit) {
+        toggleKitId(kit.getId());
+    }
+
+    public void addKitId(@Nullable String kitId) {
+        if (kitId!=null && !kits.contains(kitId)) {
+            this.kits.add(kitId);
+            OptionManager.get().save(this);
+        }
+    }
+
+    public void removeKitId(@Nullable String kitId) {
+        if (kitId!=null && kits.contains(kitId)) {
+            this.kits.remove(kitId);
+            OptionManager.get().save(this);
+        }
+    }
+
+    public void toggleKitId(@Nullable String kitId) {
+        if (this.kits.contains(kitId))
+            removeKitId(kitId);
+        else
+            addKitId(kitId);
+    }
+
+    public void setKillKewardFillerId(@Nullable String killKewardFillerId) {
+        this.killKewardFillerId = killKewardFillerId;
+        OptionManager.get().save(this);
+    }
+
+    public @Nullable String getChestFillerId() {
+        return chestFillerId;
+    }
+
+    public @Nullable String getKillKewardFillerId() {
+        return killKewardFillerId;
+    }
+
     private int perTeamMaxPlayers;
     private String chestFillerId;
     private String killKewardFillerId;
@@ -53,32 +117,28 @@ public class SkyWarsOption extends AbstractMOption {
 
     protected void fillEditor(@NotNull PagedMapGui gui) {
         super.fillEditor(gui);
-        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) perTeamMaxPlayers
-                , (v) -> {
-            perTeamMaxPlayers = (int) Math.max(1, Math.min(32, v));
-            OptionManager.get().save(SkyWarsOption.this);
-        },
-                () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(perTeamMaxPlayers)
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) getTeamMaxSize()
+                , (v) -> setTeamMaxPlayers(v.intValue()),
+                () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(getTeamMaxSize())
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                                "minioption.gui.team_max_players", "%value%", String.valueOf(perTeamMaxPlayers))).build()));
+                                "minioption.gui.team_max_players", "%value%", String.valueOf(getTeamMaxSize()))).build()));
 
         gui.addButton(new ResearchFButton<>(gui,
                 () -> {
-                    DropsFiller filler = chestFillerId == null ? null : FillerManager.get().get(chestFillerId);
+                    DropsFiller filler = getChestFillerId() == null ? null : FillerManager.get().get(getChestFillerId());
                     return new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                             "minioption.gui.chestsfiller_selector",
-                            "%id%", filler == null ? "-none-" : chestFillerId,
+                            "%id%", filler == null ? "-none-" : getChestFillerId(),
                             "%size%", filler == null ? "-" : String.valueOf(filler.getSize())
                     )).build();
                 },
                 (String base, DropsFiller filler1) -> filler1.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, DropsFiller filler) -> {
-                    chestFillerId = filler.getId().equals(chestFillerId) ? null : filler.getId();
-                    OptionManager.get().save(SkyWarsOption.this);
+                    setChestFillerId(filler.getId().equals(getChestFillerId()) ? null : filler.getId());
                     return true;
                 },
                 (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        filler.getId().equals(chestFillerId) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        filler.getId().equals(getChestFillerId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                         "minioption.gui.chestsfiller_description", filler.getPlaceholders()
                 )).build(),
                 () -> FillerManager.get().getAll().values()));
@@ -86,40 +146,35 @@ public class SkyWarsOption extends AbstractMOption {
 
         gui.addButton(new ResearchFButton<>(gui,
                 () -> {
-                    DropsFiller filler = killKewardFillerId == null ? null : FillerManager.get().get(killKewardFillerId);
+                    DropsFiller filler = getKillKewardFillerId() == null ? null : FillerManager.get().get(getKillKewardFillerId());
                     return new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                             "minioption.gui.killrewardfiller_selector",
-                            "%id%", filler == null ? "-none-" : killKewardFillerId,
+                            "%id%", filler == null ? "-none-" : getKillKewardFillerId(),
                             "%size%", filler == null ? "-" : String.valueOf(filler.getSize())
                     )).build();
                 },
                 (String base, DropsFiller filler1) -> filler1.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, DropsFiller filler) -> {
-                    killKewardFillerId = filler.getId().equals(killKewardFillerId) ? null : filler.getId();
-                    OptionManager.get().save(SkyWarsOption.this);
+                    setKillKewardFillerId(filler.getId().equals(getKillKewardFillerId()) ? null : filler.getId());
                     return true;
                 },
                 (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        filler.getId().equals(killKewardFillerId) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        filler.getId().equals(getKillKewardFillerId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                         "minioption.gui.killrewardfiller_description", filler.getPlaceholders()
                 )).build(),
                 () -> FillerManager.get().getAll().values()));
 
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.kits_selector", "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", kits)
+                        "minioption.gui.kits_selector", "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", getKitsId())
                 )).build(),
-                (String base, Kit kit) -> kit.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
+                (String base, Kit kit) -> kit.getId().contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, Kit kit) -> {
-                    if (kits.contains(kit.getId()))
-                        kits.remove(kit.getId());
-                    else
-                        kits.add(kit.getId());
-                    OptionManager.get().save(SkyWarsOption.this);
+                    toggleKit(kit);
                     return true;
                 },
                 (Kit kit) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        kits.contains(kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        hasKit(kit) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                         "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
                 )).build(),
                 () -> KitManager.get().getAll().values()));
@@ -140,8 +195,12 @@ public class SkyWarsOption extends AbstractMOption {
             if (kit != null)
                 list.add(kit);
         }
-        list.sort((k1, k2) -> k1.getPrice() == k2.getPrice() ? k1.getId().compareToIgnoreCase(k2.getId()) : k2.getPrice() - k1.getPrice());
+        list.sort((k1, k2) -> k1.getPrice() == k2.getPrice() ? k1.getId().compareToIgnoreCase(k2.getId()) : k2.getPrice() - k1.getPrice()); //TODO ? sort by price,name
         return list;
+    }
+
+    public @NotNull List<String> getKitsId() {
+        return Collections.unmodifiableList(kits);
     }
 
     @Override

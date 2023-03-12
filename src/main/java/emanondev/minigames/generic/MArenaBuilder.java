@@ -49,26 +49,15 @@ public abstract class MArenaBuilder {
         this.id = id.toLowerCase();
         this.label = label;
         this.plugin = plugin;
-        timerRunnable = Bukkit.getScheduler().runTaskTimer(Minigames.get(), new Runnable() {
-            // private int timerTick = 1;
-
-            @Override
-            public void run() {
-                Player p = getBuilder();
-                if (p != null && p.isOnline() && p.isValid()) {
-                    //TODO message repeat, bossbar, actionbar
-                    bar.addPlayer(p);
-                    onTimerCall(/*timerTick*/);
-                    //timerTick += 1;
-                }
+        timerRunnable = Bukkit.getScheduler().runTaskTimer(Minigames.get(), () -> {
+            Player p = getBuilder();
+            if (p != null && p.isOnline() && p.isValid()) {
+                //TODO message repeat, bossbar, actionbar
+                bar.addPlayer(p);
+                onTimerCall();
             }
         }, 10, 5);
         setPhaseRaw(1);
-        /*Player p = getBuilder();
-        if (p != null) {
-            bar.addPlayer(p);
-            getRepeatedMessage().send();
-        }*/
     }
 
     protected int getPhase() {
@@ -101,7 +90,10 @@ public abstract class MArenaBuilder {
     }
 
     public boolean isBuilder(@NotNull OfflinePlayer player) {
-        return builder.equals(player.getUniqueId());
+        return isBuilder(player.getUniqueId());
+    }
+    public boolean isBuilder(@NotNull UUID uuid) {
+        return builder.equals(uuid);
     }
 
     public abstract @NotNull DMessage getCurrentBossBarMessage();
@@ -166,7 +158,7 @@ public abstract class MArenaBuilder {
     }
 
     protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle) {
-        return spawnParticleWorldEditRegionEdges(p,null);
+        return spawnParticleWorldEditRegionEdges(p,particle, null);
     }
 
 

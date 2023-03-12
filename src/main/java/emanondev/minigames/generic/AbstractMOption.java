@@ -19,6 +19,26 @@ import java.util.Map;
 
 public abstract class AbstractMOption extends ARegistrable implements MOption {
 
+    public void setAllowSpectators(boolean allowSpectators) {
+        this.allowSpectators = allowSpectators;
+        OptionManager.get().save(this);
+    }
+
+    public void setCollectingPlayersPhaseCooldownMax(int value) {
+        collectingPlayersPhaseCooldownMax = (int) Math.max(1, Math.min(180, value));
+        OptionManager.get().save(this);
+    }
+
+    public void setEndPhaseCooldownMax(int value) {
+        endPhaseCooldownMax = Math.max(1, Math.min(60, value));
+        OptionManager.get().save(this);
+    }
+
+    public void setPreStartPhaseCooldownMax(int value) {
+        this.preStartPhaseCooldownMax = Math.max(1, Math.min(60, value));
+        OptionManager.get().save(this);
+    }
+
     private boolean allowSpectators;
     private int collectingPlayersPhaseCooldownMax;
     private int endPhaseCooldownMax;
@@ -64,37 +84,26 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
 
     protected void fillEditor(@NotNull PagedMapGui gui) {
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
-                () -> (long) collectingPlayersPhaseCooldownMax,
-                (v) -> {
-                    collectingPlayersPhaseCooldownMax = (int) Math.max(1, Math.min(32, v));
-                    OptionManager.get().save(AbstractMOption.this);
-                },
-                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, collectingPlayersPhaseCooldownMax)))
+                () -> (long) getCollectingPlayersPhaseCooldownMax(),
+                (v) -> setCollectingPlayersPhaseCooldownMax(v.intValue()),
+                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getCollectingPlayersPhaseCooldownMax())))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                                "minioption.gui.collecting_players_phase_max_cooldown", "%value%", String.valueOf(collectingPlayersPhaseCooldownMax))).build()));
-        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) endPhaseCooldownMax,
-                (v) -> {
-                    endPhaseCooldownMax = (int) Math.max(1, Math.min(32, v));
-                    OptionManager.get().save(AbstractMOption.this);
-                },
-                () -> Configurations.getEndPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, endPhaseCooldownMax)))
+                                "minioption.gui.collecting_players_phase_max_cooldown", "%value%", String.valueOf(getCollectingPlayersPhaseCooldownMax()))).build()));
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) getEndPhaseCooldownMax(),
+                (v) -> setEndPhaseCooldownMax(v.intValue()),
+                () -> Configurations.getEndPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getEndPhaseCooldownMax())))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                                "minioption.gui.end_phase_max_cooldown", "%value%", String.valueOf(endPhaseCooldownMax))).build()));
-        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) preStartPhaseCooldownMax
-                , (v) -> {
-            preStartPhaseCooldownMax = (int) Math.max(1, Math.min(32, v));
-            OptionManager.get().save(AbstractMOption.this);
-        },
-                () -> Configurations.getPreStartPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, preStartPhaseCooldownMax)))
+                                "minioption.gui.end_phase_max_cooldown", "%value%", String.valueOf(getEndPhaseCooldownMax()))).build()));
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) getPreStartPhaseCooldownMax()
+                , (v) -> setPreStartPhaseCooldownMax(v.intValue()),
+                () -> Configurations.getPreStartPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getPreStartPhaseCooldownMax())))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                                "minioption.gui.pre_start_phase_max_cooldown", "%value%", String.valueOf(preStartPhaseCooldownMax))).build()));
-
+                                "minioption.gui.pre_start_phase_max_cooldown", "%value%", String.valueOf(getPreStartPhaseCooldownMax()))).build()));
         gui.addButton(new FButton(gui, () ->
                 new ItemBuilder(Material.VEX_SPAWN_EGG).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer())
-                                .appendLangList("minioption.gui.allow_spectators", "%value%", String.valueOf(allowSpectators)))
-                        .setGuiProperty().addEnchantment(Enchantment.DURABILITY, allowSpectators ? 1 : 0).build(), (event) -> {
-            allowSpectators = !allowSpectators;
-            OptionManager.get().save(AbstractMOption.this);
+                                .appendLangList("minioption.gui.allow_spectators", "%value%", String.valueOf(getAllowSpectators())))
+                        .setGuiProperty().addEnchantment(Enchantment.DURABILITY, getAllowSpectators() ? 1 : 0).build(), (event) -> {
+            setAllowSpectators(!getAllowSpectators());
             return true;
         }
         ));

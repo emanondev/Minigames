@@ -6,6 +6,7 @@ import emanondev.minigames.command.*;
 import emanondev.minigames.compability.MinigamePlaceholders;
 import emanondev.minigames.generic.DropGroup;
 import emanondev.minigames.generic.DropsFiller;
+import emanondev.minigames.generic.MArenaBuilder;
 import emanondev.minigames.generic.MGame;
 import emanondev.minigames.locations.BlockLocation2D;
 import emanondev.minigames.locations.BlockLocation3D;
@@ -13,6 +14,8 @@ import emanondev.minigames.locations.BlockLocationOffset3D;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 public final class Minigames extends CorePlugin {
 
@@ -30,6 +33,8 @@ public final class Minigames extends CorePlugin {
     @Override
     public void disable() {
         GameManager.get().getAll().values().forEach(MGame::gameAbort);
+        ArrayList<MArenaBuilder> coll = new ArrayList<>(ArenaManager.get().getAllBuildings());
+        coll.forEach(arenaBuilder -> ArenaManager.get().unregisterBuilder(arenaBuilder.getUser()));
     }
 
     @Override
@@ -43,7 +48,6 @@ public final class Minigames extends CorePlugin {
 
     @Override
     public void enable() {
-        registerConfigurationSerializables();
         new DropGroupManager();
         new KitManager();
         new FillerManager();
@@ -98,5 +102,6 @@ public final class Minigames extends CorePlugin {
     @Override
     public void load() {
         instance = this;
+        registerConfigurationSerializables();
     }
 }

@@ -43,7 +43,7 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
     }
 
     public BoundingBox getArea() {
-        return area;
+        return area.clone();
     }
 
     public Vector getAreaMin(){

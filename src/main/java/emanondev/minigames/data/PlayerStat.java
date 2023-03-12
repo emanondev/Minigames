@@ -43,6 +43,7 @@ public class PlayerStat extends Stat<UUID> {
     public static final PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
     public static final PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
     public static final PlayerStat RACE_PLAYED = getStat("RACE_PLAYED");
+    public static final PlayerStat MOUNTEDRACE_PLAYED = getStat("MOUNTEDRACE_PLAYED");
     public static final PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
 
 

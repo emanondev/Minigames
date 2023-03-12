@@ -439,7 +439,9 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         fallAreas.forEach((box) -> box.shift(getArea().getMin().multiply(-1)));
         endArea.shift(getArea().getMin().multiply(-1));
         map.put("checkpoints", checkPoints);
-        map.put("checkpoints_respawn", checkPointsRespawn);
+        List<String> raw = new ArrayList<>();
+        checkPointsRespawn.forEach((loc)->raw.add(loc.toString()));
+        map.put("checkpoints_respawn", raw);
         map.put("end_area", endArea);
         map.put("fall_areas", fallAreas);
 
@@ -460,7 +462,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             if (getPhase() <= PHASE_SELECT_AREA)
                 this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
             else
-                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea());
+                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0,0,0,1,1,1));
             if (getPhase() <= PHASE_SELECT_AREA)
                 return;
             Vector min = getAreaMin();
@@ -483,10 +485,11 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                         timerTick % 4 == 0, new Particle.DustOptions(getCheckpointColor(j), 0.5F));
                 if (timerTick % 4 == 0)
                     for (int i = 0; i <= j; i++)
-                        spawnParticle(p, Particle.HEART, min.getX() + spectatorsOffset.x,
-                                min.getY() + spectatorsOffset.y + 0.5 + (0.5 * (i)), min.getZ() + spectatorsOffset.z);
+                        spawnParticle(p, Particle.HEART, min.getX() + checkPointsRespawn.get(j).x, min.getY() +
+                                checkPointsRespawn.get(j).y + 0.5 + (0.5 * (i)), min.getZ() + checkPointsRespawn.get(j).z);
             }
-            spawnParticleBoxEdges(p, Particle.REDSTONE, endArea, new Particle.DustOptions(getCheckpointColor(checkPoints.size()), 2F));
+            if (endArea != null)
+                spawnParticleBoxEdges(p, Particle.REDSTONE, endArea, new Particle.DustOptions(getCheckpointColor(checkPoints.size()), 2F));
 
             fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, Particle.FLAME, fallArea, null));
         }

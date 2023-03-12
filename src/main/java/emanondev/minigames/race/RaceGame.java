@@ -66,7 +66,7 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>, RaceOption> {
     @Override //TODO
     public boolean gameCanPreStart() {
         return getGamers().size() >= 1;
-    }
+    } //TODO autostart se solo
 
     @Override //TODO
     public boolean gameCanStart() {
@@ -80,7 +80,7 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>, RaceOption> {
         for (ARaceTeam<RaceGame> team : getTeams())
             if (getGamers(team).size() > 0)
                 counter++;
-        return counter >= 1;
+        return counter >= 1; //TODO autostart se solo
     }
 
     /*
@@ -109,5 +109,9 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>, RaceOption> {
         getTeams().forEach(team -> {
             if (!team.hasLost()) setScore(team.getName(), 0);
         });
+    }
+
+    public boolean canAddGamer(@NotNull Player player) {
+        return getPhase() != Phase.PLAYING && super.canAddGamer(player);
     }
 }

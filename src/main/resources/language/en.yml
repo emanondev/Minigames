@@ -66,6 +66,25 @@ race:
     game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
     reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+mountedrace:
+  gui:
+    selector:
+      - "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient>"
+      - "<#57c9fa>%arena%"
+      - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
+      - ""
+      - "<#57c9fa>Guida fino alla fine del percorso!"
+  game:
+    game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
+    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
+    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
+    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
+    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s!"
+    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
+    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita iniziata"
+    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita terminata"
+    spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
+    reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
 arenabuilder:
   skywars:
     error:
@@ -340,6 +359,45 @@ minioption:
       - "<#b3b3b3>Decidi se è possibile ricevere danno dall'ambiente"
       - "<#b3b3b3>Solitamente fuoco, freddo, cactus..."
       - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Any <#57c9fa>-> <#ffffff>Alterna"
+    mounted_basespeed:
+      - "<#4079ff>Velocità base veicolo/destriero"
+      - "<#57c9fa>Valore: <#ffffb3>%value%"
+    mounted_jumpstrenght:
+      - "<#4079ff>Forza del salto del cavallo"
+      - "<#57c9fa>Valore: <#ffffb3>%value%"
+      - "<#b3b3b3>In vanilla varia fra 0.4 e 1.0"
+    entitytype_selector:
+      - "<#4079ff>Cavalcatura/veicolo <#ffffb3>%selected%"
+      - ""
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Cambia/Imposta"
+    entitytype_description:
+      - "<#4079ff>Tipo <#ffffb3>%type%"
+      - ""
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Seleziona"
+    horse_color_selector:
+      - "<#4079ff>Colore cavallo <#ffffb3>%selected%"
+      - ""
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Cambia/Imposta"
+    horse_color_description:
+      - "<#4079ff>Colore cavallo <#ffffb3>%color%"
+      - ""
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Imposta/Deseziona"
+    horse_style_selector:
+      - "<#4079ff>Stile cavallo <#ffffb3>%selected%"
+      - ""
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Cambia/Imposta"
+    horse_style_description:
+      - "<#4079ff>Stile cavallo <#ffffb3>%style%"
+      - ""
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Imposta/Deseziona"
+    boat_type_selector:
+      - "<#4079ff>Tipo di Barca <#ffffb3>%selected%"
+      - ""
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Cambia/Imposta"
+    boat_type_description:
+      - "<#4079ff>Tipo di Barca <#ffffb3>%type%"
+      - ""
+      - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Imposta/Deseziona"
 join:
   error:
     game_not_available: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non puoi entrare in <#fab66e>%name%"

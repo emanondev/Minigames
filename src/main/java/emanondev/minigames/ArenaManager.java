@@ -9,9 +9,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ArenaManager extends Manager<MArena> {
 
@@ -82,4 +80,9 @@ public class ArenaManager extends Manager<MArena> {
                 return ab;
         return null;
     }
+
+    public Collection<MArenaBuilder> getAllBuildings() {
+        return Collections.unmodifiableCollection(builders.values());
+    }
+
 }
