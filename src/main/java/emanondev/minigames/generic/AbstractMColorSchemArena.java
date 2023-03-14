@@ -1,15 +1,27 @@
 package emanondev.minigames.generic;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import emanondev.core.ItemBuilder;
+import emanondev.core.gui.Gui;
+import emanondev.core.gui.PagedMapGui;
+import emanondev.core.gui.StringEditorFButton;
+import emanondev.core.gui.TextEditorFButton;
+import emanondev.core.message.DMessage;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
+import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.LocationOffset3D;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class AbstractMColorSchemArena extends ARegistrable implements MSchemArena, MColorableTeamArena {
 
@@ -67,4 +79,16 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
     }
 
 
+    @Override
+    public Gui getEditorGui(Player target, Gui parent) {
+        PagedMapGui gui = new PagedMapGui(
+                new DMessage(Minigames.get(), target).appendLang("miniarena.gui.title", getPlaceholders()).toLegacy(),
+                6, target, parent, Minigames.get());
+        gui.addButton(new StringEditorFButton(gui, this::getDisplayName, this::setDisplayName,
+                ()->new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setDescription(
+                        new DMessage(Minigames.get(), target)
+                                .appendLangList("miniarena.gui.display_name_editor",getPlaceholders())
+                ).setGuiProperty().build(),true));
+        return gui;
+    }
 }

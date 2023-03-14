@@ -2,10 +2,7 @@ package emanondev.minigames;
 
 import emanondev.core.ItemBuilder;
 import emanondev.core.PlayerSnapshot;
-import emanondev.core.gui.Gui;
-import emanondev.core.gui.ItemEditorFButton;
-import emanondev.core.gui.LongEditorFButton;
-import emanondev.core.gui.PagedMapGui;
+import emanondev.core.gui.*;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.generic.ARegistrable;
 import emanondev.minigames.generic.Registrable;
@@ -26,9 +23,25 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
     private int price;
     private ItemStack guiSelectorItem;
 
+    @NotNull
+    public String getDisplayName() {
+        return displayName != null ? displayName : getId() != null ? getId() : "";
+    }
+
+    public void setDisplayName(String displayName) {
+        if (displayName.isEmpty())
+            this.displayName = null;
+        else
+            this.displayName = displayName;
+    }
+
+    private String displayName;
+
     public Kit(@NotNull Map<String, Object> map) {
         this.snap = (PlayerSnapshot) map.get("snap");
         this.price = Math.max(0, (int) map.getOrDefault("price", 0));
+        this.displayName = (String) map.get("displayName");
+        this.guiSelectorItem = (ItemStack) map.get("gui_selector_item");
     }
 
     public static @NotNull Kit fromPlayerSnapshot(@NotNull PlayerSnapshot snap) {
@@ -75,6 +88,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new LinkedHashMap<>();
+        map.put("displayName", this.displayName);
         map.put("snap", this.snap);
         map.put("price", this.price);
         map.put("gui_selector_item", this.guiSelectorItem);
@@ -101,6 +115,11 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         PagedMapGui gui = new PagedMapGui(
                 new DMessage(Minigames.get(), target).appendLang("minikit.gui.title", getPlaceholders()).toLegacy(),
                 6, target, parent, Minigames.get());
+        gui.addButton(new StringEditorFButton(gui, this::getDisplayName, this::setDisplayName,
+                () -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setDescription(
+                        new DMessage(Minigames.get(), target)
+                                .appendLangList("minikit.gui.display_name_editor", getPlaceholders())
+                ).setGuiProperty().build(), true));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
                 () -> (long) getPrice(),
                 (v) -> {
@@ -114,8 +133,6 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
                 () -> getGuiSelectorItemRaw().build(),
                 () -> getGuiSelectorItemRaw().build(),
                 this::setGuiSelectorItem, (event) -> gui.open(target)));
-
-
         return gui;
     }
 

@@ -176,12 +176,12 @@ public class MiniOptionCommand extends CoreCommand {
             sendMsg(player, "minioption.error.gui_params", "%alias%", label);
             return;
         }
-        MOption group = OptionManager.get().get(args[1]);
-        if (group == null) {
+        MOption option = OptionManager.get().get(args[1]);
+        if (option == null) {
             sendMsg(player, "minioption.error.id_not_found", "%alias%", label, "%id%", args[1]);
             return;
         }
-        group.getEditorGui(player, null).open(player);
+        option.getEditorGui(player, null).open(player);
     }
 
     private void sendMsg(CommandSender target, String path, String... holders) {

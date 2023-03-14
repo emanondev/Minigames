@@ -169,12 +169,16 @@ miniarena:
   error:
     id_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><id></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non esiste</hover>"
     delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
+    gui_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% gui <#fab66e><id></hover>"
+    paste_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% paste <#fab66e><id></hover>"
+    no_schematic: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'arena selezionata non ha una schematic di riferimento"
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArena</b></gradient> <hover:show_text:\"<#acfad1>Questo comando permette di visualizzare\nle arene per i vari Minigame (Arena)\nPer creare un'arena <#ffffb3>/miniarenabuilder\"><#fab787>[?]</hover>"
     - "<hover:show_text:'<#acfad1>Mostra la lista di Arena esistenti'><click:run_command:'/%alias% list'><#4079ff>/%alias% <#57c9fa>list</click></hover>"
     - "<hover:show_text:\"<#acfad1>Elimina l'Arena\n<#ffffb3><id><#acfad1> è l'id del Arena\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
   success:
     delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Arena <#ffffb3>%id%</#ffffb3> eliminata"
+    paste:
     list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArena Lista Arene</b></gradient>"
     list_info:
       - "<#57c9fa>Arena <#ffffb3><b>%id%</b></#ffffb3>"
@@ -182,6 +186,12 @@ miniarena:
       - "Minigame <#ffffb3>%type%</#ffffb3>"
       - ""
       - "<#ffffb3>Clicca per vedere"
+  gui:
+    title: "<#4079ff>Arena <#57c9fa>%id% <#4079ff>(<#57c9fa>%type%<#4079ff>)"
+    display_name_editor:
+      - "<#4079ff>Nome Estetico"
+      - "<#57c9fa><#ffffb3>%displayname%"
+      - ""
 minigame:
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniGame</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di gestire\nle partite (Game)'><#fab787>[?]</hover>"
@@ -256,7 +266,7 @@ minioption:
       - "Minigame <#ffffb3>%type%</#ffffb3>"
       - ""
       - "<#ffffb3>Clicca per vedere e modificare"
-  gui: #TODO refine this section
+  gui:
     title: "<#4079ff>Option <#57c9fa>%id% <#4079ff>(<#57c9fa>%type%<#4079ff>)"
     collecting_players_phase_max_cooldown:
       - "<#4079ff>Quanti secondi dopo che i requisiti minimi"
@@ -454,6 +464,10 @@ minikit:
     price:
       - "<#4079ff>Quanto costa usare il kit?"
       - "<#57c9fa>Prezzo: <#ffffb3>%value%"
+    display_name_editor:
+      - "<#4079ff>Nome Estetico"
+      - "<#57c9fa><#ffffb3>%displayname%"
+      - ""
 minidropsfiller:
   error:
     create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id></hover>"

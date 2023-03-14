@@ -1,6 +1,7 @@
 package emanondev.minigames.eggwars;
 
 import emanondev.core.ItemBuilder;
+import emanondev.core.gui.Gui;
 import emanondev.core.gui.NumberEditorFButton;
 import emanondev.core.gui.PagedMapGui;
 import emanondev.core.gui.ResearchFButton;
@@ -9,6 +10,7 @@ import emanondev.minigames.generic.AbstractMOption;
 import emanondev.minigames.generic.DropsFiller;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,8 +49,10 @@ public class EggWarsOption extends AbstractMOption {
         return map;
     }
 
-    protected void fillEditor(@NotNull PagedMapGui gui) {
-        super.fillEditor(gui);
+
+    @Override
+    public Gui getEditorGui(Player target, Gui parent) {
+        Gui gui = super.getEditorGui(target, parent);
         gui.addButton(new NumberEditorFButton<>(gui, 1, 1, 10, () -> perTeamMaxPlayers
                 , (v) -> {
             perTeamMaxPlayers = Math.max(1, Math.min(32, v));
@@ -93,6 +97,7 @@ public class EggWarsOption extends AbstractMOption {
 
                 )).build(),
                 () -> KitManager.get().getAll().values()));
+        return gui;
     }
 
     public @Nullable DropsFiller getFiller() {

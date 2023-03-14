@@ -2,10 +2,7 @@ package emanondev.minigames.race;
 
 import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
-import emanondev.core.gui.DoubleEditorFButton;
-import emanondev.core.gui.FWrapperButton;
-import emanondev.core.gui.PagedMapGui;
-import emanondev.core.gui.ResearchFButton;
+import emanondev.core.gui.*;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
@@ -151,9 +148,10 @@ public class MountedRaceOption extends ARaceOption {
         OptionManager.get().save(this);
     }
 
-    protected void fillEditor(@NotNull PagedMapGui gui) {
-        super.fillEditor(gui);
 
+    @Override
+    public Gui getEditorGui(Player target, Gui parent) {
+        Gui gui = super.getEditorGui(target, parent);
         List<EntityType> allowed = new ArrayList<>();
         for (EntityType type : EntityType.values()) //TODO add more with custom spawned controllable mobs
             if (type.getEntityClass() != null && Vehicle.class.isAssignableFrom(type.getEntityClass()))
@@ -250,7 +248,7 @@ public class MountedRaceOption extends ARaceOption {
             setBaby(!isBaby());
             return true;
         }));*/
-
+        return gui;
     }
 
     private static Material getBoatTypeMaterial(Boat.Type type){
@@ -269,6 +267,7 @@ public class MountedRaceOption extends ARaceOption {
             case CHEST_BOAT -> Material.OAK_CHEST_BOAT;
             case PIG -> Material.CARROT_ON_A_STICK;
             case STRIDER -> Material.WARPED_FUNGUS_ON_A_STICK;
+            case MINECART -> Material.MINECART;
             case CAMEL -> Material.CACTUS;
             default -> Material.SADDLE;
         };

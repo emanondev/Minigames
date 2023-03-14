@@ -1,18 +1,13 @@
 package emanondev.minigames.race;
 
 import emanondev.core.ItemBuilder;
-import emanondev.core.gui.FButton;
-import emanondev.core.gui.LongEditorFButton;
-import emanondev.core.gui.PagedMapGui;
-import emanondev.core.gui.ResearchFButton;
+import emanondev.core.gui.*;
 import emanondev.core.message.DMessage;
-import emanondev.minigames.Kit;
-import emanondev.minigames.KitManager;
-import emanondev.minigames.Minigames;
-import emanondev.minigames.OptionManager;
+import emanondev.minigames.*;
 import emanondev.minigames.generic.AbstractMOption;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,8 +112,9 @@ public class ARaceOption extends AbstractMOption {
         OptionManager.get().save(ARaceOption.this);
     }
 
-    protected void fillEditor(@NotNull PagedMapGui gui) {
-        super.fillEditor(gui);
+    @Override
+    public Gui getEditorGui(Player target, Gui parent) {
+        Gui gui = super.getEditorGui(target,parent);
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) perTeamMaxPlayers
                 , (v) -> setTeamMaxSize(v.intValue()),
                 () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(perTeamMaxPlayers)
@@ -172,5 +168,7 @@ public class ARaceOption extends AbstractMOption {
                     return true;
                 }
         ));
+        return gui;
     }
+
 }

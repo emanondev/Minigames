@@ -82,7 +82,11 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
         return allowSpectators;
     }
 
-    protected void fillEditor(@NotNull PagedMapGui gui) {
+    @Override
+    public Gui getEditorGui(Player target, Gui parent) {
+        PagedMapGui gui = new PagedMapGui(
+                new DMessage(Minigames.get(), target).appendLang("minioption.gui.title", getPlaceholders()),
+                6, target, parent, Minigames.get());
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
                 () -> (long) getCollectingPlayersPhaseCooldownMax(),
                 (v) -> setCollectingPlayersPhaseCooldownMax(v.intValue()),
@@ -107,18 +111,6 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
             return true;
         }
         ));
-    }
-
-    @Override
-    public Gui getEditorGui(Player player, Gui parent) {
-        PagedMapGui gui = craftEditor(player, parent);
-        fillEditor(gui);
         return gui;
-    }
-
-    private PagedMapGui craftEditor(Player target, Gui parent) {
-        return new PagedMapGui(
-                new DMessage(Minigames.get(), target).appendLang("minioption.gui.title", getPlaceholders()).toLegacy(),
-                6, target, parent, Minigames.get());
     }
 }

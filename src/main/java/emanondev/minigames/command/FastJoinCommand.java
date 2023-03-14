@@ -25,7 +25,7 @@ public class FastJoinCommand extends CoreCommand {
     }
 
     @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public void onExecute(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args) {
         if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
@@ -77,7 +77,7 @@ public class FastJoinCommand extends CoreCommand {
     }
 
     @Override
-    public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
+    public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, String @NotNull [] args, @Nullable Location location) {
         return args.length == 1 ? this.complete(args[0], MinigameTypes.get().getTypes(), MType::getType, (m) -> true) : Collections.emptyList();
     }
 

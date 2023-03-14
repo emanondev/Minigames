@@ -1,6 +1,7 @@
 package emanondev.minigames.skywars;
 
 import emanondev.core.ItemBuilder;
+import emanondev.core.gui.Gui;
 import emanondev.core.gui.LongEditorFButton;
 import emanondev.core.gui.PagedMapGui;
 import emanondev.core.gui.ResearchFButton;
@@ -10,6 +11,7 @@ import emanondev.minigames.generic.AbstractMOption;
 import emanondev.minigames.generic.DropsFiller;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,14 +117,15 @@ public class SkyWarsOption extends AbstractMOption {
         return map;
     }
 
-    protected void fillEditor(@NotNull PagedMapGui gui) {
-        super.fillEditor(gui);
+
+    @Override
+    public Gui getEditorGui(Player target, Gui parent) {
+        Gui gui = super.getEditorGui(target, parent);
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) getTeamMaxSize()
                 , (v) -> setTeamMaxPlayers(v.intValue()),
                 () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(getTeamMaxSize())
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                                 "minioption.gui.team_max_players", "%value%", String.valueOf(getTeamMaxSize()))).build()));
-
         gui.addButton(new ResearchFButton<>(gui,
                 () -> {
                     DropsFiller filler = getChestFillerId() == null ? null : FillerManager.get().get(getChestFillerId());
@@ -142,8 +145,6 @@ public class SkyWarsOption extends AbstractMOption {
                         "minioption.gui.chestsfiller_description", filler.getPlaceholders()
                 )).build(),
                 () -> FillerManager.get().getAll().values()));
-
-
         gui.addButton(new ResearchFButton<>(gui,
                 () -> {
                     DropsFiller filler = getKillKewardFillerId() == null ? null : FillerManager.get().get(getKillKewardFillerId());
@@ -163,7 +164,6 @@ public class SkyWarsOption extends AbstractMOption {
                         "minioption.gui.killrewardfiller_description", filler.getPlaceholders()
                 )).build(),
                 () -> FillerManager.get().getAll().values()));
-
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                         "minioption.gui.kits_selector", "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", getKitsId())
@@ -178,6 +178,7 @@ public class SkyWarsOption extends AbstractMOption {
                         "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
                 )).build(),
                 () -> KitManager.get().getAll().values()));
+        return gui;
     }
 
     public @Nullable DropsFiller getChestsFiller() {

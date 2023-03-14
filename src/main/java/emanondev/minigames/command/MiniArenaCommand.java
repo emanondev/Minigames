@@ -3,13 +3,16 @@ package emanondev.minigames.command;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
+import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MArena;
+import emanondev.minigames.generic.MSchemArena;
 import emanondev.minigames.generic.Perms;
 import emanondev.minigames.generic.Registrable;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,20 +39,61 @@ public class MiniArenaCommand extends CoreCommand {
             return;
         }
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            //          case "create" -> create(sender, label, args);
-            //          case "gui" -> gui(sender, label, args);
             case "list" -> list(sender, label, args);
             case "delete" -> delete(sender, label, args);
+            case "paste" -> paste(sender, label, args);
+            case "gui" -> gui(sender, label, args);
             default -> help(sender, label, args);
         }
+    }
+
+    private void paste(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 1) {
+            sendMsg(sender, "miniarena.error.paste_params", "%alias%", label);
+            return;
+        }
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        MArena arena = ArenaManager.get().get(id);
+        if (arena == null) {
+            sendMsg(sender, "miniarena.error.id_not_found", "%id%", id, "%alias%", label);
+            return;
+        }
+        if (!(arena instanceof MSchemArena schemArena)) {
+            sendMsg(sender, "miniarena.error.no_schematic", "%id%", id, "%alias%", label);
+            return;
+        }
+        WorldEditUtility.paste(player.getLocation(), schemArena.getSchematic(), true, getPlugin(), false, false, false);
+        sendMsg(sender, "miniarena.success.paste", "%id%", id, "%alias%", label);
+    }
+
+    private void gui(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 1) {
+            sendMsg(sender, "miniarena.error.gui_params", "%alias%", label);
+            return;
+        }
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        MArena arena = ArenaManager.get().get(id);
+        if (arena == null) {
+            sendMsg(sender, "miniarena.error.id_not_found", "%id%", id, "%alias%", label);
+            return;
+        }
+        arena.getEditorGui(player, null).open(player);
     }
 
     @Override
     public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("list", "delete"));
+            case 1 -> this.complete(args[0], List.of("list", "delete", "paste", "gui"));
             case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case "delete" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
+                case "delete", "paste", "gui" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             default -> Collections.emptyList();

@@ -300,6 +300,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
             getMinigameType().applyKillPoints(killer);
             if (getOption().getKillRewardFiller() != null) {
+                //TODO add sound
                 UtilsInventory.giveAmount(player, getMinigameType().getKillRewardItem(), 1, UtilsInventory.ExcessManage.DROP_EXCESS);
             }
 
@@ -313,7 +314,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     public void checkGameEnd() {
         if (getPhase() != Phase.PLAYING)
             return;
-        //TODO check win conditions
         int alive = 0;
         SkyWarsTeam winner = null;
         for (SkyWarsTeam party : this.getTeams())
