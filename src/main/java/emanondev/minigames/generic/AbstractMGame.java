@@ -61,13 +61,14 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             String textLoc = (String) map.get("location");
             if (textLoc != null)
                 this.loc = BlockLocation3D.fromString(textLoc);
-            if (loc == null)
+            if (loc == null) {
                 loc = GameManager.get().generateLocation(arena, getWorld());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             loc = GameManager.get().generateLocation(arena, getWorld());
         }
-        MessageUtil.debug(getId() + " location " + loc);
+        //MessageUtil.debug(getId() + " location " + loc);
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.objective = scoreboard.registerNewObjective("game", "dummy", getObjectiveDisplayName(), RenderType.INTEGER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -427,7 +428,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 player.getInventory().setHeldItemSlot(4);
                 if (getOption().allowSelectingTeam()) //only if you can choose a kit
                     player.getInventory().setItem(2, Configurations.getTeamSelectorItem(player));
-                if (getOption().getKits().size() > 0) //only if you can choose a kit
+                if (getOption() instanceof MOptionWithKitsChoice opt && opt.getKits().size() > 0) //only if you can choose a kit
                     player.getInventory().setItem(4, Configurations.getKitSelectorItem(player));
                 player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
             }
@@ -437,7 +438,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 teleportResetLocation(player);
                 Configurations.applyGamePreStartSnapshot(player);
                 player.getInventory().setHeldItemSlot(4);
-                if (getOption().getKits().size() > 0) //only if you can choose a kit
+                if (getOption() instanceof MOptionWithKitsChoice opt && opt.getKits().size() > 0) //only if you can choose a kit
                     player.getInventory().setItem(4, Configurations.getKitSelectorItem(player));
                 player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
             }
@@ -686,7 +687,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (getPhase() == Phase.COLLECTING_PLAYERS || getPhase() == Phase.PRE_START)
             switch (event.getPlayer().getInventory().getHeldItemSlot()) {
                 case 4 -> {
-                    if (getOption().getKits().size() > 0)
+                    if (getOption() instanceof MOptionWithKitsChoice opt && opt.getKits().size() > 0)
                         getKitSelectorGui(event.getPlayer()).open(event.getPlayer());
                 }
                 case 2 -> {
@@ -748,7 +749,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 }, (kit) -> kit.getGuiSelectorItem(player).addEnchantment(Enchantment.DURABILITY,
                 kit.getId()
                         .equals(kitPreference.get(player)) ? 1 : 0).build());
-        gui.addElements(getOption().getKits());
+        if (getOption() instanceof MOptionWithKitsChoice opt)
+            gui.addElements(opt.getKits());
         gui.updateInventory();
         return gui;
     }

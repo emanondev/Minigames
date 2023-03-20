@@ -1,6 +1,7 @@
-package emanondev.minigames;
+package emanondev.minigames.command;
 
 import emanondev.core.command.CoreCommand;
+import emanondev.minigames.Minigames;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
@@ -15,14 +16,12 @@ import java.util.List;
 public class TestCommand extends CoreCommand {
 
 
-    private long delay = 0;
-
     public TestCommand() {
         super("test2", Minigames.get(), new Permission("aaa.bbb"));
     }
 
     @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args) {
+    public void onExecute(@NotNull CommandSender sender, @NotNull String s, String @NotNull [] args) {
         if (!(sender instanceof Player p))
             throw new IllegalStateException();
         new BukkitRunnable() {
@@ -51,7 +50,7 @@ public class TestCommand extends CoreCommand {
     }
 
     @Override
-    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
+    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, String @NotNull [] args, @Nullable Location location) {
         return null;
     }
 

@@ -92,12 +92,6 @@ public class ARaceOption extends AbstractMOption {
     }
 
     @Override
-    @Deprecated
-    public @NotNull List<Kit> getKits() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public boolean allowSelectingTeam() {
         return getTeamMaxSize() > 1;
     }

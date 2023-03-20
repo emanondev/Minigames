@@ -413,7 +413,7 @@ join:
     game_not_available: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non puoi entrare in <#fab66e>%name%"
     no_available_game: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non ci sono Partite disponibili"
     no_available_game_of_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non ci sono Partite disponibili per <#fab66e>%type%"
-    fastjoin_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% <#fab66e>[type]"
+    fastjoin_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% <#fab66e>[type[,type2...]]"
     join_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% <#fab66e>[type/game]"
     already_inside_a_game: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Sei già all'interno di una Partita"
     invalid_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste un Gioco chiamato <#fab66e>%type%"

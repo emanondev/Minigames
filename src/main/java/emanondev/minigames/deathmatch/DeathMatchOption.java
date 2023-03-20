@@ -1,15 +1,13 @@
-package emanondev.minigames.skywars;
+package emanondev.minigames.deathmatch;
 
 import emanondev.core.ItemBuilder;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.LongEditorFButton;
-import emanondev.core.gui.PagedMapGui;
 import emanondev.core.gui.ResearchFButton;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.*;
 import emanondev.minigames.generic.AbstractMOption;
 import emanondev.minigames.generic.DropsFiller;
-import emanondev.minigames.generic.MOptionWithKitsChoice;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -19,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class SkyWarsOption extends AbstractMOption implements MOptionWithKitsChoice {
+public class DeathMatchOption extends AbstractMOption {
 
     public void setTeamMaxPlayers(int value) {
         this.perTeamMaxPlayers = Math.max(1, Math.min(32, value));
@@ -29,31 +27,6 @@ public class SkyWarsOption extends AbstractMOption implements MOptionWithKitsCho
     public void setChestFillerId(@Nullable String chestFillerId) {
         this.chestFillerId = chestFillerId;
         OptionManager.get().save(this);
-    }
-
-    public boolean hasKitId(String kit) {
-        return kit!=null && kits.contains(kit);
-    }
-
-    public void addKitId(@Nullable String kitId) {
-        if (kitId!=null && !kits.contains(kitId)) {
-            this.kits.add(kitId);
-            OptionManager.get().save(this);
-        }
-    }
-
-    public void removeKitId(@Nullable String kitId) {
-        if (kitId!=null && kits.contains(kitId)) {
-            this.kits.remove(kitId);
-            OptionManager.get().save(this);
-        }
-    }
-
-    public void toggleKitId(@Nullable String kitId) {
-        if (this.kits.contains(kitId))
-            removeKitId(kitId);
-        else
-            addKitId(kitId);
     }
 
     public void setKillKewardFillerId(@Nullable String killKewardFillerId) {
@@ -72,23 +45,24 @@ public class SkyWarsOption extends AbstractMOption implements MOptionWithKitsCho
     private int perTeamMaxPlayers;
     private String chestFillerId;
     private String killKewardFillerId;
-    private final List<String> kits = new ArrayList<>();
+    private String kitId;
+
 
     @Override
     public int getTeamMaxSize() {
         return perTeamMaxPlayers;
     }
 
-    public SkyWarsOption() {
+    public DeathMatchOption() {
         this(new HashMap<>());
     }
 
-    public SkyWarsOption(@NotNull Map<String, Object> map) {
+    public DeathMatchOption(@NotNull Map<String, Object> map) {
         super(map);
         perTeamMaxPlayers = Math.max(1, (int) map.getOrDefault("maxPlayersPerTeam", 1));
         chestFillerId = (String) map.get("fillerId");
         killKewardFillerId = (String) map.get("killRewardfillerId");
-        kits.addAll((List<String>) map.getOrDefault("kits", Collections.emptyList()));
+        kitId = (String) map.get("kit");
     }
 
     @NotNull
@@ -98,10 +72,13 @@ public class SkyWarsOption extends AbstractMOption implements MOptionWithKitsCho
         map.put("maxPlayersPerTeam", perTeamMaxPlayers);
         map.put("fillerId", chestFillerId);
         map.put("killRewardfillerId", killKewardFillerId);
-        map.put("kits", kits);
+        map.put("kit", kitId);
         return map;
     }
 
+    public @Nullable Kit getKit() {
+        return kitId == null ? null : KitManager.get().get(kitId);
+    }
 
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
@@ -151,17 +128,19 @@ public class SkyWarsOption extends AbstractMOption implements MOptionWithKitsCho
                 () -> FillerManager.get().getAll().values()));
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.kits_selector", "%selected%", kits.isEmpty() ? "-none-" : String.join(", ", getKitsId())
+                        "minioption.gui.kit_selector", "%selected%", kitId == null ? "-none-" : kitId
                 )).build(),
-                (String base, Kit kit) -> kit.getId().contains(base.toLowerCase(Locale.ENGLISH)),
+                (String base, Kit kit) -> kit.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, Kit kit) -> {
-                    toggleKit(kit);
+                    if (Objects.equals(kitId, kit.getId()))
+                        setKit(null);
+                    else
+                        setKit(kit);
                     return true;
                 },
-                (Kit kit) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        hasKit(kit) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
-                )).build(),
+                (Kit kit) -> kit.getGuiSelectorItemRaw().addEnchantment(Enchantment.DURABILITY,
+                        Objects.equals(kitId, kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", "free")).build(),
                 () -> KitManager.get().getAll().values()));
         return gui;
     }
@@ -174,19 +153,10 @@ public class SkyWarsOption extends AbstractMOption implements MOptionWithKitsCho
         return this.killKewardFillerId == null ? null : FillerManager.get().get(this.killKewardFillerId);
     }
 
-    public @NotNull List<Kit> getKits() {
-        List<Kit> list = new ArrayList<>();
-        for (String key : kits) {
-            Kit kit = KitManager.get().get(key);
-            if (kit != null)
-                list.add(kit);
-        }
-        list.sort((k1, k2) -> k1.getPrice() == k2.getPrice() ? k1.getId().compareToIgnoreCase(k2.getId()) : k2.getPrice() - k1.getPrice()); //TODO ? sort by price,name
-        return list;
-    }
 
-    public @NotNull List<String> getKitsId() {
-        return Collections.unmodifiableList(kits);
+    public void setKit(@Nullable Kit kit) {
+        kitId = kit == null ? null : kit.getId();
+        OptionManager.get().save(this);
     }
 
     @Override

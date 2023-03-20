@@ -1,6 +1,8 @@
 package emanondev.minigames;
 
 import emanondev.core.UtilsString;
+import emanondev.minigames.deathmatch.DeathMatchGame;
+import emanondev.minigames.deathmatch.DeathMatchType;
 import emanondev.minigames.eggwars.EggWarsType;
 import emanondev.minigames.generic.MType;
 import emanondev.minigames.race.MountedRaceType;
@@ -22,6 +24,7 @@ public class MinigameTypes {
         register(MOUNTED_RACE);
         register(TIME_RACE);
         register(TIME_MOUNTED_RACE);
+        register(DEATH_MATCH);
     }
 
     @SuppressWarnings("rawtypes")
@@ -62,5 +65,6 @@ public class MinigameTypes {
     public static final TimeRaceType TIME_RACE = new TimeRaceType();
     public static final TimeMountedRaceType TIME_MOUNTED_RACE = new TimeMountedRaceType();
     public static final MountedRaceType MOUNTED_RACE = new MountedRaceType();
+    public static final DeathMatchType DEATH_MATCH = new DeathMatchType();
 
 }

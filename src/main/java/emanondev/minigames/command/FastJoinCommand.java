@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class FastJoinCommand extends CoreCommand {
@@ -52,25 +53,53 @@ public class FastJoinCommand extends CoreCommand {
                 sendMsg(player, "join.error.no_available_game", "%alias%", label);
             }
             case 1 -> {
-                @SuppressWarnings("rawtypes")
-                MType type = MinigameTypes.get().getType(args[0]);
-                if (type == null) {
-                    sendMsg(player, "join.error.invalid_type", "%type%", args[0], "%alias%", label);
-                    return;
+                if (!args[0].contains(",")) {
+                    @SuppressWarnings("rawtypes")
+                    MType type = MinigameTypes.get().getType(args[0]);
+                    if (type == null) {
+                        sendMsg(player, "join.error.invalid_type", "%type%", args[0], "%alias%", label);
+                        return;
+                    }
+                    @SuppressWarnings({"rawtypes", "unchecked"})
+                    List<MGame> available = new ArrayList<>(GameManager.get().getGameInstances(type).values());
+                    available.removeIf((m) -> switch (m.getPhase()) {
+                        case STOPPED, END, RESTART -> true;
+                        default -> false;
+                    });
+                    Collections.shuffle(available);
+                    available.sort((m1, m2) -> (100 * (m2.getGamers().size() / m2.getMaxGamers() - m1.getGamers().size() / m1.getMaxGamers())));
+
+                    if (GameManager.get().joinGameAsGamer(player, available))
+                        return;
+
+                    sendMsg(player, "join.error.no_available_game_of_type", "%type%", type.getType(), "%alias%", label);
                 }
-                @SuppressWarnings({"rawtypes", "unchecked"})
-                List<MGame> available = new ArrayList<>(GameManager.get().getGameInstances(type).values());
-                available.removeIf((m) -> switch (m.getPhase()) {
-                    case STOPPED, END, RESTART -> true;
-                    default -> false;
-                });
-                Collections.shuffle(available);
-                available.sort((m1, m2) -> (100 * (m2.getGamers().size() / m2.getMaxGamers() - m1.getGamers().size() / m1.getMaxGamers())));
+                else {
+                    String[] typesRaw = args[0].split(",");
+                    HashSet<MType> types = new HashSet<>();
+                    for (String typeRaw:typesRaw) {
+                        @SuppressWarnings("rawtypes")
+                        MType type = MinigameTypes.get().getType(typeRaw);
+                        if (type == null) {
+                            sendMsg(player, "join.error.invalid_type", "%type%", typeRaw, "%alias%", label);
+                            return;
+                        }
+                        types.add(type);
+                    }
+                    @SuppressWarnings({"rawtypes"})
+                    List<MGame> available = new ArrayList<>(GameManager.get().getGameInstances(types).values());
+                    available.removeIf((m) -> switch (m.getPhase()) {
+                        case STOPPED, END, RESTART -> true;
+                        default -> false;
+                    });
+                    Collections.shuffle(available);
+                    available.sort((m1, m2) -> (100 * (m2.getGamers().size() / m2.getMaxGamers() - m1.getGamers().size() / m1.getMaxGamers())));
 
-                if (GameManager.get().joinGameAsGamer(player, available))
-                    return;
+                    if (GameManager.get().joinGameAsGamer(player, available))
+                        return;
 
-                sendMsg(player, "join.error.no_available_game_of_type", "%type%", type.getType(), "%alias%", label);
+                    sendMsg(player, "join.error.no_available_game_of_type", "%type%", args[0], "%alias%", label);
+                }
             }
             default -> sendMsg(player, "join.error.fastjoin_params", "%alias%", label);
         }
@@ -78,7 +107,17 @@ public class FastJoinCommand extends CoreCommand {
 
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, String @NotNull [] args, @Nullable Location location) {
-        return args.length == 1 ? this.complete(args[0], MinigameTypes.get().getTypes(), MType::getType, (m) -> true) : Collections.emptyList();
+        if (args.length!=1)
+            return Collections.emptyList();
+        int index = args[0].lastIndexOf(",");
+        if (index==-1)
+            return this.complete(args[0], MinigameTypes.get().getTypes(), MType::getType);
+        String param = args[0].substring(index+1);
+        String base = args[0].substring(0,index+1);
+        List<String> completes = this.complete(param, MinigameTypes.get().getTypes(), MType::getType, (m) -> true);
+        for (int i = 0; i< completes.size();i++)
+            completes.set(i,base+completes.get(i));
+        return completes;
     }
 
     private void sendMsg(CommandSender target, String path, String... holders) {

@@ -12,6 +12,18 @@ import java.util.UUID;
 
 public class PlayerStat extends Stat<UUID> {
 
+
+    public static final PlayerStat DEATHMATCH_DEATHS = getStat("DEATHMATCH_DEATHS");
+    public static final PlayerStat DEATHMATCH_KILLS = getStat("DEATHMATCH_KILLS");
+    public static final PlayerStat DEATHMATCH_VICTORY = getStat("DEATHMATCH_VICTORY");
+    public static final PlayerStat DEATHMATCH_PLAYED  = getStat("DEATHMATCH_PLAYED");
+    public static final PlayerStat SKYWARS_KILLS = getStat("SKYWARS_KILLS");
+    public static final PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
+    public static final PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
+    public static final PlayerStat RACE_PLAYED = getStat("RACE_PLAYED");
+    public static final PlayerStat MOUNTEDRACE_PLAYED = getStat("MOUNTEDRACE_PLAYED");
+    public static final PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
+
     private static final YMLConfig conf = Minigames.get().getConfig("data" + File.separator + "user_data.yml");
     private static final HashMap<String, PlayerStat> stats = new HashMap<>();
 
@@ -38,14 +50,6 @@ public class PlayerStat extends Stat<UUID> {
     protected @NotNull String getId(@NotNull UUID target) {
         return target.toString();
     }
-
-    public static final PlayerStat SKYWARS_KILLS = getStat("SKYWARS_KILLS");
-    public static final PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
-    public static final PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
-    public static final PlayerStat RACE_PLAYED = getStat("RACE_PLAYED");
-    public static final PlayerStat MOUNTEDRACE_PLAYED = getStat("MOUNTEDRACE_PLAYED");
-    public static final PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
-
 
     public void add(@NotNull OfflinePlayer target, int amount) {
         add(target.getUniqueId(), amount);

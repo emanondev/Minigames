@@ -74,12 +74,16 @@ public class MountedRaceOption extends ARaceOption {
     @Override
     public @NotNull Map<String, Object> serialize() {
         @NotNull Map<String, Object> map = super.serialize();
-        map.put("entity_type",type==null?null: type.name());
-        map.put("horse_color", horseColor==null?null:horseColor.name());
-        map.put("horse_style",horseStyle==null?null: horseStyle.name());
+        if (type!=null)
+            map.put("entity_type", type.name());
+        if (horseColor!=null)
+            map.put("horse_color", horseColor.name());
+        if (horseStyle!=null)
+            map.put("horse_style", horseStyle.name());
         //map.put("baby", baby);
         map.put("speed", baseSpeed);
-        map.put("boat_type",boatType==null?null: boatType.name());
+        if (boatType!=null)
+            map.put("boat_type", boatType.name());
         map.put("jump_strenght", jumpStrenght);
         return map;
     }

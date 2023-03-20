@@ -123,7 +123,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             game.setLocation(generateLocation(game.getArena(), game.getWorld()));
             save = true;
         }
-        //throw new IllegalStateException("location"); //may just move it
         super.register(id, game, config);
         Collections.min(gameTickList, Comparator.comparingInt(List::size)).add(game);
         if (save)
@@ -181,7 +180,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             BoundingBox box = new BoundingBox(
                     loc.x, loc.y, loc.z,
                     loc.x + dim.getX(), loc.y + dim.getY(), loc.z + dim.getZ());
-            box.expand(528); //32+1 chunk (528)
+            box.expand(272); //16+1 chunk (272)
 
             for (@SuppressWarnings("rawtypes") MGame game : getAll().values()) {
                 if (game.getArena() instanceof MSchemArena schemArena2) {
@@ -190,13 +189,9 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                     Clipboard clip2 = schemArena2.getSchematic();
                     BlockVector3 dim2 = clip2.getDimensions();
                     BlockLocation3D loc2 = game.getGameLocation();
-                    logTetraStar(ChatColor.DARK_RED, "D Box1  &e" + box.getMinX() + " " + box.getMinY() + " " + box.getMinZ() + " to " + box.getMaxX() + " " + box.getMaxY() + " " + box.getMaxZ());
-
                     BoundingBox box2 = new BoundingBox(
                             loc2.x, loc2.y, loc2.z,
                             loc2.x + dim2.getX(), loc2.y + dim2.getY(), loc2.z + dim2.getZ());
-
-                    logTetraStar(ChatColor.DARK_RED, "D Box2  &e" + box2.getMinX() + " " + box2.getMinY() + " " + box2.getMinZ() + " to " + box2.getMaxX() + " " + box2.getMaxY() + " " + box2.getMaxZ());
                     if (box.overlaps(box2))
                         return false;
                 } else
@@ -214,6 +209,14 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             if (v.getMinigameType().equals(type))
                 map.put(k, v);
         });
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    public @NotNull Map<String, MGame> getGameInstances(@NotNull Collection< MType> types) {
+        Map<String, MGame> map = new HashMap<>();
+        for (MType type:types)
+            map.putAll(getGameInstances(type));
         return map;
     }
 

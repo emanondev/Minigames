@@ -24,8 +24,9 @@ public interface MOption extends ConfigurationSerializable, Cloneable, Registrab
 
     boolean getAllowSpectators();
 
+    /*
     @NotNull
-    List<Kit> getKits();
+    List<Kit> getKits();*/
 
     boolean allowSelectingTeam();
 

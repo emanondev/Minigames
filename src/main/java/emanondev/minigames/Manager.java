@@ -106,7 +106,7 @@ public class Manager<T extends Registrable> {
         config.save();
         registrables.remove(id).setUnregister();
         registrablesFile.remove(id);
-        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Deleted Filler &e" + id);
+        Minigames.get().logTetraStar(ChatColor.DARK_RED, "D "+this.getClass().getSimpleName()+" Deleted &e" + id);
     }
 
 

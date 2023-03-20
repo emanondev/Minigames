@@ -491,7 +491,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             if (endArea != null)
                 spawnParticleBoxEdges(p, Particle.REDSTONE, endArea, new Particle.DustOptions(getCheckpointColor(checkPoints.size()), 2F));
 
-            fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, Particle.FLAME, fallArea, null));
+            fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, timerTick,Particle.FLAME, fallArea, null));
         }
     }
 
