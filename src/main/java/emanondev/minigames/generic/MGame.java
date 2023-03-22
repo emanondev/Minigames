@@ -343,11 +343,16 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         };
     }
 
-    default void onGamerMountEvent(EntityMountEvent event, Player player){}
+    default void onGamerMountEvent(EntityMountEvent event, Player player) {
+    }
 
-    default void onGamerDismountEvent(EntityDismountEvent event, Player player){}
+    default void onGamerDismountEvent(EntityDismountEvent event, Player player) {
+    }
 
-    default void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player){};
+    default void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player) {
+    }
+
+    ;
 
     enum Phase {
         STOPPED,

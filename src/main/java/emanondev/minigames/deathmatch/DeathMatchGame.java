@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class DeathMatchGame  extends AbstractMColorSchemGame<DeathMatchTeam, DeathMatchArena, DeathMatchOption> {
+public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, DeathMatchArena, DeathMatchOption> {
 
     private final HashSet<Block> ignoredChest = new HashSet<>();
     private final HashSet<Block> filledChests = new HashSet<>();
@@ -266,7 +266,7 @@ public class DeathMatchGame  extends AbstractMColorSchemGame<DeathMatchTeam, Dea
     }
 
     public void onFakeGamerDeath(@NotNull Player player, @Nullable Player killer, boolean direct) {
-        new IllegalStateException("debug "+getPhase()).printStackTrace();
+        new IllegalStateException("debug " + getPhase()).printStackTrace();
         MessageUtil.debug(getId() + " onFakeGamerDeath " + player.getName() + " " + (killer == null ? "" : killer.getName()));
         if (containsLocation(player))
             for (ItemStack item : player.getInventory().getContents())

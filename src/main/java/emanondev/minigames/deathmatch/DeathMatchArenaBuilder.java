@@ -247,19 +247,19 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
             if (getPhase() <= PHASE_SELECT_AREA)
                 this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
             else
-                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0,0,0,1,1,1));
+                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0, 0, 0, 1, 1, 1));
             if (getPhase() <= PHASE_SELECT_AREA)
                 return;
             Vector min = getAreaMin();
             if (!getArea().equals(getWorldEditSection(p)))
                 spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
-            spawnLocations.forEach((k, v) -> spawnParticleCircle(p,Particle.REDSTONE,min.getX()+v.x,min.getY()+v.y,min.getZ()+v.z,
-                    0.4,timerTick % 4 == 0, new Particle.DustOptions(k.getColor(), 1F)));
-            if (spectatorsOffset!=null) {
+            spawnLocations.forEach((k, v) -> spawnParticleCircle(p, Particle.REDSTONE, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
+                    0.4, timerTick % 4 == 0, new Particle.DustOptions(k.getColor(), 1F)));
+            if (spectatorsOffset != null) {
                 spawnParticleCircle(p, Particle.WAX_ON, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y, min.getZ() + spectatorsOffset.z,
                         0.4, timerTick % 4 == 0);
                 if (timerTick % 4 == 0)
-                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y+1, min.getZ() + spectatorsOffset.z);
+                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y + 1, min.getZ() + spectatorsOffset.z);
             }
         }
     }

@@ -1,9 +1,15 @@
 package emanondev.minigames.race;
 
 import emanondev.core.ItemBuilder;
-import emanondev.core.gui.*;
+import emanondev.core.gui.FButton;
+import emanondev.core.gui.Gui;
+import emanondev.core.gui.LongEditorFButton;
+import emanondev.core.gui.ResearchFButton;
 import emanondev.core.message.DMessage;
-import emanondev.minigames.*;
+import emanondev.minigames.Kit;
+import emanondev.minigames.KitManager;
+import emanondev.minigames.Minigames;
+import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.AbstractMOption;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -12,7 +18,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 public class ARaceOption extends AbstractMOption {
 
@@ -108,7 +116,7 @@ public class ARaceOption extends AbstractMOption {
 
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
-        Gui gui = super.getEditorGui(target,parent);
+        Gui gui = super.getEditorGui(target, parent);
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) perTeamMaxPlayers
                 , (v) -> setTeamMaxSize(v.intValue()),
                 () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(perTeamMaxPlayers)

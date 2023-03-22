@@ -23,7 +23,7 @@ public class RaceArena extends AbstractMColorSchemArena {
         List<BoundingBox> checkpoints = (List<BoundingBox>) map.get("checkpoints");
         if (checkpoints != null)
             this.checkpoints.addAll(checkpoints);
-        for (String loc:(List<String>) map.getOrDefault("checkpoints_respawn",Collections.emptyList())){
+        for (String loc : (List<String>) map.getOrDefault("checkpoints_respawn", Collections.emptyList())) {
             this.checkpointsRespawn.add(LocationOffset3D.fromString(loc));
         }
         this.finishArea = (BoundingBox) map.get("end_area");
@@ -49,7 +49,7 @@ public class RaceArena extends AbstractMColorSchemArena {
         }
         map.put("checkpoints", checkpoints);
         ArrayList<String> raw = new ArrayList<>();
-        checkpointsRespawn.forEach((loc)->raw.add(loc.toString()));
+        checkpointsRespawn.forEach((loc) -> raw.add(loc.toString()));
         map.put("checkpoints_respawn", raw);
         map.put("end_area", finishArea);
         map.put("fall_areas", fallAreas);

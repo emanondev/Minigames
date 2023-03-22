@@ -45,16 +45,16 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
 
     }
 
-    public void teleportResetLocation(Player player) {
+    public void teleportResetLocation(@NotNull Player player) {
         Entity vehicle = player.getVehicle();
         super.teleportResetLocation(player);
         if (isGamer(player) && (getPhase() == Phase.PRE_START || getPhase() == Phase.PLAYING)) {
             Location loc = player.getLocation();
-                Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
-                    getOption().spawnRide(loc).addPassenger(player);
-                    if (vehicle != null && vehicle.isValid())
-                        vehicle.remove();
-                }, 1L);
+            Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
+                getOption().spawnRide(loc).addPassenger(player);
+                if (vehicle != null && vehicle.isValid())
+                    vehicle.remove();
+            }, 1L);
         }
     }
 
@@ -161,7 +161,7 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
             Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
                 if (event.getDismounted().isValid())
                     event.getDismounted().remove();
-                if (player.getVehicle()==null)
+                if (player.getVehicle() == null)
                     teleportResetLocation(player);
             }, 1L);
             //event.setCancelled(true);
@@ -170,13 +170,12 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
     }
 
 
-
     public void onQuitGame(@NotNull Player player) {
         boolean gamer = false;
         if (isGamer(player))
             gamer = true;
         super.onQuitGame(player);
-        if (gamer&&player.getVehicle()!=null){
+        if (gamer && player.getVehicle() != null) {
             Entity vehicle = player.getVehicle();
             vehicle.removePassenger(player);
             vehicle.remove();

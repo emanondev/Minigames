@@ -5,7 +5,6 @@ import emanondev.minigames.generic.AbstractMColorSchemGame;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
@@ -177,7 +176,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                 return;
             }
         }
-        for (int i = getCurrentCheckpoint(event.getPlayer())+1; i < checkpointsAreas.size(); i++) //TODO CHECKPOINTS POLICY
+        for (int i = getCurrentCheckpoint(event.getPlayer()) + 1; i < checkpointsAreas.size(); i++) //TODO CHECKPOINTS POLICY
             if (checkpointsAreas.get(i).overlaps(box)) {
 
                 getMinigameType().REACHED_CHECKPOINT.send(event.getPlayer(), "%checkpoint%", String.valueOf(i + 1));
@@ -239,7 +238,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     public void onQuitGame(@NotNull Player player) {
         super.onQuitGame(player);
-        if (getGamers().size()==0 && getPhase()==Phase.PLAYING){
+        if (getGamers().size() == 0 && getPhase() == Phase.PLAYING) {
             this.gameEnd();
         }
     }

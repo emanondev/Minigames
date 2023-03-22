@@ -2,7 +2,10 @@ package emanondev.minigames.race;
 
 import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
-import emanondev.core.gui.*;
+import emanondev.core.gui.DoubleEditorFButton;
+import emanondev.core.gui.FWrapperButton;
+import emanondev.core.gui.Gui;
+import emanondev.core.gui.ResearchFButton;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
@@ -36,17 +39,17 @@ public class MountedRaceOption extends ARaceOption {
 
     public MountedRaceOption(@NotNull Map<String, Object> map) {
         super(map);
-        type = map.containsKey("entity_type")?EntityType.valueOf((String) map.get("entity_type")):null;
-        horseColor = map.containsKey("horse_color")?Horse.Color.valueOf((String) map.get("horse_color")):null;
-        horseStyle = map.containsKey("horse_style")?Horse.Style.valueOf((String) map.get("horse_style")):null;
-        boatType = map.containsKey("boat_type")?Boat.Type.valueOf((String) map.get("boat_type")):null;
+        type = map.containsKey("entity_type") ? EntityType.valueOf((String) map.get("entity_type")) : null;
+        horseColor = map.containsKey("horse_color") ? Horse.Color.valueOf((String) map.get("horse_color")) : null;
+        horseStyle = map.containsKey("horse_style") ? Horse.Style.valueOf((String) map.get("horse_style")) : null;
+        boatType = map.containsKey("boat_type") ? Boat.Type.valueOf((String) map.get("boat_type")) : null;
         //baby = (boolean) map.getOrDefault("baby",false);
-        baseSpeed = (double) map.getOrDefault("speed",0.12);
-        jumpStrenght = (double) map.getOrDefault("jump_strenght",0.7);
+        baseSpeed = (double) map.getOrDefault("speed", 0.12);
+        jumpStrenght = (double) map.getOrDefault("jump_strenght", 0.7);
     }
 
     public Entity spawnRide(Location loc) {
-        return loc.getWorld().spawn(loc, (type == null ? EntityType.HORSE : type).getEntityClass(), false,(en)-> {
+        return loc.getWorld().spawn(loc, (type == null ? EntityType.HORSE : type).getEntityClass(), false, (en) -> {
             if (en instanceof Horse horse) {
                 horse.setColor(horseColor == null ? Horse.Color.values()[(int) (Math.random() * Horse.Color.values().length)] : horseColor);
                 horse.setStyle(horseStyle == null ? Horse.Style.values()[(int) (Math.random() * Horse.Style.values().length)] : horseStyle);
@@ -74,15 +77,15 @@ public class MountedRaceOption extends ARaceOption {
     @Override
     public @NotNull Map<String, Object> serialize() {
         @NotNull Map<String, Object> map = super.serialize();
-        if (type!=null)
+        if (type != null)
             map.put("entity_type", type.name());
-        if (horseColor!=null)
+        if (horseColor != null)
             map.put("horse_color", horseColor.name());
-        if (horseStyle!=null)
+        if (horseStyle != null)
             map.put("horse_style", horseStyle.name());
         //map.put("baby", baby);
         map.put("speed", baseSpeed);
-        if (boatType!=null)
+        if (boatType != null)
             map.put("boat_type", boatType.name());
         map.put("jump_strenght", jumpStrenght);
         return map;
@@ -190,8 +193,8 @@ public class MountedRaceOption extends ARaceOption {
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                                 "minioption.gui.mounted_jumpstrenght", "%value%",
                                 UtilsString.formatOptional2Digit(getJumpStrenght()))).build()),
-                (e) -> getType().getEntityClass()==null||!AbstractHorse.class.isAssignableFrom(getType().getEntityClass()),
-                () -> getType().getEntityClass()==null||!AbstractHorse.class.isAssignableFrom(getType().getEntityClass()), (e) -> false, () -> null));
+                (e) -> getType().getEntityClass() == null || !AbstractHorse.class.isAssignableFrom(getType().getEntityClass()),
+                () -> getType().getEntityClass() == null || !AbstractHorse.class.isAssignableFrom(getType().getEntityClass()), (e) -> false, () -> null));
 
 
         gui.addButton(new FWrapperButton(gui, new ResearchFButton<>(gui,
@@ -239,8 +242,8 @@ public class MountedRaceOption extends ARaceOption {
                         "minioption.gui.boat_type_description", "%type%", type.name().toLowerCase(Locale.ENGLISH)
                 )).build(),
                 () -> List.of(Boat.Type.values())),
-                (e) -> getType().getEntityClass()==null||!Boat.class.isAssignableFrom(getType().getEntityClass()),
-                () -> getType().getEntityClass()==null||!Boat.class.isAssignableFrom(getType().getEntityClass()),
+                (e) -> getType().getEntityClass() == null || !Boat.class.isAssignableFrom(getType().getEntityClass()),
+                () -> getType().getEntityClass() == null || !Boat.class.isAssignableFrom(getType().getEntityClass()),
                 (e) -> false, () -> null));
 
 
@@ -255,18 +258,19 @@ public class MountedRaceOption extends ARaceOption {
         return gui;
     }
 
-    private static Material getBoatTypeMaterial(Boat.Type type){
-        if (type==null)
+    private static Material getBoatTypeMaterial(Boat.Type type) {
+        if (type == null)
             return Material.OAK_BOAT;
-        try{
-            return Material.valueOf(type+"_BOAT");
-        }catch (Throwable t){
+        try {
+            return Material.valueOf(type + "_BOAT");
+        } catch (Throwable t) {
             return Material.OAK_BOAT;
         }
 
     }
-    private static Material getEntityTypeMaterial(EntityType type){
-        return switch (type){
+
+    private static Material getEntityTypeMaterial(EntityType type) {
+        return switch (type) {
             case BOAT -> Material.OAK_BOAT;
             case CHEST_BOAT -> Material.OAK_CHEST_BOAT;
             case PIG -> Material.CARROT_ON_A_STICK;

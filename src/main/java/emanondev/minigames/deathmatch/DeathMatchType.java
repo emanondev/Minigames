@@ -5,7 +5,6 @@ import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.ArenaManager;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;
@@ -65,7 +64,7 @@ public class DeathMatchType extends MType<DeathMatchArena, DeathMatchOption> {
         double kp = getSection().loadDouble("game.kill_points", 2D);
         if (kp > 0) {
             new VaultEconomyHandler().addMoney(p, kp);
-            new DMessage(getPlugin(),p).appendLang("generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(kp));
+            new DMessage(getPlugin(), p).appendLang("generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(kp));
         }
     }
 
@@ -73,7 +72,7 @@ public class DeathMatchType extends MType<DeathMatchArena, DeathMatchOption> {
         double win = getSection().loadDouble("game.win_points", 10D);
         if (win > 0) {
             new VaultEconomyHandler().addMoney(p, win);
-            new DMessage(getPlugin(),p).appendLang("generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(win));
+            new DMessage(getPlugin(), p).appendLang("generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(win));
         }
     }
 }

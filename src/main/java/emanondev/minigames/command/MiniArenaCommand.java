@@ -3,7 +3,6 @@ package emanondev.minigames.command;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
-import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MArena;
@@ -66,7 +65,8 @@ public class MiniArenaCommand extends CoreCommand {
             sendMsg(sender, "miniarena.error.no_schematic", "%id%", id, "%alias%", label);
             return;
         }
-        WorldEditUtility.paste(player.getLocation(), schemArena.getSchematic(), true, getPlugin(), false, false, false);
+        schemArena.paste(player.getLocation());
+        //WorldEditUtility.paste(player.getLocation(), schemArena.getSchematic(), true, getPlugin(), false, false, false);
         sendMsg(sender, "miniarena.success.paste", "%id%", id, "%alias%", label);
     }
 

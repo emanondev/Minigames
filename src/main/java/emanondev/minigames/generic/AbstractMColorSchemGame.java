@@ -1,6 +1,5 @@
 package emanondev.minigames.generic;
 
-import com.sk89q.worldedit.math.BlockVector3;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
@@ -9,6 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
@@ -179,9 +179,9 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     @Contract("-> new")
     public BoundingBox getBoundingBox() {
         if (boxCache == null) {
-            BlockVector3 dim = getSchematic().getDimensions();
+            BlockVector dim = getArena().getSize();
             boxCache = new BoundingBox(getGameLocation().x, getGameLocation().y, getGameLocation().z,
-                    getGameLocation().x + dim.getX(), getGameLocation().y + dim.getY(), getGameLocation().z + dim.getZ());
+                    getGameLocation().x + dim.getBlockX(), getGameLocation().y + dim.getBlockY(), getGameLocation().z + dim.getBlockZ());
         }
         return boxCache.clone();
     }

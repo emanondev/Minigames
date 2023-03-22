@@ -1,7 +1,6 @@
 package emanondev.minigames.generic;
 
 import emanondev.minigames.Kit;
-import emanondev.minigames.OptionManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,8 +9,8 @@ import java.util.Collection;
 public interface MOptionWithKitsChoice extends MOption {
     Collection<Kit> getKits();
 
-    default boolean hasKit(Kit kit){
-        return kit!=null && hasKitId(kit.getId());
+    default boolean hasKit(Kit kit) {
+        return kit != null && hasKitId(kit.getId());
     }
 
     boolean hasKitId(String kit);

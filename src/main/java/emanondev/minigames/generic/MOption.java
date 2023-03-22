@@ -1,12 +1,9 @@
 package emanondev.minigames.generic;
 
 import emanondev.core.gui.Gui;
-import emanondev.minigames.Kit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public interface MOption extends ConfigurationSerializable, Cloneable, Registrable {
     @Deprecated

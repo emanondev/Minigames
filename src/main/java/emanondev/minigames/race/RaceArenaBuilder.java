@@ -440,7 +440,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         endArea.shift(getArea().getMin().multiply(-1));
         map.put("checkpoints", checkPoints);
         List<String> raw = new ArrayList<>();
-        checkPointsRespawn.forEach((loc)->raw.add(loc.toString()));
+        checkPointsRespawn.forEach((loc) -> raw.add(loc.toString()));
         map.put("checkpoints_respawn", raw);
         map.put("end_area", endArea);
         map.put("fall_areas", fallAreas);
@@ -462,7 +462,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             if (getPhase() <= PHASE_SELECT_AREA)
                 this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
             else
-                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0,0,0,1,1,1));
+                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0, 0, 0, 1, 1, 1));
             if (getPhase() <= PHASE_SELECT_AREA)
                 return;
             Vector min = getAreaMin();
@@ -491,7 +491,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             if (endArea != null)
                 spawnParticleBoxEdges(p, Particle.REDSTONE, endArea, new Particle.DustOptions(getCheckpointColor(checkPoints.size()), 2F));
 
-            fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, timerTick,Particle.FLAME, fallArea, null));
+            fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, timerTick, Particle.FLAME, fallArea, null));
         }
     }
 

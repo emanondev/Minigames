@@ -3,7 +3,6 @@ package emanondev.minigames.eggwars;
 import emanondev.core.ItemBuilder;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.NumberEditorFButton;
-import emanondev.core.gui.PagedMapGui;
 import emanondev.core.gui.ResearchFButton;
 import emanondev.minigames.*;
 import emanondev.minigames.generic.AbstractMOption;

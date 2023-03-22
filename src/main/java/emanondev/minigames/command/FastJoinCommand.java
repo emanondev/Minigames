@@ -73,11 +73,10 @@ public class FastJoinCommand extends CoreCommand {
                         return;
 
                     sendMsg(player, "join.error.no_available_game_of_type", "%type%", type.getType(), "%alias%", label);
-                }
-                else {
+                } else {
                     String[] typesRaw = args[0].split(",");
                     HashSet<MType> types = new HashSet<>();
-                    for (String typeRaw:typesRaw) {
+                    for (String typeRaw : typesRaw) {
                         @SuppressWarnings("rawtypes")
                         MType type = MinigameTypes.get().getType(typeRaw);
                         if (type == null) {
@@ -107,16 +106,16 @@ public class FastJoinCommand extends CoreCommand {
 
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, String @NotNull [] args, @Nullable Location location) {
-        if (args.length!=1)
+        if (args.length != 1)
             return Collections.emptyList();
         int index = args[0].lastIndexOf(",");
-        if (index==-1)
+        if (index == -1)
             return this.complete(args[0], MinigameTypes.get().getTypes(), MType::getType);
-        String param = args[0].substring(index+1);
-        String base = args[0].substring(0,index+1);
+        String param = args[0].substring(index + 1);
+        String base = args[0].substring(0, index + 1);
         List<String> completes = this.complete(param, MinigameTypes.get().getTypes(), MType::getType, (m) -> true);
-        for (int i = 0; i< completes.size();i++)
-            completes.set(i,base+completes.get(i));
+        for (int i = 0; i < completes.size(); i++)
+            completes.set(i, base + completes.get(i));
         return completes;
     }
 

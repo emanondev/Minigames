@@ -6,7 +6,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.CorePlugin;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
@@ -46,7 +45,7 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
         return area.clone();
     }
 
-    public Vector getAreaMin(){
+    public Vector getAreaMin() {
         return getArea().getMin();
     }
 
@@ -54,14 +53,14 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
         return world;
     }
 
-    public BoundingBox getWorldEditSection(Player p){
+    public BoundingBox getWorldEditSection(Player p) {
         try {
             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
                     .getSelection(BukkitAdapter.adapt(p.getWorld()));
             return new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
                     sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
                     sel.getMaximumPoint().getZ());
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }

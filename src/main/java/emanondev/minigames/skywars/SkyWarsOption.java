@@ -3,7 +3,6 @@ package emanondev.minigames.skywars;
 import emanondev.core.ItemBuilder;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.LongEditorFButton;
-import emanondev.core.gui.PagedMapGui;
 import emanondev.core.gui.ResearchFButton;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.*;
@@ -32,18 +31,18 @@ public class SkyWarsOption extends AbstractMOption implements MOptionWithKitsCho
     }
 
     public boolean hasKitId(String kit) {
-        return kit!=null && kits.contains(kit);
+        return kit != null && kits.contains(kit);
     }
 
     public void addKitId(@Nullable String kitId) {
-        if (kitId!=null && !kits.contains(kitId)) {
+        if (kitId != null && !kits.contains(kitId)) {
             this.kits.add(kitId);
             OptionManager.get().save(this);
         }
     }
 
     public void removeKitId(@Nullable String kitId) {
-        if (kitId!=null && kits.contains(kitId)) {
+        if (kitId != null && kits.contains(kitId)) {
             this.kits.remove(kitId);
             OptionManager.get().save(this);
         }

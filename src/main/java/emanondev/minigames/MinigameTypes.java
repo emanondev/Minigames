@@ -1,7 +1,6 @@
 package emanondev.minigames;
 
 import emanondev.core.UtilsString;
-import emanondev.minigames.deathmatch.DeathMatchGame;
 import emanondev.minigames.deathmatch.DeathMatchType;
 import emanondev.minigames.eggwars.EggWarsType;
 import emanondev.minigames.generic.MType;

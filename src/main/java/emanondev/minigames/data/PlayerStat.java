@@ -16,7 +16,7 @@ public class PlayerStat extends Stat<UUID> {
     public static final PlayerStat DEATHMATCH_DEATHS = getStat("DEATHMATCH_DEATHS");
     public static final PlayerStat DEATHMATCH_KILLS = getStat("DEATHMATCH_KILLS");
     public static final PlayerStat DEATHMATCH_VICTORY = getStat("DEATHMATCH_VICTORY");
-    public static final PlayerStat DEATHMATCH_PLAYED  = getStat("DEATHMATCH_PLAYED");
+    public static final PlayerStat DEATHMATCH_PLAYED = getStat("DEATHMATCH_PLAYED");
     public static final PlayerStat SKYWARS_KILLS = getStat("SKYWARS_KILLS");
     public static final PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
     public static final PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");

@@ -1,7 +1,5 @@
 package emanondev.minigames;
 
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.math.BlockVector3;
 import emanondev.core.PlayerSnapshot;
 import emanondev.core.UtilsString;
 import emanondev.core.YMLConfig;
@@ -32,6 +30,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -130,9 +129,9 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         logTetraStar(ChatColor.DARK_RED, "D Registered Game &e" + id + "&f of type &e" + game.getMinigameType().getType()
                 + "&f at location &e" + game.getGameLocation().toString().replace(":", " ")
                 + (game.getArena() instanceof MSchemArena mArena ? " to " +
-                (game.getGameLocation().x + mArena.getSchematic().getDimensions().getBlockX()) + " "
-                + (game.getGameLocation().y + mArena.getSchematic().getDimensions().getBlockY()) + " " +
-                (game.getGameLocation().z + mArena.getSchematic().getDimensions().getBlockZ()) : ""));
+                (game.getGameLocation().x + mArena.getSize().getBlockX()) + " "
+                + (game.getGameLocation().y + mArena.getSize().getBlockY()) + " " +
+                (game.getGameLocation().z + mArena.getSize().getBlockZ()) : ""));
     }
 
 
@@ -174,8 +173,8 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
 
     public boolean isValidLocation(@NotNull BlockLocation3D loc, @NotNull MArena arena, @NotNull World w) {
         if (arena instanceof MSchemArena schemArena) {
-            Clipboard clip = schemArena.getSchematic();
-            BlockVector3 dim = clip.getDimensions();
+            //Clipboard clip = schemArena.getSchematic();
+            BlockVector dim = schemArena.getSize();//clip.getDimensions();
             //TODO eventually move the y
             BoundingBox box = new BoundingBox(
                     loc.x, loc.y, loc.z,
@@ -186,8 +185,8 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                 if (game.getArena() instanceof MSchemArena schemArena2) {
                     if (!game.getWorld().getName().equals(w.getName()))
                         continue;
-                    Clipboard clip2 = schemArena2.getSchematic();
-                    BlockVector3 dim2 = clip2.getDimensions();
+                    BlockVector dim2 = schemArena2.getSize();
+                    //BlockVector3 dim2 = clip2.getDimensions();
                     BlockLocation3D loc2 = game.getGameLocation();
                     BoundingBox box2 = new BoundingBox(
                             loc2.x, loc2.y, loc2.z,
@@ -213,9 +212,9 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
     }
 
     @SuppressWarnings("unchecked")
-    public @NotNull Map<String, MGame> getGameInstances(@NotNull Collection< MType> types) {
+    public @NotNull Map<String, MGame> getGameInstances(@NotNull Collection<MType> types) {
         Map<String, MGame> map = new HashMap<>();
-        for (MType type:types)
+        for (MType type : types)
             map.putAll(getGameInstances(type));
         return map;
     }
@@ -524,6 +523,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             }
         }
     }
+
     @EventHandler(ignoreCancelled = true)
     private void event(EntityMountEvent event) {
         if (event.getEntity() instanceof Player player) {
@@ -536,6 +536,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             }
         }
     }
+
     @EventHandler(ignoreCancelled = true)
     private void event(EntityDismountEvent event) {
         if (event.getEntity() instanceof Player player) {
@@ -548,13 +549,14 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             }
         }
     }
+
     @EventHandler(ignoreCancelled = true)
     private void event(VehicleMoveEvent event) {
-        for (Entity e:event.getVehicle().getPassengers()) {
+        for (Entity e : event.getVehicle().getPassengers()) {
             if (e instanceof Player player) {
                 @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
-                if (game != null&& game.isGamer(player))
-                        game.onGamerVehicleMoveEvent(event, player);
+                if (game != null && game.isGamer(player))
+                    game.onGamerVehicleMoveEvent(event, player);
 
             }
         }

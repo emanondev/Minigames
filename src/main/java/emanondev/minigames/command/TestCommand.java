@@ -1,20 +1,28 @@
 package emanondev.minigames.command;
 
+import com.sk89q.jnbt.NBTInputStream;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import emanondev.core.command.CoreCommand;
+import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 public class TestCommand extends CoreCommand {
 
+    Clipboard schematicCache;
 
     public TestCommand() {
         super("test2", Minigames.get(), new Permission("aaa.bbb"));
@@ -22,31 +30,21 @@ public class TestCommand extends CoreCommand {
 
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String s, String @NotNull [] args) {
-        if (!(sender instanceof Player p))
-            throw new IllegalStateException();
-        new BukkitRunnable() {
-            int i = 0;
+        File dest = new File(ArenaManager.get().getSchematicsFolder(), "emanon____pillars");
+        if (!dest.isFile())
+            throw new IllegalStateException("selected schematic do not exist");
 
-            @Override
-            public void run() {
-                boolean done = false;
-                while (!done)
-                    try {
-                        if (i>=Particle.values().length) {
-                            this.cancel();
-                            return;
-                        }
-                        Location l = p.getEyeLocation().add(p.getLocation().getDirection().multiply(3));
-                        p.spawnParticle(Particle.values()[i/2], l, 1);
-                        if (i%2==0)
-                            p.sendMessage(Particle.values()[i/2].name());
-                        done = true;
-                    } catch (Exception e) {
-                        i++;
-                    }
-                i++;
-            }
-        }.runTaskTimer(Minigames.get(), 20, 20);
+        ClipboardFormat format = ClipboardFormats.findByFile(dest);
+        try (NBTInputStream nbtStream = new NBTInputStream(new GZIPInputStream(new FileInputStream(dest)))) {
+            //ClipboardReader reader = format.getReader(new FileInputStream(dest));
+            //log(reader.getClass().getName()+" "+reader.getClass().getSimpleName());
+            Test test = new Test(nbtStream);
+            test.read();
+            nbtStream.close();
+            //reader.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
