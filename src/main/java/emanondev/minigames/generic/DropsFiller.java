@@ -9,6 +9,7 @@ import emanondev.minigames.FillerManager;
 import emanondev.minigames.Minigames;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+@SerializableAs("DropsFiller")
 public class DropsFiller extends ARegistrable implements ConfigurationSerializable {
 
     private final List<String> dropGroups = new ArrayList<>();

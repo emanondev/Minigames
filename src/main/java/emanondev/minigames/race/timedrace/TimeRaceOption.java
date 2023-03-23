@@ -1,5 +1,6 @@
-package emanondev.minigames.race;
+package emanondev.minigames.race.timedrace;
 
+import emanondev.minigames.race.ARaceOption;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

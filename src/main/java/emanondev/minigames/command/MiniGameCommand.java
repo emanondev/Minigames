@@ -194,7 +194,7 @@ public class MiniGameCommand extends CoreCommandPlus {
         @SuppressWarnings("rawtypes")
         MGame mGame = mType.createGame(arena.getId(), option.getId());
         GameManager.get().register(id, mGame, player);
-        mGame.gameInitialize();
+        mGame.initialize();
         sendMsg(player, "minigame.success.create", UtilsString.merge(mGame.getPlaceholders(), "%alias%", label));
     }
 

@@ -1,6 +1,8 @@
-package emanondev.minigames.race;
+package emanondev.minigames.race.timedrace;
 
 import emanondev.minigames.MinigameTypes;
+import emanondev.minigames.race.ARaceGame;
+import emanondev.minigames.race.ARaceTeam;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;

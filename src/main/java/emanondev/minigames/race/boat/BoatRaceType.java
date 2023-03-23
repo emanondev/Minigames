@@ -1,4 +1,4 @@
-package emanondev.minigames.race;
+package emanondev.minigames.race.boat;
 
 import emanondev.core.ItemBuilder;
 import emanondev.minigames.ArenaManager;
@@ -6,6 +6,8 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MOption;
+import emanondev.minigames.race.ARaceType;
+import emanondev.minigames.race.RaceArena;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
@@ -13,23 +15,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MountedRaceType extends ARaceType<MountedRaceOption> {
+public class BoatRaceType extends ARaceType<BoatRaceOption> {
 
 
-    public MountedRaceType() {
-        super("mountedrace", RaceArena.class, MountedRaceOption.class, Minigames.get());
+    public BoatRaceType() {
+        super("boatrace", RaceArena.class, BoatRaceOption.class, Minigames.get());
         ConfigurationSerialization.registerClass(RaceArena.class);
-        ConfigurationSerialization.registerClass(MountedRaceOption.class);
-        ConfigurationSerialization.registerClass(MountedRaceGame.class);
+        ConfigurationSerialization.registerClass(BoatRaceOption.class);
+        ConfigurationSerialization.registerClass(BoatRaceGame.class);
     }
 
     @Override
-    public @NotNull MountedRaceOption createDefaultOptions() {
-        return new MountedRaceOption();
+    public @NotNull BoatRaceOption createDefaultOptions() {
+        return new BoatRaceOption();
     }
 
     @Override
-    public @NotNull MountedRaceGame createGame(@NotNull String arenaId, @NotNull String optionId) {
+    public @NotNull BoatRaceGame createGame(@NotNull String arenaId, @NotNull String optionId) {
         MArena arena = ArenaManager.get().get(arenaId);
         if (arena == null || !this.matchType(arena))
             throw new IllegalStateException();
@@ -39,12 +41,12 @@ public class MountedRaceType extends ARaceType<MountedRaceOption> {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("option", optionId);
         map.put("arena", arenaId);
-        return new MountedRaceGame(map);
+        return new BoatRaceGame(map);
     }
 
     @Override
     public @NotNull ItemBuilder getGameSelectorBaseItem() {
-        return new ItemBuilder(getSection().getMaterial("display.gui.material", Material.LEATHER_BOOTS))
+        return new ItemBuilder(getSection().getMaterial("display.gui.material", Material.OAK_BOAT))
                 .setGuiProperty().setCustomModelData(getSection()
                         .getInteger("display.gui.custommodel", null));
     }

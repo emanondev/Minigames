@@ -1,6 +1,7 @@
 package emanondev.minigames.generic;
 
 import emanondev.core.message.DMessage;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.Chunk;
@@ -31,6 +32,7 @@ import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 
 public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends ConfigurationSerializable, Cloneable, Registrable {
@@ -124,15 +126,29 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      * must set phase to RESTART and call gameRestart()
      * <p>
      * also do anything which should be done when the game start for the first time and do not need to be done on game restart
+     * @return
      */
-    void gameInitialize();
+    CompletableFuture<Void> gameInitialize();
+
+
+    default void initialize(){
+        gameInitialize().whenComplete((value,th)-> {
+            MessageUtil.debug(this.getId()+" ("+getMinigameType().getType()+") Inizializzazione terminata");
+            if (th != null)
+                this.gameAbort();
+            else
+                this.restart();
+        });
+    }
 
     /**
      * reset any variables which needs to be cleared on game restart
      * after that register the timer task
      * and finally set the COLLECTING_PLAYERS phase
      */
-    void gameRestart();
+    CompletableFuture<Void> gameRestart();
+
+    void restart();
 
     void gameCollectingPlayers();
 

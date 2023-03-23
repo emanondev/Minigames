@@ -3,12 +3,14 @@ package emanondev.minigames.race;
 import emanondev.minigames.generic.AbstractMColorSchemArena;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.DyeColor;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+@SerializableAs("RaceArena")
 public class RaceArena extends AbstractMColorSchemArena {
     private final Map<DyeColor, LocationOffset3D> spawnLocations = new EnumMap<>(DyeColor.class);
     private final List<BoundingBox> checkpoints = new ArrayList<>();

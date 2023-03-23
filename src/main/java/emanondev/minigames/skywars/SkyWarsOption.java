@@ -10,6 +10,7 @@ import emanondev.minigames.generic.AbstractMOption;
 import emanondev.minigames.generic.DropsFiller;
 import emanondev.minigames.generic.MOptionWithKitsChoice;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+@SerializableAs("SkyWarsOption")
 public class SkyWarsOption extends AbstractMOption implements MOptionWithKitsChoice {
 
     public void setTeamMaxPlayers(int value) {

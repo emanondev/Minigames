@@ -104,10 +104,10 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         for (@SuppressWarnings("rawtypes") MGame game : getAll().values()) {
             new BukkitRunnable() {
                 public void run() {
-                    game.gameInitialize();
+                    game.initialize();
                 }
             }.runTaskLater(Minigames.get(), counter);
-            counter += 5;
+            counter += 40;
         }
 
     }

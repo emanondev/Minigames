@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O extends MOption> extends ARegistrable implements MGame<T, A, O>, Listener {
 
@@ -96,7 +98,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             this.gameAbort();
         this.loc = loc;
         if (!wasStopped)
-            this.gameInitialize();
+            this.initialize();
     }
 
     @Override
@@ -109,27 +111,57 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     }
 
     @Override
-    public void gameInitialize() {
-        MessageUtil.debug(getId() + " gameInizialize");
-        if (phase != Phase.STOPPED)
-            throw new IllegalStateException();
-        phase = Phase.RESTART;
-        gameRestart();
+    public CompletableFuture<Void> gameInitialize() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        new BukkitRunnable() {
+            public void run() {
+                try {
+                    MessageUtil.debug(getId() + " gameInizialize");
+                    if (phase != Phase.STOPPED)
+                        throw new IllegalStateException();
+                    phase = Phase.RESTART;
+                    future.complete(null);
+                } catch (Throwable t) {
+                    future.completeExceptionally(t);
+                }
+            }
+        }.runTask(Minigames.get());
+        return future;
     }
 
     @Override
-    public void gameRestart() {
-        MessageUtil.debug(getId() + " gameRestart");
-        if (phase != Phase.RESTART)
-            throw new IllegalStateException();
+    public CompletableFuture<Void> gameRestart() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        new BukkitRunnable() {
+            public void run() {
+                try {
+                    MessageUtil.debug(getId() + " gameRestart");
+                    if (phase != Phase.RESTART)
+                        throw new IllegalStateException();
 
-        kitPreference.clear();
-        for (T team : getTeams())
-            team.clear();
-        phase = Phase.COLLECTING_PLAYERS;
-        gameCollectingPlayers();
+                    kitPreference.clear();
+                    for (T team : getTeams())
+                        team.clear();
+                    future.complete(null);
+                } catch (Throwable t) {
+                    future.completeExceptionally(t);
+                }
+            }
+        }.runTask(Minigames.get());
+        return future;
     }
 
+    public void restart() {
+        gameRestart().whenComplete((value, th) -> {
+            MessageUtil.debug(this.getId() + " (" + getMinigameType().getType() + ") Restart terminato");
+            if (th != null)
+                this.gameAbort();
+            else {
+                phase = Phase.COLLECTING_PLAYERS;
+                gameCollectingPlayers();
+            }
+        });
+    }
 
     @Override
     public void gameCollectingPlayers() {
@@ -212,7 +244,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (preStartCountdown <= 0) {
             if (!gameCanStart()) { //some idiot disconnected //TODO back to Collecting Players (?)
                 this.gameAbort(); //TODO here!!
-                this.gameRestart();
+                this.restart();
                 return;
             }
             getGamers().forEach(SimpleMessage::sendEmptyActionBarMessage);
@@ -325,7 +357,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         //timer.cancel();
         phase = Phase.RESTART;
         registerAsListener(false);
-        gameRestart();
+        restart();
     }
 
     @Override

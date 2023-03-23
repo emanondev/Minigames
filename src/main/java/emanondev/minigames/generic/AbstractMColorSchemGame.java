@@ -8,6 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends MSchemArena & MColorableTeamArena, O extends MOption> extends AbstractMGame<T, A, O> implements MSchemGame<T, A, O> {
 
@@ -119,49 +121,95 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     }
 
     @Override
-    public void gameInitialize() {
-        super.gameInitialize();
-        BoundingBox box = getBoundingBox();
-        BoundingBox above = new BoundingBox(box.getMinX(), box.getMaxY(), box.getMinZ(),
-                box.getMaxX(), getWorld().getMaxHeight(), box.getMaxZ());
-        BoundingBox below = new BoundingBox(box.getMinX(), getWorld().getMinHeight(), box.getMinZ(),
-                box.getMaxX(), box.getMinY() - 1, box.getMaxZ());
-        above.expand(CLEAR_MARGIN, 0, CLEAR_MARGIN);
-        below.expand(CLEAR_MARGIN, 0, CLEAR_MARGIN);
-        WorldEditUtility.pasteAir(above, getWorld(), true, Minigames.get());
-        WorldEditUtility.pasteAir(below, getWorld(), true, Minigames.get());
-        BoundingBox side1 = new BoundingBox(box.getMinX(), box.getMinY(), box.getMinZ() - 1,
-                box.getMaxX(), box.getMaxY(), box.getMinZ() - CLEAR_MARGIN);
-        BoundingBox side2 = new BoundingBox(box.getMinX(), box.getMinY(), box.getMaxZ(),
-                box.getMaxX(), box.getMaxY(), box.getMaxZ() + CLEAR_MARGIN);
-        side1.expand(CLEAR_MARGIN, 0, 0);
-        side2.expand(CLEAR_MARGIN, 0, 0);
-        WorldEditUtility.pasteAir(side1, getWorld(), true, Minigames.get());
-        WorldEditUtility.pasteAir(side2, getWorld(), true, Minigames.get());
-        BoundingBox side3 = new BoundingBox(box.getMinX() - 1, box.getMinY(), box.getMinZ(),
-                box.getMinX() - CLEAR_MARGIN, box.getMaxY(), box.getMaxZ());
-        BoundingBox side4 = new BoundingBox(box.getMaxX(), box.getMinY(), box.getMinZ(),
-                box.getMaxX() + CLEAR_MARGIN, box.getMaxY(), box.getMaxZ());
-        WorldEditUtility.pasteAir(side3, getWorld(), true, Minigames.get());
-        WorldEditUtility.pasteAir(side4, getWorld(), true, Minigames.get());
+    public CompletableFuture<Void> gameInitialize() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        super.gameInitialize().whenComplete((value, th) -> {
+            if (th != null)
+                future.completeExceptionally(th);
+            else
+                new BukkitRunnable() {
+                    public void run() {
+                        try {
+                            BoundingBox box = getBoundingBox();
+                            BoundingBox above = new BoundingBox(box.getMinX(), box.getMaxY(), box.getMinZ(),
+                                    box.getMaxX(), getWorld().getMaxHeight(), box.getMaxZ());
+                            BoundingBox below = new BoundingBox(box.getMinX(), getWorld().getMinHeight(), box.getMinZ(),
+                                    box.getMaxX(), box.getMinY() - 1, box.getMaxZ());
+                            above.expand(CLEAR_MARGIN, 0, CLEAR_MARGIN);
+                            below.expand(CLEAR_MARGIN, 0, CLEAR_MARGIN);
+                            BoundingBox side1 = new BoundingBox(box.getMinX(), box.getMinY(), box.getMinZ() - 1,
+                                    box.getMaxX(), box.getMaxY(), box.getMinZ() - CLEAR_MARGIN);
+                            BoundingBox side2 = new BoundingBox(box.getMinX(), box.getMinY(), box.getMaxZ(),
+                                    box.getMaxX(), box.getMaxY(), box.getMaxZ() + CLEAR_MARGIN);
+                            side1.expand(CLEAR_MARGIN, 0, 0);
+                            side2.expand(CLEAR_MARGIN, 0, 0);
+                            BoundingBox side3 = new BoundingBox(box.getMinX() - 1, box.getMinY(), box.getMinZ(),
+                                    box.getMinX() - CLEAR_MARGIN, box.getMaxY(), box.getMaxZ());
+                            BoundingBox side4 = new BoundingBox(box.getMaxX(), box.getMinY(), box.getMinZ(),
+                                    box.getMaxX() + CLEAR_MARGIN, box.getMaxY(), box.getMaxZ());
+                            CompletableFuture.allOf(
+                                    WorldEditUtility.pasteAir(above, getWorld(), true, Minigames.get()),
+                                    WorldEditUtility.pasteAir(below, getWorld(), true, Minigames.get()),
+                                    WorldEditUtility.pasteAir(side1, getWorld(), true, Minigames.get()),
+                                    WorldEditUtility.pasteAir(side2, getWorld(), true, Minigames.get()),
+                                    WorldEditUtility.pasteAir(side3, getWorld(), true, Minigames.get()),
+                                    WorldEditUtility.pasteAir(side4, getWorld(), true, Minigames.get())
+                            ).whenComplete((value, th) -> {
+                                if (th != null)
+                                    future.completeExceptionally(th);
+                                else
+                                    future.complete(null);
+                            });
+                        } catch (Throwable t) {
+                            future.completeExceptionally(t);
+                        }
+                    }
+                }.runTask(Minigames.get());
+        });
+        return future;
     }
 
     @Override
-    public void gameRestart() {
-        if (getPhase() != Phase.RESTART)
-            throw new IllegalStateException();
-        this.pasteSchematic();
-        super.gameRestart();
-        this.clearedEntitiesBefore.clear();
-        World w = getWorld();
-        getBoundingBox(); //force load
-        for (Chunk chunk : w.getLoadedChunks())
-            if (this.overlaps(chunk) && chunk.isEntitiesLoaded()) {
-                clearedEntitiesBefore.add(chunk);
-                for (Entity e : chunk.getEntities())
-                    if (!(e instanceof Player))
-                        e.remove();
-            }
+    public CompletableFuture<Void> gameRestart() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        if (getPhase() != Phase.RESTART) {
+            future.completeExceptionally(new IllegalStateException());
+            return future;
+        }
+
+        pasteSchematic().whenComplete((val, t) -> {
+            if (t != null)
+                future.completeExceptionally(t);
+            else
+                super.gameRestart().whenComplete((value, t2) -> {
+                    if (t2 != null)
+                        future.completeExceptionally(t2);
+                    else
+                        new BukkitRunnable() {
+                            public void run() {
+                                try {
+                                    clearedEntitiesBefore.clear();
+                                    World w = getWorld();
+                                    getBoundingBox(); //force load
+                                    for (Chunk chunk : w.getLoadedChunks())
+                                        if (overlaps(chunk) && chunk.isEntitiesLoaded()) {
+                                            clearedEntitiesBefore.add(chunk);
+                                            for (Entity e : chunk.getEntities())
+                                                if (!(e instanceof Player))
+                                                    e.remove();
+                                        }
+                                    future.complete(null);
+                                } catch (Throwable t3) {
+                                    future.completeExceptionally(t3);
+                                }
+
+                            }
+                        }.runTask(Minigames.get());
+
+
+                });
+        });
+        return future;
     }
 
     protected abstract @NotNull T craftTeam(@NotNull DyeColor color);

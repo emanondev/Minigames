@@ -1,4 +1,4 @@
-package emanondev.minigames.race;
+package emanondev.minigames.race.running;
 
 import emanondev.core.ItemBuilder;
 import emanondev.minigames.ArenaManager;
@@ -6,6 +6,8 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;
 import emanondev.minigames.generic.MOption;
+import emanondev.minigames.race.ARaceType;
+import emanondev.minigames.race.RaceArena;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
@@ -13,23 +15,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class RaceType extends ARaceType<RaceOption> {
+public class RunRaceType extends ARaceType<RunRaceOption> {
 
 
-    public RaceType() {
-        super("race", RaceArena.class, RaceOption.class, Minigames.get());
+    public RunRaceType() {
+        super("runrace", RaceArena.class, RunRaceOption.class, Minigames.get());
         ConfigurationSerialization.registerClass(RaceArena.class);
-        ConfigurationSerialization.registerClass(RaceOption.class);
-        ConfigurationSerialization.registerClass(RaceGame.class);
+        ConfigurationSerialization.registerClass(RunRaceOption.class);
+        ConfigurationSerialization.registerClass(RunRaceGame.class);
     }
 
     @Override
-    public @NotNull RaceOption createDefaultOptions() {
-        return new RaceOption();
+    public @NotNull RunRaceOption createDefaultOptions() {
+        return new RunRaceOption();
     }
 
     @Override
-    public @NotNull RaceGame createGame(@NotNull String arenaId, @NotNull String optionId) {
+    public @NotNull RunRaceGame createGame(@NotNull String arenaId, @NotNull String optionId) {
         MArena arena = ArenaManager.get().get(arenaId);
         if (arena == null || !this.matchType(arena))
             throw new IllegalStateException();
@@ -39,7 +41,7 @@ public class RaceType extends ARaceType<RaceOption> {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("option", optionId);
         map.put("arena", arenaId);
-        return new RaceGame(map);
+        return new RunRaceGame(map);
     }
 
     @Override

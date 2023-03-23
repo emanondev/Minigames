@@ -1,6 +1,7 @@
 package emanondev.minigames.race;
 
 import emanondev.minigames.MessageUtil;
+import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -14,11 +15,13 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> extends AbstractMColorSchemGame<T, RaceArena, O> {
 
@@ -33,23 +36,52 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     }
 
 
-    public void gameInitialize() {
-        super.gameInitialize();
-        checkpointsAreas.clear();
-        falloutAreas.clear();
-        checkpointsAreas.addAll(getArena().getCheckpoints());
-        falloutAreas.addAll(getArena().getFallAreas());
-        Location offset = getGameLocation().toLocation();
-        for (BoundingBox box : checkpointsAreas)
-            box.shift(offset);
-        for (BoundingBox box : falloutAreas)
-            box.shift(offset);
-        finishArea = getArena().getFinishArea().shift(offset);
+    public CompletableFuture<Void> gameInitialize() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        CompletableFuture<Void> old = super.gameInitialize();
+        old.whenComplete((value, th) -> {
+            if (th != null)
+                future.completeExceptionally(th);
+            else
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            checkpointsAreas.clear();
+                            falloutAreas.clear();
+                            checkpointsAreas.addAll(getArena().getCheckpoints());
+                            falloutAreas.addAll(getArena().getFallAreas());
+                            Location offset = getGameLocation().toLocation();
+                            for (BoundingBox box : checkpointsAreas)
+                                box.shift(offset);
+                            for (BoundingBox box : falloutAreas)
+                                box.shift(offset);
+                            finishArea = getArena().getFinishArea().shift(offset);
+                            future.complete(null);
+                        } catch (Throwable t) {
+                            future.completeExceptionally(t);
+                        }
+                    }
+                }.runTask(Minigames.get());
+        });
+        return future;
     }
 
-    public void gameRestart() {
-        super.gameRestart();
-        currentCheckpoint.clear();
+    public CompletableFuture<Void> gameRestart() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        super.gameRestart().whenComplete((value,th)->{
+            if (th!=null)
+                future.completeExceptionally(th);
+            else
+                new BukkitRunnable(){
+                    @Override
+                    public void run() {
+                        currentCheckpoint.clear();
+                        future.complete(null);
+                    }
+                }.runTask(Minigames.get());
+        });
+        return future;
     }
 
 
@@ -161,7 +193,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
 
     public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
-        MessageUtil.debug(getId() + " moveinsidearena " + event.getPlayer().getName());
+        //MessageUtil.debug(getId() + " moveinsidearena " + event.getPlayer().getName());
         super.onGamerMoveInsideArena(event);
         if (isSpectator(event.getPlayer()))
             return;

@@ -3,10 +3,12 @@ package emanondev.minigames.skywars;
 import emanondev.minigames.generic.AbstractMColorSchemArena;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.DyeColor;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+@SerializableAs("SkyWarsArena")
 public class SkyWarsArena extends AbstractMColorSchemArena {
 
     /*

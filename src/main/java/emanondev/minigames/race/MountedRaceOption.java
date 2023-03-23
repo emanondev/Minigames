@@ -3,7 +3,6 @@ package emanondev.minigames.race;
 import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
 import emanondev.core.gui.DoubleEditorFButton;
-import emanondev.core.gui.FWrapperButton;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.ResearchFButton;
 import emanondev.core.message.DMessage;
@@ -21,30 +20,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class MountedRaceOption extends ARaceOption {
+public abstract class MountedRaceOption extends ARaceOption {
 
     private EntityType type;
-    private Horse.Color horseColor;
-    private Horse.Style horseStyle;
-    //private boolean baby; //future custom wasd control
     private double baseSpeed;
     private Boat.Type boatType;
     private double jumpStrenght;
-    //chested
-    //armoured (type)
-
-    public MountedRaceOption() {
-        this(new HashMap<>());
-    }
+    private Horse.Color horseColor;
+    private Horse.Style horseStyle;
 
     public MountedRaceOption(@NotNull Map<String, Object> map) {
         super(map);
         type = map.containsKey("entity_type") ? EntityType.valueOf((String) map.get("entity_type")) : null;
+        boatType = map.containsKey("boat_type") ? Boat.Type.valueOf((String) map.get("boat_type")) : null;
+        baseSpeed = (double) map.getOrDefault("speed", 0.12);
         horseColor = map.containsKey("horse_color") ? Horse.Color.valueOf((String) map.get("horse_color")) : null;
         horseStyle = map.containsKey("horse_style") ? Horse.Style.valueOf((String) map.get("horse_style")) : null;
-        boatType = map.containsKey("boat_type") ? Boat.Type.valueOf((String) map.get("boat_type")) : null;
-        //baby = (boolean) map.getOrDefault("baby",false);
-        baseSpeed = (double) map.getOrDefault("speed", 0.12);
         jumpStrenght = (double) map.getOrDefault("jump_strenght", 0.7);
     }
 
@@ -63,8 +54,6 @@ public class MountedRaceOption extends ARaceOption {
                 boat.setBoatType(boatType == null ? Boat.Type.values()[(int) (Math.random() * Boat.Type.values().length)] : boatType);
             if (en instanceof Steerable steerable)
                 steerable.setSaddle(true);
-            /*if (en instanceof Ageable ageable && baby)
-                ageable.setBaby();*/
             if (en instanceof LivingEntity living)
                 living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(baseSpeed);
             if (en instanceof Mob mob)
@@ -83,7 +72,6 @@ public class MountedRaceOption extends ARaceOption {
             map.put("horse_color", horseColor.name());
         if (horseStyle != null)
             map.put("horse_style", horseStyle.name());
-        //map.put("baby", baby);
         map.put("speed", baseSpeed);
         if (boatType != null)
             map.put("boat_type", boatType.name());
@@ -93,10 +81,12 @@ public class MountedRaceOption extends ARaceOption {
 
 
     public @NotNull EntityType getType() {
-        return type == null ? EntityType.HORSE : type;
+        return type == null ? getDefaultType() : type;
     }
 
     public void setType(@Nullable EntityType type) {
+        if (type!=null && !isAllowedType(type))
+            throw new IllegalStateException();
         this.type = type;
         OptionManager.get().save(this);
     }
@@ -118,15 +108,6 @@ public class MountedRaceOption extends ARaceOption {
         this.horseStyle = horseStyle;
         OptionManager.get().save(this);
     }
-/*
-    public boolean isBaby() {
-        return baby;
-    }
-
-    public void setBaby(boolean baby) {
-        this.baby = baby;
-        OptionManager.get().save(this);
-    }*/
 
     public double getBaseSpeed() {
         return baseSpeed;
@@ -155,16 +136,18 @@ public class MountedRaceOption extends ARaceOption {
         OptionManager.get().save(this);
     }
 
+    protected Set<EntityType> getAllowedTypes() {
+        SortedSet<EntityType> allowed = new TreeSet<>(Comparator.comparing(Enum::name));
+        for (EntityType type : EntityType.values())
+            if (isAllowedType(type))
+                allowed.add(type);
+        return allowed;
+    }
 
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
         Gui gui = super.getEditorGui(target, parent);
-        List<EntityType> allowed = new ArrayList<>();
-        for (EntityType type : EntityType.values()) //TODO add more with custom spawned controllable mobs
-            if (type.getEntityClass() != null && Vehicle.class.isAssignableFrom(type.getEntityClass()))
-                if (!type.name().contains("MINECART_") && !type.name().contains("LLAMA"))
-                    allowed.add(type);
-        allowed.sort(Comparator.comparing(Enum::name));
+        Set<EntityType> allowed = getAllowedTypes();
 
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(getEntityTypeMaterial(getType())).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
@@ -181,95 +164,20 @@ public class MountedRaceOption extends ARaceOption {
                         "minioption.gui.entitytype_description", "%type%", type.name().toLowerCase(Locale.ENGLISH)
                 )).build(),
                 () -> allowed));
-        gui.addButton(new DoubleEditorFButton(gui, 1, 0.01, 10, this::getBaseSpeed
+        gui.addButton(new DoubleEditorFButton(gui, 0.1, 0.01, 10, this::getBaseSpeed
                 , this::setBaseSpeed,
                 () -> new ItemBuilder(Material.LEATHER_BOOTS).setGuiProperty()
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                                 "minioption.gui.mounted_basespeed", "%value%",
                                 UtilsString.formatOptional2Digit(getBaseSpeed()))).build()));
-        gui.addButton(new FWrapperButton(gui, new DoubleEditorFButton(gui, 1, 0.01, 10, this::getJumpStrenght
-                , this::setJumpStrenght,
-                () -> new ItemBuilder(Material.RABBIT_FOOT).setGuiProperty()
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                                "minioption.gui.mounted_jumpstrenght", "%value%",
-                                UtilsString.formatOptional2Digit(getJumpStrenght()))).build()),
-                (e) -> getType().getEntityClass() == null || !AbstractHorse.class.isAssignableFrom(getType().getEntityClass()),
-                () -> getType().getEntityClass() == null || !AbstractHorse.class.isAssignableFrom(getType().getEntityClass()), (e) -> false, () -> null));
-
-
-        gui.addButton(new FWrapperButton(gui, new ResearchFButton<>(gui,
-                () -> new ItemBuilder(Material.BROWN_DYE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.horse_color_selector", "%selected%", getHorseColor() == null ? "-random-" : getHorseColor().name().toLowerCase(Locale.ENGLISH)
-                )).build(),
-                (String base, Horse.Color color) -> color.name().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
-                (InventoryClickEvent event, Horse.Color color) -> {
-                    setHorseColor(getHorseColor() == color ? null : color);
-                    gui.open(event.getWhoClicked());
-                    return true;
-                },
-                (Horse.Color color) -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        color == getHorseColor() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.horse_color_description", "%color%", color.name().toLowerCase(Locale.ENGLISH)
-                )).build(),
-                () -> List.of(Horse.Color.values())), (e) -> getType() != EntityType.HORSE, () -> getType() != EntityType.HORSE, (e) -> false, () -> null));
-        gui.addButton(new FWrapperButton(gui, new ResearchFButton<>(gui,
-                () -> new ItemBuilder(Material.SADDLE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.horse_style_selector", "%selected%", getHorseStyle() == null ? "-random-" : getHorseStyle().name().toLowerCase(Locale.ENGLISH)
-                )).build(),
-                (String base, Horse.Style style) -> style.name().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
-                (InventoryClickEvent event, Horse.Style style) -> {
-                    setHorseStyle(getHorseStyle() == style ? null : style);
-                    gui.open(event.getWhoClicked());
-                    return true;
-                },
-                (Horse.Style style) -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        style == getHorseStyle() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.horse_style_description", "%style%", style.name().toLowerCase(Locale.ENGLISH)
-                )).build(),
-                () -> List.of(Horse.Style.values())), (e) -> getType() != EntityType.HORSE, () -> getType() != EntityType.HORSE, (e) -> false, () -> null));
-        gui.addButton(new FWrapperButton(gui, new ResearchFButton<>(gui,
-                () -> new ItemBuilder(getBoatTypeMaterial(getBoatType())).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.boat_type_selector", "%selected%", getBoatType() == null ? "-random-" : getBoatType().name().toLowerCase(Locale.ENGLISH)
-                )).build(),
-                (String base, Boat.Type type) -> type.name().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
-                (InventoryClickEvent event, Boat.Type type) -> {
-                    setBoatType(getBoatType() == type ? null : type);
-                    gui.open(event.getWhoClicked());
-                    return true;
-                },
-                (Boat.Type type) -> new ItemBuilder(getBoatTypeMaterial(type)).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        type == getBoatType() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
-                        "minioption.gui.boat_type_description", "%type%", type.name().toLowerCase(Locale.ENGLISH)
-                )).build(),
-                () -> List.of(Boat.Type.values())),
-                (e) -> getType().getEntityClass() == null || !Boat.class.isAssignableFrom(getType().getEntityClass()),
-                () -> getType().getEntityClass() == null || !Boat.class.isAssignableFrom(getType().getEntityClass()),
-                (e) -> false, () -> null));
-
-
-        //TODO future custom wasd control
-        /*gui.addButton(new FButton(gui, () ->
-                new ItemBuilder(Material.VEX_SPAWN_EGG).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer())
-                                .appendLangList("minioption.gui.allow_spectators", "%value%", String.valueOf(isBaby())))
-                        .setGuiProperty().addEnchantment(Enchantment.DURABILITY, isBaby() ? 1 : 0).build(), (event) -> {
-            setBaby(!isBaby());
-            return true;
-        }));*/
         return gui;
     }
 
-    private static Material getBoatTypeMaterial(Boat.Type type) {
-        if (type == null)
-            return Material.OAK_BOAT;
-        try {
-            return Material.valueOf(type + "_BOAT");
-        } catch (Throwable t) {
-            return Material.OAK_BOAT;
-        }
+    protected abstract @NotNull EntityType getDefaultType();
 
-    }
+    protected abstract boolean isAllowedType(@NotNull EntityType type);
 
-    private static Material getEntityTypeMaterial(EntityType type) {
+    private static @NotNull Material getEntityTypeMaterial(@NotNull EntityType type) {
         return switch (type) {
             case BOAT -> Material.OAK_BOAT;
             case CHEST_BOAT -> Material.OAK_CHEST_BOAT;
@@ -277,6 +185,9 @@ public class MountedRaceOption extends ARaceOption {
             case STRIDER -> Material.WARPED_FUNGUS_ON_A_STICK;
             case MINECART -> Material.MINECART;
             case CAMEL -> Material.CACTUS;
+            case SKELETON_HORSE -> Material.BONE;
+            case ZOMBIE_HORSE -> Material.ROTTEN_FLESH;
+            case MULE, DONKEY -> Material.CARROT;
             default -> Material.SADDLE;
         };
 

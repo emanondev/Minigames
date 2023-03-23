@@ -23,17 +23,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, MountedRaceOption> {
+public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRaceOption> extends ARaceGame<T ,O> {
 
     public MountedRaceGame(@NotNull Map<String, Object> map) {
         super(map);
+        //this.played = played;
+        //this.victory = victory;
     }
 
-
-    @Override
-    public @NotNull MountedRaceType getMinigameType() {
-        return MinigameTypes.MOUNTED_RACE;
-    }
+    public abstract PlayerStat getPlayedStat();
+    public abstract PlayerStat getVictoryStat();
 
     @Override
     public void onEntityDeath(@NotNull EntityDeathEvent event) {
@@ -59,7 +58,6 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
     }
 
     public void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player) {
-        MessageUtil.debug(getId() + " vehiclemove " + player.getName());
         onGamerMoveInsideArena(new PlayerMoveEvent(player, event.getFrom(), event.getTo()));
     }
 
@@ -68,7 +66,7 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
     @Override
     protected void onGamerReachRaceFinishArea(Player player) {
         //TODO won notify && celebrate
-
+        getVictoryStat().add(player,1);
         gameEnd();
     }
 
@@ -77,9 +75,9 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
         if (getTeam(player) != null)
             return;
         MessageUtil.debug(getId() + " assigning team to " + player.getName());
-        List<ARaceTeam> teams = new ArrayList<>(getTeams());
+        List<T> teams = new ArrayList<>(getTeams());
         teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
-        for (ARaceTeam team : teams)
+        for (T team : teams)
             if (team.addUser(player)) {
                 new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
                         "%color%", team.getColor().name());
@@ -100,14 +98,6 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
         return getPhase() != Phase.PLAYING && super.canAddGamer(player);
     }
 
-    public void gamePlayingTimer() {
-        super.gamePlayingTimer();
-        //TODO test?
-        //for (Player gamer:getGamers())
-        //    onGamerMoveInsideArena(new PlayerMoveEvent(gamer,gamer.getLocation(),gamer.getLocation()));
-    }
-
-
     @Override //TODO
     public boolean gameCanPreStart() {
         return getGamers().size() >= 1;
@@ -116,32 +106,17 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
     @Override //TODO
     public boolean gameCanStart() {
         int counter = 0;
-        for (ARaceTeam<MountedRaceGame> team : getTeams())
+        for (T team : getTeams())
             if (getGamers(team).size() > 0)
                 counter++;
         return counter >= 1; //TODO autostart se solo
     }
 
-    /*
-    @Override
-    public boolean gameCanPreStart() {
-        return getGamers().size() >= 2;
-    }
-
-    @Override
-    public boolean gameCanStart() {
-        int counter = 0;
-        for (ARaceTeam<RaceGame> team : getTeams())
-            if (getGamers(team).size() > 0)
-                counter++;
-        return counter >= 2;
-    }*/
-
 
     public void gameStart() {
         super.gameStart();
         for (Player player : getGamers()) {
-            PlayerStat.MOUNTEDRACE_PLAYED.add(player, 1);
+            getPlayedStat().add(player, 1);
             PlayerStat.GAME_PLAYED.add(player, 1);
         }
         GameStat.PLAY_TIMES.add(this, 1);
@@ -150,13 +125,7 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
         });
     }
 
-
-    public void onGamerMountEvent(EntityMountEvent event, Player player) {
-        //event.setCancelled(true);
-    }
-
     public void onGamerDismountEvent(EntityDismountEvent event, Player player) {
-        MessageUtil.debug(getId() + " dismounted " + player.getName());
         if (getPhase() == Phase.PLAYING || getPhase() == Phase.PRE_START) {
             Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
                 if (event.getDismounted().isValid())
@@ -164,16 +133,12 @@ public class MountedRaceGame extends ARaceGame<ARaceTeam<MountedRaceGame>, Mount
                 if (player.getVehicle() == null)
                     teleportResetLocation(player);
             }, 1L);
-            //event.setCancelled(true);
-            //event.getDismounted().remove(); //buggoso????
         }
     }
 
 
     public void onQuitGame(@NotNull Player player) {
-        boolean gamer = false;
-        if (isGamer(player))
-            gamer = true;
+        boolean gamer = isGamer(player);
         super.onQuitGame(player);
         if (gamer && player.getVehicle() != null) {
             Entity vehicle = player.getVehicle();

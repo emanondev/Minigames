@@ -13,6 +13,7 @@ import emanondev.minigames.DropGroupManager;
 import emanondev.minigames.Minigames;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@SerializableAs("DropGroup")
 public class DropGroup extends ARegistrable implements ConfigurationSerializable, Registrable {
 
     private final RandomItemContainer<ItemStack> drops;

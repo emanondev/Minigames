@@ -1,4 +1,4 @@
-package emanondev.minigames.race;
+package emanondev.minigames.race.running;
 
 import emanondev.core.message.DMessage;
 import emanondev.minigames.MessageUtil;
@@ -7,6 +7,9 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.ColoredTeam;
+import emanondev.minigames.race.ARaceGame;
+import emanondev.minigames.race.ARaceTeam;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -16,16 +19,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>, RaceOption> {
+@SerializableAs(value="RunRaceGame")
+public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption> {
 
-    public RaceGame(@NotNull Map<String, Object> map) {
+    public RunRaceGame(@NotNull Map<String, Object> map) {
         super(map);
     }
 
 
     @Override
-    public @NotNull RaceType getMinigameType() {
-        return MinigameTypes.RACE;
+    public @NotNull RunRaceType getMinigameType() {
+        return MinigameTypes.RUN_RACE;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>, RaceOption> {
     @Override
     protected void onGamerReachRaceFinishArea(Player player) {
         //TODO won notify && celebrate
-
+        PlayerStat.RUNRACE_VICTORY.add(player,1);
         gameEnd();
     }
 
@@ -71,38 +75,22 @@ public class RaceGame extends ARaceGame<ARaceTeam<RaceGame>, RaceOption> {
     @Override //TODO
     public boolean gameCanStart() {
         MessageUtil.debug("Teams: " + getTeams().size());
-        for (ARaceTeam<RaceGame> team : getTeams()) {
+        for (ARaceTeam<RunRaceGame> team : getTeams()) {
             MessageUtil.debug("Teams: " + team.getColor() + " name:" + team.getName() + " users: " + getGamers(team).size() + "/" + team.getUsers().size());
         }
 
 
         int counter = 0;
-        for (ARaceTeam<RaceGame> team : getTeams())
+        for (ARaceTeam<RunRaceGame> team : getTeams())
             if (getGamers(team).size() > 0)
                 counter++;
         return counter >= 1; //TODO autostart se solo
     }
 
-    /*
-    @Override
-    public boolean gameCanPreStart() {
-        return getGamers().size() >= 2;
-    }
-
-    @Override
-    public boolean gameCanStart() {
-        int counter = 0;
-        for (ARaceTeam<RaceGame> team : getTeams())
-            if (getGamers(team).size() > 0)
-                counter++;
-        return counter >= 2;
-    }*/
-
-
     public void gameStart() {
         super.gameStart();
         for (Player player : getGamers()) {
-            PlayerStat.RACE_PLAYED.add(player, 1);
+            PlayerStat.RUNRACE_PLAYED.add(player, 1);
             PlayerStat.GAME_PLAYED.add(player, 1);
         }
         GameStat.PLAY_TIMES.add(this, 1);

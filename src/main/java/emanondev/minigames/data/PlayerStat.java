@@ -20,9 +20,15 @@ public class PlayerStat extends Stat<UUID> {
     public static final PlayerStat SKYWARS_KILLS = getStat("SKYWARS_KILLS");
     public static final PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
     public static final PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
-    public static final PlayerStat RACE_PLAYED = getStat("RACE_PLAYED");
-    public static final PlayerStat MOUNTEDRACE_PLAYED = getStat("MOUNTEDRACE_PLAYED");
+    public static final PlayerStat RUNRACE_PLAYED = getStat("RUNRACE_PLAYED");
+    public static final PlayerStat ELYTRARACE_PLAYED = getStat("ELYTRARACE_PLAYED");
+    public static final PlayerStat HORSERACE_PLAYED = getStat("HORSERACE_PLAYED");
+    public static final PlayerStat BOATRACE_PLAYED = getStat("BOATRACE_PLAYED");
+    public static final PlayerStat HORSERACE_VICTORY = getStat("HORSERACE_VICTORY");
+    public static final PlayerStat BOATRACE_VICTORY = getStat("BOATRACE_VICTORY");
     public static final PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
+    public static final PlayerStat RUNRACE_VICTORY = getStat("RUNRACE_VICTORY");
+    public static final PlayerStat ELYTRARACE_VICTORY = getStat("ELYTRARACE_VICTORY");
 
     private static final YMLConfig conf = Minigames.get().getConfig("data" + File.separator + "user_data.yml");
     private static final HashMap<String, PlayerStat> stats = new HashMap<>();

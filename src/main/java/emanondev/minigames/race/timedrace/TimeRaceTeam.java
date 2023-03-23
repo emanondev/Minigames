@@ -1,5 +1,6 @@
-package emanondev.minigames.race;
+package emanondev.minigames.race.timedrace;
 
+import emanondev.minigames.race.ARaceTeam;
 import org.bukkit.DyeColor;
 import org.jetbrains.annotations.NotNull;
 
