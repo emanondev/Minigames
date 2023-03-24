@@ -40,7 +40,6 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
 
     @Override
     public void gamePreStart() {
-        //MessageUtil.debug(  getId() + " gamePREPreStart");
         //TODO assignTeams!
 
         List<Player> list = new ArrayList<>(this.getGamers());

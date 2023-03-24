@@ -41,7 +41,6 @@ public class JoinCommand extends CoreCommand {
 
         switch (args.length) {
             case 0 -> {
-                //TODO open a gui
                 @SuppressWarnings("rawtypes")
                 ArrayList<MGame> values = new ArrayList<>(GameManager.get().getAll().values());
                 values.removeIf((game) -> game.getPhase() == MGame.Phase.STOPPED);

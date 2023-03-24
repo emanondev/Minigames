@@ -36,12 +36,14 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
     public void onEntityDeath(@NotNull EntityDeathEvent event) {
     }
 
-    //###
     @Override
-    protected void onGamerReachRaceFinishArea(Player player) {
-        //TODO won notify && celebrate
-        PlayerStat.RUNRACE_VICTORY.add(player,1);
-        gameEnd();
+    public PlayerStat getPlayedStat() {
+        return PlayerStat.RUNRACE_PLAYED;
+    }
+
+    @Override
+    public PlayerStat getVictoryStat() {
+        return PlayerStat.RUNRACE_VICTORY;
     }
 
     @Deprecated
@@ -65,38 +67,6 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
     public void checkGameEnd() {
         if (getGamers().size() <= 1)
             this.gameEnd();
-    }
-
-    @Override //TODO
-    public boolean gameCanPreStart() {
-        return getGamers().size() >= 1;
-    } //TODO autostart se solo
-
-    @Override //TODO
-    public boolean gameCanStart() {
-        MessageUtil.debug("Teams: " + getTeams().size());
-        for (ARaceTeam<RunRaceGame> team : getTeams()) {
-            MessageUtil.debug("Teams: " + team.getColor() + " name:" + team.getName() + " users: " + getGamers(team).size() + "/" + team.getUsers().size());
-        }
-
-
-        int counter = 0;
-        for (ARaceTeam<RunRaceGame> team : getTeams())
-            if (getGamers(team).size() > 0)
-                counter++;
-        return counter >= 1; //TODO autostart se solo
-    }
-
-    public void gameStart() {
-        super.gameStart();
-        for (Player player : getGamers()) {
-            PlayerStat.RUNRACE_PLAYED.add(player, 1);
-            PlayerStat.GAME_PLAYED.add(player, 1);
-        }
-        GameStat.PLAY_TIMES.add(this, 1);
-        getTeams().forEach(team -> {
-            if (!team.hasLost()) setScore(team.getName(), 0);
-        });
     }
 
     public boolean canAddGamer(@NotNull Player player) {

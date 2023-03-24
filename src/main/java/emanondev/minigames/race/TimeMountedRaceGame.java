@@ -1,6 +1,7 @@
 package emanondev.minigames.race;
 
 import emanondev.minigames.MinigameTypes;
+import emanondev.minigames.data.PlayerStat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,16 @@ public class TimeMountedRaceGame extends ARaceGame<ARaceTeam<TimeMountedRaceGame
     @Override
     protected void onGamerReachRaceFinishArea(Player player) {
 
+    }
+
+    @Override
+    public PlayerStat getPlayedStat() {
+        return null;
+    }
+
+    @Override
+    public PlayerStat getVictoryStat() {
+        return null;
     }
 
     @Override

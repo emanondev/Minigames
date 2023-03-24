@@ -1,6 +1,8 @@
 package emanondev.minigames.race.elytra;
 
+import emanondev.core.ItemBuilder;
 import emanondev.core.message.DMessage;
+import emanondev.minigames.Kit;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
@@ -9,9 +11,13 @@ import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.race.ARaceGame;
 import emanondev.minigames.race.ARaceTeam;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,12 +42,14 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     public void onEntityDeath(@NotNull EntityDeathEvent event) {
     }
 
-    //###
     @Override
-    protected void onGamerReachRaceFinishArea(Player player) {
-        //TODO won notify && celebrate
-        PlayerStat.ELYTRARACE_VICTORY.add(player,1);
-        gameEnd();
+    public PlayerStat getPlayedStat() {
+        return PlayerStat.ELYTRARACE_PLAYED;
+    }
+
+    @Override
+    public PlayerStat getVictoryStat() {
+        return PlayerStat.ELYTRARACE_VICTORY;
     }
 
     @Deprecated
@@ -67,33 +75,17 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
             this.gameEnd();
     }
 
-    @Override //TODO
-    public boolean gameCanPreStart() {
-        return getGamers().size() >= 1;
-    } //TODO autostart se solo
-
-    @Override //TODO
-    public boolean gameCanStart() {
-        int counter = 0;
-        for (ARaceTeam<ElytraRaceGame> team : getTeams())
-            if (getGamers(team).size() > 0)
-                counter++;
-        return counter >= 1; //TODO autostart se solo
-    }
-
-    public void gameStart() {
-        super.gameStart();
-        for (Player player : getGamers()) {
-            PlayerStat.ELYTRARACE_PLAYED.add(player, 1);
-            PlayerStat.GAME_PLAYED.add(player, 1);
-        }
-        GameStat.PLAY_TIMES.add(this, 1);
-        getTeams().forEach(team -> {
-            if (!team.hasLost()) setScore(team.getName(), 0);
-        });
-    }
-
     public boolean canAddGamer(@NotNull Player player) {
         return getPhase() != Phase.PLAYING && super.canAddGamer(player);
+    }
+
+    public void teleportResetLocation(@NotNull Player player) {
+        super.teleportResetLocation(player);
+        if (isGamer(player) && (getPhase() == Phase.PRE_START || getPhase() == Phase.PLAYING)) {
+            player.getInventory().setItem(EquipmentSlot.CHEST,new ItemBuilder(Material.ELYTRA)
+                    .setGuiProperty().addEnchantment(Enchantment.BINDING_CURSE,1).build());
+            if (getPhase() == Phase.PLAYING && player.getLocation().getBlock().getRelative(BlockFace.DOWN).isPassable())
+                player.setGliding(true);
+        }
     }
 }

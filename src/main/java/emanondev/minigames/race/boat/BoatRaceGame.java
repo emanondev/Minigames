@@ -10,13 +10,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-@SerializableAs(value="BoatRaceGame")
+@SerializableAs(value = "BoatRaceGame")
 public class BoatRaceGame extends MountedRaceGame<ARaceTeam<BoatRaceGame>, BoatRaceOption> {
 
     public BoatRaceGame(@NotNull Map<String, Object> map) {
         super(map);
     }
-
 
     @Override
     public PlayerStat getPlayedStat() {

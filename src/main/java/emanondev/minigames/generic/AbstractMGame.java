@@ -38,9 +38,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private int collectingPlayersCountdown = -1;
     private int endCountdown = -1;
     private int preStartCountdown = -1;
-
-    //private BukkitTask timer;
-    //private final HashSet<Player> collectedPlayers = new HashSet<>();
     private BlockLocation3D loc;
     private Phase phase = Phase.STOPPED;
 
@@ -53,12 +50,17 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @SuppressWarnings("unchecked")
     public AbstractMGame(@NotNull Map<String, Object> map) {
         this.optionId = (String) map.get("option");
-        this.option = (O) OptionManager.get().get(optionId);
+        if (this.optionId == null)
+            throw new IllegalStateException("Arena ID is null");
         this.arenaId = (String) map.get("arena");
+        if (this.arenaId == null)
+            throw new IllegalStateException("Option ID is null");
+        this.option = (O) OptionManager.get().get(optionId);
         this.arena = (A) ArenaManager.get().get(arenaId);
-
-        if (this.arena == null || this.option == null)
-            throw new NullPointerException();
+        if (this.arena == null)
+            throw new IllegalStateException("Arena is null, couldn't find Arena ID '"+arenaId+"'");
+        if (this.option == null)
+            throw new IllegalStateException("Option is null, couldn't find Option ID '"+optionId+"'");
         try {
             String textLoc = (String) map.get("location");
             if (textLoc != null)
@@ -70,7 +72,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             e.printStackTrace();
             loc = GameManager.get().generateLocation(arena, getWorld());
         }
-        //MessageUtil.debug(getId() + " location " + loc);
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.objective = scoreboard.registerNewObjective("game", "dummy", getObjectiveDisplayName(), RenderType.INTEGER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -208,8 +209,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 if (getTeam(gamer) == null)
                     assignTeam(gamer);
             }
-            //getGamers().forEach(SimpleMessage::sendEmptyActionBarMessage);
-            // assign teams
 
             gamePreStart();
             return;

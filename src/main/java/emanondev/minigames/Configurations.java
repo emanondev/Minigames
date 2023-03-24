@@ -34,7 +34,7 @@ public class Configurations {
 
     public static void applyGameSpectatorSnapshot(@NotNull Player player) {
         applySnapshot(player, "spectator");
-        player.setAllowFlight(true);//TODO hotfix
+        player.setAllowFlight(true);
         player.setFlying(true);
     }
 

@@ -1,8 +1,11 @@
 package emanondev.minigames.race;
 
-import emanondev.minigames.MessageUtil;
+import emanondev.minigames.Kit;
 import emanondev.minigames.Minigames;
+import emanondev.minigames.data.GameStat;
+import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
+import emanondev.minigames.race.elytra.ElytraRaceGame;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -40,46 +43,42 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
         CompletableFuture<Void> future = new CompletableFuture<>();
         CompletableFuture<Void> old = super.gameInitialize();
         old.whenComplete((value, th) -> {
-            if (th != null)
-                future.completeExceptionally(th);
-            else
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            checkpointsAreas.clear();
-                            falloutAreas.clear();
-                            checkpointsAreas.addAll(getArena().getCheckpoints());
-                            falloutAreas.addAll(getArena().getFallAreas());
-                            Location offset = getGameLocation().toLocation();
-                            for (BoundingBox box : checkpointsAreas)
-                                box.shift(offset);
-                            for (BoundingBox box : falloutAreas)
-                                box.shift(offset);
-                            finishArea = getArena().getFinishArea().shift(offset);
-                            future.complete(null);
-                        } catch (Throwable t) {
-                            future.completeExceptionally(t);
-                        }
+            if (th != null) future.completeExceptionally(th);
+            else new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        checkpointsAreas.clear();
+                        falloutAreas.clear();
+                        checkpointsAreas.addAll(getArena().getCheckpoints());
+                        falloutAreas.addAll(getArena().getFallAreas());
+                        Location offset = getGameLocation().toLocation();
+                        for (BoundingBox box : checkpointsAreas)
+                            box.shift(offset);
+                        for (BoundingBox box : falloutAreas)
+                            box.shift(offset);
+                        finishArea = getArena().getFinishArea().shift(offset);
+                        future.complete(null);
+                    } catch (Throwable t) {
+                        future.completeExceptionally(t);
                     }
-                }.runTask(Minigames.get());
+                }
+            }.runTask(Minigames.get());
         });
         return future;
     }
 
     public CompletableFuture<Void> gameRestart() {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        super.gameRestart().whenComplete((value,th)->{
-            if (th!=null)
-                future.completeExceptionally(th);
-            else
-                new BukkitRunnable(){
-                    @Override
-                    public void run() {
-                        currentCheckpoint.clear();
-                        future.complete(null);
-                    }
-                }.runTask(Minigames.get());
+        super.gameRestart().whenComplete((value, th) -> {
+            if (th != null) future.completeExceptionally(th);
+            else new BukkitRunnable() {
+                @Override
+                public void run() {
+                    currentCheckpoint.clear();
+                    future.complete(null);
+                }
+            }.runTask(Minigames.get());
         });
         return future;
     }
@@ -120,10 +119,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     @Override
     public void onGameEntityDamaged(@NotNull EntityDamageEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (!getOption().getAllowFallDamage())
-                event.setCancelled(true);
-        } else if (!getOption().getAllowEnvironmentDamage())
-            event.setCancelled(true);
+            if (!getOption().getAllowFallDamage()) event.setCancelled(true);
+        } else if (!getOption().getAllowEnvironmentDamage()) event.setCancelled(true);
     }
 
     @Override
@@ -139,17 +136,14 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     public void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player hitPlayer) {
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (!getOption().getAllowFallDamage())
-                event.setCancelled(true);
-        } else if (!getOption().getAllowEnvironmentDamage())
-            event.setCancelled(true);
+            if (!getOption().getAllowFallDamage()) event.setCancelled(true);
+        } else if (!getOption().getAllowEnvironmentDamage()) event.setCancelled(true);
         super.onGamerDamaged(event, hitPlayer);
     }
 
     @Override
     public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL)
-            event.setCancelled(true);
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) event.setCancelled(true);
     }
 
     @Override
@@ -179,8 +173,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                         damager = terrorist;
                 }
                 onFakeGamerDeath(event.getPlayer(), damager, direct);
-                if (isSpectator(event.getPlayer()))
-                    teleportResetLocation(event.getPlayer());
+                if (isSpectator(event.getPlayer())) teleportResetLocation(event.getPlayer());
             }
             case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
         }
@@ -195,10 +188,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
         //MessageUtil.debug(getId() + " moveinsidearena " + event.getPlayer().getName());
         super.onGamerMoveInsideArena(event);
-        if (isSpectator(event.getPlayer()))
-            return;
-        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
-            return;
+        if (isSpectator(event.getPlayer())) return;
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END) return;
 
         BoundingBox box = event.getPlayer().getBoundingBox();
         if (getPhase() == Phase.PLAYING) {
@@ -226,14 +217,17 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     public abstract @NotNull ARaceType<O> getMinigameType();
 
-    protected abstract void onGamerReachRaceFinishArea(Player player);
+    protected void onGamerReachRaceFinishArea(Player player) {
+        //TODO won notify && celebrate
+        getVictoryStat().add(player, 1);
+        gameEnd();
+    }
 
     /**
      * Handle block break done by one of playingPlayers
      */
     @Override
     public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
-        //if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
         event.setCancelled(true);
     }
 
@@ -242,7 +236,6 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
      */
     @Override
     public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
-        //if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
         event.setCancelled(true);
     }
     //TODO blockbucket
@@ -265,13 +258,48 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             super.teleportResetLocation(player);
         else
             player.teleport(getArena().getCheckpointsRespawn().get(checkpoint).add(getGameLocation()));
+        if (isGamer(player) && (getPhase() == Phase.PRE_START || getPhase() == Phase.PLAYING)) {
+            Kit kit = getOption().getKit();
+            if (kit!=null)
+                kit.apply(player);
+        }
     }
-
 
     public void onQuitGame(@NotNull Player player) {
         super.onQuitGame(player);
         if (getGamers().size() == 0 && getPhase() == Phase.PLAYING) {
             this.gameEnd();
         }
+    }
+
+    public void gameStart() {
+        super.gameStart();
+        for (Player player : getGamers()) {
+            getPlayedStat().add(player, 1);
+            PlayerStat.GAME_PLAYED.add(player, 1);
+        }
+        GameStat.PLAY_TIMES.add(this, 1);
+        getTeams().forEach(team -> {
+            if (!team.hasLost()) setScore(team.getName(), 0);
+        });
+    }
+
+    public abstract PlayerStat getPlayedStat();
+
+    public abstract PlayerStat getVictoryStat();
+
+
+    @Override
+    public boolean gameCanPreStart() {
+        return getGamers().size() >= 1;
+    } //TODO autostart se solo, cambiare in 2+
+
+    @Override
+    public boolean gameCanStart() {
+        int counter = 0;
+        for (T team : getTeams())
+            if (getGamers(team).size() > 0)
+                counter++;
+        return counter >= 1; //TODO autostart se solo, cambiare in 2+
     }
 }
