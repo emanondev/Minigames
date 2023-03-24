@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TimeMountedRaceType extends ARaceType<TimeMountedRaceOption> {
+public abstract class TimeMountedRaceType extends ARaceType<TimeMountedRaceOption> {
 
 
     public TimeMountedRaceType() {
@@ -28,6 +28,7 @@ public class TimeMountedRaceType extends ARaceType<TimeMountedRaceOption> {
         return new TimeMountedRaceOption();
     }
 
+    /*
     @Override
     public @NotNull TimeMountedRaceGame createGame(@NotNull String arenaId, @NotNull String optionId) {
         MArena arena = ArenaManager.get().get(arenaId);
@@ -40,7 +41,7 @@ public class TimeMountedRaceType extends ARaceType<TimeMountedRaceOption> {
         map.put("option", optionId);
         map.put("arena", arenaId);
         return new TimeMountedRaceGame(map);
-    }
+    }*/
 
     @Override
     public @NotNull ItemBuilder getGameSelectorBaseItem() {

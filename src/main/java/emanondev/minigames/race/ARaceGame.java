@@ -5,7 +5,6 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
-import emanondev.minigames.race.elytra.ElytraRaceGame;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -260,7 +259,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             player.teleport(getArena().getCheckpointsRespawn().get(checkpoint).add(getGameLocation()));
         if (isGamer(player) && (getPhase() == Phase.PRE_START || getPhase() == Phase.PLAYING)) {
             Kit kit = getOption().getKit();
-            if (kit!=null)
+            if (kit != null)
                 kit.apply(player);
         }
     }
@@ -284,9 +283,9 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
         });
     }
 
-    public abstract PlayerStat getPlayedStat();
+    public abstract @NotNull PlayerStat getPlayedStat();
 
-    public abstract PlayerStat getVictoryStat();
+    public abstract @NotNull PlayerStat getVictoryStat();
 
 
     @Override
@@ -301,5 +300,9 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             if (getGamers(team).size() > 0)
                 counter++;
         return counter >= 1; //TODO autostart se solo, cambiare in 2+
+    }
+
+    public void onGamerExhaustionEvent(EntityExhaustionEvent event, Player player) {
+        event.setCancelled(true);
     }
 }

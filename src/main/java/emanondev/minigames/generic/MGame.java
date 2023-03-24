@@ -368,7 +368,10 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     default void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player) {
     }
 
-    ;
+    default void onGamerExhaustionEvent(EntityExhaustionEvent event, Player player){
+        if (getPhase()!=Phase.PLAYING)
+            event.setCancelled(true);
+    }
 
     enum Phase {
         STOPPED,

@@ -18,7 +18,7 @@ import java.util.*;
 public class MiniGameCommand extends CoreCommandPlus {
 
     /*
-    create <id> <type> <option> <arena>
+    create <id> <type> <arena> <option>
     tp <id>
     stop <id>
     reset <id>

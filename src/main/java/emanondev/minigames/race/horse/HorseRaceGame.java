@@ -17,12 +17,12 @@ public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, Hor
     }
 
     @Override
-    public PlayerStat getPlayedStat() {
+    public @NotNull PlayerStat getPlayedStat() {
         return PlayerStat.HORSERACE_PLAYED;
     }
 
     @Override
-    public PlayerStat getVictoryStat() {
+    public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.HORSERACE_VICTORY;
     }
 

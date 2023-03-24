@@ -47,7 +47,7 @@ skywars:
 runrace:
   gui:
     selector:
-      - "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient>"
+      - "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient>"
       - "<#57c9fa>%arena%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
@@ -55,53 +55,73 @@ runrace:
       - "<#57c9fa>più veloce degli altri!"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
-    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
-    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
-    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
-    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s!"
-    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
-    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Partita iniziata"
-    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Partita terminata"
+    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
+    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
+    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
+    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s!"
+    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
+    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Partita iniziata"
+    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
-    reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+    reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+elytrarace:
+  gui:
+    selector:
+      - "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient>"
+      - "<#57c9fa>%arena%"
+      - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
+      - ""
+      - "<#57c9fa>Corri e salta verso la fine"
+      - "<#57c9fa>più veloce degli altri!"
+  game:
+    game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
+    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
+    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
+    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
+    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s!"
+    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
+    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Partita iniziata"
+    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Partita terminata"
+    spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
+    reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
 horserace:
   gui:
     selector:
-      - "<gradient:#4079ff:#57c9fa:#ffffb3>[HorseRace]</gradient>"
+      - "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient>"
       - "<#57c9fa>%arena%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Cavalca fino alla fine del percorso!"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
-    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
-    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
-    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
-    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s!"
-    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
-    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita iniziata"
-    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita terminata"
+    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
+    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
+    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
+    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s!"
+    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
+    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Partita iniziata"
+    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
-    reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+    reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
 boatrace:
   gui:
     selector:
-      - "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient>"
+      - "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient>"
       - "<#57c9fa>%arena%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Guida fino alla fine del percorso!"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
-    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
-    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
-    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
-    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s!"
-    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
-    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita iniziata"
-    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Partita terminata"
+    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
+    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
+    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
+    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s!"
+    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
+    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Partita iniziata"
+    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
-    reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[MountedRace]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+    reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
 arenabuilder:
   skywars:
     error:
@@ -212,14 +232,14 @@ miniarena:
 minigame:
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniGame</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di gestire\nle partite (Game)'><#fab787>[?]</hover>"
-    - "<hover:show_text:\"<#acfad1>Configura un Game\n<#ffffb3><id><#acfad1> è l'id del Game\n<#ffffb3><type><#acfad1> è il tipo di Minigame\n<#ffffb3><option><#acfad1> è la configurazione di opzioni\n<#ffffb3><arena><#acfad1> è l'arena designata\n<#ffffb3><type><#acfad1> è il tipo di Minigame\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id> <type> <option> <arena></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Configura un Game\n<#ffffb3><id><#acfad1> è l'id del Game\n<#ffffb3><type><#acfad1> è il tipo di Minigame\n<#ffffb3><option><#acfad1> è la configurazione di opzioni\n<#ffffb3><arena><#acfad1> è l'arena designata\n<#ffffb3><type><#acfad1> è il tipo di Minigame\"><click:suggest_command:'/%alias% create '><#4079ff>/%alias% <#57c9fa>create <#ffffb3><id> <type> <arena> <option></click></hover>"
     - "<hover:show_text:\"<#acfad1>Sospendi il Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% stop '><#4079ff>/%alias% <#57c9fa>stop <#ffffb3><id></click></hover>"
     - "<hover:show_text:\"<#acfad1>Riavvia il Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% reset '><#4079ff>/%alias% <#57c9fa>reset <#ffffb3><id></click></hover>"
     - "<hover:show_text:\"<#acfad1>Teletrasportati al Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% tp '><#4079ff>/%alias% <#57c9fa>tp <#ffffb3><id></click></hover>"
     - "<hover:show_text:'<#acfad1>Mostra la lista dei Game esistenti\n<#ffffb3>[type]<#acfad1> per filtrare una tipologia di Minigame'><click:run_command:'/%alias% list '><#4079ff>/%alias% <#57c9fa>list <#ffffb3>[type]</click></hover>"
     - "<hover:show_text:\"<#acfad1>Elimina il Game\n<#ffffb3><id><#acfad1> è l'id del Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
   error:
-    create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type> <option> <arena></hover>"
+    create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type> <arena> <option></hover>"
     delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
     invalid_id: "<hover:show_text:\"<#e060de>L'<#fab66e><id></#fab66e> dev'essere una stringa di\ncaratteri numeri e/o trattini bassi\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non è valido</hover>"
     id_already_used: "<hover:show_text:'<#e060de>Scegli un <#fab66e><id></#fab66e> che non sia già utilizzato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> è già in uso</hover>"

@@ -37,12 +37,12 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
     }
 
     @Override
-    public PlayerStat getPlayedStat() {
+    public @NotNull PlayerStat getPlayedStat() {
         return PlayerStat.RUNRACE_PLAYED;
     }
 
     @Override
-    public PlayerStat getVictoryStat() {
+    public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.RUNRACE_VICTORY;
     }
 

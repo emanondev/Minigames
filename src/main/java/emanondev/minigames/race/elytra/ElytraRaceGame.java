@@ -43,12 +43,12 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     }
 
     @Override
-    public PlayerStat getPlayedStat() {
+    public @NotNull PlayerStat getPlayedStat() {
         return PlayerStat.ELYTRARACE_PLAYED;
     }
 
     @Override
-    public PlayerStat getVictoryStat() {
+    public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.ELYTRARACE_VICTORY;
     }
 
@@ -86,6 +86,14 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
                     .setGuiProperty().addEnchantment(Enchantment.BINDING_CURSE,1).build());
             if (getPhase() == Phase.PLAYING && player.getLocation().getBlock().getRelative(BlockFace.DOWN).isPassable())
                 player.setGliding(true);
+        }
+    }
+
+    public void gameStart() {
+        super.gameStart();
+        for (Player player : getGamers()) {
+            player.getInventory().setItem(EquipmentSlot.CHEST,new ItemBuilder(Material.ELYTRA)
+                    .setGuiProperty().addEnchantment(Enchantment.BINDING_CURSE,1).build());
         }
     }
 }

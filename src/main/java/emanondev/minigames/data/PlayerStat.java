@@ -12,7 +12,11 @@ import java.util.UUID;
 
 public class PlayerStat extends Stat<UUID> {
 
+    private static final YMLConfig conf = Minigames.get().getConfig("data" + File.separator + "user_data.yml");
+    private static final HashMap<String, PlayerStat> stats = new HashMap<>();
 
+    public static final PlayerStat TIMERUNRACE_VICTORY = getStat("TIMERUNRACE_VICTORY");;
+    public static final PlayerStat TIMERUNRACE_PLAYED = getStat("TIMERUNRACE_PLAYED");;
     public static final PlayerStat DEATHMATCH_DEATHS = getStat("DEATHMATCH_DEATHS");
     public static final PlayerStat DEATHMATCH_KILLS = getStat("DEATHMATCH_KILLS");
     public static final PlayerStat DEATHMATCH_VICTORY = getStat("DEATHMATCH_VICTORY");
@@ -30,8 +34,6 @@ public class PlayerStat extends Stat<UUID> {
     public static final PlayerStat RUNRACE_VICTORY = getStat("RUNRACE_VICTORY");
     public static final PlayerStat ELYTRARACE_VICTORY = getStat("ELYTRARACE_VICTORY");
 
-    private static final YMLConfig conf = Minigames.get().getConfig("data" + File.separator + "user_data.yml");
-    private static final HashMap<String, PlayerStat> stats = new HashMap<>();
 
 
     private PlayerStat(@NotNull String id) {

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class TimeMountedRaceGame extends ARaceGame<ARaceTeam<TimeMountedRaceGame>, TimeMountedRaceOption> {
+public abstract class TimeMountedRaceGame extends ARaceGame<ARaceTeam<TimeMountedRaceGame>, TimeMountedRaceOption> {
     public TimeMountedRaceGame(Map<String, Object> map) {
         super(map);
     }
@@ -19,23 +19,8 @@ public class TimeMountedRaceGame extends ARaceGame<ARaceTeam<TimeMountedRaceGame
     }
 
     @Override
-    public PlayerStat getPlayedStat() {
-        return null;
-    }
-
-    @Override
-    public PlayerStat getVictoryStat() {
-        return null;
-    }
-
-    @Override
     protected void assignTeam(Player p) {
 
-    }
-
-    @Override
-    public @NotNull TimeMountedRaceType getMinigameType() {
-        return MinigameTypes.TIME_MOUNTED_RACE;
     }
 
     @Override

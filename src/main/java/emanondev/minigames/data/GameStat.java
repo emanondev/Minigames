@@ -14,6 +14,10 @@ public class GameStat extends Stat<MGame> {
     private static final YMLConfig conf = Minigames.get().getConfig("data" + File.separator + "game_data.yml");
     private static final HashMap<String, GameStat> stats = new HashMap<>();
 
+    public final static GameStat PLAY_TIMES = getStat("PLAY_TIMES");
+    public final static GameStat TOTAL_TIME_MS = getStat("TOTAL_TIME_MS");
+
+
     private GameStat(@NotNull String id) {
         super(id);
     }
@@ -36,8 +40,4 @@ public class GameStat extends Stat<MGame> {
     protected @NotNull String getId(@NotNull MGame target) {
         return target.getId();
     }
-
-    public final static GameStat PLAY_TIMES = getStat("PLAY_TIMES");
-    public final static GameStat TOTAL_TIME_MS = getStat("TOTAL_TIME_MS");
-
 }

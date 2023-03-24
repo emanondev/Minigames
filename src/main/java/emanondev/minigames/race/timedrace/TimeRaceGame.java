@@ -1,6 +1,7 @@
 package emanondev.minigames.race.timedrace;
 
 import emanondev.minigames.MinigameTypes;
+import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.race.ARaceGame;
 import emanondev.minigames.race.ARaceTeam;
 import org.bukkit.entity.Player;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class TimeRaceGame extends ARaceGame<ARaceTeam<TimeRaceGame>, TimeRaceOption> {
+public abstract class TimeRaceGame extends ARaceGame<ARaceTeam<TimeRaceGame>, TimeRaceOption> {
     public TimeRaceGame(Map<String, Object> map) {
         super(map);
     }
@@ -23,11 +24,6 @@ public class TimeRaceGame extends ARaceGame<ARaceTeam<TimeRaceGame>, TimeRaceOpt
     @Override
     protected void assignTeam(Player p) {
 
-    }
-
-    @Override
-    public @NotNull TimeRaceType getMinigameType() {
-        return MinigameTypes.TIME_RACE;
     }
 
     @Override

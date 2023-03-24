@@ -43,7 +43,7 @@ import java.util.*;
 @SuppressWarnings("rawtypes")
 public class GameManager extends Manager<MGame> implements Listener, ConsoleLogger {
 
-    private static final int GAME_MINIMAL_DISTANCING = 272; //16+1 chunk (272)
+    //private static final int GAME_MINIMAL_DISTANCING = 272; //16+1 chunk (272)
 
     private static GameManager instance;
     private final List<List<MGame>> gameTickList;
@@ -66,7 +66,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                 }
             i++;
         }
-    }.runTaskTimer(Minigames.get(), 20L, 1L);
+    }.runTaskTimer(Minigames.get(), C.getStartupGameInitializeDelayTicks(), 1L);
 
     public static @NotNull GameManager get() {
         return instance;
@@ -182,7 +182,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             BoundingBox box = new BoundingBox(
                     loc.x, loc.y, loc.z,
                     loc.x + dim.getX(), loc.y + dim.getY(), loc.z + dim.getZ());
-            box.expand(GAME_MINIMAL_DISTANCING);
+            box.expand(C.getGameMinimalDistancing());
 
             for (@SuppressWarnings("rawtypes") MGame game : getAll().values()) {
                 if (game.getArena() instanceof MSchemArena schemArena2) {
@@ -253,7 +253,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                 Bukkit.getPluginManager().callEvent(new PlayerJoinedGameEvent(game, player));
                 logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f joined game &e" + game.getId());
                 playerGames.put(player, game);
-                //MessageUtil.debug(game.getScoreboard().);
                 player.setScoreboard(game.getScoreboard());
                 return true;
             }
@@ -570,6 +569,18 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
         if (game != null && !game.isGamer(event.getPlayer()))
             event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void event(EntityExhaustionEvent event) {
+        if (!(event.getEntity() instanceof Player player))
+            return;
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
+        if (game != null)
+            if (game.isGamer(player))
+                game.onGamerExhaustionEvent(event,player);
+            else
+                event.setCancelled(true);
     }
 
     @Override
