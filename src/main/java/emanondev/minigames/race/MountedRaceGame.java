@@ -56,10 +56,10 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
     public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
         if (getTeam(player) != null) return;
         MessageUtil.debug(getId() + " assigning team to " + player.getName());
-        List<T> teams = new ArrayList<>(getTeams());
-        teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
-        for (T team : teams)
-            if (team.addUser(player)) {
+        //List<T> teams = new ArrayList<>(getTeams());
+        //teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
+        for (T team : getTeams())
+            if (team.getUsersAmount()<getOption().getTeamMaxSize()&&team.addUser(player)) {
                 new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
                         "%color%", team.getColor().name());
                 return;

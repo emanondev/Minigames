@@ -14,8 +14,7 @@ generic:
     playing: Playing
     restart: Restarting
     end: Restarting
-
-  obtain_points: "&a[Game] Hai ottenuto &e%amount% &apunti!"
+  obtain_points: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Hai ottenuto <#ffffb3>%amount%</#ffffb3> punti!"
   gui:
     kitselector_title: "<#4079ff>Scegli il Kit"
     kitselector_description:
@@ -34,6 +33,7 @@ skywars:
       - ""
       - "<#57c9fa>Salta da un'isola all'altra e"
       - "<#57c9fa>uccidi gli altri giocatori"
+      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -44,6 +44,12 @@ skywars:
     game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Partita iniziata"
     game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
+    you_killed: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+    you_have_been_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+    you_have_been_eliminated_by: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+    user_have_been_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+    user_have_been_eliminated_by: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+#TODO
 runrace:
   gui:
     selector:
@@ -53,6 +59,7 @@ runrace:
       - ""
       - "<#57c9fa>Corri e salta verso la fine"
       - "<#57c9fa>più veloce degli altri!"
+      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -64,6 +71,13 @@ runrace:
     game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
     reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+    back_to_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei stato riportato indietro all'ultimo checkpoint!"
+    you_won_first: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei arrivato Primo!!!"
+    player_won_first: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato primo terminando la corsa"
+    you_won_second: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei arrivato secondo!!!"
+    player_won_second: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato secondo"
+    you_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+    player_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato terzo"
 elytrarace:
   gui:
     selector:
@@ -73,6 +87,7 @@ elytrarace:
       - ""
       - "<#57c9fa>Corri e salta verso la fine"
       - "<#57c9fa>più veloce degli altri!"
+      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -84,6 +99,13 @@ elytrarace:
     game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
     reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+    back_to_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Sei stato riportato indietro all'ultimo checkpoint!"
+    you_won_first: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Sei arrivato Primo!!!"
+    player_won_first: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato primo terminando la corsa"
+    you_won_second: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Sei arrivato secondo!!!"
+    player_won_second: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato secondo"
+    you_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+    player_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato terzo"
 horserace:
   gui:
     selector:
@@ -92,6 +114,7 @@ horserace:
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Cavalca fino alla fine del percorso!"
+      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -103,6 +126,13 @@ horserace:
     game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
     reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+    back_to_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Sei stato riportato indietro all'ultimo checkpoint!"
+    you_won_first: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Sei arrivato Primo!!!"
+    player_won_first: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato primo terminando la corsa"
+    you_won_second: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Sei arrivato secondo!!!"
+    player_won_second: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato secondo"
+    you_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+    player_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato terzo"
 boatrace:
   gui:
     selector:
@@ -111,6 +141,7 @@ boatrace:
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Guida fino alla fine del percorso!"
+      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -122,6 +153,13 @@ boatrace:
     game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient> <#e02850>Non puoi uscire dall'arena"
     reached_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Hai raggiunto il checkpoint <#ffffb3>%checkpoint%</#ffffb3>!"
+    back_to_checkpoint: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Sei stato riportato indietro all'ultimo checkpoint!"
+    you_won_first: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Sei arrivato Primo!!!"
+    player_won_first: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato primo terminando la corsa"
+    you_won_second: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Sei arrivato secondo!!!"
+    player_won_second: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato secondo"
+    you_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
+    player_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato terzo"
 arenabuilder:
   skywars:
     error:
@@ -229,6 +267,31 @@ miniarena:
       - "<#4079ff>Nome Estetico"
       - "<#57c9fa><#ffffb3>%displayname%"
       - ""
+    min_duration_exstimation:
+      - "<#4079ff>Quanto stimi che la partita possa durare al minimo?"
+      - "<#57c9fa>Tempo: <#ffffb3>%value% <#57c9fa>min"
+      - ""
+      - "<#b3b3b3>Serve come placeholder ed informazione per i giocatori"
+    max_duration_exstimation:
+      - "<#4079ff>Quanto stimi che la partita possa durare al massimo?"
+      - "<#57c9fa>Tempo: <#ffffb3>%value% <#57c9fa>min"
+      - ""
+      - "<#b3b3b3>Serve come placeholder ed informazione per i giocatori"
+    reward_first:
+      - "<#4079ff>Quanti punti dare al primo arrivato?"
+      - "<#57c9fa>Punti: <#ffffb3>%value% <#57c9fa>"
+      - ""
+      - "<#b3b3b3>I punti sono la ricompensa per il completamento"
+    reward_second:
+      - "<#4079ff>Quanti punti dare al secondo arrivato?"
+      - "<#57c9fa>Punti: <#ffffb3>%value% <#57c9fa>"
+      - ""
+      - "<#b3b3b3>I punti sono la ricompensa per il completamento"
+    reward_third:
+      - "<#4079ff>Quanti punti dare al terzo arrivato?"
+      - "<#57c9fa>Punti: <#ffffb3>%value% <#57c9fa>"
+      - ""
+      - "<#b3b3b3>I punti sono la ricompensa per il completamento"
 minigame:
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniGame</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di gestire\nle partite (Game)'><#fab787>[?]</hover>"
@@ -445,6 +508,12 @@ minioption:
       - "<#4079ff>Tipo di Barca <#ffffb3>%type%"
       - ""
       - "<#57c9fa>[<#ffffff>Click<#57c9fa>] <#ffffff>Qualsiasi <#57c9fa>-> <#ffffff>Imposta/Deseziona"
+    show_arena_borders:
+      - "<#4079ff>Mostrare i bordi dell'arena?"
+      - "<#57c9fa>Valore: <#ffffb3>%value%"
+      - ""
+      - "<#b3b3b3>Puoi mostrare i bordi dell'arena sotto forma"
+      - "<#b3b3b3>di world border ai giocatori"
 join:
   error:
     game_not_available: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non puoi entrare in <#fab66e>%name%"

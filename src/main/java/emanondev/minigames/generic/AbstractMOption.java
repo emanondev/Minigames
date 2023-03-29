@@ -19,36 +19,43 @@ import java.util.Map;
 
 public abstract class AbstractMOption extends ARegistrable implements MOption {
 
+    private boolean showArenaBorders;
+    private boolean allowSpectators;
+    private int collectingPlayersPhaseCooldownMax;
+    private int endPhaseCooldownMax;
+    private int preStartPhaseCooldownMax;
+
+    @Override
     public void setAllowSpectators(boolean allowSpectators) {
         this.allowSpectators = allowSpectators;
         OptionManager.get().save(this);
     }
 
+    @Override
     public void setCollectingPlayersPhaseCooldownMax(int value) {
         collectingPlayersPhaseCooldownMax = (int) Math.max(1, Math.min(180, value));
         OptionManager.get().save(this);
     }
 
+    @Override
     public void setEndPhaseCooldownMax(int value) {
         endPhaseCooldownMax = Math.max(1, Math.min(60, value));
         OptionManager.get().save(this);
     }
 
+    @Override
     public void setPreStartPhaseCooldownMax(int value) {
         this.preStartPhaseCooldownMax = Math.max(1, Math.min(60, value));
         OptionManager.get().save(this);
     }
 
-    private boolean allowSpectators;
-    private int collectingPlayersPhaseCooldownMax;
-    private int endPhaseCooldownMax;
-    private int preStartPhaseCooldownMax;
 
     public AbstractMOption(@NotNull Map<String, Object> map) {
         collectingPlayersPhaseCooldownMax = (int) map.getOrDefault("collectingplayersphasecooldownmax", 27);
         endPhaseCooldownMax = (int) map.getOrDefault("endphasecooldownmax", 10);
         preStartPhaseCooldownMax = (int) map.getOrDefault("prestartphasecooldownmax", 3);
         allowSpectators = (boolean) map.getOrDefault("allowSpectators", true);
+        showArenaBorders = (boolean) map.getOrDefault("showArenaBorders", true);
     }
 
     @Override
@@ -74,6 +81,7 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
         map.put("endphasecooldownmax", endPhaseCooldownMax);
         map.put("prestartphasecooldownmax", preStartPhaseCooldownMax);
         map.put("allowSpectators", allowSpectators);
+        map.put("showArenaBorders",showArenaBorders);
         return map;
     }
 
@@ -111,6 +119,27 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
             return true;
         }
         ));
+        gui.addButton(new FButton(gui, () ->
+                new ItemBuilder(Material.BARRIER).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer())
+                                .appendLangList("minioption.gui.show_arena_borders", "%value%",
+                                        String.valueOf(getAllowSpectators())))
+                        .setGuiProperty().addEnchantment(Enchantment.DURABILITY, getShowArenaBorders() ? 1 : 0).build(), (event) -> {
+            setShowArenaBorders(!getShowArenaBorders());
+            return true;
+        }
+        ));
         return gui;
     }
+
+    @Override
+    public boolean getShowArenaBorders(){
+        return showArenaBorders;
+    }
+
+    @Override
+    public void setShowArenaBorders(boolean value){
+        showArenaBorders = value;
+        OptionManager.get().save(this);
+    }
+
 }

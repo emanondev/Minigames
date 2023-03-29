@@ -25,4 +25,13 @@ public interface MArena extends ConfigurationSerializable, Cloneable, Registrabl
     }
 
     Gui getEditorGui(Player player, Gui parent);
+
+    int getMinDurationEstimation();
+
+    void setMinDurationEstimation(int minDurationEstimation);
+
+    int getMaxDurationEstimation();
+
+    void setMaxDurationEstimation(int maxDurationEstimation);
+
 }

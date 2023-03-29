@@ -54,8 +54,10 @@ public abstract class MountedRaceOption extends ARaceOption {
                 boat.setBoatType(boatType == null ? Boat.Type.values()[(int) (Math.random() * Boat.Type.values().length)] : boatType);
             if (en instanceof Steerable steerable)
                 steerable.setSaddle(true);
-            if (en instanceof LivingEntity living)
+            if (en instanceof LivingEntity living) {
                 living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(baseSpeed);
+                living.setCollidable(false);
+            }
             if (en instanceof Mob mob)
                 mob.setAware(false);
             if (en instanceof Tameable tm)

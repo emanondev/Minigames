@@ -74,6 +74,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             else new BukkitRunnable() {
                 @Override
                 public void run() {
+                    secondHasArrived = false;
+                    thirdHasArrived = false;
                     currentCheckpoint.clear();
                     future.complete(null);
                 }
@@ -154,6 +156,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
         //TODO inc death counter
         teleportResetLocation(dead);
         //TODO notify
+        sendMsg(dead, getMinigameType().getType() + ".game.back_to_checkpoint");
     }
 
     @Override
@@ -191,7 +194,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
         if (getPhase() != Phase.PLAYING && getPhase() != Phase.END) return;
 
         BoundingBox box = event.getPlayer().getBoundingBox();
-        if (getPhase() == Phase.PLAYING) {
+        if (getPhase() == Phase.PLAYING || getPhase() == Phase.END) {
             if (finishArea.overlaps(box)) { //TODO CHECKPOINTS POLICY
                 currentCheckpoint.remove(event.getPlayer().getUniqueId());
                 onGamerReachRaceFinishArea(event.getPlayer());
@@ -216,10 +219,50 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     public abstract @NotNull ARaceType<O> getMinigameType();
 
+
+    private boolean secondHasArrived = false;
+    private boolean thirdHasArrived = false;
+
+
     protected void onGamerReachRaceFinishArea(Player player) {
         //TODO won notify && celebrate
-        getVictoryStat().add(player, 1);
-        gameEnd();
+        if (getPhase() == Phase.PLAYING) {
+            getVictoryStat().add(player, 1);
+            gameEnd();
+            givePoints(player, getArena().getRewardFirst());
+            getGamers().forEach((p) -> {
+                if (player == p)
+                    sendMsg(p, getMinigameType().getType() + ".game.you_won_first");
+                else
+                    sendMsg(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName());
+            });
+            getSpectators().forEach((p) -> sendMsg(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName()));
+            return;
+        }
+        if (!secondHasArrived) {
+            secondHasArrived = true;
+            givePoints(player, getArena().getRewardSecond());
+            getGamers().forEach((p) -> {
+                if (player == p)
+                    sendMsg(p, getMinigameType().getType() + ".game.you_won_second");
+                else
+                    sendMsg(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName());
+            });
+            getSpectators().forEach((p) -> sendMsg(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName()));
+            return;
+        }
+        if (!thirdHasArrived) {
+            thirdHasArrived = true;
+            givePoints(player, getArena().getRewardThird());
+            getGamers().forEach((p) -> {
+                if (player == p)
+                    sendMsg(p, getMinigameType().getType() + ".game.you_won_third");
+                else
+                    sendMsg(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName());
+            });
+            getSpectators().forEach((p) -> sendMsg(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName()));
+            return;
+        }
     }
 
     /**
@@ -305,4 +348,5 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     public void onGamerExhaustionEvent(EntityExhaustionEvent event, Player player) {
         event.setCancelled(true);
     }
+
 }

@@ -1,6 +1,7 @@
 package emanondev.minigames.generic;
 
 import emanondev.core.SoundInfo;
+import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.PagedListFGui;
@@ -9,6 +10,7 @@ import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -799,6 +801,25 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         switch (getPhase()) {
             case COLLECTING_PLAYERS, PRE_START -> event.setCancelled(true);
         }
+    }
+
+    protected void givePoints(Player target,double amount) {
+        if (amount > 0) {
+            try {
+                new VaultEconomyHandler().addMoney(target, amount);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            new DMessage(Minigames.get(), target).appendLang("generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount)).send();
+        }
+    }
+
+    protected void sendMsg(CommandSender target, String path, String... holders) {
+        new DMessage(getPlugin(), target).appendLang(path, holders).send();
+    }
+
+    protected void sendMsgList(CommandSender target, String path, String... holders) {
+        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 
 }

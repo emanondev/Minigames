@@ -11,6 +11,14 @@ public interface MOption extends ConfigurationSerializable, Cloneable, Registrab
         getEditorGui(who).open(who);
     }
 
+    void setAllowSpectators(boolean allowSpectators);
+
+    void setCollectingPlayersPhaseCooldownMax(int value);
+
+    void setEndPhaseCooldownMax(int value);
+
+    void setPreStartPhaseCooldownMax(int value);
+
     int getCollectingPlayersPhaseCooldownMax();
 
     int getEndPhaseCooldownMax();
@@ -40,4 +48,7 @@ public interface MOption extends ConfigurationSerializable, Cloneable, Registrab
         return getEditorGui(player, null);
     }
 
+    boolean getShowArenaBorders();
+
+    void setShowArenaBorders(boolean value);
 }

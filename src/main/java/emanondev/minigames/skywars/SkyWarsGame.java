@@ -299,8 +299,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             setScore(team.getName(), -1);
         if (killer != null && isGamer(killer)) {
             PlayerStat.SKYWARS_KILLS.add(killer, 1);
-
-            getMinigameType().applyKillPoints(killer);
+            givePoints(killer,getMinigameType().getKillPoints());
             if (getOption().getKillRewardFiller() != null) {
                 //TODO add sound
                 UtilsInventory.giveAmount(player, getMinigameType().getKillRewardItem(), 1, UtilsInventory.ExcessManage.DROP_EXCESS);
@@ -335,7 +334,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             Player p = Bukkit.getPlayer(user);
             if (p != null && isGamer(p)) {
                 PlayerStat.SKYWARS_VICTORY.add(user, 1);
-                getMinigameType().applyWinPoints(p);
+                givePoints(p,getMinigameType().getWinPoints());
             }
         }
         this.gameEnd();

@@ -41,8 +41,8 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
                     }
                     return switch (args[1]) {
                         case "players" -> String.valueOf(game.getGamers().size());
-                        case "spectators" -> String.valueOf(game.getMaxGamers());
-                        case "maxplayers" -> String.valueOf(game.getSpectators());
+                        case "spectators" -> String.valueOf(game.getSpectators());
+                        case "maxplayers" -> String.valueOf(game.getMaxGamers());
                         case "phase" -> game.getPhase().getTranslatedName(player.isOnline() ? player.getPlayer() : null);
                         default -> {
                             Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% time unit " + args[1] + " doesn't match with existing ones");
@@ -90,9 +90,7 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
                         }
                     };
                 }
-                default -> {
-                    throw new IllegalStateException();
-                }
+                default -> throw new IllegalStateException();
 
             }
 

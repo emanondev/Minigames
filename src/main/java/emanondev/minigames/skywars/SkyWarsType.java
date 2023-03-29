@@ -61,22 +61,6 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
                         .getInteger("display.gui.custommodel", null));
     }
 
-    public void applyKillPoints(Player p) {
-        double kp = getSection().loadDouble("game.kill_points", 2D);
-        if (kp > 0) {
-            new VaultEconomyHandler().addMoney(p, kp);
-            MessageUtil.sendMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(kp));
-        }
-    }
-
-    public void applyWinPoints(Player p) {
-        double win = getSection().loadDouble("game.win_points", 10D);
-        if (win > 0) {
-            new VaultEconomyHandler().addMoney(p, win);
-            MessageUtil.sendMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(win));
-        }
-    }
-
     public double getSnowballPush() {
         return this.getSection().loadDouble("game.snowball_push", 0.5D);
     }
@@ -87,5 +71,13 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
 
     public ItemStack getKillRewardItem() { //TODO description
         return new ItemBuilder(Material.MAGMA_CREAM).setGuiProperty().addEnchantment(Enchantment.DURABILITY, 1).build();
+    }
+
+    public double getKillPoints() {
+        return getSection().loadDouble("game.kill_points", 2D);
+    }
+
+    public double getWinPoints() {
+        return getSection().loadDouble("game.win_points", 2D);
     }
 }

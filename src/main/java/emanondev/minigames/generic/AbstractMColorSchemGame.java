@@ -26,7 +26,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     private final List<BoundingBox> cacheArea = new ArrayList<>();
     private final HashMap<Player, Integer> bordersId = new HashMap<>();
     private final BoundingBox hiddenBorderArea;
-    private final Map<DyeColor, T> teams = new EnumMap<>(DyeColor.class);
+    private final Map<DyeColor, T> teams = new LinkedHashMap<>();
     private final HashSet<Chunk> clearedEntitiesBefore = new HashSet<>();
 
     private BoundingBox boxCache;
@@ -51,6 +51,8 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     }
 
     private void sendUpdateBorder(Player player) {
+        if (!getOption().getShowArenaBorders())
+            return;
         Integer id = bordersId.get(player);
         if (hiddenBorderArea.contains(player.getLocation().toVector()))
             if (id == null)
@@ -86,7 +88,6 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             teams.put(color, craftTeam(color));
             getScoreboard().registerNewTeam(color.name());
         }
-
         BoundingBox box = getBoundingBox();
         isSquared = box.getWidthX() == box.getWidthZ() || Math.max(box.getWidthX(), box.getWidthZ()) < 10;
 
@@ -118,6 +119,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             borders.add(wb);
         }
         hiddenBorderArea = box.clone().expand(-SEE_WORLD_BORDER_DISTANCE, 999, -SEE_WORLD_BORDER_DISTANCE);
+
     }
 
     @Override
@@ -293,6 +295,10 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             case END, COLLECTING_PLAYERS -> player.teleport(getArena().getSpectatorsOffset().add(getGameLocation()));
             default -> new IllegalStateException().printStackTrace();
         }
+        if (player.getFireTicks() > 0)
+            player.setFireTicks(0);
+        if (player.getFreezeTicks() > 0)
+            player.setFreezeTicks(0);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package emanondev.minigames.generic;
 
+import emanondev.core.CorePlugin;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
@@ -355,7 +356,9 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
                 "%phase%", this.getPhase().name(),
                 "%maxplayers%", String.valueOf(this.getMaxGamers()),
                 "%type%", this.getMinigameType().getType(),
-                "%location%", this.getGameLocation().toString().replace(":", " ")
+                "%location%", this.getGameLocation().toString().replace(":", " "),
+                "%min_duration_estimation%", String.valueOf(this.getArena().getMinDurationEstimation()),
+                "%max_duration_estimation%", String.valueOf(this.getArena().getMaxDurationEstimation())
         };
     }
 
@@ -384,5 +387,9 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         public String getTranslatedName(CommandSender target) {
             return Minigames.get().getLanguageConfig(target).getString("generic.phase_name." + this.name().toLowerCase(Locale.ENGLISH));
         }
+    }
+
+    default CorePlugin getPlugin(){
+        return getMinigameType().getPlugin();
     }
 }
