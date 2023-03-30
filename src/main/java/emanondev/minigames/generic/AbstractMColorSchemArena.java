@@ -78,7 +78,23 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
     }
 
     public CompletableFuture<EditSession> paste(@NotNull Location location) {
-        return WorldEditUtility.paste(location, getSchematic(), true, Minigames.get(), false, false, false);
+        CompletableFuture<EditSession> future = new CompletableFuture<>();
+        getSchematicAsync().whenComplete((val, th) -> {
+            if (th != null)
+                future.completeExceptionally(th);
+            else {
+                CompletableFuture<EditSession> f2 = WorldEditUtility.paste(
+                        location, val, true, Minigames.get(), false, false, false);
+                f2.whenComplete((val2, th2) -> {
+                    if (th2 != null)
+                        future.completeExceptionally(th2);
+                    else
+                        future.complete(val2);
+                });
+            }
+        });
+        //return WorldEditUtility.paste(location, getSchematic(), true, Minigames.get(), false, false, false);
+        return future;
     }
 
 
@@ -100,6 +116,18 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         clip = WorldEditUtility.load(file);
         schematicCache = new SoftReference<>(clip);
         return clip;
+    }
+
+    private CompletableFuture<Clipboard> getSchematicAsync() {
+        Clipboard clip = schematicCache == null ? null : schematicCache.get();
+        if (clip != null)
+            return CompletableFuture.completedFuture(clip);
+        File file = new File(ArenaManager.get().getSchematicsFolder(), schematicName);
+        if (!file.isFile())
+            throw new IllegalStateException("selected schematic do not exist");
+        CompletableFuture<Clipboard> future = WorldEditUtility.load(file, Minigames.get(), true);
+        future.whenComplete((val, th) -> schematicCache = new SoftReference<>(val));
+        return future;
     }
 
     @NotNull

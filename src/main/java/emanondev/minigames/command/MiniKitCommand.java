@@ -56,7 +56,7 @@ public class MiniKitCommand extends CoreCommand {
         return switch (args.length) {
             case 1 -> this.complete(args[0], List.of("create", "update", "apply", "list", "delete", "price", "gui"));
             case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case "update", "apply", "delete", "price" -> this.complete(args[1], KitManager.get().getAll().keySet());
+                case "gui", "update", "apply", "delete", "price" -> this.complete(args[1], KitManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             default -> Collections.emptyList();

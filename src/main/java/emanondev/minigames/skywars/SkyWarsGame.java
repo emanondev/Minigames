@@ -294,7 +294,22 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         SkyWarsTeam team = getTeam(player);
         switchToSpectator(player);
         new SoundInfo(Sound.ENTITY_GHAST_DEATH, 1, 1, true).play(player); //self death notify
-        //TODO add message
+        getGamers().forEach(gamer->{
+            if (gamer.equals(player)){
+                if (killer==null)
+                    sendMsg(gamer,getMinigameType()+".game.you_have_been_eliminated");
+                else
+                    sendMsg(gamer,getMinigameType()+".game.you_have_been_eliminated_by","%who%",killer.getName());
+            }else  if (gamer.equals(killer)){
+                sendMsg(gamer,getMinigameType()+".game.you_eliminated","%who%",player.getName());
+            } else {
+                if (killer==null)
+                    sendMsg(gamer,getMinigameType()+".game.user_have_been_eliminated","%who%",player.getName());
+                else
+                    sendMsg(gamer,getMinigameType()+".game.user_have_been_eliminated_by","%who%",player.getName(),"%killer%", killer.getName());
+            }
+
+        });
         if (team != null && team.hasLost())
             setScore(team.getName(), -1);
         if (killer != null && isGamer(killer)) {
@@ -339,6 +354,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         }
         this.gameEnd();
     }
+
 
     public boolean canAddGamer(@NotNull Player player) {
         return getPhase() != Phase.PLAYING && super.canAddGamer(player);

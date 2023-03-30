@@ -101,7 +101,8 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
 
     public String[] getPlaceholders() {
         return new String[]{
-                "%price%", price == 0 ? "-free-" : String.valueOf(price), "%id%", getId()
+                "%price%", price == 0 ? "-free-" : String.valueOf(price), "%id%", getId(),
+                "%displayname%", getDisplayName()
         };
     }
 
@@ -120,6 +121,12 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
                         new DMessage(Minigames.get(), target)
                                 .appendLangList("minikit.gui.display_name_editor", getPlaceholders())
                 ).setGuiProperty().build(), true));
+        gui.addButton(new ItemEditorFButton(gui,
+                () -> getGuiSelectorItemRaw().setDescription(
+                        new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                                "minikit.gui.display_item_editor")).build(),
+                () -> getGuiSelectorItemRaw().build(),
+                this::setGuiSelectorItem, (event) -> gui.open(target)));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
                 () -> (long) getPrice(),
                 (v) -> {
@@ -129,10 +136,6 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
                 () -> new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setDescription(
                         new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
                                 "minikit.gui.price", "%value%", String.valueOf(getPrice()))).build()));
-        gui.addButton(new ItemEditorFButton(gui,
-                () -> getGuiSelectorItemRaw().build(),
-                () -> getGuiSelectorItemRaw().build(),
-                this::setGuiSelectorItem, (event) -> gui.open(target)));
         return gui;
     }
 
