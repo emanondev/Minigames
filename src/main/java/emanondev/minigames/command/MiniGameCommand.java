@@ -101,6 +101,7 @@ public class MiniGameCommand extends CoreCommandPlus {
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
+        @SuppressWarnings("rawtypes")
         MGame group = GameManager.get().get(id);
         if (group == null) {
             sendMsg(sender, "minigame.error.id_not_found", "%id%", id, "%alias%", label);

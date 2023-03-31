@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-@SerializableAs(value="HorseRaceGame")
+@SerializableAs(value = "HorseRaceGame")
 public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, HorseRaceOption> {
 
     public HorseRaceGame(@NotNull Map<String, Object> map) {
@@ -27,10 +27,9 @@ public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, Hor
     }
 
     @Override
-    public @NotNull HorseRaceType getMinigameType(){
+    public @NotNull HorseRaceType getMinigameType() {
         return MinigameTypes.HORSE_RACE;
     }
-
 
 
 }

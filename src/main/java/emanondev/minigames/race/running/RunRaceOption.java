@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-@SerializableAs(value="RunRaceOption")
+@SerializableAs(value = "RunRaceOption")
 public class RunRaceOption extends ARaceOption {
 
     public RunRaceOption() {

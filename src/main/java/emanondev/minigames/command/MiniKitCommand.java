@@ -160,6 +160,7 @@ public class MiniKitCommand extends CoreCommand {
             sendMsg(sender, "minikit.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
+        //TODO is used?
         KitManager.get().delete(kit);
         sendMsg(sender, "minikit.success.delete", "%id%", id, "%alias%", label);
     }

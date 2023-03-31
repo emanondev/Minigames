@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-@SerializableAs(value="BoatRaceOption")
+@SerializableAs(value = "BoatRaceOption")
 public class BoatRaceOption extends MountedRaceOption {
 
 

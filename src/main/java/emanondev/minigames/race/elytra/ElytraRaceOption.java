@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-@SerializableAs(value="ElytraRaceOption")
+@SerializableAs(value = "ElytraRaceOption")
 public class ElytraRaceOption extends ARaceOption {
 
     public ElytraRaceOption() {

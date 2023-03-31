@@ -33,7 +33,7 @@ skywars:
       - ""
       - "<#57c9fa>Salta da un'isola all'altra e"
       - "<#57c9fa>uccidi gli altri giocatori"
-      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
+      - "<#57c9fa>Durata <#ffffb3>%min_duration_estimation%-%max_duration_estimation%</#ffffb3> min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -58,7 +58,7 @@ runrace:
       - ""
       - "<#57c9fa>Corri e salta verso la fine"
       - "<#57c9fa>più veloce degli altri!"
-      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
+      - "<#57c9fa>Durata <#ffffb3>%min_duration_estimation%-%max_duration_estimation%</#ffffb3> min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -86,7 +86,7 @@ elytrarace:
       - ""
       - "<#57c9fa>Corri e salta verso la fine"
       - "<#57c9fa>più veloce degli altri!"
-      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
+      - "<#57c9fa>Durata <#ffffb3>%min_duration_estimation%-%max_duration_estimation%</#ffffb3> min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -113,7 +113,7 @@ horserace:
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Cavalca fino alla fine del percorso!"
-      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
+      - "<#57c9fa>Durata <#ffffb3>%min_duration_estimation%-%max_duration_estimation%</#ffffb3> min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
@@ -140,7 +140,7 @@ boatrace:
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Guida fino alla fine del percorso!"
-      - "<#57c9fa>Durata %min_duration_estimation%~%min_duration_estimation% min"
+      - "<#57c9fa>Durata <#ffffb3>%min_duration_estimation%-%max_duration_estimation%</#ffffb3> min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
     assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"

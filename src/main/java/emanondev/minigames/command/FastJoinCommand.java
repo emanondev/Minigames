@@ -75,6 +75,7 @@ public class FastJoinCommand extends CoreCommand {
                     sendMsg(player, "join.error.no_available_game_of_type", "%type%", type.getType(), "%alias%", label);
                 } else {
                     String[] typesRaw = args[0].split(",");
+                    @SuppressWarnings({"rawtypes"})
                     HashSet<MType> types = new HashSet<>();
                     for (String typeRaw : typesRaw) {
                         @SuppressWarnings("rawtypes")

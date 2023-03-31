@@ -60,9 +60,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         this.option = (O) OptionManager.get().get(optionId);
         this.arena = (A) ArenaManager.get().get(arenaId);
         if (this.arena == null)
-            throw new IllegalStateException("Arena is null, couldn't find Arena ID '"+arenaId+"'");
+            throw new IllegalStateException("Arena is null, couldn't find Arena ID '" + arenaId + "'");
         if (this.option == null)
-            throw new IllegalStateException("Option is null, couldn't find Option ID '"+optionId+"'");
+            throw new IllegalStateException("Option is null, couldn't find Option ID '" + optionId + "'");
         try {
             String textLoc = (String) map.get("location");
             if (textLoc != null)
@@ -803,11 +803,11 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
-    protected void givePoints(Player target,double amount) {
+    protected void givePoints(Player target, double amount) {
         if (amount > 0) {
             try {
                 new VaultEconomyHandler().addMoney(target, amount);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             new DMessage(Minigames.get(), target).appendLang("generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount)).send();

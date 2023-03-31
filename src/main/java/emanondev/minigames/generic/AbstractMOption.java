@@ -81,7 +81,7 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
         map.put("endphasecooldownmax", endPhaseCooldownMax);
         map.put("prestartphasecooldownmax", preStartPhaseCooldownMax);
         map.put("allowSpectators", allowSpectators);
-        map.put("showArenaBorders",showArenaBorders);
+        map.put("showArenaBorders", showArenaBorders);
         return map;
     }
 
@@ -132,12 +132,12 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
     }
 
     @Override
-    public boolean getShowArenaBorders(){
+    public boolean getShowArenaBorders() {
         return showArenaBorders;
     }
 
     @Override
-    public void setShowArenaBorders(boolean value){
+    public void setShowArenaBorders(boolean value) {
         showArenaBorders = value;
         OptionManager.get().save(this);
     }

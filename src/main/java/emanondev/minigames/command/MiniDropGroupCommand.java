@@ -74,6 +74,7 @@ public class MiniDropGroupCommand extends CoreCommand {
             sendMsg(sender, "minidropgroup.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
+        //TODO is used?
         DropGroupManager.get().delete(group);
         sendMsg(sender, "minidropgroup.success.delete", "%id%", id, "%alias%", label);
 

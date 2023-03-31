@@ -1,7 +1,5 @@
 package emanondev.minigames.race;
 
-import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.data.PlayerStat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;

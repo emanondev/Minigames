@@ -71,7 +71,6 @@ public final class Minigames extends CorePlugin {
 
         //TODO remove later
         this.registerCommand(new TestCommand());
-        this.registerCommand(new SnapshotSupportCommand());
 
         if (Hooks.isPAPIEnabled())
             new MinigamePlaceholders().register();

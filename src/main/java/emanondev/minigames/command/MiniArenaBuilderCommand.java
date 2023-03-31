@@ -87,8 +87,6 @@ public class MiniArenaBuilderCommand extends CoreCommand {
         }
         if (!MAN.registerBuilder(sender.getUniqueId(), id, label, type))
             sendMsg(sender, "miniarenabuilder.error.invalid_id", "%id%", id, "%alias%", label);
-        //else //handled by the ArenaBuilder
-        //  sendMsg(sender, "miniarenabuilder.success.create", "%alias%", label);
     }
 
     private void abort(@NotNull Player sender, @NotNull String label, @NotNull String[] args) {

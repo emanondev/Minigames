@@ -3,7 +3,6 @@ package emanondev.minigames.race;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
-import emanondev.minigames.generic.ColoredTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -14,22 +13,16 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.jetbrains.annotations.NotNull;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRaceOption> extends ARaceGame<T, O> {
 
     public MountedRaceGame(@NotNull Map<String, Object> map) {
         super(map);
-        //this.played = played;
-        //this.victory = victory;
     }
 
     @Override
     public void onEntityDeath(@NotNull EntityDeathEvent event) {
-        //TODO check if is mounted
         for (Entity passenger : event.getEntity().getPassengers())
             if (passenger instanceof Player player && isGamer(player)) this.onFakeGamerDeath(player, null, true);
 
@@ -56,10 +49,9 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
     public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
         if (getTeam(player) != null) return;
         MessageUtil.debug(getId() + " assigning team to " + player.getName());
-        //List<T> teams = new ArrayList<>(getTeams());
-        //teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
+
         for (T team : getTeams())
-            if (team.getUsersAmount()<getOption().getTeamMaxSize()&&team.addUser(player)) {
+            if (team.getUsersAmount() < getOption().getTeamMaxSize() && team.addUser(player)) {
                 new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
                         "%color%", team.getColor().name());
                 return;
@@ -95,6 +87,15 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
             Entity vehicle = player.getVehicle();
             vehicle.removePassenger(player);
             vehicle.remove();
+        }
+    }
+
+    public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
+        super.onGamerMoveInsideArena(event);
+        if (isSpectator(event.getPlayer())) return;
+        if (getPhase() == Phase.PRE_START) { //that fix the ugly visual error
+            event.setCancelled(false);
+            teleportResetLocation(event.getPlayer());
         }
     }
 

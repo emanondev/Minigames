@@ -4,12 +4,10 @@ import emanondev.core.UtilsString;
 import emanondev.minigames.deathmatch.DeathMatchType;
 import emanondev.minigames.eggwars.EggWarsType;
 import emanondev.minigames.generic.MType;
-import emanondev.minigames.race.TimeMountedRaceType;
-import emanondev.minigames.race.elytra.ElytraRaceType;
-import emanondev.minigames.race.running.RunRaceType;
 import emanondev.minigames.race.boat.BoatRaceType;
+import emanondev.minigames.race.elytra.ElytraRaceType;
 import emanondev.minigames.race.horse.HorseRaceType;
-import emanondev.minigames.race.timedrace.TimeRaceType;
+import emanondev.minigames.race.running.RunRaceType;
 import emanondev.minigames.skywars.SkyWarsType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,14 +17,12 @@ import java.util.*;
 public class MinigameTypes {
 
 
-
     public MinigameTypes() {
         instance = this;
         register(SKYWARS);
         register(RUN_RACE);
         register(BOAT_RACE);
         register(ELYTRA_RACE);
-        //register(MOUNTED_RACE);
         //register(TIME_RACE);
         //register(TIME_MOUNTED_RACE);
         register(HORSE_RACE);
@@ -70,7 +66,7 @@ public class MinigameTypes {
     public static final RunRaceType RUN_RACE = new RunRaceType();
     public static final ElytraRaceType ELYTRA_RACE = new ElytraRaceType();
     //public static final TimeRaceType TIME_RACE = new TimeRaceType();
-   // public static final TimeMountedRaceType TIME_MOUNTED_RACE = new TimeMountedRaceType();
+    // public static final TimeMountedRaceType TIME_MOUNTED_RACE = new TimeMountedRaceType();
     //public static final MountedRaceType MOUNTED_RACE = new MountedRaceType();
     public static final HorseRaceType HORSE_RACE = new HorseRaceType();
     public static final BoatRaceType BOAT_RACE = new BoatRaceType();

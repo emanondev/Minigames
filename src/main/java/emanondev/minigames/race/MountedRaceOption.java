@@ -87,7 +87,7 @@ public abstract class MountedRaceOption extends ARaceOption {
     }
 
     public void setType(@Nullable EntityType type) {
-        if (type!=null && !isAllowedType(type))
+        if (type != null && !isAllowedType(type))
             throw new IllegalStateException();
         this.type = type;
         OptionManager.get().save(this);

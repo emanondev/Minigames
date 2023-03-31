@@ -43,8 +43,6 @@ import java.util.*;
 @SuppressWarnings("rawtypes")
 public class GameManager extends Manager<MGame> implements Listener, ConsoleLogger {
 
-    //private static final int GAME_MINIMAL_DISTANCING = 272; //16+1 chunk (272)
-
     private static GameManager instance;
     private final List<List<MGame>> gameTickList;
 
@@ -176,8 +174,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
 
     public boolean isValidLocation(@NotNull BlockLocation3D loc, @NotNull MArena arena, @NotNull World w) {
         if (arena instanceof MSchemArena schemArena) {
-            //Clipboard clip = schemArena.getSchematic();
-            BlockVector dim = schemArena.getSize();//clip.getDimensions();
+            BlockVector dim = schemArena.getSize();
             //TODO eventually move the y
             BoundingBox box = new BoundingBox(
                     loc.x, loc.y, loc.z,
@@ -578,7 +575,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
         if (game != null)
             if (game.isGamer(player))
-                game.onGamerExhaustionEvent(event,player);
+                game.onGamerExhaustionEvent(event, player);
             else
                 event.setCancelled(true);
     }

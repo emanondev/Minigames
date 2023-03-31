@@ -294,19 +294,19 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         SkyWarsTeam team = getTeam(player);
         switchToSpectator(player);
         new SoundInfo(Sound.ENTITY_GHAST_DEATH, 1, 1, true).play(player); //self death notify
-        getGamers().forEach(gamer->{
-            if (gamer.equals(player)){
-                if (killer==null)
-                    sendMsg(gamer,getMinigameType()+".game.you_have_been_eliminated");
+        getGamers().forEach(gamer -> {
+            if (gamer.equals(player)) {
+                if (killer == null)
+                    sendMsg(gamer, getMinigameType() + ".game.you_have_been_eliminated");
                 else
-                    sendMsg(gamer,getMinigameType()+".game.you_have_been_eliminated_by","%who%",killer.getName());
-            }else  if (gamer.equals(killer)){
-                sendMsg(gamer,getMinigameType()+".game.you_eliminated","%who%",player.getName());
+                    sendMsg(gamer, getMinigameType() + ".game.you_have_been_eliminated_by", "%who%", killer.getName());
+            } else if (gamer.equals(killer)) {
+                sendMsg(gamer, getMinigameType() + ".game.you_eliminated", "%who%", player.getName());
             } else {
-                if (killer==null)
-                    sendMsg(gamer,getMinigameType()+".game.user_have_been_eliminated","%who%",player.getName());
+                if (killer == null)
+                    sendMsg(gamer, getMinigameType() + ".game.user_have_been_eliminated", "%who%", player.getName());
                 else
-                    sendMsg(gamer,getMinigameType()+".game.user_have_been_eliminated_by","%who%",player.getName(),"%killer%", killer.getName());
+                    sendMsg(gamer, getMinigameType() + ".game.user_have_been_eliminated_by", "%who%", player.getName(), "%killer%", killer.getName());
             }
 
         });
@@ -314,7 +314,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             setScore(team.getName(), -1);
         if (killer != null && isGamer(killer)) {
             PlayerStat.SKYWARS_KILLS.add(killer, 1);
-            givePoints(killer,getMinigameType().getKillPoints());
+            givePoints(killer, getMinigameType().getKillPoints());
             if (getOption().getKillRewardFiller() != null) {
                 //TODO add sound
                 UtilsInventory.giveAmount(player, getMinigameType().getKillRewardItem(), 1, UtilsInventory.ExcessManage.DROP_EXCESS);
@@ -349,7 +349,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             Player p = Bukkit.getPlayer(user);
             if (p != null && isGamer(p)) {
                 PlayerStat.SKYWARS_VICTORY.add(user, 1);
-                givePoints(p,getMinigameType().getWinPoints());
+                givePoints(p, getMinigameType().getWinPoints());
             }
         }
         this.gameEnd();

@@ -1,7 +1,5 @@
 package emanondev.minigames.race.timedrace;
 
-import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.race.ARaceGame;
 import emanondev.minigames.race.ARaceTeam;
 import org.bukkit.entity.Player;

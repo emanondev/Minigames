@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-@SerializableAs(value="HorseRaceOption")
+@SerializableAs(value = "HorseRaceOption")
 public class HorseRaceOption extends MountedRaceOption {
 
     public HorseRaceOption() {

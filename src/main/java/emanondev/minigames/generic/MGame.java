@@ -127,14 +127,15 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      * must set phase to RESTART and call gameRestart()
      * <p>
      * also do anything which should be done when the game start for the first time and do not need to be done on game restart
+     *
      * @return
      */
     CompletableFuture<Void> gameInitialize();
 
 
-    default void initialize(){
-        gameInitialize().whenComplete((value,th)-> {
-            MessageUtil.debug(this.getId()+" ("+getMinigameType().getType()+") Inizializzazione terminata");
+    default void initialize() {
+        gameInitialize().whenComplete((value, th) -> {
+            MessageUtil.debug(this.getId() + " (" + getMinigameType().getType() + ") Inizializzazione terminata");
             if (th != null)
                 this.gameAbort();
             else
@@ -371,8 +372,8 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     default void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player) {
     }
 
-    default void onGamerExhaustionEvent(EntityExhaustionEvent event, Player player){
-        if (getPhase()!=Phase.PLAYING)
+    default void onGamerExhaustionEvent(EntityExhaustionEvent event, Player player) {
+        if (getPhase() != Phase.PLAYING)
             event.setCancelled(true);
     }
 
@@ -389,7 +390,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         }
     }
 
-    default CorePlugin getPlugin(){
+    default CorePlugin getPlugin() {
         return getMinigameType().getPlugin();
     }
 }

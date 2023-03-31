@@ -1,9 +1,5 @@
 package emanondev.minigames.command;
 
-import com.sk89q.jnbt.NBTInputStream;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import emanondev.core.command.CoreCommand;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
@@ -16,13 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 public class TestCommand extends CoreCommand {
 
-    Clipboard schematicCache;
 
     public TestCommand() {
         super("test2", Minigames.get(), new Permission("aaa.bbb"));
@@ -34,17 +27,6 @@ public class TestCommand extends CoreCommand {
         if (!dest.isFile())
             throw new IllegalStateException("selected schematic do not exist");
 
-        ClipboardFormat format = ClipboardFormats.findByFile(dest);
-        try (NBTInputStream nbtStream = new NBTInputStream(new GZIPInputStream(new FileInputStream(dest)))) {
-            //ClipboardReader reader = format.getReader(new FileInputStream(dest));
-            //log(reader.getClass().getName()+" "+reader.getClass().getSimpleName());
-            Test test = new Test(nbtStream);
-            test.read();
-            nbtStream.close();
-            //reader.read();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

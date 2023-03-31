@@ -1,10 +1,7 @@
 package emanondev.minigames.skywars;
 
 import emanondev.core.ItemBuilder;
-import emanondev.core.UtilsString;
-import emanondev.core.VaultEconomyHandler;
 import emanondev.minigames.ArenaManager;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;
@@ -13,7 +10,6 @@ import emanondev.minigames.generic.MType;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

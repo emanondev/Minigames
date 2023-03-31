@@ -1,19 +1,12 @@
 package emanondev.minigames.race.timedrace;
 
 import emanondev.core.ItemBuilder;
-import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
-import emanondev.minigames.OptionManager;
-import emanondev.minigames.generic.MArena;
-import emanondev.minigames.generic.MOption;
 import emanondev.minigames.race.ARaceType;
 import emanondev.minigames.race.RaceArena;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public abstract class TimeRaceType extends ARaceType<TimeRaceOption> {
 

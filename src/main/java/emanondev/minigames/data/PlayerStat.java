@@ -35,7 +35,6 @@ public class PlayerStat extends Stat<UUID> {
     public static final PlayerStat ELYTRARACE_VICTORY = getStat("ELYTRARACE_VICTORY");
 
 
-
     private PlayerStat(@NotNull String id) {
         super(id);
     }

@@ -5,7 +5,6 @@ import emanondev.core.gui.Gui;
 import emanondev.core.gui.LongEditorFButton;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.ArenaManager;
-import emanondev.minigames.Configurations;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.AbstractMColorSchemArena;
 import emanondev.minigames.locations.LocationOffset3D;
@@ -32,7 +31,7 @@ public class RaceArena extends AbstractMColorSchemArena {
     }
 
     public void setRewardFirst(int rewardFirst) {
-        this.rewardFirst = Math.max(0,rewardFirst);
+        this.rewardFirst = Math.max(0, rewardFirst);
         ArenaManager.get().save(this);
     }
 
@@ -41,7 +40,7 @@ public class RaceArena extends AbstractMColorSchemArena {
     }
 
     public void setRewardSecond(int rewardSecond) {
-        this.rewardSecond = Math.max(0,rewardSecond);
+        this.rewardSecond = Math.max(0, rewardSecond);
         ArenaManager.get().save(this);
     }
 
@@ -50,7 +49,7 @@ public class RaceArena extends AbstractMColorSchemArena {
     }
 
     public void setRewardThird(int rewardThird) {
-        this.rewardThird = Math.max(0,rewardThird);
+        this.rewardThird = Math.max(0, rewardThird);
         ArenaManager.get().save(this);
     }
 
