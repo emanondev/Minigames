@@ -120,13 +120,13 @@ public class ARaceOption extends AbstractMOption {
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) perTeamMaxPlayers
                 , (v) -> setTeamMaxSize(v.intValue()),
                 () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(perTeamMaxPlayers)
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minioption.gui.team_max_players", "%value%", String.valueOf(perTeamMaxPlayers))).build()));
         gui.addButton(new ResearchFButton<>(gui,
-                () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.kit_selector", "%selected%", kitId == null ? "-none-" : kitId
                 )).build(),
-                (String base, Kit kit) -> kit.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
+                (String base, Kit kit) -> kit.getId().contains(base.toLowerCase(Locale.ENGLISH)),
                 (InventoryClickEvent event, Kit kit) -> {
                     if (Objects.equals(kitId, kit.getId()))
                         setKit(null);
@@ -135,11 +135,11 @@ public class ARaceOption extends AbstractMOption {
                     return true;
                 },
                 (Kit kit) -> kit.getGuiSelectorItemRaw().addEnchantment(Enchantment.DURABILITY,
-                        Objects.equals(kitId, kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        Objects.equals(kitId, kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", "free")).build(),
                 () -> KitManager.get().getAll().values()));
         gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                allowPvp ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                allowPvp ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                 "minioption.gui.allow_pvp", "%value%", String.valueOf(allowPvp))).build(),
                 (e) -> {
                     this.setAllowPvp(!this.getAllowPvp());
@@ -147,7 +147,7 @@ public class ARaceOption extends AbstractMOption {
                 }
         ));
         gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.BOW).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                allowPve ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                allowPve ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                 "minioption.gui.allow_pve", "%value%", String.valueOf(allowPve))).build(),
                 (e) -> {
                     this.setAllowPve(!this.getAllowPve());
@@ -155,7 +155,7 @@ public class ARaceOption extends AbstractMOption {
                 }
         ));
         gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.LEATHER_BOOTS).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                allowFallDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                allowFallDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                 "minioption.gui.allow_fall_damage", "%value%", String.valueOf(allowFallDamage))).build(),
                 (e) -> {
                     this.setAllowFallDamage(!this.getAllowFallDamage());
@@ -163,7 +163,7 @@ public class ARaceOption extends AbstractMOption {
                 }
         ));
         gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.LAVA_BUCKET).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                allowEnvironmentDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                allowEnvironmentDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                 "minioption.gui.allow_environment_damage", "%value%", String.valueOf(allowEnvironmentDamage))).build(),
                 (e) -> {
                     this.setAllowEnvironmentDamage(!this.getAllowEnvironmentDamage());

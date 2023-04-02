@@ -74,17 +74,17 @@ public class SpleefArenaBuilder extends SchematicArenaBuilder {
     public List<String> handleComplete(@NotNull String[] args) {
         return switch (args.length) {
             case 1 -> switch (getPhase()) {
-                case PHASE_SELECT_AREA -> UtilsCommand.complete(args[0], List.of("selectarea"));
-                case PHASE_SET_TEAM_SPAWNS -> UtilsCommand.complete(args[0], List.of("setteamspawn", "deleteteamspawn"));
-                case PHASE_SET_TEAM_SPAWNS_OR_NEXT -> UtilsCommand.complete(args[0], List.of("setteamspawn", "deleteteamspawn", "next"));
-                case PHASE_SET_SPECTATOR_SPAWN -> UtilsCommand.complete(args[0], List.of("setspectatorspawn"));
-                case PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> UtilsCommand.complete(args[0], List.of("setspectatorspawn", "next"));
+                case PHASE_SELECT_AREA -> complete(args[0], List.of("selectarea"));
+                case PHASE_SET_TEAM_SPAWNS -> complete(args[0], List.of("setteamspawn", "deleteteamspawn"));
+                case PHASE_SET_TEAM_SPAWNS_OR_NEXT -> complete(args[0], List.of("setteamspawn", "deleteteamspawn", "next"));
+                case PHASE_SET_SPECTATOR_SPAWN -> complete(args[0], List.of("setspectatorspawn"));
+                case PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> complete(args[0], List.of("setspectatorspawn", "next"));
                 default -> Collections.emptyList();
             };
             case 2 -> switch (getPhase()) {
                 case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                    case "setteamspawn" -> UtilsCommand.complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c));
-                    case "deleteteamspawn" -> UtilsCommand.complete(args[1], DyeColor.class, spawnLocations::containsKey);
+                    case "setteamspawn" -> complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c));
+                    case "deleteteamspawn" -> complete(args[1], DyeColor.class, spawnLocations::containsKey);
                     default -> Collections.emptyList();
                 };
                 default -> Collections.emptyList();

@@ -152,7 +152,7 @@ public abstract class MountedRaceOption extends ARaceOption {
         Set<EntityType> allowed = getAllowedTypes();
 
         gui.addButton(new ResearchFButton<>(gui,
-                () -> new ItemBuilder(getEntityTypeMaterial(getType())).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                () -> new ItemBuilder(getEntityTypeMaterial(getType())).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.entitytype_selector", "%selected%", getType().name().toLowerCase(Locale.ENGLISH)
                 )).build(),
                 (String base, EntityType type) -> type.name().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
@@ -162,14 +162,14 @@ public abstract class MountedRaceOption extends ARaceOption {
                     return true;
                 },
                 (EntityType type) -> new ItemBuilder(getEntityTypeMaterial(type)).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        type == getType() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        type == getType() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.entitytype_description", "%type%", type.name().toLowerCase(Locale.ENGLISH)
                 )).build(),
                 () -> allowed));
         gui.addButton(new DoubleEditorFButton(gui, 0.1, 0.01, 10, this::getBaseSpeed
                 , this::setBaseSpeed,
                 () -> new ItemBuilder(Material.LEATHER_BOOTS).setGuiProperty()
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minioption.gui.mounted_basespeed", "%value%",
                                 UtilsString.formatOptional2Digit(getBaseSpeed()))).build()));
         return gui;

@@ -35,7 +35,7 @@ public class JoinCommand extends CoreCommand {
             return;
         }
         if (GameManager.get().getCurrentGame(player) != null) {
-            sendMsg(player, "join.error.already_inside_a_game", "%alias%", label);
+            sendDMessage(player, "join.error.already_inside_a_game", "%alias%", label);
             return;
         }
 
@@ -45,7 +45,7 @@ public class JoinCommand extends CoreCommand {
                 ArrayList<MGame> values = new ArrayList<>(GameManager.get().getAll().values());
                 values.removeIf((game) -> game.getPhase() == MGame.Phase.STOPPED);
                 if (values.isEmpty()) {
-                    sendMsg(player, "join.error.no_available_game", "%alias%", label);
+                    sendDMessage(player, "join.error.no_available_game", "%alias%", label);
                     return;
                 }
                 @SuppressWarnings("rawtypes")
@@ -68,7 +68,7 @@ public class JoinCommand extends CoreCommand {
                     Collection<MGame> values = new ArrayList(GameManager.get().getGameInstances(type).values());
                     values.removeIf((game) -> game.getPhase() == MGame.Phase.STOPPED);
                     if (values.isEmpty()) {
-                        sendMsg(player, "join.error.no_available_game", "%alias%", label);
+                        sendDMessage(player, "join.error.no_available_game", "%alias%", label);
                         return;
                     }
                     @SuppressWarnings("rawtypes")
@@ -87,27 +87,19 @@ public class JoinCommand extends CoreCommand {
                 @SuppressWarnings("rawtypes")
                 MGame game = GameManager.get().get(args[0]);
                 if (game == null) {
-                    sendMsg(player, "join.error.invalid_game_or_minigame", "%name%", args[0], "%alias%", label);
+                    sendDMessage(player, "join.error.invalid_game_or_minigame", "%name%", args[0], "%alias%", label);
                     return;
                 }
                 if (GameManager.get().joinGameAsGamer(player, game))
                     return;
-                sendMsg(player, "join.error.game_not_available", "%name%", game.getId(), "%alias%", label);
+                sendDMessage(player, "join.error.game_not_available", "%name%", game.getId(), "%alias%", label);
             }
-            default -> sendMsg(player, "join.error.join_params", "%alias%", label);
+            default -> sendDMessage(player, "join.error.join_params", "%alias%", label);
         }
     }
 
     @Override
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return args.length == 1 ? this.complete(args[0], MinigameTypes.get().getTypesId()) : Collections.emptyList();
-    }
-
-    private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders).send();
-    }
-
-    private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 }

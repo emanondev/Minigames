@@ -100,7 +100,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                 }
                 try {
                     setArea(player);
-                    sendMsg(player, "arenabuilder.race.success.select_area",
+                    sendDMessage(player, "arenabuilder.race.success.select_area",
                             "%world%", getWorld().getName(),
                             "%x1%", String.valueOf((int) getArea().getMinX()),
                             "%x2%", String.valueOf((int) getArea().getMaxX()),
@@ -111,7 +111,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
 
                     setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
                 } catch (IncompleteRegionException e) {
-                    sendMsg(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
+                    sendDMessage(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
                 }
             }
             case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
@@ -134,7 +134,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                         LocationOffset3D loc = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
                         boolean override = spawnLocations.containsKey(color);
                         spawnLocations.put(color, loc);
-                        sendMsg(player, override ? "arenabuilder.race.success.override_team_spawn"
+                        sendDMessage(player, override ? "arenabuilder.race.success.override_team_spawn"
                                 : "arenabuilder.race.success.set_team_spawn", "%color%", color.name(), "%alias%", label);
                         if (getPhase() == PHASE_SET_TEAM_SPAWNS && spawnLocations.size() >= 2)
                             setPhaseRaw(PHASE_SET_TEAM_SPAWNS_OR_NEXT);
@@ -146,7 +146,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                         //TODO check color value
                         DyeColor color = DyeColor.valueOf(args[1].toUpperCase());
                         spawnLocations.remove(color);
-                        sendMsg(player, "arenabuilder.race.success.deleted_team_spawn",
+                        sendDMessage(player, "arenabuilder.race.success.deleted_team_spawn",
                                 "%color%", color.name(), "%alias%", label);
                         if (getPhase() == PHASE_SET_TEAM_SPAWNS_OR_NEXT && spawnLocations.size() < 2)
                             setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
@@ -172,7 +172,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                         }
                         boolean override = spectatorsOffset != null;
                         spectatorsOffset = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
-                        sendMsg(player, override ? "arenabuilder.race.success.override_spectators_spawn"
+                        sendDMessage(player, override ? "arenabuilder.race.success.override_spectators_spawn"
                                 : "arenabuilder.race.success.set_spectators_spawn", "%alias%", label);
                         if (getPhase() == PHASE_SET_SPECTATOR_SPAWN)
                             setPhaseRaw(PHASE_SET_SPECTATOR_SPAWN_OR_NEXT);
@@ -187,7 +187,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                     case "clear" -> {
                         checkPoints.clear();
                         checkPointsRespawn.clear();
-                        sendMsg(player, "arenabuilder.race.success.cleared_checkpoints",
+                        sendDMessage(player, "arenabuilder.race.success.cleared_checkpoints",
                                 "%amount%", String.valueOf(checkPoints.size()), "%alias%", label);
                     }
                     case "checkpointarea" -> {
@@ -221,7 +221,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                                 WARN_SELECTED_AREA_VERY_SMALL.send(player, "%volume%", String.valueOf(checkPointArea.getVolume()), "%alias%", label);
                             }
 
-                            sendMsg(player, "arenabuilder.race.success.select_checkpoint",
+                            sendDMessage(player, "arenabuilder.race.success.select_checkpoint",
                                     "%world%", getWorld().getName(),
                                     "%x1%", String.valueOf((int) checkPointArea.getMinX()),
                                     "%x2%", String.valueOf((int) checkPointArea.getMaxX()),
@@ -232,7 +232,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             checkPoints.add(checkPointArea);
                             setPhaseRaw(PHASE_CHECKPOINT_SPAWN);
                         } catch (IncompleteRegionException e) {
-                            sendMsg(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
+                            sendDMessage(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
                         }
                     }
                     default -> ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
@@ -242,7 +242,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             case PHASE_CHECKPOINT_SPAWN -> { //checkpoint checkpointrespawnloc || undo
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "undo" -> {
-                        sendMsg(player, "race.arenabuilder.success.undo_checkpoint", "%alias%", label);
+                        sendDMessage(player, "race.arenabuilder.success.undo_checkpoint", "%alias%", label);
                         checkPoints.remove(checkPoints.size() - 1);
                         setPhaseRaw(PHASE_CHECKPOINT_AREA_OR_NEXT);
                     }
@@ -252,7 +252,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             return;
                         }
                         checkPointsRespawn.add(LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin())));
-                        sendMsg(player, "race.arenabuilder.success.set_checkpoint_respawn", "%number%", String.valueOf(checkPoints.size()), "%alias%", label);
+                        sendDMessage(player, "race.arenabuilder.success.set_checkpoint_respawn", "%number%", String.valueOf(checkPoints.size()), "%alias%", label);
                         setPhaseRaw(PHASE_CHECKPOINT_AREA_OR_NEXT);
                     }
                     default -> ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
@@ -289,7 +289,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             if (finishArea.getVolume() < 2) {
                                 WARN_SELECTED_AREA_VERY_SMALL.send(player, "%volume%", String.valueOf(finishArea.getVolume()), "%alias%", label);
                             }
-                            sendMsg(player, "arenabuilder.race.success.select_finisharea",
+                            sendDMessage(player, "arenabuilder.race.success.select_finisharea",
                                     "%world%", getWorld().getName(),
                                     "%x1%", String.valueOf((int) finishArea.getMinX()),
                                     "%x2%", String.valueOf((int) finishArea.getMaxX()),
@@ -300,7 +300,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             this.endArea = finishArea;
                             setPhaseRaw(PHASE_FALLING_ZONES);
                         } catch (IncompleteRegionException e) {
-                            sendMsg(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
+                            sendDMessage(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
                         }
                     }
                     default -> ERR_UNKNOWN_ACTION.send(player, "%alias%", label);
@@ -315,7 +315,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                     }
                     case "next" -> {
                         ArenaManager.get().onArenaBuilderCompletedArena(this);
-                        sendMsg(player, "arenabuilder.race.success.completed",
+                        sendDMessage(player, "arenabuilder.race.success.completed",
                                 UtilsString.merge(ArenaManager.get().get(getId()).getPlaceholders(), "%alias%", label));
                     }
                     case "fallingzone" -> {
@@ -346,7 +346,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                                 return;
                             }
                             fallAreas.add(fallArea);
-                            sendMsg(player, "arenabuilder.race.success.select_fallingzone",
+                            sendDMessage(player, "arenabuilder.race.success.select_fallingzone",
                                     "%world%", getWorld().getName(),
                                     "%x1%", String.valueOf((int) fallArea.getMinX()),
                                     "%x2%", String.valueOf((int) fallArea.getMaxX()),
@@ -355,13 +355,13 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                                     "%z1%", String.valueOf((int) fallArea.getMinZ()),
                                     "%z2%", String.valueOf((int) fallArea.getMaxZ()), "%number%", String.valueOf(fallAreas.size()), "%alias%", label);
                         } catch (IncompleteRegionException e) {
-                            sendMsg(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
+                            sendDMessage(player, "arenabuilder.race.error.unselected_area", "%alias%", label);
                         }
                     }
                     case "undofallingzone" -> {
                         if (fallAreas.size() > 0) {
                             fallAreas.remove(fallAreas.size() - 1);
-                            sendMsg(player, "arenabuilder.race.success.deleted_last_fallingzone",
+                            sendDMessage(player, "arenabuilder.race.success.deleted_last_fallingzone",
                                     "%alias%", label);
                         }
                     }
@@ -374,22 +374,22 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     @Override
     public List<String> handleComplete(@NotNull String[] args) {
         return switch (getPhase()) {
-            case PHASE_SELECT_AREA -> args.length == 1 ? UtilsCommand.complete(args[0], List.of("selectarea")) : Collections.emptyList();
-            case PHASE_SET_TEAM_SPAWNS -> args.length == 1 ? UtilsCommand.complete(args[0], List.of("setteamspawn")) :
-                    args.length == 2 ? UtilsCommand.complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c)) : Collections.emptyList();
+            case PHASE_SELECT_AREA -> args.length == 1 ? complete(args[0], List.of("selectarea")) : Collections.emptyList();
+            case PHASE_SET_TEAM_SPAWNS -> args.length == 1 ? complete(args[0], List.of("setteamspawn")) :
+                    args.length == 2 ? complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c)) : Collections.emptyList();
             case PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
                 if (args.length == 1)
-                    yield UtilsCommand.complete(args[0], List.of("setteamspawn", "next"));
+                    yield complete(args[0], List.of("setteamspawn", "next"));
                 if (args.length == 2)
-                    yield UtilsCommand.complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c));
+                    yield complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c));
                 yield Collections.emptyList();
             }
-            case PHASE_SET_SPECTATOR_SPAWN -> UtilsCommand.complete(args[0], List.of("setspectatorspawn"));
-            case PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> UtilsCommand.complete(args[0], List.of("setspectatorspawn", "next"));
-            case PHASE_CHECKPOINT_AREA_OR_NEXT -> UtilsCommand.complete(args[0], List.of("checkpointarea", "next", "clear"));
-            case PHASE_CHECKPOINT_SPAWN -> UtilsCommand.complete(args[0], List.of("checkpointrespawnloc", "undo"));
-            case PHASE_FINISH_AREA -> UtilsCommand.complete(args[0], List.of("finisharea"));
-            case PHASE_FALLING_ZONES -> UtilsCommand.complete(args[0], List.of("fallingzone", "next", "undofinisharea", "undofallingzone"));
+            case PHASE_SET_SPECTATOR_SPAWN -> complete(args[0], List.of("setspectatorspawn"));
+            case PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> complete(args[0], List.of("setspectatorspawn", "next"));
+            case PHASE_CHECKPOINT_AREA_OR_NEXT -> complete(args[0], List.of("checkpointarea", "next", "clear"));
+            case PHASE_CHECKPOINT_SPAWN -> complete(args[0], List.of("checkpointrespawnloc", "undo"));
+            case PHASE_FINISH_AREA -> complete(args[0], List.of("finisharea"));
+            case PHASE_FALLING_ZONES -> complete(args[0], List.of("fallingzone", "next", "undofinisharea", "undofallingzone"));
             default -> throw new IllegalStateException("Unexpected value: " + getPhase());
         };
     }

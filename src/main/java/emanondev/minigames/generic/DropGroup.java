@@ -101,12 +101,12 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
                     () -> (long) getWeight(item),
                     (weight) -> addWeight(item, weight.intValue()),
                     () -> new ItemBuilder(item).addDescription(new DMessage(
-                            gui.getPlugin(), gui.getTargetPlayer()).append("\n").appendLangList("minidropgroup.gui.chance_info",
+                            gui.getPlugin(), gui.getTargetPlayer()).append("\n").appendLang("minidropgroup.gui.chance_info",
                             "%chance%", UtilsString.formatForced2Digit(100 * ((double) getWeight(item)) / drops.getFullWeight()),
                             "%weight%", String.valueOf(getWeight(item)))).build()));
         }
         gui.setControlGuiButton(4, new FButton(gui, () -> new ItemBuilder(Material.PAPER).setGuiProperty()
-                .setDescription(new DMessage(Minigames.get(), player).appendLangList("minidropgroup.gui.info", "%id%", getId())).build(),
+                .setDescription(new DMessage(Minigames.get(), player).appendLang("minidropgroup.gui.info", "%id%", getId())).build(),
                 (e) -> false));
         return gui;
     }

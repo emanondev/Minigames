@@ -5,11 +5,14 @@ import org.bukkit.Location;
 import org.bukkit.util.BlockVector;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 public interface MSchemArena extends MArena {
 
-    CompletableFuture<EditSession> paste(@NotNull Location location);
+    @NotNull CompletableFuture<EditSession> paste(@NotNull Location location);
 
-    BlockVector getSize();
+    @NotNull BlockVector getSize();
+
+    @NotNull File getSchematicFile();
 }

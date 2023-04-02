@@ -15,6 +15,7 @@ public class PlayerJoiningGameEvent extends GameEvent implements Cancellable {
     private final Player player;
     private boolean isCancelled = false;
 
+    @SuppressWarnings("rawtypes")
     public PlayerJoiningGameEvent(@NotNull MGame game, @NotNull Player player) {
         super(game);
         this.player = player;

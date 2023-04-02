@@ -120,10 +120,6 @@ public class Configurations {
         return sInfo;
     }
 
-    public static ItemStack getFillerToggleViewItem(Player player) {
-        return getItem(player, "filler_toggle_view", "minifiller.gui.filler_toggle_view").build();
-    }
-
     public static SoundInfo getCollectingPlayersCooldownTickSound() {
         return getSoundInfo("collecting_players_cooldown_tick");
     }

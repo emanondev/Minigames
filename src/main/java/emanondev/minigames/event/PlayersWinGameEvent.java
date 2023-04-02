@@ -16,6 +16,7 @@ public class PlayersWinGameEvent extends GameEvent {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private final Set<Player> players;
 
+    @SuppressWarnings("rawtypes")
     public PlayersWinGameEvent(@NotNull MGame game, @NotNull Set<Player> players) {
         super(game);
         this.players = Collections.unmodifiableSet(players);

@@ -61,7 +61,7 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
         double kp = getSection().loadDouble("kill_points", 2D);
         if (kp > 0) {
             new VaultEconomyHandler().addMoney(p, kp);
-            MessageUtil.sendMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(kp));
+            sendDMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(kp));
         }
     }
 
@@ -69,7 +69,7 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
         double win = getSection().loadDouble("win_points", 10D);
         if (win > 0) {
             new VaultEconomyHandler().addMoney(p, win);
-            MessageUtil.sendMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(win));
+            sendDMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(win));
         }
     }
 

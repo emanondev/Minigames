@@ -84,31 +84,31 @@ public class MiniGameCommand extends CoreCommandPlus {
     }
 
     private void tp(CommandSender sender, String label, String[] args) {
-        sendMsg(sender, "not_implemented");
+        sendDMessage(sender, "not_implemented");
     }
 
     private void stop(CommandSender sender, String label, String[] args) {
-        sendMsg(sender, "not_implemented");
+        sendDMessage(sender, "not_implemented");
     }
 
     private void reset(CommandSender sender, String label, String[] args) {
-        sendMsg(sender, "not_implemented");
+        sendDMessage(sender, "not_implemented");
     }
 
     private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
-            sendMsg(sender, "minigame.error.delete_params", "%alias%", label);
+            sendDMessage(sender, "minigame.error.delete_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         @SuppressWarnings("rawtypes")
         MGame group = GameManager.get().get(id);
         if (group == null) {
-            sendMsg(sender, "minigame.error.id_not_found", "%id%", id, "%alias%", label);
+            sendDMessage(sender, "minigame.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
         GameManager.get().delete(group);
-        sendMsg(sender, "minigame.success.delete", "%id%", id, "%alias%", label);
+        sendDMessage(sender, "minigame.success.delete", "%id%", id, "%alias%", label);
     }
 
     //minigame list [type]
@@ -118,7 +118,7 @@ public class MiniGameCommand extends CoreCommandPlus {
         if (args.length > 1) {
             type = MinigameTypes.get().getType(args[1]);
             if (type == null) {
-                sendMsg(sender, "minigame.error.invalid_minigametype", "%type%", args[1], "%alias%", label);
+                sendDMessage(sender, "minigame.error.invalid_minigametype", "%type%", args[1], "%alias%", label);
                 return;
             }
         }
@@ -133,7 +133,7 @@ public class MiniGameCommand extends CoreCommandPlus {
         for (@SuppressWarnings("rawtypes") MGame game : list) {
             if (type == null || game.getMinigameType().equals(type)) {
                 msg.appendHover(
-                        new DMessage(getPlugin(), sender).appendLangList("minigame.success.list_info",
+                        new DMessage(getPlugin(), sender).appendLang("minigame.success.list_info",
                                 UtilsString.merge(game.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
                                 .appendRunCommand("/" + label + " tp " + game.getId(), game.getId())).append(" ");
                 color = !color;
@@ -143,7 +143,7 @@ public class MiniGameCommand extends CoreCommandPlus {
     }
 
     private void help(CommandSender sender, String label, String[] args) {
-        sendMsgList(sender, "minigame.help", "%alias%", label);
+        sendDMessage(sender, "minigame.help", "%alias%", label);
     }
 
 
@@ -156,55 +156,46 @@ public class MiniGameCommand extends CoreCommandPlus {
         }
 
         if (args.length != 5) {
-            sendMsg(player, "minigame.error.create_params", "%alias%", label);
+            sendDMessage(player, "minigame.error.create_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase();
         if (!UtilsString.isLowcasedValidID(id)) {
-            sendMsg(player, "minigame.error.invalid_id", "%id%", id, "%alias%", label);
+            sendDMessage(player, "minigame.error.invalid_id", "%id%", id, "%alias%", label);
             return;
         }
         if (GameManager.get().get(id) != null) {
-            sendMsg(player, "minigame.error.id_already_used", "%id%", id, "%alias%", label);
+            sendDMessage(player, "minigame.error.id_already_used", "%id%", id, "%alias%", label);
             return;
         }
         @SuppressWarnings("rawtypes")
         MType mType = MinigameTypes.get().getType(args[2]);
         if (mType == null) {
-            sendMsg(player, "minigame.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
+            sendDMessage(player, "minigame.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
             return;
         }
         MArena arena = ArenaManager.get().get(args[3]);
         if (arena == null) {
-            sendMsg(player, "minigame.error.arena_not_found", "%arena%", args[3], "%alias%", label);
+            sendDMessage(player, "minigame.error.arena_not_found", "%arena%", args[3], "%alias%", label);
             return;
         }
         if (!mType.matchType(arena)) {
-            sendMsg(player, "minigame.error.invalid_arena_type", "%type%", args[2], "%arena%", args[3], "%alias%", label);
+            sendDMessage(player, "minigame.error.invalid_arena_type", "%type%", args[2], "%arena%", args[3], "%alias%", label);
             return;
         }
         MOption option = OptionManager.get().get(args[4]);
         if (option == null) {
-            sendMsg(player, "minigame.error.option_not_found", "%option%", args[4], "%alias%", label);
+            sendDMessage(player, "minigame.error.option_not_found", "%option%", args[4], "%alias%", label);
             return;
         }
         if (!mType.matchType(option)) {
-            sendMsg(player, "minigame.error.invalid_option_type", "%type%", args[2], "%option%", args[4], "%alias%", label);
+            sendDMessage(player, "minigame.error.invalid_option_type", "%type%", args[2], "%option%", args[4], "%alias%", label);
             return;
         }
         @SuppressWarnings("rawtypes")
         MGame mGame = mType.createGame(arena.getId(), option.getId());
         GameManager.get().register(id, mGame, player);
         mGame.initialize();
-        sendMsg(player, "minigame.success.create", UtilsString.merge(mGame.getPlaceholders(), "%alias%", label));
-    }
-
-
-    private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders).send();
-    }
-
-    private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
+        sendDMessage(player, "minigame.success.create", UtilsString.merge(mGame.getPlaceholders(), "%alias%", label));
     }
 }

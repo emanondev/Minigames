@@ -12,6 +12,7 @@ public class GameUnloadEvent extends GameEvent {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    @SuppressWarnings("rawtypes")
     public GameUnloadEvent(@NotNull MGame game) {
         super(game);
     }

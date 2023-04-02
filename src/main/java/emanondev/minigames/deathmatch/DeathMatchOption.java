@@ -89,12 +89,12 @@ public class DeathMatchOption extends AbstractMOption {
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) getTeamMaxSize()
                 , (v) -> setTeamMaxPlayers(v.intValue()),
                 () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(getTeamMaxSize())
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minioption.gui.team_max_players", "%value%", String.valueOf(getTeamMaxSize()))).build()));
         gui.addButton(new ResearchFButton<>(gui,
                 () -> {
                     DropsFiller filler = getChestFillerId() == null ? null : FillerManager.get().get(getChestFillerId());
-                    return new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                    return new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                             "minioption.gui.chestsfiller_selector",
                             "%id%", filler == null ? "-none-" : getChestFillerId(),
                             "%size%", filler == null ? "-" : String.valueOf(filler.getSize())
@@ -106,14 +106,14 @@ public class DeathMatchOption extends AbstractMOption {
                     return true;
                 },
                 (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        filler.getId().equals(getChestFillerId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        filler.getId().equals(getChestFillerId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.chestsfiller_description", filler.getPlaceholders()
                 )).build(),
                 () -> FillerManager.get().getAll().values()));
         gui.addButton(new ResearchFButton<>(gui,
                 () -> {
                     DropsFiller filler = getKillKewardFillerId() == null ? null : FillerManager.get().get(getKillKewardFillerId());
-                    return new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                    return new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                             "minioption.gui.killrewardfiller_selector",
                             "%id%", filler == null ? "-none-" : getKillKewardFillerId(),
                             "%size%", filler == null ? "-" : String.valueOf(filler.getSize())
@@ -125,12 +125,12 @@ public class DeathMatchOption extends AbstractMOption {
                     return true;
                 },
                 (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        filler.getId().equals(getKillKewardFillerId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        filler.getId().equals(getKillKewardFillerId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.killrewardfiller_description", filler.getPlaceholders()
                 )).build(),
                 () -> FillerManager.get().getAll().values()));
         gui.addButton(new ResearchFButton<>(gui,
-                () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.kit_selector", "%selected%", kitId == null ? "-none-" : kitId
                 )).build(),
                 (String base, Kit kit) -> kit.getId().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
@@ -142,7 +142,7 @@ public class DeathMatchOption extends AbstractMOption {
                     return true;
                 },
                 (Kit kit) -> kit.getGuiSelectorItemRaw().addEnchantment(Enchantment.DURABILITY,
-                        Objects.equals(kitId, kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        Objects.equals(kitId, kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", "free")).build(),
                 () -> KitManager.get().getAll().values()));
         return gui;

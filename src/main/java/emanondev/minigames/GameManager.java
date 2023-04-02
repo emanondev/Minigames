@@ -101,13 +101,14 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         getAll().forEach((k, v) -> v.gameAbort());
         super.reload();
         long counter = 1;
+
         for (@SuppressWarnings("rawtypes") MGame game : getAll().values()) {
             new BukkitRunnable() {
                 public void run() {
                     game.initialize();
                 }
             }.runTaskLater(Minigames.get(), counter);
-            counter += 40;
+            counter += C.getStartupGameInitializeDelayTicks();
         }
 
     }
@@ -179,7 +180,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             BoundingBox box = new BoundingBox(
                     loc.x, loc.y, loc.z,
                     loc.x + dim.getX(), loc.y + dim.getY(), loc.z + dim.getZ());
-            box.expand(C.getGameMinimalDistancing());
+            box.expand(C.getGameMinimalSpaceDistancing());
 
             for (@SuppressWarnings("rawtypes") MGame game : getAll().values()) {
                 if (game.getArena() instanceof MSchemArena schemArena2) {

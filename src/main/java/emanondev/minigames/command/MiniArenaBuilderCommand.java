@@ -55,47 +55,47 @@ public class MiniArenaBuilderCommand extends CoreCommand {
     }
 
     private void help(@NotNull Player sender, @NotNull String label, @NotNull String[] args) {
-        sendMsgList(sender, "miniarenabuilder.help", "%alias%", label);
+        sendDMessage(sender, "miniarenabuilder.help", "%alias%", label);
     }
 
     private void create(@NotNull Player sender, @NotNull String label, @NotNull String[] args) {
         if (MAN.isBuilding(sender)) {
-            sendMsg(sender, "miniarenabuilder.error.already_creating", "%alias%", label);
+            sendDMessage(sender, "miniarenabuilder.error.already_creating", "%alias%", label);
             return;
         }
         if (args.length != 3) {
             //arguments
-            sendMsg(sender, "miniarenabuilder.error.create_params", "%alias%", label);
+            sendDMessage(sender, "miniarenabuilder.error.create_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         if (MAN.get(id) != null) {
-            sendMsg(sender, "miniarenabuilder.error.id_already_used", "%id%", id, "%alias%", label);
+            sendDMessage(sender, "miniarenabuilder.error.id_already_used", "%id%", id, "%alias%", label);
             return;
         }
         MArenaBuilder arenaBuilder = MAN.getBuildingArenaById(id);
         if (arenaBuilder != null) {
-            sendMsg(sender, "miniarenabuilder.error.id_already_building", "%id%", id, "%alias%", label,
+            sendDMessage(sender, "miniarenabuilder.error.id_already_building", "%id%", id, "%alias%", label,
                     "%who%", Bukkit.getOfflinePlayer(arenaBuilder.getUser()).getName());
             return;
         }
         @SuppressWarnings("rawtypes")
         MType type = MinigameTypes.get().getType(args[2]);
         if (type == null) {
-            sendMsg(sender, "miniarenabuilder.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
+            sendDMessage(sender, "miniarenabuilder.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
             return;
         }
         if (!MAN.registerBuilder(sender.getUniqueId(), id, label, type))
-            sendMsg(sender, "miniarenabuilder.error.invalid_id", "%id%", id, "%alias%", label);
+            sendDMessage(sender, "miniarenabuilder.error.invalid_id", "%id%", id, "%alias%", label);
     }
 
     private void abort(@NotNull Player sender, @NotNull String label, @NotNull String[] args) {
         if (MAN.isBuilding(sender)) {
             MAN.unregisterBuilder(sender.getUniqueId());
-            sendMsg(sender, "miniarenabuilder.success.abort", "%alias%", label);
+            sendDMessage(sender, "miniarenabuilder.success.abort", "%alias%", label);
             return;
         }
-        sendMsg(sender, "miniarenabuilder.error.not_creating", "%alias%", label);
+        sendDMessage(sender, "miniarenabuilder.error.not_creating", "%alias%", label);
     }
 
 
@@ -117,12 +117,4 @@ public class MiniArenaBuilderCommand extends CoreCommand {
         return arenaMan.getBuildingArena(who).handleComplete(args);
     }
 
-
-    private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders).send();
-    }
-
-    private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
-    }
 }

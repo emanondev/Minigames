@@ -77,7 +77,7 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         this.maxDurationEstimation = Math.max(this.minDurationEstimation + 1, (int) map.getOrDefault("maxDurationEstimation", 5));
     }
 
-    public CompletableFuture<EditSession> paste(@NotNull Location location) {
+    public @NotNull CompletableFuture<EditSession> paste(@NotNull Location location) {
         CompletableFuture<EditSession> future = new CompletableFuture<>();
         getSchematicAsync().whenComplete((val, th) -> {
             if (th != null)
@@ -93,24 +93,24 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
                 });
             }
         });
-        //return WorldEditUtility.paste(location, getSchematic(), true, Minigames.get(), false, false, false);
         return future;
     }
 
 
-    public BlockVector getSize() {
+    public @NotNull BlockVector getSize() {
         if (size != null)
             return size.clone();
-        BlockVector3 blockV = getSchematic().getDimensions();
+        BlockVector3 blockV = getSchematic().getDimensions(); //TODO may read just size instead of all the file
         size = new BlockVector(blockV.getBlockX(), blockV.getBlockY(), blockV.getBlockZ());
         return size;
     }
 
+    @Deprecated
     private Clipboard getSchematic() {
         Clipboard clip = schematicCache == null ? null : schematicCache.get();
         if (clip != null)
             return clip;
-        File file = new File(ArenaManager.get().getSchematicsFolder(), schematicName);
+        File file = getSchematicFile();
         if (!file.isFile())
             throw new IllegalStateException("selected schematic do not exist");
         clip = WorldEditUtility.load(file);
@@ -122,12 +122,17 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         Clipboard clip = schematicCache == null ? null : schematicCache.get();
         if (clip != null)
             return CompletableFuture.completedFuture(clip);
-        File file = new File(ArenaManager.get().getSchematicsFolder(), schematicName);
+        File file = getSchematicFile();
         if (!file.isFile())
             throw new IllegalStateException("selected schematic do not exist");
         CompletableFuture<Clipboard> future = WorldEditUtility.load(file, Minigames.get(), true);
         future.whenComplete((val, th) -> schematicCache = new SoftReference<>(val));
         return future;
+    }
+
+    @Override
+    public @NotNull File getSchematicFile(){
+        return new File(ArenaManager.get().getSchematicsFolder(), schematicName);
     }
 
     @NotNull
@@ -168,20 +173,20 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         gui.addButton(new StringEditorFButton(gui, this::getDisplayName, this::setDisplayName,
                 () -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setDescription(
                         new DMessage(Minigames.get(), target)
-                                .appendLangList("miniarena.gui.display_name_editor", getPlaceholders())
+                                .appendLang("miniarena.gui.display_name_editor", getPlaceholders())
                 ).setGuiProperty().build(), true));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 100,
                 () -> (long) getMinDurationEstimation(),
                 (v) -> setMinDurationEstimation(v.intValue()),
                 () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getMinDurationEstimation())))
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minioption.gui.min_duration_estimation", "%value%", String.valueOf(getMinDurationEstimation()))).build()));
 
         gui.addButton(new LongEditorFButton(gui, 1, 1, 100,
                 () -> (long) getMaxDurationEstimation(),
                 (v) -> setMaxDurationEstimation(v.intValue()),
                 () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minioption.gui.max_duration_estimation", "%value%",
                                 String.valueOf(getMaxDurationEstimation()))).build()));
         return gui;

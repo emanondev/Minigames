@@ -73,7 +73,7 @@ public class RaceArena extends AbstractMColorSchemArena {
         List<BoundingBox> fallAreas = (List<BoundingBox>) map.get("fall_areas");
         if (fallAreas != null)
             this.fallAreas.addAll(fallAreas);
-        if (checkpoints.size() != checkpointsRespawn.size())
+        if (this.checkpoints.size() != checkpointsRespawn.size())
             throw new IllegalArgumentException();
 
         rewardFirst = Math.max(0, (Integer) map.getOrDefault("reward_first", 10));
@@ -149,21 +149,21 @@ public class RaceArena extends AbstractMColorSchemArena {
                 () -> (long) getRewardFirst(),
                 (v) -> setRewardFirst(v.intValue()),
                 () -> new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "miniarena.gui.reward_first", "%value%",
                                 String.valueOf(getRewardFirst()))).build()));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
                 () -> (long) getRewardSecond(),
                 (v) -> setRewardSecond(v.intValue()),
                 () -> new ItemBuilder(Material.IRON_INGOT).setGuiProperty().setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "miniarena.gui.reward_second", "%value%",
                                 String.valueOf(getRewardSecond()))).build()));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
                 () -> (long) getRewardThird(),
                 (v) -> setRewardThird(v.intValue()),
                 () -> new ItemBuilder(Material.COPPER_INGOT).setGuiProperty().setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "miniarena.gui.reward_third", "%value%",
                                 String.valueOf(getRewardThird()))).build()));
         return gui;

@@ -17,7 +17,8 @@ public interface MTeam {
 
     void clearScore();*/
 
-    AbstractMGame getGame();
+    @SuppressWarnings("rawtypes")
+    MGame getGame();
 
     Team getScoreboardTeam();
 

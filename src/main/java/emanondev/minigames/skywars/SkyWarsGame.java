@@ -297,16 +297,16 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         getGamers().forEach(gamer -> {
             if (gamer.equals(player)) {
                 if (killer == null)
-                    sendMsg(gamer, getMinigameType() + ".game.you_have_been_eliminated");
+                    sendDMessage(gamer, getMinigameType() + ".game.you_have_been_eliminated");
                 else
-                    sendMsg(gamer, getMinigameType() + ".game.you_have_been_eliminated_by", "%who%", killer.getName());
+                    sendDMessage(gamer, getMinigameType() + ".game.you_have_been_eliminated_by", "%who%", killer.getName());
             } else if (gamer.equals(killer)) {
-                sendMsg(gamer, getMinigameType() + ".game.you_eliminated", "%who%", player.getName());
+                sendDMessage(gamer, getMinigameType() + ".game.you_eliminated", "%who%", player.getName());
             } else {
                 if (killer == null)
-                    sendMsg(gamer, getMinigameType() + ".game.user_have_been_eliminated", "%who%", player.getName());
+                    sendDMessage(gamer, getMinigameType() + ".game.user_have_been_eliminated", "%who%", player.getName());
                 else
-                    sendMsg(gamer, getMinigameType() + ".game.user_have_been_eliminated_by", "%who%", player.getName(), "%killer%", killer.getName());
+                    sendDMessage(gamer, getMinigameType() + ".game.user_have_been_eliminated_by", "%who%", player.getName(), "%killer%", killer.getName());
             }
 
         });

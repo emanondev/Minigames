@@ -23,8 +23,6 @@ public class MinigameTypes {
         register(RUN_RACE);
         register(BOAT_RACE);
         register(ELYTRA_RACE);
-        //register(TIME_RACE);
-        //register(TIME_MOUNTED_RACE);
         register(HORSE_RACE);
         register(DEATH_MATCH);
     }
@@ -65,9 +63,6 @@ public class MinigameTypes {
     public static final EggWarsType EGGWARS = new EggWarsType();
     public static final RunRaceType RUN_RACE = new RunRaceType();
     public static final ElytraRaceType ELYTRA_RACE = new ElytraRaceType();
-    //public static final TimeRaceType TIME_RACE = new TimeRaceType();
-    // public static final TimeMountedRaceType TIME_MOUNTED_RACE = new TimeMountedRaceType();
-    //public static final MountedRaceType MOUNTED_RACE = new MountedRaceType();
     public static final HorseRaceType HORSE_RACE = new HorseRaceType();
     public static final BoatRaceType BOAT_RACE = new BoatRaceType();
     public static final DeathMatchType DEATH_MATCH = new DeathMatchType();

@@ -17,7 +17,7 @@ public abstract class ARegistrable implements Registrable {
         this.id = id;
     }
 
-    public final @NotNull String getId() {
+    public final String getId() {
         return id;
     }
 

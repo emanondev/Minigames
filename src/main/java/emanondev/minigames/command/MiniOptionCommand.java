@@ -68,7 +68,7 @@ public class MiniOptionCommand extends CoreCommand {
     }
 
     private void help(CommandSender sender, String label, String[] args) {
-        sendMsgList(sender, "minioption.help", "%alias%", label);
+        sendDMessage(sender, "minioption.help", "%alias%", label);
     }
 
 
@@ -78,46 +78,46 @@ public class MiniOptionCommand extends CoreCommand {
             return;
         }
         if (args.length <= 2) {
-            sendMsg(sender, "minioption.error.clone_params", "%alias%", label);
+            sendDMessage(sender, "minioption.error.clone_params", "%alias%", label);
             return;
         }
         String idOld = args[1].toLowerCase(Locale.ENGLISH);
         MOption group = OptionManager.get().get(idOld);
         if (group == null) {
-            sendMsg(sender, "minioption.error.id_not_found", "%id%", idOld, "%alias%", label);
+            sendDMessage(sender, "minioption.error.id_not_found", "%id%", idOld, "%alias%", label);
             return;
         }
         String idNew = args[1].toLowerCase(Locale.ENGLISH);
         MOption groupNew = OptionManager.get().get(idOld);
         if (groupNew != null) {
-            sendMsg(sender, "minioption.error.id_already_used", "%id%", idNew, "%alias%", label);
+            sendDMessage(sender, "minioption.error.id_already_used", "%id%", idNew, "%alias%", label);
             return;
         }
 
         try {
             OptionManager.get().register(idNew, (MOption) ConfigurationSerialization.deserializeObject(
                     group.serialize(), group.getClass()), player);
-            sendMsg(sender, "minioption.success.clone", "%newid%", idNew, "%oldid%", idOld, "%alias%", label);
+            sendDMessage(sender, "minioption.success.clone", "%newid%", idNew, "%oldid%", idOld, "%alias%", label);
         } catch (IllegalArgumentException e) {
-            sendMsg(sender, "minioption.error.invalid_id", "%id%", idNew, "%alias%", label);
+            sendDMessage(sender, "minioption.error.invalid_id", "%id%", idNew, "%alias%", label);
         }
     }
 
 
     private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
-            sendMsg(sender, "minioption.error.delete_params", "%alias%", label);
+            sendDMessage(sender, "minioption.error.delete_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         MOption group = OptionManager.get().get(id);
         if (group == null) {
-            sendMsg(sender, "minioption.error.id_not_found", "%id%", id, "%alias%", label);
+            sendDMessage(sender, "minioption.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
         //TODO is used???
         OptionManager.get().delete(group);
-        sendMsg(sender, "minioption.success.delete", "%id%", id, "%alias%", label);
+        sendDMessage(sender, "minioption.success.delete", "%id%", id, "%alias%", label);
     }
 
     private void create(CommandSender sender, String label, String[] args) {
@@ -126,26 +126,26 @@ public class MiniOptionCommand extends CoreCommand {
             return;
         }
         if (args.length != 3) {
-            sendMsg(player, "minioption.error.create_params", "%alias%", label);
+            sendDMessage(player, "minioption.error.create_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
         MOption group = OptionManager.get().get(id);
         if (group != null) {
-            sendMsg(player, "minioption.error.id_already_used", "%id%", id, "%alias%", label);
+            sendDMessage(player, "minioption.error.id_already_used", "%id%", id, "%alias%", label);
             return;
         }
         @SuppressWarnings("rawtypes")
         MType type = MinigameTypes.get().getType(args[2]);
         if (type == null) {
-            sendMsg(player, "minioption.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
+            sendDMessage(player, "minioption.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
             return;
         }
         try {
             OptionManager.get().register(id, type.createDefaultOptions(), player);
-            sendMsg(player, "minioption.success.create", "%id%", id, "%type%", type.getType(), "%alias%", label);
+            sendDMessage(player, "minioption.success.create", "%id%", id, "%type%", type.getType(), "%alias%", label);
         } catch (IllegalArgumentException e) {
-            sendMsg(player, "minioption.error.invalid_id", "%id%", id, "%alias%", label);
+            sendDMessage(player, "minioption.error.invalid_id", "%id%", id, "%alias%", label);
         }
     }
 
@@ -159,7 +159,7 @@ public class MiniOptionCommand extends CoreCommand {
         list.sort(Comparator.comparing(Registrable::getId));
         for (MOption option : list) {
             msg.appendHover(
-                    new DMessage(getPlugin(), sender).appendLangList("minioption.success.list_info",
+                    new DMessage(getPlugin(), sender).appendLang("minioption.success.list_info",
                             UtilsString.merge(option.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
                             .appendRunCommand("/" + label + " gui " + option.getId(), option.getId())).append(" ");
             color = !color;
@@ -173,22 +173,14 @@ public class MiniOptionCommand extends CoreCommand {
             return;
         }
         if (args.length <= 1) {
-            sendMsg(player, "minioption.error.gui_params", "%alias%", label);
+            sendDMessage(player, "minioption.error.gui_params", "%alias%", label);
             return;
         }
         MOption option = OptionManager.get().get(args[1]);
         if (option == null) {
-            sendMsg(player, "minioption.error.id_not_found", "%alias%", label, "%id%", args[1]);
+            sendDMessage(player, "minioption.error.id_not_found", "%alias%", label, "%id%", args[1]);
             return;
         }
         option.getEditorGui(player, null).open(player);
-    }
-
-    private void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders).send();
-    }
-
-    private void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 }

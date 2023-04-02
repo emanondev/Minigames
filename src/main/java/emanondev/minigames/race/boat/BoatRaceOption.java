@@ -49,7 +49,7 @@ public class BoatRaceOption extends MountedRaceOption {
     public Gui getEditorGui(Player target, Gui parent) {
         Gui gui = super.getEditorGui(target, parent);
         gui.addButton(new FWrapperButton(gui, new ResearchFButton<>(gui,
-                () -> new ItemBuilder(getBoatTypeMaterial(getBoatType())).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                () -> new ItemBuilder(getBoatTypeMaterial(getBoatType())).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.boat_type_selector", "%selected%", getBoatType() == null ? "-random-" : getBoatType().name().toLowerCase(Locale.ENGLISH)
                 )).build(),
                 (String base, Boat.Type type) -> type.name().toLowerCase(Locale.ENGLISH).contains(base.toLowerCase(Locale.ENGLISH)),
@@ -59,7 +59,7 @@ public class BoatRaceOption extends MountedRaceOption {
                     return true;
                 },
                 (Boat.Type type) -> new ItemBuilder(getBoatTypeMaterial(type)).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                        type == getBoatType() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        type == getBoatType() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.boat_type_description", "%type%", type.name().toLowerCase(Locale.ENGLISH)
                 )).build(),
                 () -> List.of(Boat.Type.values())),

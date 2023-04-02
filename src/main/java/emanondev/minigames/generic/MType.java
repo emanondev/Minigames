@@ -5,6 +5,7 @@ import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
 import emanondev.core.YMLSection;
 import emanondev.core.message.SimpleMessage;
+import emanondev.core.util.CorePluginLinked;
 import emanondev.minigames.Configurations;
 import emanondev.minigames.GameManager;
 import org.bukkit.ChatColor;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class MType<A extends MArena, O extends MOption> {
+public abstract class MType<A extends MArena, O extends MOption> implements CorePluginLinked {
 
     public final SimpleMessage GAME_START_MESSAGE;
     public final SimpleMessage GAME_END_MESSAGE;
@@ -88,7 +89,7 @@ public abstract class MType<A extends MArena, O extends MOption> {
     public abstract ItemBuilder getGameSelectorBaseItem();
 
 
-    public final CorePlugin getPlugin() {
+    public final @NotNull CorePlugin getPlugin() {
         return plugin;
     }
 

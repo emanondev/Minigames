@@ -5,6 +5,7 @@ import emanondev.core.UtilsCommand;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
+import emanondev.core.util.CompleteUtility;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
@@ -82,7 +83,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                     }
                     try {
                         setArea(player);
-                        sendMsg(player, "arenabuilder.skywars.success.select_area",
+                        sendDMessage(player, "arenabuilder.skywars.success.select_area",
                                 "%world%", getWorld().getName(),
                                 "%x1%", String.valueOf((int) getArea().getMinX()),
                                 "%x2%", String.valueOf((int) getArea().getMaxX()),
@@ -93,7 +94,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
 
                         setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
                     } catch (IncompleteRegionException e) {
-                        sendMsg(player, "arenabuilder.skywars.error.unselected_area", "%alias%", label);
+                        sendDMessage(player, "arenabuilder.skywars.error.unselected_area", "%alias%", label);
                     }
                 }
                 case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
@@ -117,7 +118,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                             LocationOffset3D loc = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
                             boolean override = spawnLocations.containsKey(color);
                             spawnLocations.put(color, loc);
-                            sendMsg(player, override ? "arenabuilder.skywars.success.override_team_spawn"
+                            sendDMessage(player, override ? "arenabuilder.skywars.success.override_team_spawn"
                                     : "arenabuilder.skywars.success.set_team_spawn", "%color%", color.name(), "%alias%", label);
                             if (getPhase() == PHASE_SET_TEAM_SPAWNS && spawnLocations.size() >= 2)
                                 setPhaseRaw(PHASE_SET_TEAM_SPAWNS_OR_NEXT);
@@ -129,7 +130,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                             //TODO check color value
                             DyeColor color = DyeColor.valueOf(args[1].toUpperCase());
                             spawnLocations.remove(color);
-                            sendMsg(player, "arenabuilder.skywars.success.deleted_team_spawn",
+                            sendDMessage(player, "arenabuilder.skywars.success.deleted_team_spawn",
                                     "%color%", color.name(), "%alias%", label);
                             if (getPhase() == PHASE_SET_TEAM_SPAWNS_OR_NEXT && spawnLocations.size() < 2)
                                 setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
@@ -145,7 +146,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                         case "next" -> {
                             if (spectatorsOffset != null) {
                                 ArenaManager.get().onArenaBuilderCompletedArena(this);
-                                sendMsg(player, "arenabuilder.skywars.success.completed",
+                                sendDMessage(player, "arenabuilder.skywars.success.completed",
                                         UtilsString.merge(ArenaManager.get().get(getId()).getPlaceholders(), "%alias%", label));
                                 return;
                             }
@@ -157,7 +158,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                             }
                             boolean override = spectatorsOffset != null;
                             spectatorsOffset = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
-                            sendMsg(player, override ? "arenabuilder.skywars.success.override_spectators_spawn"
+                            sendDMessage(player, override ? "arenabuilder.skywars.success.override_spectators_spawn"
                                     : "arenabuilder.skywars.success.set_spectators_spawn", "%alias%", label);
                             if (getPhase() == PHASE_SET_SPECTATOR_SPAWN)
                                 setPhaseRaw(PHASE_SET_SPECTATOR_SPAWN_OR_NEXT);
@@ -177,17 +178,17 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
     public List<String> handleComplete(@NotNull String[] args) {
         return switch (args.length) {
             case 1 -> switch (getPhase()) {
-                case PHASE_SELECT_AREA -> UtilsCommand.complete(args[0], List.of("selectarea"));
-                case PHASE_SET_TEAM_SPAWNS -> UtilsCommand.complete(args[0], List.of("setteamspawn", "deleteteamspawn"));
-                case PHASE_SET_TEAM_SPAWNS_OR_NEXT -> UtilsCommand.complete(args[0], List.of("setteamspawn", "deleteteamspawn", "next"));
-                case PHASE_SET_SPECTATOR_SPAWN -> UtilsCommand.complete(args[0], List.of("setspectatorspawn"));
-                case PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> UtilsCommand.complete(args[0], List.of("setspectatorspawn", "next"));
+                case PHASE_SELECT_AREA -> complete(args[0], List.of("selectarea"));
+                case PHASE_SET_TEAM_SPAWNS -> complete(args[0], List.of("setteamspawn", "deleteteamspawn"));
+                case PHASE_SET_TEAM_SPAWNS_OR_NEXT -> complete(args[0], List.of("setteamspawn", "deleteteamspawn", "next"));
+                case PHASE_SET_SPECTATOR_SPAWN -> complete(args[0], List.of("setspectatorspawn"));
+                case PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> complete(args[0], List.of("setspectatorspawn", "next"));
                 default -> Collections.emptyList();
             };
             case 2 -> switch (getPhase()) {
                 case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                    case "setteamspawn" -> UtilsCommand.complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c));
-                    case "deleteteamspawn" -> UtilsCommand.complete(args[1], DyeColor.class, spawnLocations::containsKey);
+                    case "setteamspawn" -> complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c));
+                    case "deleteteamspawn" -> complete(args[1], DyeColor.class, spawnLocations::containsKey);
                     default -> Collections.emptyList();
                 };
                 default -> Collections.emptyList();

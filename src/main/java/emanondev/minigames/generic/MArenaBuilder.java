@@ -6,6 +6,8 @@ import com.sk89q.worldedit.regions.Region;
 import emanondev.core.CorePlugin;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
+import emanondev.core.util.CompleteUtility;
+import emanondev.core.util.CorePluginLinked;
 import emanondev.minigames.Minigames;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +16,6 @@ import org.bukkit.Particle;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class MArenaBuilder {
+public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked {
 
     private final UUID builder;
     private final BukkitTask timerRunnable;
@@ -35,11 +36,11 @@ public abstract class MArenaBuilder {
     private final CorePlugin plugin;
     private int phase = 1;
 
-    public String getLabel() {
+    public @NotNull String getLabel() {
         return label;
     }
 
-    public CorePlugin getPlugin() {
+    public @NotNull CorePlugin getPlugin() {
         return plugin;
     }
 
@@ -53,7 +54,6 @@ public abstract class MArenaBuilder {
         timerRunnable = Bukkit.getScheduler().runTaskTimer(Minigames.get(), () -> {
             Player p = getBuilder();
             if (p != null && p.isOnline() && p.isValid()) {
-                //TODO message repeat, bossbar, actionbar
                 bar.addPlayer(p);
                 onTimerCall();
             }
@@ -240,13 +240,5 @@ public abstract class MArenaBuilder {
                 if (Math.abs(max.getX() + 1 + y + z) % RATEO == val)
                     spawnParticle(p, particle, max.getX() + 1, y, z, data);
             }
-    }
-
-    protected void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders).send();
-    }
-
-    protected void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 }

@@ -156,7 +156,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     public void onFakeGamerDeath(@NotNull Player dead, @Nullable Player killer, boolean direct) {
         //TODO inc death counter
         teleportResetLocation(dead);
-        sendMsg(dead, getMinigameType().getType() + ".game.back_to_checkpoint");
+        sendDMessage(dead, getMinigameType().getType() + ".game.back_to_checkpoint");
     }
 
     @Override
@@ -233,11 +233,11 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             first = player.getUniqueId();
             getGamers().forEach((p) -> {
                 if (player == p)
-                    sendMsg(p, getMinigameType().getType() + ".game.you_won_first");
+                    sendDMessage(p, getMinigameType().getType() + ".game.you_won_first");
                 else
-                    sendMsg(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName());
+                    sendDMessage(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName());
             });
-            getSpectators().forEach((p) -> sendMsg(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName()));
+            getSpectators().forEach((p) -> sendDMessage(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName()));
             return;
         }
         if (second == null && !first.equals(player.getUniqueId())) {
@@ -245,11 +245,11 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             givePoints(player, getArena().getRewardSecond());
             getGamers().forEach((p) -> {
                 if (player == p)
-                    sendMsg(p, getMinigameType().getType() + ".game.you_won_second");
+                    sendDMessage(p, getMinigameType().getType() + ".game.you_won_second");
                 else
-                    sendMsg(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName());
+                    sendDMessage(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName());
             });
-            getSpectators().forEach((p) -> sendMsg(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName()));
+            getSpectators().forEach((p) -> sendDMessage(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName()));
             return;
         }
         if (third == null && !first.equals(player.getUniqueId()) && !second.equals(player.getUniqueId())) {
@@ -257,12 +257,11 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             givePoints(player, getArena().getRewardThird());
             getGamers().forEach((p) -> {
                 if (player == p)
-                    sendMsg(p, getMinigameType().getType() + ".game.you_won_third");
+                    sendDMessage(p, getMinigameType().getType() + ".game.you_won_third");
                 else
-                    sendMsg(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName());
+                    sendDMessage(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName());
             });
-            getSpectators().forEach((p) -> sendMsg(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName()));
-            return;
+            getSpectators().forEach((p) -> sendDMessage(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName()));
         }
     }
 

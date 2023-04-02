@@ -119,11 +119,11 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         gui.addButton(new StringEditorFButton(gui, this::getDisplayName, this::setDisplayName,
                 () -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setDescription(
                         new DMessage(Minigames.get(), target)
-                                .appendLangList("minikit.gui.display_name_editor", getPlaceholders())
+                                .appendLang("minikit.gui.display_name_editor", getPlaceholders())
                 ).setGuiProperty().build(), true));
         gui.addButton(new ItemEditorFButton(gui,
                 () -> getGuiSelectorItemRaw().setDescription(
-                        new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minikit.gui.display_item_editor")).build(),
                 () -> getGuiSelectorItemRaw().build(),
                 this::setGuiSelectorItem, (event) -> gui.open(target)));
@@ -134,7 +134,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
                     KitManager.get().save(Kit.this);
                 },
                 () -> new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setDescription(
-                        new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList(
+                        new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minikit.gui.price", "%value%", String.valueOf(getPrice()))).build()));
         return gui;
     }
@@ -150,7 +150,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
 
     public ItemBuilder getGuiSelectorItem(Player target) {
         return getGuiSelectorItemRaw().setDescription(new DMessage(Minigames.get(), target)
-                .appendLangList("generic.gui.kitselector_description",
+                .appendLang("generic.gui.kitselector_description",
                         getPlaceholders()));
     }
 

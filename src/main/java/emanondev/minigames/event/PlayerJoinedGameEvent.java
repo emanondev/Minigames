@@ -13,6 +13,7 @@ public class PlayerJoinedGameEvent extends GameEvent {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private final Player player;
 
+    @SuppressWarnings("rawtypes")
     public PlayerJoinedGameEvent(@NotNull MGame game, @NotNull Player player) {
         super(game);
         this.player = player;

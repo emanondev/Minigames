@@ -2,6 +2,7 @@ package emanondev.minigames.generic;
 
 import emanondev.core.CorePlugin;
 import emanondev.core.message.DMessage;
+import emanondev.core.util.CorePluginLinked;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.locations.BlockLocation3D;
@@ -36,7 +37,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
-public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends ConfigurationSerializable, Cloneable, Registrable {
+public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends CorePluginLinked, ConfigurationSerializable, Cloneable, Registrable {
 
     @NotNull BlockLocation3D getGameLocation();
 
@@ -347,7 +348,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
                 ).build();
     }
 
-    default String[] getPlaceholders() {
+    default @NotNull String[] getPlaceholders() {
         return new String[]{
                 "%id%", this.getId(),
                 "%option%", this.getOption().getId(),
@@ -390,7 +391,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         }
     }
 
-    default CorePlugin getPlugin() {
+    default @NotNull CorePlugin getPlugin() {
         return getMinigameType().getPlugin();
     }
 }

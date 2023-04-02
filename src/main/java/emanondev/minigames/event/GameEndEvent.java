@@ -11,12 +11,13 @@ public class GameEndEvent extends GameEvent {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    @SuppressWarnings("rawtypes")
     public GameEndEvent(@NotNull MGame game) {
         super(game);
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
     }
 }

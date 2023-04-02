@@ -48,7 +48,8 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
         MessageUtil.debug(getId() + " assigning team to " + player.getName());
         //List<ARaceTeam> teams = new ArrayList<>(getTeams());
         //teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
-        for (ARaceTeam team : getTeams())
+
+        for (@SuppressWarnings("rawtypes") ARaceTeam team : getTeams())
             if (team.getUsersAmount() < getOption().getTeamMaxSize() && team.addUser(player)) {
                 new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
                         "%color%", team.getColor().name());

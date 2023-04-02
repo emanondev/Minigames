@@ -77,7 +77,7 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
         teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
         for (EggWarsTeam team : teams)
             if (team.addUser(player)) {
-                MessageUtil.sendMessage(player, "eggwars.game.assign_team", "%color%", team.getColor().name());
+                sendDMessage(player, "eggwars.game.assign_team", "%color%", team.getColor().name());
                 return;
             }
         throw new IllegalStateException("unable to add user to a party");

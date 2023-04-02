@@ -34,6 +34,7 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
                 //minigames_playerstats_<what>_<game_id>
                 case "game" -> {
                     String gameId = params.substring(args[0].length() + args[1].length() + 2);
+                    @SuppressWarnings("rawtypes")
                     MGame game = GameManager.get().get(gameId);
                     if (game == null) {
                         Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% game " + gameId + " does not exist");
@@ -70,6 +71,7 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
                 //minigames_gamestats_<game_id>_stat_<stat_id>
                 case "gamestats" -> {
                     String[] ids = params.substring(args[0].length() + 1).split("_stat_");
+                    @SuppressWarnings("rawtypes")
                     MGame game = GameManager.get().get(ids[0]);
                     if (game == null) {
                         Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% game " + ids[0] + " does not exist");

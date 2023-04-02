@@ -10,7 +10,6 @@ import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.*;
-import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -810,16 +809,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            new DMessage(Minigames.get(), target).appendLang("generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount)).send();
+            sendDMessage(target,"generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
         }
-    }
-
-    protected void sendMsg(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLang(path, holders).send();
-    }
-
-    protected void sendMsgList(CommandSender target, String path, String... holders) {
-        new DMessage(getPlugin(), target).appendLangList(path, holders).send();
     }
 
 }
