@@ -1,6 +1,7 @@
 package emanondev.minigames.generic;
 
 import emanondev.core.CorePlugin;
+import emanondev.core.ItemBuilder;
 import emanondev.core.message.DMessage;
 import emanondev.core.util.CorePluginLinked;
 import emanondev.minigames.MessageUtil;
@@ -14,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -342,10 +344,14 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     void onGamerHitByProjectile(@NotNull ProjectileHitEvent event);
 
     default ItemStack getGameSelectorItem(Player player) {
-        return getMinigameType().getGameSelectorBaseItem().setAmount(Math.max(1, getGamers().size()))
-                .setDescription(new DMessage(getMinigameType().getPlugin(), player).appendLangList(
+        ItemBuilder result = getMinigameType().getGameSelectorBaseItem().setAmount(Math.max(1, getGamers().size())).setGuiProperty()
+
+                .setDescription(new DMessage(getMinigameType().getPlugin(), player).appendLang(
                         getMinigameType().getType() + ".gui.selector", getPlaceholders())
-                ).build();
+                );
+        if (getGamers().size()>0&& canAddGamer(player))
+            result.addEnchantment(Enchantment.DURABILITY,1);
+        return result.build();
     }
 
     default @NotNull String[] getPlaceholders() {

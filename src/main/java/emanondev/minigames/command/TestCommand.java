@@ -4,22 +4,18 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.command.CoreCommand;
-import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.List;
 
 public class TestCommand extends CoreCommand {
@@ -32,19 +28,20 @@ public class TestCommand extends CoreCommand {
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String s, String @NotNull [] args) {
         Player p = (Player) sender;
-        BoundingBox box = BoundingBox.of(p.getLocation(),p.getLocation());
-        box.expand(10,10,10);
+        BoundingBox box = BoundingBox.of(p.getLocation(), p.getLocation());
+        box.expand(10, 10, 10);
 
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             int counter = 0;
+
             @Override
             public void run() {
-                if (counter>=30)
+                if (counter >= 30)
                     this.cancel();
                 counter++;
-                spawnParticleBoxFaces(p,counter,Particle.FLAME,box);
+                spawnParticleBoxFaces(p, counter, Particle.FLAME, box);
             }
-        }.runTaskTimer(getPlugin(),20L,20L);
+        }.runTaskTimer(getPlugin(), 20L, 20L);
 
     }
 
@@ -153,26 +150,27 @@ public class TestCommand extends CoreCommand {
         Location l = p.getLocation();
         int xMin = Math.max(l.getBlockX() - RADIUS, min.getBlockX()), xMax = Math.min(l.getBlockX() + RADIUS, max.getBlockX());
         int zMin = Math.max(l.getBlockZ() - RADIUS, min.getBlockZ()), zMax = Math.min(l.getBlockZ() + RADIUS, max.getBlockZ());
+        //logInfo("X: "+xMin+" "+xMax+"   Z: "+zMin+" "+zMax);
         for (int x = xMin; x <= xMax; x++)
             for (int z = zMin; z <= zMax; z++) {
-                if (Math.abs(x + min.getY() + z) % RATEO == val)
-                    spawnParticle(p, particle, x, min.getY(), z, data);
-                if (Math.abs(x + max.getY() + 1 + z) % RATEO == val)
-                    spawnParticle(p, particle, x, max.getY() + 1, z, data);
+                if (Math.abs(x + min.getBlockY() + z) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, x, min.getBlockY(), z, data);
+                if (Math.abs(x + max.getBlockY() + 1 + z) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, x, max.getBlockY() + 1, z, data);
             }
         for (int x = xMin; x <= xMax; x++)
             for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
-                if (Math.abs(x + y + min.getZ()) % RATEO == val)
-                    spawnParticle(p, particle, x, y, min.getZ(), data);
-                if (Math.abs(x + y + max.getZ() + 1) % RATEO == val)
-                    spawnParticle(p, particle, x, y, max.getZ() + 1, data);
+                if (Math.abs(x + y + min.getBlockZ()) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, x, y, min.getBlockZ(), data);
+                if (Math.abs(x + y + max.getBlockZ() + 1) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, x, y, max.getBlockZ() + 1, data);
             }
         for (int z = zMin; z <= zMax; z++)
             for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
-                if (Math.abs(min.getX() + y + z) % RATEO == val)
-                    spawnParticle(p, particle, min.getX(), y, z, data);
-                if (Math.abs(max.getX() + 1 + y + z) % RATEO == val)
-                    spawnParticle(p, particle, max.getX() + 1, y, z, data);
+                if (Math.abs(min.getBlockX() + y + z) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, min.getBlockX(), y, z, data);
+                if (Math.abs(max.getBlockX() + 1 + y + z) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, max.getBlockX() + 1, y, z, data);
             }
     }
 }

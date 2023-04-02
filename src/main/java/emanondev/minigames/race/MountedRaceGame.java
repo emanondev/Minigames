@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRaceOption> extends ARaceGame<T, O> {
 
@@ -24,9 +25,8 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
     @Override
     public void onEntityDeath(@NotNull EntityDeathEvent event) {
         for (Entity passenger : event.getEntity().getPassengers())
-            if (passenger instanceof Player player && isGamer(player)) this.onFakeGamerDeath(player, null, true);
-
-
+            if (passenger instanceof Player player && isGamer(player))
+                this.onFakeGamerDeath(player, null, true);
     }
 
     public void teleportResetLocation(@NotNull Player player) {
@@ -73,6 +73,8 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
     public void onGamerDismountEvent(EntityDismountEvent event, Player player) {
         if (getPhase() == Phase.PLAYING || getPhase() == Phase.PRE_START) {
             Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
+                if (!isGamer(player))
+                    return;
                 if (event.getDismounted().isValid()) event.getDismounted().remove();
                 if (player.getVehicle() == null) teleportResetLocation(player);
             }, 1L);
@@ -93,9 +95,21 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
     public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
         super.onGamerMoveInsideArena(event);
         if (isSpectator(event.getPlayer())) return;
-        if (getPhase() == Phase.PRE_START) { //that fix the ugly visual error
-            event.setCancelled(false);
-            teleportResetLocation(event.getPlayer());
+        if (getPhase() == Phase.PRE_START &&
+                Objects.equals(event.getFrom().getWorld(), event.getTo().getWorld()) &&
+                event.getFrom().distanceSquared(event.getTo()) != 0) { //that fix the ugly visual error
+            event.getPlayer().getVehicle().removePassenger(event.getPlayer());
+            /*
+            Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
+                if (!isGamer(event.getPlayer()))
+                    return;
+                if (event.getPlayer().getVehicle()!=null) {
+                    event.getPlayer().getVehicle().remove();
+                }
+                teleportResetLocation(event.getPlayer());
+            }, 1L);
+            event.setCancelled(false); //TODO bugged
+            */
         }
     }
 

@@ -221,24 +221,24 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
         int zMin = Math.max(l.getBlockZ() - RADIUS, min.getBlockZ()), zMax = Math.min(l.getBlockZ() + RADIUS, max.getBlockZ());
         for (int x = xMin; x <= xMax; x++)
             for (int z = zMin; z <= zMax; z++) {
-                if (Math.abs(x + min.getY() + z) % RATEO == val)
-                    spawnParticle(p, particle, x, min.getY(), z, data);
-                if (Math.abs(x + max.getY() + 1 + z) % RATEO == val)
-                    spawnParticle(p, particle, x, max.getY() + 1, z, data);
+                if (Math.abs(x + min.getBlockY() + z) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, x, min.getBlockY(), z, data);
+                if (Math.abs(x + max.getBlockY() + 1 + z) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, x, max.getBlockY() + 1, z, data);
             }
         for (int x = xMin; x <= xMax; x++)
             for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
-                if (Math.abs(x + y + min.getZ()) % RATEO == val)
-                    spawnParticle(p, particle, x, y, min.getZ(), data);
-                if (Math.abs(x + y + max.getZ() + 1) % RATEO == val)
-                    spawnParticle(p, particle, x, y, max.getZ() + 1, data);
+                if (Math.abs(x + y + min.getBlockZ()) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, x, y, min.getBlockZ(), data);
+                if (Math.abs(x + y + max.getBlockZ() + 1) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, x, y, max.getBlockZ() + 1, data);
             }
         for (int z = zMin; z <= zMax; z++)
             for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
-                if (Math.abs(min.getX() + y + z) % RATEO == val)
-                    spawnParticle(p, particle, min.getX(), y, z, data);
-                if (Math.abs(max.getX() + 1 + y + z) % RATEO == val)
-                    spawnParticle(p, particle, max.getX() + 1, y, z, data);
+                if (Math.abs(min.getBlockX() + y + z) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, min.getBlockX(), y, z, data);
+                if (Math.abs(max.getBlockX() + 1 + y + z) % RATEO == val % RATEO)
+                    spawnParticle(p, particle, max.getBlockX() + 1, y, z, data);
             }
     }
 }
