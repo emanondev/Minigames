@@ -809,7 +809,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            sendDMessage(target,"generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
+            sendDMessage(target, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
         }
     }
 

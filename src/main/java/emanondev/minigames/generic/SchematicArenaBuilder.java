@@ -5,7 +5,6 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.CorePlugin;
-import emanondev.core.util.CorePluginLinked;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

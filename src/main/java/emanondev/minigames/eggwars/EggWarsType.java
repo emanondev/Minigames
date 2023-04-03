@@ -4,7 +4,6 @@ import emanondev.core.ItemBuilder;
 import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.minigames.ArenaManager;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.generic.MArena;

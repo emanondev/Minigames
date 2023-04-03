@@ -143,7 +143,7 @@ public class TestCommand extends CoreCommand {
         }
     }
 
-    private static final int RATEO = 5;
+    private static final int RATEO = 7;
     private static final int RADIUS = 100;
 
     private void markFaces(Player p, int val, Particle particle, Vector min, Vector max, Object data) {

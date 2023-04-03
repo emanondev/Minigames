@@ -1,6 +1,5 @@
 package emanondev.minigames.spleef;
 
-import emanondev.core.UtilsCommand;
 import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.Minigames;

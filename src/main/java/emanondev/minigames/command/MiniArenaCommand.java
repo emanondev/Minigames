@@ -21,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.*;
 
@@ -64,16 +62,16 @@ public class MiniArenaCommand extends CoreCommand {
         private final UUID user;
         private final World world;
 
-        private SchemInfo(@NotNull String id,@NotNull BoundingBox box,@NotNull UUID user,@NotNull World world){
+        private SchemInfo(@NotNull String id, @NotNull BoundingBox box, @NotNull UUID user, @NotNull World world) {
             this.id = id;
             this.box = box;
             this.user = user;
             this.world = world;
         }
 
-        public void show(){
+        public void show() {
             Player player = Bukkit.getPlayer(user);
-            if (player==null)
+            if (player == null)
                 return;
 
             //TODO spawn particles
@@ -87,7 +85,7 @@ public class MiniArenaCommand extends CoreCommand {
             this.playerOnlyNotify(sender);
             return;
         }
-        if (args.length !=2 && args.length !=3) {
+        if (args.length != 2 && args.length != 3) {
             sendDMessage(sender, "miniarena.error.paste_params", "%alias%", label);
             return;
         }
@@ -102,27 +100,27 @@ public class MiniArenaCommand extends CoreCommand {
             return;
         }
         World w = player.getWorld();
-        if (w.getMaxHeight()<player.getLocation().getY()+schemArena.getSize().getBlockY()){
+        if (w.getMaxHeight() < player.getLocation().getY() + schemArena.getSize().getBlockY()) {
             sendDMessage(sender, "miniarena.error.too_high", "%id%", id, "%alias%", label);
             return;
         }
-        if (w.getMinHeight()>player.getLocation().getY()){
+        if (w.getMinHeight() > player.getLocation().getY()) {
             sendDMessage(sender, "miniarena.error.too_low", "%id%", id, "%alias%", label);
             return;
         }
-        if (args.length==2 || !args[2].equalsIgnoreCase("-confirm")){
-            new DMessage(getPlugin(),sender).appendRunCommand("/"+label+" "+args[0]+" "+args[1]+" -confirm",
-                    getDMessage(sender, "miniarena.error.paste_need_confirmation", "%id%", id, "%alias%", label));
+        if (args.length == 2 || !args[2].equalsIgnoreCase("-confirm")) {
+            new DMessage(getPlugin(), sender).appendRunCommand("/" + label + " " + args[0] + " " + args[1] + " -confirm",
+                    getDMessage(sender, "miniarena.error.paste_need_confirmation", "%id%", id, "%alias%", label)).send();
             return;
         }
         sendDMessage(sender, "miniarena.success.pasting", "%id%", id, "%alias%", label);
-        schemArena.paste(player.getLocation()).whenComplete((s,th)->sendDMessage(sender, "miniarena.success.pasted", "%id%", id, "%alias%", label));
+        schemArena.paste(player.getLocation()).whenComplete((s, th) -> sendDMessage(sender, "miniarena.success.pasted", "%id%", id, "%alias%", label));
         UUID user = player.getUniqueId();
         Location loc = player.getLocation().getBlock().getLocation();
-        BoundingBox box = BoundingBox.of(loc,loc.clone().add(schemArena.getSize().getBlockX(),schemArena.getSize().getBlockY(),schemArena.getSize().getBlockZ()));
-        SchemInfo info = new SchemInfo(id, box, user,player.getWorld());
+        BoundingBox box = BoundingBox.of(loc, loc.clone().add(schemArena.getSize().getBlockX(), schemArena.getSize().getBlockY(), schemArena.getSize().getBlockZ()));
+        SchemInfo info = new SchemInfo(id, box, user, player.getWorld());
 
-        pasted.put(info.user,info);
+        pasted.put(info.user, info);
     }
 
     //miniarena update [-confirm]
@@ -136,7 +134,7 @@ public class MiniArenaCommand extends CoreCommand {
             return;
         }
         SchemInfo info = pasted.get(player.getUniqueId());
-        if (info==null){
+        if (info == null) {
             sendDMessage(sender, "miniarena.error.nothing_pasted", "%alias%", label);
             return;
         }
@@ -152,24 +150,24 @@ public class MiniArenaCommand extends CoreCommand {
             sendDMessage(sender, "miniarena.error.updating_no_schematic", "%id%", info.id, "%alias%", label);
             return;
         }
-        if (schemArena.getSize().getBlockX()*schemArena.getSize().getBlockY()*schemArena.getSize().getBlockZ()!=info.box.getVolume()) { //TODO check that might need +1
+        if (schemArena.getSize().getBlockX() * schemArena.getSize().getBlockY() * schemArena.getSize().getBlockZ() != info.box.getVolume()) { //TODO check that might need +1
             sendDMessage(sender, "miniarena.error.updating_different_size", "%id%", info.id, "%alias%", label);
             return;
         }
-        if (args.length==1 || !args[1].equalsIgnoreCase("-confirm")){
-            new DMessage(getPlugin(),sender).appendRunCommand("/"+label+" "+args[0]+" -confirm",
-                    getDMessage(sender, "miniarena.error.update_need_confirmation", "%id%", info.id, "%alias%", label));
+        if (args.length == 1 || !args[1].equalsIgnoreCase("-confirm")) {
+            new DMessage(getPlugin(), sender).appendRunCommand("/" + label + " " + args[0] + " -confirm",
+                    getDMessage(sender, "miniarena.error.update_need_confirmation", "%id%", info.id, "%alias%", label)).send();
             return;
         }
         sendDMessage(sender, "miniarena.success.updating", "%id%", info.id, "%alias%", label);
         File file = schemArena.getSchematicFile();
         try {
-            if (!file.renameTo(new File(file.getParentFile(),"old_"+file.getName())))
+            if (!file.renameTo(new File(file.getParentFile(), "old_" + file.getName())))
                 throw new IllegalStateException();
-            if (WorldEditUtility.save(file,WorldEditUtility.copy(info.world,info.box,false,true))) {
+            if (WorldEditUtility.save(file, WorldEditUtility.copy(info.world, info.box, false, true))) {
                 pasted.remove(info.user);
                 sendDMessage(sender, "miniarena.success.updated", "%id%", info.id, "%alias%", label);
-            }else
+            } else
                 sendDMessage(sender, "miniarena.error.update_failed", "%id%", info.id, "%alias%", label);
         } catch (Exception e) {
             e.printStackTrace();
@@ -236,7 +234,7 @@ public class MiniArenaCommand extends CoreCommand {
         list.sort(Comparator.comparing(Registrable::getId));
         for (MArena arena : list) {
             msg.appendHover(
-                    new DMessage(getPlugin(), sender).appendLangList("miniarena.success.list_info",
+                    new DMessage(getPlugin(), sender).appendLang("miniarena.success.list_info",
                             UtilsString.merge(arena.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
                             .appendRunCommand("/" + label + " gui " + arena.getId(), arena.getId())).append(" ");
             color = !color;

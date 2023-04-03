@@ -131,7 +131,7 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
     }
 
     @Override
-    public @NotNull File getSchematicFile(){
+    public @NotNull File getSchematicFile() {
         return new File(ArenaManager.get().getSchematicsFolder(), schematicName);
     }
 

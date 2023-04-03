@@ -1,7 +1,6 @@
 package emanondev.minigames.command;
 
 import emanondev.core.command.CoreCommand;
-import emanondev.core.message.DMessage;
 import emanondev.minigames.GameManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.generic.MGame;

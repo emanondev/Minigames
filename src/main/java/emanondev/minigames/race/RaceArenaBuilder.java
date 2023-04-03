@@ -4,7 +4,6 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
-import emanondev.core.UtilsCommand;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
@@ -188,7 +187,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                         checkPoints.clear();
                         checkPointsRespawn.clear();
                         sendDMessage(player, "arenabuilder.race.success.cleared_checkpoints",
-                                "%amount%", String.valueOf(checkPoints.size()), "%alias%", label);
+                                "%alias%", label);
                     }
                     case "checkpointarea" -> {
                         try {

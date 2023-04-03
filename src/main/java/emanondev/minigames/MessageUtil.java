@@ -1,6 +1,5 @@
 package emanondev.minigames;
 
-import emanondev.core.message.MessageComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
