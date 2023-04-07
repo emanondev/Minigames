@@ -5,14 +5,19 @@ import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.runrace.RunRaceWinFirstEvent;
+import emanondev.minigames.event.runrace.RunRaceWinSecondEvent;
+import emanondev.minigames.event.runrace.RunRaceWinThirdEvent;
 import emanondev.minigames.race.ARaceGame;
 import emanondev.minigames.race.ARaceTeam;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Set;
 
 @SerializableAs(value = "RunRaceGame")
 public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption> {
@@ -46,9 +51,6 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
         if (getTeam(player) != null)
             return;
         MessageUtil.debug(getId() + " assigning team to " + player.getName());
-        //List<ARaceTeam> teams = new ArrayList<>(getTeams());
-        //teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
-
         for (@SuppressWarnings("rawtypes") ARaceTeam team : getTeams())
             if (team.getUsersAmount() < getOption().getTeamMaxSize() && team.addUser(player)) {
                 new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
@@ -67,5 +69,20 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
 
     public boolean canAddGamer(@NotNull Player player) {
         return getPhase() != Phase.PLAYING && super.canAddGamer(player);
+    }
+
+    @Override
+    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new RunRaceWinFirstEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new RunRaceWinSecondEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new RunRaceWinThirdEvent(team, lineCutter, winners));
     }
 }

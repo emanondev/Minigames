@@ -220,50 +220,72 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     public abstract @NotNull ARaceType<O> getMinigameType();
 
 
-    private UUID first = null;
-    private UUID second = null;
-    private UUID third = null;
+    private T first = null;
+    private T second = null;
+    private T third = null;
 
 
     protected void onGamerReachRaceFinishArea(Player player) {
+        @Nullable T team = getTeam(player);
+        if (team == null) {
+            new IllegalStateException().printStackTrace();
+            return;
+        }
         if (getPhase() == Phase.PLAYING) {
-            getVictoryStat().add(player, 1);
             gameEnd();
-            givePoints(player, getArena().getRewardFirst());
-            first = player.getUniqueId();
+            first = team;
+            HashSet<Player> winners = new HashSet<>();
             getGamers().forEach((p) -> {
-                if (player == p)
+                if (team.containsUser(p)) {
+                    winners.add(p);
+                    getVictoryStat().add(p, 1);
+                    givePoints(p, getArena().getRewardFirst());
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_first");
-                else
+                } else
                     sendDMessage(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName());
             });
             getSpectators().forEach((p) -> sendDMessage(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName()));
+            craftAndCallWinFirstEvent(team, player, winners);
             return;
         }
-        if (second == null && !first.equals(player.getUniqueId())) {
-            second = player.getUniqueId();
-            givePoints(player, getArena().getRewardSecond());
+        if (second == null && !first.equals(team)) {
+            second = team;
+            HashSet<Player> winners = new HashSet<>();
             getGamers().forEach((p) -> {
-                if (player == p)
+                if (team.containsUser(p)) {
+                    winners.add(p);
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_second");
-                else
+                    //TODO victorySecond
+                    givePoints(p, getArena().getRewardSecond());
+                } else
                     sendDMessage(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName());
             });
             getSpectators().forEach((p) -> sendDMessage(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName()));
+            craftAndCallWinSecondEvent(team, player, winners);
             return;
         }
-        if (third == null && !first.equals(player.getUniqueId()) && !second.equals(player.getUniqueId())) {
-            third = player.getUniqueId();
-            givePoints(player, getArena().getRewardThird());
+        if (third == null && !first.equals(team) && !Objects.equals(second, team)) {
+            third = team;
+            HashSet<Player> winners = new HashSet<>();
             getGamers().forEach((p) -> {
-                if (player == p)
+                if (team.containsUser(p)) {
+                    winners.add(p);
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_third");
-                else
+                    //TODO victoryThird
+                    givePoints(p, getArena().getRewardThird());
+                } else
                     sendDMessage(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName());
             });
             getSpectators().forEach((p) -> sendDMessage(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName()));
+            craftAndCallWinThirdEvent(team, player, winners);
         }
     }
+
+    protected abstract void craftAndCallWinFirstEvent(@NotNull T team, @NotNull Player lineCutter, @NotNull Set<Player> winners);
+
+    protected abstract void craftAndCallWinSecondEvent(@NotNull T team, @NotNull Player lineCutter, @NotNull Set<Player> winners);
+
+    protected abstract void craftAndCallWinThirdEvent(@NotNull T team, @NotNull Player lineCutter, @NotNull Set<Player> winners);
 
     /**
      * Handle block break done by one of playingPlayers

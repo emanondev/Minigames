@@ -217,8 +217,6 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     default void gameRestartTimer() {
     }
 
-    ;
-
     /**
      * teleport everyone away players
      * finally set RESTART phase and calls gameRestart()

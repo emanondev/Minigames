@@ -2,12 +2,18 @@ package emanondev.minigames.race.horse;
 
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.horserace.HorseRaceWinFirstEvent;
+import emanondev.minigames.event.horserace.HorseRaceWinSecondEvent;
+import emanondev.minigames.event.horserace.HorseRaceWinThirdEvent;
 import emanondev.minigames.race.ARaceTeam;
 import emanondev.minigames.race.MountedRaceGame;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Set;
 
 @SerializableAs(value = "HorseRaceGame")
 public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, HorseRaceOption> {
@@ -31,5 +37,19 @@ public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, Hor
         return MinigameTypes.HORSE_RACE;
     }
 
+    @Override
+    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new HorseRaceWinFirstEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new HorseRaceWinSecondEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new HorseRaceWinThirdEvent(team, lineCutter, winners));
+    }
 
 }

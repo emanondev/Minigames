@@ -6,9 +6,13 @@ import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.elytrarace.ElytraRaceWinFirstEvent;
+import emanondev.minigames.event.elytrarace.ElytraRaceWinSecondEvent;
+import emanondev.minigames.event.elytrarace.ElytraRaceWinThirdEvent;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.race.ARaceGame;
 import emanondev.minigames.race.ARaceTeam;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -18,10 +22,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SerializableAs(value = "ElytraRaceGame")
 public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraRaceOption> {
@@ -34,6 +35,21 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     @Override
     public @NotNull ElytraRaceType getMinigameType() {
         return MinigameTypes.ELYTRA_RACE;
+    }
+
+    @Override
+    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new ElytraRaceWinFirstEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new ElytraRaceWinSecondEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new ElytraRaceWinThirdEvent(team, lineCutter, winners));
     }
 
     @Override
