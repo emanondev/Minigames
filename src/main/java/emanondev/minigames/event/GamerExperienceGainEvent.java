@@ -28,11 +28,11 @@ public class GamerExperienceGainEvent extends Event implements Cancellable {
         this.xp = xpGain;
     }
 
-    public @Range(from = 0,to=Long.MAX_VALUE) long getExperienceGain() {
+    public @Range(from = 0, to = Long.MAX_VALUE) long getExperienceGain() {
         return xp;
     }
 
-    public void setExperienceGain(@Range(from = 0,to = Long.MAX_VALUE) long value) {
+    public void setExperienceGain(@Range(from = 0, to = Long.MAX_VALUE) long value) {
         this.xp = value;
     }
 

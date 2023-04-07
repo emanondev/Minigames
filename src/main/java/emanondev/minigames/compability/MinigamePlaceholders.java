@@ -103,9 +103,9 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
                     return switch (args[1]) {
                         case "xp", "exp", "experience" -> String.valueOf(gamer.getExperience());
                         case "lv", "level" -> String.valueOf(gamer.getLevel());
-                        case "xptolevelup","experiencetolevelup" -> String.valueOf(gamer.getExperienceToLevelUp());
-                        case "xptoleveluppercent","experiencetoleveluppercent" -> UtilsString.formatOptional2Digit(((double) gamer.getExperience()) / gamer.getLevelUpExperience()*100); //TODO allow to choose format
-                        case "levelupxp","levelupexperience" -> String.valueOf(gamer.getLevelUpExperience());
+                        case "xptolevelup", "experiencetolevelup" -> String.valueOf(gamer.getExperienceToLevelUp());
+                        case "xptoleveluppercent", "experiencetoleveluppercent" -> UtilsString.formatOptional2Digit(((double) gamer.getExperience()) / gamer.getLevelUpExperience() * 100); //TODO allow to choose format
+                        case "levelupxp", "levelupexperience" -> String.valueOf(gamer.getLevelUpExperience());
                         case "xpbar" -> { //minigame_player_xpbar[_lenght][_symbol][_color1][_color2]
                             int lenght = 30;
                             if (args.length > 2) {

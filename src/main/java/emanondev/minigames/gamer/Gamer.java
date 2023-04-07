@@ -89,7 +89,7 @@ public class Gamer {
             return;
         GamerExperienceGainEvent event = new GamerExperienceGainEvent(this, lv + 1);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled())
+        if (event.isCancelled() || event.getExperienceGain() <= 0)
             return;
         this.xp += event.getExperienceGain();
         recalculateLevel();

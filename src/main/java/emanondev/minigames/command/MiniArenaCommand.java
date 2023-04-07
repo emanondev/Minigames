@@ -67,8 +67,8 @@ public class MiniArenaCommand extends CoreCommand {
 
     private void markFaces(Player p, int val, Vector min, Vector max) {
         Location l = p.getLocation();
-        int xMin = Math.max(l.getBlockX() - RADIUS, min.getBlockX()), xMax = Math.min(l.getBlockX() + RADIUS, max.getBlockX()+1);
-        int zMin = Math.max(l.getBlockZ() - RADIUS, min.getBlockZ()), zMax = Math.min(l.getBlockZ() + RADIUS, max.getBlockZ()+1);
+        int xMin = Math.max(l.getBlockX() - RADIUS, min.getBlockX()), xMax = Math.min(l.getBlockX() + RADIUS, max.getBlockX() + 1);
+        int zMin = Math.max(l.getBlockZ() - RADIUS, min.getBlockZ()), zMax = Math.min(l.getBlockZ() + RADIUS, max.getBlockZ() + 1);
         for (int x = xMin; x <= xMax; x++)
             for (int z = zMin; z <= zMax; z++) {
                 if (Math.abs(x + min.getBlockY() + z) % RATEO == val % RATEO)
@@ -77,14 +77,14 @@ public class MiniArenaCommand extends CoreCommand {
                     spawnParticle(p, x, max.getBlockY() + 1, z);
             }
         for (int x = xMin; x <= xMax; x++)
-            for (int y = min.getBlockY(); y <= max.getBlockY() +1; y++) {
+            for (int y = min.getBlockY(); y <= max.getBlockY() + 1; y++) {
                 if (Math.abs(x + y + min.getBlockZ()) % RATEO == val % RATEO)
                     spawnParticle(p, x, y, min.getBlockZ());
                 if (Math.abs(x + y + max.getBlockZ() + 1) % RATEO == val % RATEO)
                     spawnParticle(p, x, y, max.getBlockZ() + 1);
             }
         for (int z = zMin; z <= zMax; z++)
-            for (int y = min.getBlockY(); y <= max.getBlockY() +1; y++) {
+            for (int y = min.getBlockY(); y <= max.getBlockY() + 1; y++) {
                 if (Math.abs(min.getBlockX() + y + z) % RATEO == val % RATEO)
                     spawnParticle(p, min.getBlockX(), y, z);
                 if (Math.abs(max.getBlockX() + 1 + y + z) % RATEO == val % RATEO)
@@ -183,7 +183,7 @@ public class MiniArenaCommand extends CoreCommand {
         schemArena.paste(player.getLocation()).whenComplete((s, th) -> sendDMessage(sender, "miniarena.success.pasted", "%id%", id, "%alias%", label));
         UUID user = player.getUniqueId();
         Location loc = player.getLocation().getBlock().getLocation();
-        BoundingBox box = BoundingBox.of(loc, loc.clone().add(schemArena.getSize().getBlockX()-1, schemArena.getSize().getBlockY()-1, schemArena.getSize().getBlockZ()-1));
+        BoundingBox box = BoundingBox.of(loc, loc.clone().add(schemArena.getSize().getBlockX() - 1, schemArena.getSize().getBlockY() - 1, schemArena.getSize().getBlockZ() - 1));
         SchemInfo info = new SchemInfo(id, box, user, player.getWorld());
         pasted.put(info.user, info);
     }
@@ -215,7 +215,7 @@ public class MiniArenaCommand extends CoreCommand {
             sendDMessage(sender, "miniarena.error.updating_no_schematic", "%id%", info.id, "%alias%", label);
             return;
         }
-        if ((schemArena.getSize().getBlockX()-1) * (schemArena.getSize().getBlockY()-1) * (schemArena.getSize().getBlockZ()-1) != info.box.getVolume()) { //TODO check that might need +1
+        if ((schemArena.getSize().getBlockX() - 1) * (schemArena.getSize().getBlockY() - 1) * (schemArena.getSize().getBlockZ() - 1) != info.box.getVolume()) { //TODO check that might need +1
             sendDMessage(sender, "miniarena.error.updating_different_size", "%id%", info.id, "%alias%", label);
             return;
         }

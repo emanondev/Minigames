@@ -12,9 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerJoiningGameEvent extends GameEvent implements Cancellable {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
+
     private final Player player;
     private boolean isCancelled = false;
 
