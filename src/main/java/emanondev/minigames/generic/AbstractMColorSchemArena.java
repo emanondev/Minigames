@@ -192,4 +192,8 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         return gui;
     }
 
+    @Override
+    public void invalidateCache() {
+        schematicCache = null;
+    }
 }

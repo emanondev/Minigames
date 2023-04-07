@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 public class GameUnloadEvent extends GameEvent {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLERS_LIST;
+    }
 
     @SuppressWarnings("rawtypes")
     public GameUnloadEvent(@NotNull MGame game) {

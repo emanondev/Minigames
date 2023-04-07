@@ -19,4 +19,5 @@ public class Perms {
             .setAccess(PermissionDefault.TRUE).buildAndRegister(Minigames.get());
     public static final Permission COMMAND_ARENABUILDER = PermissionBuilder.ofCommand(Minigames.get(), "arenabuilder").buildAndRegister(Minigames.get());
     public static final Permission COMMAND_MINIDROPGROUP = PermissionBuilder.ofCommand(Minigames.get(), "minidropgroup").buildAndRegister(Minigames.get());
+    public static final Permission COMMAND_GAMER = PermissionBuilder.ofCommand(Minigames.get(), "minigamer").buildAndRegister(Minigames.get());
 }

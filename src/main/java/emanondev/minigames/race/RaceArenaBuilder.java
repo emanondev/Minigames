@@ -227,7 +227,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                                     "%y1%", String.valueOf((int) checkPointArea.getMinY()),
                                     "%y2%", String.valueOf((int) checkPointArea.getMaxY()),
                                     "%z1%", String.valueOf((int) checkPointArea.getMinZ()),
-                                    "%z2%", String.valueOf((int) checkPointArea.getMaxZ()), "%number%", String.valueOf(checkPoints.size()), "%alias%", label);
+                                    "%z2%", String.valueOf((int) checkPointArea.getMaxZ()), "%number%", String.valueOf(checkPoints.size()+1), "%alias%", label);
                             checkPoints.add(checkPointArea);
                             setPhaseRaw(PHASE_CHECKPOINT_SPAWN);
                         } catch (IncompleteRegionException e) {

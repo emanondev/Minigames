@@ -1,0 +1,2 @@
+max_level: 100
+exp_formula: 100+10*(%level%-1)

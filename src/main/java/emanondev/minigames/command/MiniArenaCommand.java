@@ -12,10 +12,14 @@ import emanondev.minigames.generic.Perms;
 import emanondev.minigames.generic.Registrable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +39,68 @@ public class MiniArenaCommand extends CoreCommand {
     public MiniArenaCommand() {
         super("miniarena", Minigames.get(), Perms.COMMAND_MINIOPTION
                 , "setup arena");
+        task = new BukkitRunnable() {
+            private int tick = 0;
+
+            @Override
+            public void run() {
+                tick++;
+                for (UUID uuid : pasted.keySet()) {
+                    Player p = Bukkit.getPlayer(uuid);
+                    if (p == null || !p.isValid())
+                        return;
+                    if (!Objects.equals(p.getWorld(), pasted.get(uuid).world))
+                        return;
+                    spawnParticleBoxFaces(p, tick, pasted.get(uuid).box);
+                }
+            }
+        }.runTaskTimer(getPlugin(), 20L, 20L);
+    }
+
+    //from MArenaBuilder START
+    private void spawnParticleBoxFaces(Player p, int tick, BoundingBox box) {
+        markFaces(p, tick, box.getMin(), box.getMax());
+    }
+
+    private static final int RATEO = 5;
+    private static final int RADIUS = 100;
+
+    private void markFaces(Player p, int val, Vector min, Vector max) {
+        Location l = p.getLocation();
+        int xMin = Math.max(l.getBlockX() - RADIUS, min.getBlockX()), xMax = Math.min(l.getBlockX() + RADIUS, max.getBlockX()+1);
+        int zMin = Math.max(l.getBlockZ() - RADIUS, min.getBlockZ()), zMax = Math.min(l.getBlockZ() + RADIUS, max.getBlockZ()+1);
+        for (int x = xMin; x <= xMax; x++)
+            for (int z = zMin; z <= zMax; z++) {
+                if (Math.abs(x + min.getBlockY() + z) % RATEO == val % RATEO)
+                    spawnParticle(p, x, min.getBlockY(), z);
+                if (Math.abs(x + max.getBlockY() + 1 + z) % RATEO == val % RATEO)
+                    spawnParticle(p, x, max.getBlockY() + 1, z);
+            }
+        for (int x = xMin; x <= xMax; x++)
+            for (int y = min.getBlockY(); y <= max.getBlockY() +1; y++) {
+                if (Math.abs(x + y + min.getBlockZ()) % RATEO == val % RATEO)
+                    spawnParticle(p, x, y, min.getBlockZ());
+                if (Math.abs(x + y + max.getBlockZ() + 1) % RATEO == val % RATEO)
+                    spawnParticle(p, x, y, max.getBlockZ() + 1);
+            }
+        for (int z = zMin; z <= zMax; z++)
+            for (int y = min.getBlockY(); y <= max.getBlockY() +1; y++) {
+                if (Math.abs(min.getBlockX() + y + z) % RATEO == val % RATEO)
+                    spawnParticle(p, min.getBlockX(), y, z);
+                if (Math.abs(max.getBlockX() + 1 + y + z) % RATEO == val % RATEO)
+                    spawnParticle(p, max.getBlockX() + 1, y, z);
+            }
+    }
+
+    private void spawnParticle(Player p, double x, double y, double z) {
+        p.spawnParticle(Particle.WAX_OFF, x, y, z, 0, 0, 0, 0, 0, null);
+    }
+    //from MArenaBuilder END
+
+    private BukkitTask task;
+
+    public void reload() {
+        //restart task?
     }
 
 
@@ -117,9 +183,8 @@ public class MiniArenaCommand extends CoreCommand {
         schemArena.paste(player.getLocation()).whenComplete((s, th) -> sendDMessage(sender, "miniarena.success.pasted", "%id%", id, "%alias%", label));
         UUID user = player.getUniqueId();
         Location loc = player.getLocation().getBlock().getLocation();
-        BoundingBox box = BoundingBox.of(loc, loc.clone().add(schemArena.getSize().getBlockX(), schemArena.getSize().getBlockY(), schemArena.getSize().getBlockZ()));
+        BoundingBox box = BoundingBox.of(loc, loc.clone().add(schemArena.getSize().getBlockX()-1, schemArena.getSize().getBlockY()-1, schemArena.getSize().getBlockZ()-1));
         SchemInfo info = new SchemInfo(id, box, user, player.getWorld());
-
         pasted.put(info.user, info);
     }
 
@@ -150,7 +215,7 @@ public class MiniArenaCommand extends CoreCommand {
             sendDMessage(sender, "miniarena.error.updating_no_schematic", "%id%", info.id, "%alias%", label);
             return;
         }
-        if (schemArena.getSize().getBlockX() * schemArena.getSize().getBlockY() * schemArena.getSize().getBlockZ() != info.box.getVolume()) { //TODO check that might need +1
+        if ((schemArena.getSize().getBlockX()-1) * (schemArena.getSize().getBlockY()-1) * (schemArena.getSize().getBlockZ()-1) != info.box.getVolume()) { //TODO check that might need +1
             sendDMessage(sender, "miniarena.error.updating_different_size", "%id%", info.id, "%alias%", label);
             return;
         }
@@ -167,11 +232,12 @@ public class MiniArenaCommand extends CoreCommand {
             if (WorldEditUtility.save(file, WorldEditUtility.copy(info.world, info.box, false, true))) {
                 pasted.remove(info.user);
                 sendDMessage(sender, "miniarena.success.updated", "%id%", info.id, "%alias%", label);
+                schemArena.invalidateCache();
             } else
                 sendDMessage(sender, "miniarena.error.update_failed", "%id%", info.id, "%alias%", label);
         } catch (Exception e) {
             e.printStackTrace();
-            sendDMessage(sender, "miniarena.success.updated", "%id%", info.id, "%alias%", label);
+            sendDMessage(sender, "miniarena.error.update_failed", "%id%", info.id, "%alias%", label);
         }
     }
 

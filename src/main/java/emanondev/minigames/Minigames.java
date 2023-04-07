@@ -40,6 +40,7 @@ public final class Minigames extends CorePlugin {
     @Override
     public void reload() {
         C.reload();
+        GamerManager.get().reload();
         FillerManager.get().reload();
         KitManager.get().reload();
         ArenaManager.get().reload();
@@ -50,6 +51,7 @@ public final class Minigames extends CorePlugin {
     @Override
     public void enable() {
         C.reload();
+        new GamerManager();
         new DropGroupManager();
         new KitManager();
         new FillerManager();
@@ -78,6 +80,7 @@ public final class Minigames extends CorePlugin {
     }
 
     private void registerCommands() {
+        this.registerCommand(new MiniGamerCommand());
         this.registerCommand(new MiniKitCommand());
         this.registerCommand(new MiniDropGroupCommand());
         this.registerCommand(new MiniDropsFillerCommand());

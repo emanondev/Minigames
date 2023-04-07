@@ -15,4 +15,6 @@ public interface MSchemArena extends MArena {
     @NotNull BlockVector getSize();
 
     @NotNull File getSchematicFile();
+
+    void invalidateCache();
 }

@@ -14,6 +14,9 @@ import java.util.Set;
 public class PlayersWinGameEvent extends GameEvent {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLERS_LIST;
+    }
     private final Set<Player> players;
 
     @SuppressWarnings("rawtypes")

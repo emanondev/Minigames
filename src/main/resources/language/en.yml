@@ -254,7 +254,7 @@ miniarena:
     updating_id_not_found: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#e02850> Sembra che l'arena %id% sia stata eliminata"
     updating_no_schematic: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#e02850> Sembra che l'arena %id% non supporti l'uso di schematic"
     updating_different_size: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#e02850> Sembra che l'arena %id% abbia una schematic di dimensione differente"
-    update_need_confirmation: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> ! Sei sicuro? ! clicca per confermare"
+    update_need_confirmation: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#e02850> ! Sei sicuro? ! clicca per confermare"
     update_failed: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#e02850> Salvataggio schematic fallito controlla la console"
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArena</b></gradient> <hover:show_text:\"<#acfad1>Questo comando permette di visualizzare\nle arene per i vari Minigame (Arena)\nPer creare un'arena <#ffffb3>/miniarenabuilder\"><#fab787>[?]</hover>"
@@ -683,3 +683,32 @@ minidropgroup:
       - "<#57c9fa>Per aggiungere nuovi oggetti devi invece usare:"
       - "<#ffffb3>/minidropgroup addhand %id%</#ffffb3><#57c9fa> o"
       - "<#ffffb3>/minidropgroup addchest %id%"
+minigamer:
+  error:
+    info_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% info <#fab66e><player></hover>"
+    reset_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% reset <#fab66e><player></hover>"
+    addxp_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% addxp <#fab66e><amount> [player]</hover>"
+    setxp_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% setxp <#fab66e><amount> [player]</hover>"
+    addlv_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% addlv <#fab66e><amount> [player]</hover>"
+    setlv_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% setlv <#fab66e><amount> [player]</hover>"
+    never_joined_server: "<hover:show_text:'<#e060de>Usa il nome di un giocatore valido'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> il giocatore <#fab66e>%name%</#fab66e> non è mai stato sul server</hover>"
+    invalid_number: "<hover:show_text:'<#e060de>Usa un numero valido'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> <#fab66e>%amount%</#fab66e> non è un numero valido</hover>"
+    invalid_amount_min_0: "<hover:show_text:'<#e060de>Deve essere 0 o superiore'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> <#fab66e>%amount%</#fab66e> non è un valore accettabile</hover>"
+    invalid_amount_min_1: "<hover:show_text:'<#e060de>Deve essere 1 o superiore'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> <#fab66e>%amount%</#fab66e> non è un valore accettabile</hover>"
+  help:
+    - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniGamer</b></gradient> <hover:show_text:\"<#acfad1>Questo comando permette di gestire\ni giocatori (Gamer)\"><#fab787>[?]</hover>"
+    - "<hover:show_text:'<#acfad1>Mostra le informazioni sul giocatore selezionato'><click:suggest_command:'/%alias% info '><#4079ff>/%alias% <#57c9fa>info <#ffffb3>[player]</click></hover>"
+    - "<hover:show_text:'<#acfad1>Aggiunge esperienza al giocatore selezionato'><click:suggest_command:'/%alias% addxp '><#4079ff>/%alias% <#57c9fa>addxp <#ffffb3><amount> [player]</click></hover>"
+    - "<hover:show_text:'<#acfad1>Aggiunge livelli al giocatore selezionato'><click:suggest_command:'/%alias% addlv '><#4079ff>/%alias% <#57c9fa>addlv <#ffffb3><amount> [player]</click></hover>"
+    - "<hover:show_text:'<#acfad1>Imposta esperienza per il giocatore selezionato'><click:suggest_command:'/%alias% setxp '><#4079ff>/%alias% <#57c9fa>setxp <#ffffb3><amount> [player]</click></hover>"
+    - "<hover:show_text:'<#acfad1>Imposta livello per il giocatore selezionato'><click:suggest_command:'/%alias% setlv '><#4079ff>/%alias% <#57c9fa>setlv <#ffffb3><amount> [player]</click></hover>"
+    - "<hover:show_text:'<#acfad1>Reimposta livello a 1 ed esperienza a 0'><click:suggest_command:'/%alias% reset '><#4079ff>/%alias% <#57c9fa>reset <#ffffb3>[player]</click></hover>"
+  success:
+    info:
+      - "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Gamer <#ffffb3>%name%</#ffffb3>"
+      - "<#57c9fa> Level <#ffffb3>%level%</#ffffb3> Experience: <#ffffb3>%exp%</#ffffb3>//%levelupexp%"
+    reset: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Resettato il giocatore <#ffffb3>%name%</#ffffb3>"
+    addxp: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Aggiunti %amount% esperienza al giocatore <#ffffb3>%name%</#ffffb3>"
+    addlv: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Aggiunti %amount% livelli al giocatore <#ffffb3>%name%</#ffffb3>"
+    setxp: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Impostata %amount% esperienza al giocatore <#ffffb3>%name%</#ffffb3>"
+    setlv: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Impostato il livello %amount% al giocatore <#ffffb3>%name%</#ffffb3>"
