@@ -6,6 +6,8 @@ import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.boatrace.BoatRaceStartEvent;
+import emanondev.minigames.event.elytrarace.ElytraRaceStartEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinFirstEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinSecondEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinThirdEvent;
@@ -27,6 +29,11 @@ import java.util.*;
 @SerializableAs(value = "ElytraRaceGame")
 public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraRaceOption> {
 
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new ElytraRaceStartEvent(this));
+    }
     public ElytraRaceGame(@NotNull Map<String, Object> map) {
         super(map);
     }
@@ -87,10 +94,6 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     public void checkGameEnd() {
         if (getGamers().size() <= 1)
             this.gameEnd();
-    }
-
-    public boolean canAddGamer(@NotNull Player player) {
-        return getPhase() != Phase.PLAYING && super.canAddGamer(player);
     }
 
     public void teleportResetLocation(@NotNull Player player) {

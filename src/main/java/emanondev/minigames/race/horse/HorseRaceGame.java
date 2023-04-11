@@ -2,6 +2,8 @@ package emanondev.minigames.race.horse;
 
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.boatrace.BoatRaceStartEvent;
+import emanondev.minigames.event.horserace.HorseRaceStartEvent;
 import emanondev.minigames.event.horserace.HorseRaceWinFirstEvent;
 import emanondev.minigames.event.horserace.HorseRaceWinSecondEvent;
 import emanondev.minigames.event.horserace.HorseRaceWinThirdEvent;
@@ -17,6 +19,11 @@ import java.util.Set;
 
 @SerializableAs(value = "HorseRaceGame")
 public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, HorseRaceOption> {
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new HorseRaceStartEvent(this));
+    }
 
     public HorseRaceGame(@NotNull Map<String, Object> map) {
         super(map);

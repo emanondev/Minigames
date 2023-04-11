@@ -1,20 +1,14 @@
-package emanondev.minigames.event.skywars;
+package emanondev.minigames.event.eggwars;
 
-import emanondev.minigames.event.PlayersWinGameEvent;
+import emanondev.minigames.eggwars.EggWarsGame;
+import emanondev.minigames.event.GameStartEvent;
 import emanondev.minigames.skywars.SkyWarsGame;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
-public class SkyWarsWinEvent extends PlayersWinGameEvent<SkyWarsGame> {
+public class EggWarsStartEvent extends GameStartEvent<EggWarsGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-
-    public SkyWarsWinEvent(@NotNull SkyWarsGame game, @NotNull Set<Player> players) {
-        super(game, players);
-    }
 
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
@@ -25,4 +19,7 @@ public class SkyWarsWinEvent extends PlayersWinGameEvent<SkyWarsGame> {
         return HANDLERS_LIST;
     }
 
+    public EggWarsStartEvent(@NotNull EggWarsGame game) {
+        super(game);
+    }
 }

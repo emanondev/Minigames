@@ -19,7 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends MSchemArena & MColorableTeamArena, O extends MOption> extends AbstractMGame<T, A, O> implements MSchemGame<T, A, O> {
+public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends MSchemArena & MColorableTeamArena, O extends MOption>
+        extends AbstractMGame<T, A, O> implements MSchemGame<T, A, O> {
 
     private final boolean isSquared; // count as squared even if the area is pretty small
     private final List<WorldBorder> borders = new ArrayList<>();

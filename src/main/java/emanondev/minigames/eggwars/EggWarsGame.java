@@ -5,6 +5,8 @@ import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.boatrace.BoatRaceStartEvent;
+import emanondev.minigames.event.eggwars.EggWarsStartEvent;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.generic.DropsFiller;
@@ -38,6 +40,11 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
 
     private final HashSet<Block> ignoredChest = new HashSet<>();
     private final HashSet<Block> filledChests = new HashSet<>();
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new EggWarsStartEvent(this));
+    }
 
     @Override
     public void gamePreStart() {

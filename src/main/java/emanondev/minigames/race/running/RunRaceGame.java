@@ -5,6 +5,8 @@ import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.boatrace.BoatRaceStartEvent;
+import emanondev.minigames.event.runrace.RunRaceStartEvent;
 import emanondev.minigames.event.runrace.RunRaceWinFirstEvent;
 import emanondev.minigames.event.runrace.RunRaceWinSecondEvent;
 import emanondev.minigames.event.runrace.RunRaceWinThirdEvent;
@@ -26,6 +28,10 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
         super(map);
     }
 
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new RunRaceStartEvent(this));
+    }
 
     @Override
     public @NotNull RunRaceType getMinigameType() {
@@ -65,10 +71,6 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
     public void checkGameEnd() {
         if (getGamers().size() <= 1)
             this.gameEnd();
-    }
-
-    public boolean canAddGamer(@NotNull Player player) {
-        return getPhase() != Phase.PLAYING && super.canAddGamer(player);
     }
 
     @Override

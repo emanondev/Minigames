@@ -2,6 +2,7 @@ package emanondev.minigames.race.boat;
 
 import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.boatrace.BoatRaceStartEvent;
 import emanondev.minigames.event.boatrace.BoatRaceWinFirstEvent;
 import emanondev.minigames.event.boatrace.BoatRaceWinSecondEvent;
 import emanondev.minigames.event.boatrace.BoatRaceWinThirdEvent;
@@ -21,6 +22,11 @@ public class BoatRaceGame extends MountedRaceGame<ARaceTeam<BoatRaceGame>, BoatR
 
     public BoatRaceGame(@NotNull Map<String, Object> map) {
         super(map);
+    }
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new BoatRaceStartEvent(this));
     }
 
     @Override

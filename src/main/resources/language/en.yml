@@ -306,6 +306,21 @@ miniarena:
       - "<#57c9fa>Punti: <#ffffb3>%value% <#57c9fa>"
       - ""
       - "<#b3b3b3>I punti sono la ricompensa per il completamento"
+    reward_first_exp:
+      - "<#4079ff>Quanta esperienza dare al primo arrivato?"
+      - "<#57c9fa>Exp: <#ffffb3>%value% <#57c9fa>"
+      - ""
+      - "<#b3b3b3>L'esperienza è intesa come esperienza Gamer"
+    reward_second_exp:
+      - "<#4079ff>Quanta esperienza dare al secondo arrivato?"
+      - "<#57c9fa>Exp: <#ffffb3>%value% <#57c9fa>"
+      - ""
+      - "<#b3b3b3>L'esperienza è intesa come esperienza Gamer"
+    reward_third_exp:
+      - "<#4079ff>Quanta esperienza dare al terzo arrivato?"
+      - "<#57c9fa>Exp: <#ffffb3>%value% <#57c9fa>"
+      - ""
+      - "<#b3b3b3>L'esperienza è intesa come esperienza Gamer"
 minigame:
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniGame</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di gestire\nle partite (Game)'><#fab787>[?]</hover>"
@@ -586,6 +601,10 @@ minikit:
     price:
       - "<#4079ff>Quanto costa usare il kit?"
       - "<#57c9fa>Prezzo: <#ffffb3>%value%"
+    unlock_level:
+      - "<#4079ff>A che livello si sblocca il kit?"
+      - "<#57c9fa>Livello: <#ffffb3>%value%"
+      - "<#ffffb3>Fa riferimento al livello da Gamer"
     display_name_editor:
       - "<#4079ff>Nome Estetico"
       - "<#57c9fa><#ffffb3>%displayname%"

@@ -74,6 +74,14 @@ public class SkyWarsType extends MType<SkyWarsArena, SkyWarsOption> {
     }
 
     public double getWinPoints() {
-        return getSection().loadDouble("game.win_points", 2D);
+        return getSection().loadDouble("game.win_points", 5D);
+    }
+
+    public int getKillExp() {
+        return getSection().loadInteger("game.kill_exp", 2);
+    }
+
+    public int getWinExp() {
+        return getSection().loadInteger("game.win_exp", 5);
     }
 }

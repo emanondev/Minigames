@@ -8,6 +8,9 @@ import emanondev.minigames.MinigameTypes;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
+import emanondev.minigames.event.skywars.SkyWarsDeathEvent;
+import emanondev.minigames.event.skywars.SkyWarsStartEvent;
+import emanondev.minigames.event.skywars.SkyWarsWinEvent;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
 import emanondev.minigames.generic.ColoredTeam;
 import emanondev.minigames.generic.DropsFiller;
@@ -42,6 +45,12 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     private final HashSet<Block> ignoredChest = new HashSet<>();
     private final HashSet<Block> filledChests = new HashSet<>();
+
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new SkyWarsStartEvent(this));
+    }
 
     @Override
     public void gamePreStart() {
@@ -285,6 +294,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     public void onFakeGamerDeath(@NotNull Player player, @Nullable Player killer, boolean direct) {
         new IllegalStateException("debug " + getPhase()).printStackTrace();
         MessageUtil.debug(getId() + " onFakeGamerDeath " + player.getName() + " " + (killer == null ? "" : killer.getName()));
+        craftAndCallGamerDeathEvent(player,killer);
         if (containsLocation(player))
             for (ItemStack item : player.getInventory().getContents())
                 if (!UtilsInventory.isAirOrNull(item))
@@ -327,6 +337,21 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         checkGameEnd();
     }
 
+    protected void craftAndCallGamerDeathEvent(Player player, Player killer) {
+        Bukkit.getPluginManager().callEvent(new SkyWarsDeathEvent(this,player,killer));
+    }
+    protected void craftAndCallWinEvent(SkyWarsTeam winner) {
+        if (winner==null)
+            return;
+        HashSet<Player> players = new HashSet<>();
+        for (UUID user :winner.getUsers()){
+            Player player = Bukkit.getPlayer(user);
+            if (player!=null&& getGamers().contains(player))
+                players.add(player);
+        }
+        Bukkit.getPluginManager().callEvent(new SkyWarsWinEvent(this,players));
+    }
+
     public void checkGameEnd() {
         if (getPhase() != Phase.PLAYING)
             return;
@@ -337,6 +362,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 winner = party;
                 alive++;
             }
+        craftAndCallWinEvent(winner);
         if (alive == 0) {
             new IllegalStateException("no winner").printStackTrace();
             gameEnd();

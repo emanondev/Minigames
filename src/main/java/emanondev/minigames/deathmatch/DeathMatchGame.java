@@ -64,6 +64,11 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         });
     }
 
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        //TODO
+    }
+
 
     /**
      * Assign a party to user or throw an exception

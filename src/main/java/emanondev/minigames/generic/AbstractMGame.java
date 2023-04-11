@@ -285,6 +285,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         MessageUtil.debug(getId() + " gameStart");
         if (phase != Phase.PLAYING)
             throw new IllegalStateException();
+        craftAndCallGameStartEvent();
         for (Player player : getGamers()) {
             getMinigameType().GAME_START_MESSAGE.send(player);
             getMinigameType().applyDefaultPlayerSnapshot(player); //TODO again()
@@ -296,7 +297,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 if (kit == null) {
                     //TODO apply default kit
                 } else {
-                    if (kit.getPrice() == 0 || ecoHandler.removeMoney(player, kit.getPrice())) {
+                    if (kit.getPrice() <= 0 || ecoHandler.removeMoney(player, kit.getPrice())) {
                         kit.apply(player);
                     } else {
                         //TODO not enough money
@@ -310,6 +311,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
         //TODO notify game started?
     }
+
+    protected abstract void craftAndCallGameStartEvent();
 
     @Override
     public void gamePlayingTimer() {
@@ -813,4 +816,14 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
+    protected void giveGameExp(Player target, int amount) {
+        if (amount > 0) {
+            try {
+                GamerManager.get().getGamer(target).addExperience(amount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //sendDMessage(target, "generic.obtain_exp", "%amount%", UtilsString.formatOptional2Digit(amount));
+        }
+    }
 }

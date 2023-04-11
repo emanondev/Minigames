@@ -5,6 +5,7 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.generic.AbstractMColorSchemGame;
+import emanondev.minigames.generic.MTeam;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -240,6 +241,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                     winners.add(p);
                     getVictoryStat().add(p, 1);
                     givePoints(p, getArena().getRewardFirst());
+                    giveGameExp(p, getArena().getRewardFirstExp());
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_first");
                 } else
                     sendDMessage(p, getMinigameType().getType() + ".game.player_won_first", "%who%", player.getName());
@@ -257,6 +259,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_second");
                     //TODO victorySecond
                     givePoints(p, getArena().getRewardSecond());
+                    giveGameExp(p, getArena().getRewardSecondExp());
                 } else
                     sendDMessage(p, getMinigameType().getType() + ".game.player_won_second", "%who%", player.getName());
             });
@@ -273,6 +276,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_third");
                     //TODO victoryThird
                     givePoints(p, getArena().getRewardThird());
+                    giveGameExp(p, getArena().getRewardThirdExp());
                 } else
                     sendDMessage(p, getMinigameType().getType() + ".game.player_won_third", "%who%", player.getName());
             });
@@ -369,6 +373,24 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     public void onGamerExhaustionEvent(EntityExhaustionEvent event, Player player) {
         event.setCancelled(true);
+    }
+
+    public boolean canAddGamer(@NotNull Player player) {
+        return switch (getPhase()){
+            case PRE_START,COLLECTING_PLAYERS -> super.canAddGamer(player);
+            case PLAYING -> {
+                if (!super.canAddGamer(player))
+                    yield false;
+                boolean wasIn = false;
+                for (MTeam team:                getTeams())
+                    if (team.containsUser(player)){
+                        wasIn=true;
+                        break;
+                    }
+                yield wasIn;
+            }
+            default -> false;
+        };
     }
 
 }

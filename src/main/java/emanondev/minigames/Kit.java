@@ -21,6 +21,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
 
     private final PlayerSnapshot snap;
     private int price;
+    private int unlockLevel;
     private ItemStack guiSelectorItem;
 
     @NotNull
@@ -42,6 +43,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         this.price = Math.max(0, (int) map.getOrDefault("price", 0));
         this.displayName = (String) map.get("displayName");
         this.guiSelectorItem = (ItemStack) map.get("gui_selector_item");
+        this.unlockLevel = Math.max(0, (int) map.getOrDefault("unlock_level", 0));
     }
 
     public static @NotNull Kit fromPlayerSnapshot(@NotNull PlayerSnapshot snap) {
@@ -92,6 +94,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         map.put("snap", this.snap);
         map.put("price", this.price);
         map.put("gui_selector_item", this.guiSelectorItem);
+        map.put("unlock_level", this.unlockLevel);
         return map;
     }
 
@@ -106,6 +109,13 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         };
     }
 
+    public int getUnlockLevel() {
+        return unlockLevel;
+    }
+
+    public void setUnlockLevel(int unlockLevel) {
+        this.unlockLevel = Math.max(0,unlockLevel);
+    }
 
     public void setPrice(int val) {
         this.price = Math.max(0, val);
@@ -136,6 +146,15 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
                 () -> new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setDescription(
                         new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minikit.gui.price", "%value%", String.valueOf(getPrice()))).build()));
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
+                () -> (long) getUnlockLevel(),
+                (v) -> {
+                    setUnlockLevel(v.intValue());
+                    KitManager.get().save(Kit.this);
+                },
+                () -> new ItemBuilder(Material.EXPERIENCE_BOTTLE).setGuiProperty().setDescription(
+                        new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                                "minikit.gui.unlock_level", "%value%", String.valueOf(getPrice()))).build()));
         return gui;
     }
 

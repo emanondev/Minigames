@@ -25,6 +25,12 @@ public class RaceArena extends AbstractMColorSchemArena {
     private final List<LocationOffset3D> checkpointsRespawn = new ArrayList<>();
     private final BoundingBox finishArea;
     private final List<BoundingBox> fallAreas = new ArrayList<>();
+    private int rewardFirstExp;
+    private int rewardSecondExp;
+    private int rewardThirdExp;
+    private int rewardFirst;
+    private int rewardSecond;
+    private int rewardThird;
 
     public int getRewardFirst() {
         return rewardFirst;
@@ -53,10 +59,6 @@ public class RaceArena extends AbstractMColorSchemArena {
         ArenaManager.get().save(this);
     }
 
-    private int rewardFirst;
-    private int rewardSecond;
-    private int rewardThird;
-
     public RaceArena(@NotNull Map<String, Object> map) {
         super(map);
         Map<String, ?> teamMap = (Map<String, ?>) map.get("teams");
@@ -79,6 +81,9 @@ public class RaceArena extends AbstractMColorSchemArena {
         rewardFirst = Math.max(0, (Integer) map.getOrDefault("reward_first", 10));
         rewardSecond = Math.max(0, (Integer) map.getOrDefault("reward_second", 5));
         rewardThird = Math.max(0, (Integer) map.getOrDefault("reward_third", 3));
+        rewardFirstExp = Math.max(0, (Integer) map.getOrDefault("reward_first_exp", 10));
+        rewardSecondExp = Math.max(0, (Integer) map.getOrDefault("reward_second_exp", 5));
+        rewardThirdExp = Math.max(0, (Integer) map.getOrDefault("reward_third_exp", 3));
     }
 
     @NotNull
@@ -101,6 +106,9 @@ public class RaceArena extends AbstractMColorSchemArena {
         map.put("reward_first", rewardFirst);
         map.put("reward_second", rewardSecond);
         map.put("reward_third", rewardThird);
+        map.put("reward_first_exp", rewardFirstExp);
+        map.put("reward_second_exp", rewardSecondExp);
+        map.put("reward_third_exp", rewardThirdExp);
         return map;
     }
 
@@ -148,24 +156,74 @@ public class RaceArena extends AbstractMColorSchemArena {
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
                 () -> (long) getRewardFirst(),
                 (v) -> setRewardFirst(v.intValue()),
-                () -> new ItemBuilder(Material.GOLD_INGOT).setGuiProperty().setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
+                () -> new ItemBuilder(Material.GOLD_INGOT).setGuiProperty()
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "miniarena.gui.reward_first", "%value%",
                                 String.valueOf(getRewardFirst()))).build()));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
                 () -> (long) getRewardSecond(),
                 (v) -> setRewardSecond(v.intValue()),
-                () -> new ItemBuilder(Material.IRON_INGOT).setGuiProperty().setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
+                () -> new ItemBuilder(Material.IRON_INGOT).setGuiProperty().setAmount(2)
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "miniarena.gui.reward_second", "%value%",
                                 String.valueOf(getRewardSecond()))).build()));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
                 () -> (long) getRewardThird(),
                 (v) -> setRewardThird(v.intValue()),
-                () -> new ItemBuilder(Material.COPPER_INGOT).setGuiProperty().setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
+                () -> new ItemBuilder(Material.COPPER_INGOT).setGuiProperty().setAmount(3)
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "miniarena.gui.reward_third", "%value%",
                                 String.valueOf(getRewardThird()))).build()));
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
+                () -> (long) getRewardFirstExp(),
+                (v) -> setRewardFirstExp(v.intValue()),
+                () -> new ItemBuilder(Material.EXPERIENCE_BOTTLE).setGuiProperty()
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                                "miniarena.gui.reward_first_exp", "%value%",
+                                String.valueOf(getRewardFirstExp()))).build()));
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
+                () -> (long) getRewardSecondExp(),
+                (v) -> setRewardSecondExp(v.intValue()),
+                () -> new ItemBuilder(Material.EXPERIENCE_BOTTLE).setGuiProperty().setAmount(2)
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                                "miniarena.gui.reward_second_exp", "%value%",
+                                String.valueOf(getRewardSecondExp()))).build()));
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
+                () -> (long) getRewardThirdExp(),
+                (v) -> setRewardThirdExp(v.intValue()),
+                () -> new ItemBuilder(Material.EXPERIENCE_BOTTLE).setGuiProperty().setAmount(3)
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                                "miniarena.gui.reward_third_exp", "%value%",
+                                String.valueOf(getRewardThirdExp()))).build()));
         return gui;
     }
+
+    public int getRewardFirstExp() {
+        return rewardFirstExp;
+
+    }
+
+    public int getRewardSecondExp() {
+        return rewardSecondExp;
+    }
+
+    public int getRewardThirdExp() {
+        return rewardThirdExp;
+    }
+
+    public void setRewardFirstExp(int rewardFirstExp) {
+        this.rewardFirstExp = Math.max(0, rewardFirstExp);
+        ArenaManager.get().save(this);
+    }
+
+    public void setRewardSecondExp(int rewardSecondExp) {
+        this.rewardSecondExp = Math.max(0, rewardSecondExp);
+        ArenaManager.get().save(this);
+    }
+
+    public void setRewardThirdExp(int rewardThirdExp) {
+        this.rewardThirdExp = Math.max(0, rewardThirdExp);
+        ArenaManager.get().save(this);
+    }
+
 }

@@ -3,6 +3,7 @@ package emanondev.minigames.race;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
+import emanondev.minigames.generic.MTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -65,10 +66,6 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
         if (getGamers().size() <= 1) this.gameEnd();
     }
 
-
-    public boolean canAddGamer(@NotNull Player player) {
-        return getPhase() != Phase.PLAYING && super.canAddGamer(player);
-    }
 
     public void onGamerDismountEvent(EntityDismountEvent event, Player player) {
         if (getPhase() == Phase.PLAYING || getPhase() == Phase.PRE_START) {

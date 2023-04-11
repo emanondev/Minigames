@@ -140,6 +140,7 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% please check correct values");
             Minigames.get().logInfo("%minigames_playerstats_<time_unit>_<stat_id>");
             Minigames.get().logInfo("%minigames_gamestats_<time_unit>_<game_id>_stat_<stat_id>");
