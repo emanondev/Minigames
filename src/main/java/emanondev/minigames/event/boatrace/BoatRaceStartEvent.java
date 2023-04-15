@@ -1,8 +1,7 @@
 package emanondev.minigames.event.boatrace;
 
 import emanondev.minigames.event.GameStartEvent;
-import emanondev.minigames.race.boat.BoatRaceGame;
-import emanondev.minigames.race.running.RunRaceGame;
+import emanondev.minigames.games.race.boat.BoatRaceGame;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 

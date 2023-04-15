@@ -1,8 +1,7 @@
 package emanondev.minigames.event.eggwars;
 
-import emanondev.minigames.eggwars.EggWarsGame;
+import emanondev.minigames.games.eggwars.EggWarsGame;
 import emanondev.minigames.event.GameStartEvent;
-import emanondev.minigames.skywars.SkyWarsGame;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,8 +1,8 @@
 package emanondev.minigames.event.boatrace;
 
 import emanondev.minigames.event.ARaceWinEvent;
-import emanondev.minigames.race.ARaceTeam;
-import emanondev.minigames.race.boat.BoatRaceGame;
+import emanondev.minigames.games.race.ARaceTeam;
+import emanondev.minigames.games.race.boat.BoatRaceGame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

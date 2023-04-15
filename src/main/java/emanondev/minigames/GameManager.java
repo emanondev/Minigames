@@ -255,8 +255,15 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                 return true;
             }
         if (gameOld != null) {
-            playerSnapshots.remove(player).apply(player);
-            player.setScoreboard(playerBoards.remove(player));
+            Location respawn = C.getRespawnLocation();
+            if (respawn!=null){
+                EnumSet<PlayerSnapshot.FieldType> values = EnumSet.allOf(PlayerSnapshot.FieldType.class);
+                values.remove(PlayerSnapshot.FieldType.LOCATION);
+                player.teleport(respawn);
+                playerSnapshots.remove(player).apply(player,values);
+            }else
+                playerSnapshots.remove(player).apply(player);
+            player.setScoreboard(playerBoards.remove(player)); //TODO not working
         }
         return false;
     }
@@ -284,7 +291,14 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             return true;
         }
         if (gameOld != null) {
-            playerSnapshots.remove(player).apply(player);
+            Location respawn = C.getRespawnLocation();
+            if (respawn!=null){
+                EnumSet<PlayerSnapshot.FieldType> values = EnumSet.allOf(PlayerSnapshot.FieldType.class);
+                values.remove(PlayerSnapshot.FieldType.LOCATION);
+                player.teleport(respawn);
+                playerSnapshots.remove(player).apply(player,values);
+            }else
+                playerSnapshots.remove(player).apply(player);
             player.setScoreboard(playerBoards.remove(player));
         }
         return false;

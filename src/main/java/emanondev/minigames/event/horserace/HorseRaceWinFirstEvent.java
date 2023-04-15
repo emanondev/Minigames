@@ -1,8 +1,8 @@
 package emanondev.minigames.event.horserace;
 
 import emanondev.minigames.event.ARaceWinEvent;
-import emanondev.minigames.race.ARaceTeam;
-import emanondev.minigames.race.horse.HorseRaceGame;
+import emanondev.minigames.games.race.ARaceTeam;
+import emanondev.minigames.games.race.horse.HorseRaceGame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

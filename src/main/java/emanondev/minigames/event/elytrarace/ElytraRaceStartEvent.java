@@ -1,8 +1,7 @@
 package emanondev.minigames.event.elytrarace;
 
 import emanondev.minigames.event.GameStartEvent;
-import emanondev.minigames.race.elytra.ElytraRaceGame;
-import emanondev.minigames.race.running.RunRaceGame;
+import emanondev.minigames.games.race.elytra.ElytraRaceGame;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 

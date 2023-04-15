@@ -1,7 +1,7 @@
 package emanondev.minigames.event.skywars;
 
 import emanondev.minigames.event.GameEvent;
-import emanondev.minigames.skywars.SkyWarsGame;
+import emanondev.minigames.games.skywars.SkyWarsGame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

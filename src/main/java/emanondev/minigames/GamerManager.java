@@ -33,6 +33,7 @@ public class GamerManager {
         if (instance != null)
             throw new IllegalStateException();
         GamerManager.instance = this;
+        reload();
     }
 
     public static GamerManager get() {
@@ -50,7 +51,7 @@ public class GamerManager {
 
     public @Range(from = 0, to = Long.MAX_VALUE) long getLevelUpExperience(@Range(from = 1, to = Integer.MAX_VALUE) int level) {
         if (level >= maxLevel)
-            throw new IllegalArgumentException();
+            return Long.MAX_VALUE;//TODO should i return -1? throw new IllegalArgumentException();
         return levelupExp.getOrDefault(level, Long.MAX_VALUE);
     }
 

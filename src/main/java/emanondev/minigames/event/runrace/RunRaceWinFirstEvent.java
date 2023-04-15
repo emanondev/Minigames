@@ -1,8 +1,8 @@
 package emanondev.minigames.event.runrace;
 
 import emanondev.minigames.event.ARaceWinEvent;
-import emanondev.minigames.race.ARaceTeam;
-import emanondev.minigames.race.running.RunRaceGame;
+import emanondev.minigames.games.race.ARaceTeam;
+import emanondev.minigames.games.race.running.RunRaceGame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

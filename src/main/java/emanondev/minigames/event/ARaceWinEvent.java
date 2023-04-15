@@ -1,7 +1,7 @@
 package emanondev.minigames.event;
 
-import emanondev.minigames.race.ARaceGame;
-import emanondev.minigames.race.ARaceTeam;
+import emanondev.minigames.games.race.ARaceGame;
+import emanondev.minigames.games.race.ARaceTeam;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

@@ -1,14 +1,14 @@
 package emanondev.minigames;
 
 import emanondev.core.UtilsString;
-import emanondev.minigames.deathmatch.DeathMatchType;
-import emanondev.minigames.eggwars.EggWarsType;
+import emanondev.minigames.games.deathmatch.DeathMatchType;
+import emanondev.minigames.games.eggwars.EggWarsType;
 import emanondev.minigames.generic.MType;
-import emanondev.minigames.race.boat.BoatRaceType;
-import emanondev.minigames.race.elytra.ElytraRaceType;
-import emanondev.minigames.race.horse.HorseRaceType;
-import emanondev.minigames.race.running.RunRaceType;
-import emanondev.minigames.skywars.SkyWarsType;
+import emanondev.minigames.games.race.boat.BoatRaceType;
+import emanondev.minigames.games.race.elytra.ElytraRaceType;
+import emanondev.minigames.games.race.horse.HorseRaceType;
+import emanondev.minigames.games.race.running.RunRaceType;
+import emanondev.minigames.games.skywars.SkyWarsType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

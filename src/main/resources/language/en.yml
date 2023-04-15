@@ -330,6 +330,8 @@ minigame:
     - "<hover:show_text:\"<#acfad1>Teletrasportati al Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% tp '><#4079ff>/%alias% <#57c9fa>tp <#ffffb3><id></click></hover>"
     - "<hover:show_text:'<#acfad1>Mostra la lista dei Game esistenti\n<#ffffb3>[type]<#acfad1> per filtrare una tipologia di Minigame'><click:run_command:'/%alias% list '><#4079ff>/%alias% <#57c9fa>list <#ffffb3>[type]</click></hover>"
     - "<hover:show_text:\"<#acfad1>Elimina il Game\n<#ffffb3><id><#acfad1> è l'id del Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
+    - "<hover:show_text:\"<#acfad1>Imposta lo spawn di ritorno al termine di un Game\"><click:suggest_command:'/%alias% setspawn '><#4079ff>/%alias% <#57c9fa>setspawn </click></hover>"
+    - "<hover:show_text:\"<#acfad1>Resetta lo spawn di ritorno al termine di un Game\"><click:suggest_command:'/%alias% unsetspawn '><#4079ff>/%alias% <#57c9fa>unsetspawn </click></hover>"
   error:
     create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type> <arena> <option></hover>"
     delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
@@ -341,8 +343,10 @@ minigame:
     option_not_found: "<hover:show_text:\"<#e060de>Usa un <#fab66e><option></#fab66e> esistente o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'Option <#fab66e>%option%</#fab66e> non esiste</hover>"
     invalid_option_type: "<hover:show_text:\"<#e060de>Usa un <#fab66e><option></#fab66e> compatibile o creane uno\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'Option <#fab66e>%option%</#fab66e> non è compatibile per il Minigame %type%</hover>"
   success:
-    create: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Nuovo Game <#ffffb3>%id%</#ffffb3> creato"
-    delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient> <#57c9fa>Game <#ffffb3>%id%</#ffffb3> eliminato"
+    create: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Nuovo Game <#ffffb3>%id%</#ffffb3> creato"
+    delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Game <#ffffb3>%id%</#ffffb3> eliminato"
+    setspawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Impostato lo spawn di ritorno"
+    unsetspawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Disimpostato lo spawn di ritorno"
     list_prefix: "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniGame Lista Game</b></gradient>"
     list_info:
       - "<#57c9fa>Game <#ffffb3><b>%id%</b></#ffffb3>"

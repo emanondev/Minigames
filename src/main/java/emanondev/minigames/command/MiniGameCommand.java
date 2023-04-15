@@ -24,6 +24,8 @@ public class MiniGameCommand extends CoreCommandPlus {
     reset <id>
     list [type] <- filtro opzionale
     delete
+    setspawn
+    unsetspawn
      */
     public MiniGameCommand() {
         super("MiniGame", Minigames.get(), Perms.COMMAND_MINIGAME, "Sets Games");
@@ -79,8 +81,24 @@ public class MiniGameCommand extends CoreCommandPlus {
             case "reset" -> reset(sender, label, args);
             case "list" -> list(sender, label, args);
             case "delete" -> delete(sender, label, args);
+            case "setspawn" -> setspawn(sender, label, args);
+            case "unsetspawn" -> unsetspawn(sender, label, args);
             default -> help(sender, label, args);
         }
+    }
+
+    private void unsetspawn(CommandSender sender, String label, String[] args) {
+        C.setRespawnLocation(null);
+        sendDMessage(sender, "minigame.success.unsetspawn", "%alias%", label);
+    }
+
+    private void setspawn(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        C.setRespawnLocation(player.getLocation());
+        sendDMessage(sender, "minigame.success.setspawn", "%alias%", label);
     }
 
     private void tp(CommandSender sender, String label, String[] args) {
