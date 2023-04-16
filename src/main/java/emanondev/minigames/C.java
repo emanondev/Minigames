@@ -19,7 +19,7 @@ public class C {
         startupGameInitializeDelayTicks = Math.max(Minigames.get().getConfig().getInt("startup_game_initialize_delay_ticks", 80), 20);
         String respawnLocationTmp = Minigames.get().getConfig().getString("respawnLocation.coordinates");
         respawnLocationWorld = Minigames.get().getConfig().getString("respawnLocation.world");
-        respawnLocationCoordinates = respawnLocationTmp==null?null:LocationOffset3D.fromString(respawnLocationTmp);
+        respawnLocationCoordinates = respawnLocationTmp == null ? null : LocationOffset3D.fromString(respawnLocationTmp);
     }
 
     public static int getGameMinimalSpaceDistancing() {
@@ -31,21 +31,20 @@ public class C {
     }
 
     public static @Nullable Location getRespawnLocation() {
-        if (respawnLocationWorld==null)
+        if (respawnLocationWorld == null)
             return null;
         World w = Bukkit.getWorld(respawnLocationWorld);
-        if (w==null)
+        if (w == null)
             return null;
-        return new Location(w,respawnLocationCoordinates.x,respawnLocationCoordinates.y,respawnLocationCoordinates.z,respawnLocationCoordinates.yaw,respawnLocationCoordinates.pitch);
+        return new Location(w, respawnLocationCoordinates.x, respawnLocationCoordinates.y, respawnLocationCoordinates.z, respawnLocationCoordinates.yaw, respawnLocationCoordinates.pitch);
     }
 
     public static void setRespawnLocation(@Nullable Location respawnLocation) {
-        if (respawnLocation==null || respawnLocation.getWorld()==null){
+        if (respawnLocation == null || respawnLocation.getWorld() == null) {
             C.respawnLocationCoordinates = null;
             C.respawnLocationWorld = null;
             Minigames.get().getConfig().set("respawnLocation", null);
-        }
-        else {
+        } else {
             C.respawnLocationCoordinates = LocationOffset3D.fromLocation(respawnLocation);
             C.respawnLocationWorld = respawnLocation.getWorld().getName();
             Minigames.get().getConfig().set("respawnLocation.coordinates", C.respawnLocationCoordinates.toString());

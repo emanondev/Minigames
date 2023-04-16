@@ -4,8 +4,8 @@ import emanondev.core.ItemBuilder;
 import emanondev.core.PlayerSnapshot;
 import emanondev.core.gui.*;
 import emanondev.core.message.DMessage;
-import emanondev.minigames.generic.ARegistrable;
-import emanondev.minigames.generic.Registrable;
+import emanondev.minigames.games.ARegistrable;
+import emanondev.minigames.games.Registrable;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -114,7 +114,7 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
     }
 
     public void setUnlockLevel(int unlockLevel) {
-        this.unlockLevel = Math.max(0,unlockLevel);
+        this.unlockLevel = Math.max(0, unlockLevel);
     }
 
     public void setPrice(int val) {

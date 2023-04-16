@@ -1,4 +1,4 @@
-package emanondev.minigames.generic;
+package emanondev.minigames.games;
 
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.MessageUtil;

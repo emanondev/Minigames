@@ -1,4 +1,4 @@
-package emanondev.minigames.generic;
+package emanondev.minigames.games;
 
 import emanondev.core.gui.Gui;
 import emanondev.minigames.locations.LocationOffset3D;

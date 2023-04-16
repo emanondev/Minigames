@@ -1,6 +1,6 @@
 package emanondev.minigames.games.deathmatch;
 
-import emanondev.minigames.generic.AbstractMColorSchemArena;
+import emanondev.minigames.games.AbstractMColorSchemArena;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.DyeColor;
 import org.jetbrains.annotations.NotNull;

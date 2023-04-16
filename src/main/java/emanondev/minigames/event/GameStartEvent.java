@@ -1,6 +1,6 @@
 package emanondev.minigames.event;
 
-import emanondev.minigames.generic.MGame;
+import emanondev.minigames.games.MGame;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

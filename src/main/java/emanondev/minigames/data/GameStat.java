@@ -2,7 +2,7 @@ package emanondev.minigames.data;
 
 import emanondev.core.YMLConfig;
 import emanondev.minigames.Minigames;
-import emanondev.minigames.generic.MGame;
+import emanondev.minigames.games.MGame;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

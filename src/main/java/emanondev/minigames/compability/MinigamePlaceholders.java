@@ -8,7 +8,7 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.gamer.Gamer;
-import emanondev.minigames.generic.MGame;
+import emanondev.minigames.games.MGame;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

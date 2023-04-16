@@ -1,9 +1,9 @@
 package emanondev.minigames;
 
 import emanondev.core.UtilsString;
-import emanondev.minigames.generic.MArena;
-import emanondev.minigames.generic.MArenaBuilder;
-import emanondev.minigames.generic.MType;
+import emanondev.minigames.games.MArena;
+import emanondev.minigames.games.MArenaBuilder;
+import emanondev.minigames.games.MType;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

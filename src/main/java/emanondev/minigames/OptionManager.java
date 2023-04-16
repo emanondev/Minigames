@@ -1,7 +1,7 @@
 package emanondev.minigames;
 
-import emanondev.minigames.generic.MOption;
-import emanondev.minigames.generic.MType;
+import emanondev.minigames.games.MOption;
+import emanondev.minigames.games.MType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

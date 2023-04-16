@@ -1,6 +1,6 @@
 package emanondev.minigames;
 
-import emanondev.minigames.generic.DropsFiller;
+import emanondev.minigames.games.DropsFiller;
 
 public class FillerManager extends Manager<DropsFiller> {
 

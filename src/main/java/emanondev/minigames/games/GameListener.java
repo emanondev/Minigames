@@ -1,4 +1,4 @@
-package emanondev.minigames.generic;
+package emanondev.minigames.games;
 
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;

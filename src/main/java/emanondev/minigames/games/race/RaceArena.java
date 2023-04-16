@@ -6,7 +6,7 @@ import emanondev.core.gui.LongEditorFButton;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
-import emanondev.minigames.generic.AbstractMColorSchemArena;
+import emanondev.minigames.games.AbstractMColorSchemArena;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;

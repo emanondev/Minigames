@@ -4,7 +4,7 @@ import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommandPlus;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.*;
-import emanondev.minigames.generic.*;
+import emanondev.minigames.games.*;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

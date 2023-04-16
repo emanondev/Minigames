@@ -4,7 +4,7 @@ import emanondev.core.ItemBuilder;
 import emanondev.core.PlayerSnapshot;
 import emanondev.core.SoundInfo;
 import emanondev.core.YMLConfig;
-import emanondev.minigames.generic.ColoredTeam;
+import emanondev.minigames.games.ColoredTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

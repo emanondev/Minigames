@@ -8,7 +8,7 @@ import emanondev.core.util.ConsoleLogger;
 import emanondev.minigames.event.PlayerJoinedGameEvent;
 import emanondev.minigames.event.PlayerQuitGameEvent;
 import emanondev.minigames.event.PlayerSpectateGameEvent;
-import emanondev.minigames.generic.*;
+import emanondev.minigames.games.*;
 import emanondev.minigames.locations.BlockLocation3D;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -256,12 +256,12 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             }
         if (gameOld != null) {
             Location respawn = C.getRespawnLocation();
-            if (respawn!=null){
+            if (respawn != null) {
                 EnumSet<PlayerSnapshot.FieldType> values = EnumSet.allOf(PlayerSnapshot.FieldType.class);
                 values.remove(PlayerSnapshot.FieldType.LOCATION);
                 player.teleport(respawn);
-                playerSnapshots.remove(player).apply(player,values);
-            }else
+                playerSnapshots.remove(player).apply(player, values);
+            } else
                 playerSnapshots.remove(player).apply(player);
             player.setScoreboard(playerBoards.remove(player)); //TODO not working
         }
@@ -292,12 +292,12 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         }
         if (gameOld != null) {
             Location respawn = C.getRespawnLocation();
-            if (respawn!=null){
+            if (respawn != null) {
                 EnumSet<PlayerSnapshot.FieldType> values = EnumSet.allOf(PlayerSnapshot.FieldType.class);
                 values.remove(PlayerSnapshot.FieldType.LOCATION);
                 player.teleport(respawn);
-                playerSnapshots.remove(player).apply(player,values);
-            }else
+                playerSnapshots.remove(player).apply(player, values);
+            } else
                 playerSnapshots.remove(player).apply(player);
             player.setScoreboard(playerBoards.remove(player));
         }

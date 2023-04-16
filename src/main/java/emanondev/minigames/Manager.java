@@ -2,7 +2,7 @@ package emanondev.minigames;
 
 import emanondev.core.UtilsString;
 import emanondev.core.YMLConfig;
-import emanondev.minigames.generic.Registrable;
+import emanondev.minigames.games.Registrable;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

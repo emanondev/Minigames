@@ -1,4 +1,4 @@
-package emanondev.minigames.generic;
+package emanondev.minigames.games;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

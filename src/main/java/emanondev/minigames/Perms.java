@@ -1,7 +1,6 @@
-package emanondev.minigames.generic;
+package emanondev.minigames;
 
 import emanondev.core.PermissionBuilder;
-import emanondev.minigames.Minigames;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 

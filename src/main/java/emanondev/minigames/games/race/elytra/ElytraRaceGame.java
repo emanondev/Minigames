@@ -10,7 +10,7 @@ import emanondev.minigames.event.elytrarace.ElytraRaceStartEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinFirstEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinSecondEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinThirdEvent;
-import emanondev.minigames.generic.ColoredTeam;
+import emanondev.minigames.games.ColoredTeam;
 import emanondev.minigames.games.race.ARaceGame;
 import emanondev.minigames.games.race.ARaceTeam;
 import org.bukkit.Bukkit;
@@ -33,6 +33,7 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     protected void craftAndCallGameStartEvent() {
         Bukkit.getPluginManager().callEvent(new ElytraRaceStartEvent(this));
     }
+
     public ElytraRaceGame(@NotNull Map<String, Object> map) {
         super(map);
     }

@@ -1,5 +1,5 @@
 skywars_chest:
-  ==: emanondev.minigames.generic.DropsFiller
+  ==: emanondev.minigames.games.DropsFiller
   groups:
     - blocks
     - blocks

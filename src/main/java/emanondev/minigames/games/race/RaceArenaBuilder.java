@@ -11,7 +11,7 @@ import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.UtilColor;
-import emanondev.minigames.generic.SchematicArenaBuilder;
+import emanondev.minigames.games.SchematicArenaBuilder;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.*;
 import org.bukkit.entity.Player;

@@ -1,6 +1,6 @@
 package emanondev.minigames.games.deathmatch;
 
-import emanondev.minigames.generic.ColoredTeam;
+import emanondev.minigames.games.ColoredTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;

@@ -1,6 +1,6 @@
 package emanondev.minigames.event;
 
-import emanondev.minigames.generic.MGame;
+import emanondev.minigames.games.MGame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

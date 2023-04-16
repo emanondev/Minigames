@@ -1,6 +1,6 @@
 package emanondev.minigames;
 
-import emanondev.minigames.generic.DropGroup;
+import emanondev.minigames.games.DropGroup;
 
 public class DropGroupManager extends Manager<DropGroup> {
 

@@ -1,9 +1,9 @@
 package emanondev.minigames;
 
 import emanondev.core.UtilsString;
+import emanondev.minigames.games.MType;
 import emanondev.minigames.games.deathmatch.DeathMatchType;
 import emanondev.minigames.games.eggwars.EggWarsType;
-import emanondev.minigames.generic.MType;
 import emanondev.minigames.games.race.boat.BoatRaceType;
 import emanondev.minigames.games.race.elytra.ElytraRaceType;
 import emanondev.minigames.games.race.horse.HorseRaceType;

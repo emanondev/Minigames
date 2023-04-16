@@ -1,4 +1,4 @@
-package emanondev.minigames.generic;
+package emanondev.minigames.games;
 
 import emanondev.core.SoundInfo;
 import emanondev.core.UtilsString;

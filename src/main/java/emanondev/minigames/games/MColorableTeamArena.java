@@ -1,4 +1,4 @@
-package emanondev.minigames.generic;
+package emanondev.minigames.games;
 
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.DyeColor;

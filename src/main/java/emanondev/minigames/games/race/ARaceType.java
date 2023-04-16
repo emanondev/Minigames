@@ -3,7 +3,7 @@ package emanondev.minigames.games.race;
 import emanondev.core.CorePlugin;
 import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.Minigames;
-import emanondev.minigames.generic.MType;
+import emanondev.minigames.games.MType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

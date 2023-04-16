@@ -1,43 +1,43 @@
 blocks:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '30':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"OAK_PLANKS","amount":{"==I":20}}'
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"STONE","amount":{"==I":20}}'
   '10':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"OAK_LOG","amount":{"==I":5}}'
 food:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '20':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"COOKED_BEEF","amount":{"==I":5}}'
   '30':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"BREAD","amount":{"==I":5}}'
 minerals:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '10':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"DIAMOND"}'
   '20':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"IRON_INGOT"}'
 throwweapons:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '10':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"BOW"}'
   '40':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"FISHING_ROD"}'
 strings:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '30':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"STRING"}'
   '10':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"STRING","amount":{"==I":2}}'
 arrows:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '30':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"ARROW","amount":{"==I":5}}'
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"ARROW","amount":{"==I":10}}'
   '10':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"ARROW","amount":{"==I":15}}'
 potions:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '40':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"SPLASH_POTION","meta":{"==":"ItemMeta","meta-type":"POTION","potion-type":"minecraft:strong_harming"}}'
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"POTION","meta":{"==":"ItemMeta","meta-type":"POTION","potion-type":"minecraft:invisibility"}}'
@@ -47,7 +47,7 @@ potions:
   '80':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"POTION","meta":{"==":"ItemMeta","meta-type":"POTION","potion-type":"minecraft:strong_healing"}}'
 tools:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '40':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"STONE_AXE"}'
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"STONE_PICKAXE"}'
@@ -56,37 +56,37 @@ tools:
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"IRON_PICKAXE"}'
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"IRON_AXE"}'
 expbottle:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '40':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"EXPERIENCE_BOTTLE","amount":{"==I":5}}'
 snowballs:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '20':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"SNOWBALL","amount":{"==I":16}}'
   '40':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"SNOWBALL","amount":{"==I":12}}'
 lavabucket:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '50':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"LAVA_BUCKET"}'
 waterbucket:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '50':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"WATER_BUCKET"}'
 woodutil:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '40':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"STICK","amount":{"==I":5}}'
   '20':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"LADDER","amount":{"==I":10}}'
 fireutil:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '20':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"FLINT_AND_STEEL"}'
   '50':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"TNT","amount":{"==I":8}}'
 unique:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '20':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"GOLDEN_APPLE"}'
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"ENCHANTING_TABLE"}'
@@ -97,7 +97,7 @@ unique:
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"GHAST_SPAWN_EGG"}'
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"POTION","meta":{"==":"ItemMeta","meta-type":"POTION","potion-type":"minecraft:strength"}}'
 armor:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '80':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"LEATHER_HELMET"}'
   '40':
@@ -119,7 +119,7 @@ armor:
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"DIAMOND_LEGGINGS"}'
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"DIAMOND_BOOTS"}'
 meleeweapons:
-  ==: emanondev.minigames.generic.DropGroup
+  ==: emanondev.minigames.games.DropGroup
   '60':
     - '{"==":"org.bukkit.inventory.ItemStack","v":{"==I":3120},"type":"STONE_SWORD"}'
   '40':

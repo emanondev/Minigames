@@ -1,4 +1,4 @@
-package emanondev.minigames.generic;
+package emanondev.minigames.games;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;

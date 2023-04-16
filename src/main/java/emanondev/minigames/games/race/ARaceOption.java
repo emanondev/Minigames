@@ -10,7 +10,7 @@ import emanondev.minigames.Kit;
 import emanondev.minigames.KitManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
-import emanondev.minigames.generic.AbstractMOption;
+import emanondev.minigames.games.AbstractMOption;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;

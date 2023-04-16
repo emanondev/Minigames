@@ -4,8 +4,8 @@ import emanondev.minigames.Kit;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
-import emanondev.minigames.generic.AbstractMColorSchemGame;
-import emanondev.minigames.generic.MTeam;
+import emanondev.minigames.games.AbstractMColorSchemGame;
+import emanondev.minigames.games.MTeam;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -375,15 +375,15 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     }
 
     public boolean canAddGamer(@NotNull Player player) {
-        return switch (getPhase()){
-            case PRE_START,COLLECTING_PLAYERS -> super.canAddGamer(player);
+        return switch (getPhase()) {
+            case PRE_START, COLLECTING_PLAYERS -> super.canAddGamer(player);
             case PLAYING -> {
                 if (!super.canAddGamer(player))
                     yield false;
                 boolean wasIn = false;
-                for (MTeam team:                getTeams())
-                    if (team.containsUser(player)){
-                        wasIn=true;
+                for (MTeam team : getTeams())
+                    if (team.containsUser(player)) {
+                        wasIn = true;
                         break;
                     }
                 yield wasIn;
