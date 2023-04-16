@@ -1,10 +1,13 @@
 package emanondev.minigames.games;
 
+import emanondev.core.ItemBuilder;
 import emanondev.core.SoundInfo;
 import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
 import emanondev.core.gui.Gui;
+import emanondev.core.gui.LongEditorFButton;
 import emanondev.core.gui.PagedListFGui;
+import emanondev.core.gui.PagedMapGui;
 import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.*;
@@ -47,6 +50,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private final String optionId;
     private final String arenaId;
     private final HashMap<Player, String> kitPreference = new HashMap<>();
+    private int joinGuiSlot;
+    private int joinTypeGuiSlot;
 
     @SuppressWarnings("unchecked")
     public AbstractMGame(@NotNull Map<String, Object> map) {
@@ -69,6 +74,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             if (loc == null) {
                 loc = GameManager.get().generateLocation(arena, getWorld());
             }
+            this.joinGuiSlot = Math.max(0, (Integer) map.getOrDefault("join_gui_slot", 0));
+            this.joinTypeGuiSlot = Math.max(0, (Integer) map.getOrDefault("join_type_gui_slot", 0));
         } catch (Exception e) {
             e.printStackTrace();
             loc = GameManager.get().generateLocation(arena, getWorld());
@@ -109,6 +116,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         map.put("option", optionId);
         map.put("arena", arenaId);
         map.put("location", loc.toString());
+        map.put("join_gui_slot", this.joinGuiSlot);
+        map.put("join_type_gui_slot", this.joinTypeGuiSlot);
         return map;
     }
 
@@ -825,5 +834,46 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             }
             //sendDMessage(target, "generic.obtain_exp", "%amount%", UtilsString.formatOptional2Digit(amount));
         }
+    }
+
+    public Gui getEditorGui(Player target, Gui parent) {
+        PagedMapGui gui = new PagedMapGui(
+                new DMessage(Minigames.get(), target).appendLang("minigame.gui.title", getPlaceholders()),
+                6, target, parent, Minigames.get());
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
+                () -> (long) getJoinGuiSlot(),
+                (v) -> setJoinGuiSlot(v.intValue()),
+                () -> new ItemBuilder(Material.COMPASS).setAmount(Math.max(1, Math.min(101, getJoinGuiSlot())))
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                                "minigame.gui.join_gui_slot", "%value%", String.valueOf(getJoinGuiSlot()))).build()));
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
+                () -> (long) getJoinTypeGuiSlot(),
+                (v) -> setJoinTypeGuiSlot(v.intValue()),
+                () -> new ItemBuilder(Material.RECOVERY_COMPASS).setAmount(Math.max(1, Math.min(101, getJoinTypeGuiSlot())))
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                                "minigame.gui.join_type_gui_slot", "%value%", String.valueOf(getJoinTypeGuiSlot()))).build()));
+        return gui;
+    }
+
+    @Override
+    public void setJoinGuiSlot(int val) {
+        this.joinGuiSlot = Math.max(0, val);
+        GameManager.get().save(this);
+    }
+
+    @Override
+    public void setJoinTypeGuiSlot(int val) {
+        this.joinTypeGuiSlot = Math.max(0, val);
+        GameManager.get().save(this);
+    }
+
+    @Override
+    public int getJoinGuiSlot() {
+        return this.joinGuiSlot;
+    }
+
+    @Override
+    public int getJoinTypeGuiSlot() {
+        return this.joinTypeGuiSlot;
     }
 }

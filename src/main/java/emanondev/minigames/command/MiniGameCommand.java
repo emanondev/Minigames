@@ -35,10 +35,10 @@ public class MiniGameCommand extends CoreCommandPlus {
     @SuppressWarnings("unchecked")
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("create", "list", "delete", "tp"));
+            case 1 -> this.complete(args[0], List.of("gui", "create", "list", "delete", "tp", "setspawn", "unsetspawn", "stop", "reset", "gui"));
             case 2 -> switch (args[0].toLowerCase()) {
                 case "list" -> this.complete(args[1], MinigameTypes.get().getTypesId());
-                case "delete", "tp", "stop", "reset" -> this.complete(args[1], GameManager.get().getAll().keySet());
+                case "gui", "delete", "tp", "stop", "reset" -> this.complete(args[1], GameManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             case 3 -> switch (args[0].toLowerCase()) {
@@ -78,6 +78,7 @@ public class MiniGameCommand extends CoreCommandPlus {
             case "create" -> create(sender, label, args);
             case "tp" -> tp(sender, label, args);
             case "stop" -> stop(sender, label, args);
+            case "gui" -> gui(sender, label, args);
             case "reset" -> reset(sender, label, args);
             case "list" -> list(sender, label, args);
             case "delete" -> delete(sender, label, args);
@@ -85,6 +86,23 @@ public class MiniGameCommand extends CoreCommandPlus {
             case "unsetspawn" -> unsetspawn(sender, label, args);
             default -> help(sender, label, args);
         }
+    }
+
+    private void gui(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 1) {
+            sendDMessage(player, "minigame.error.gui_params", "%alias%", label);
+            return;
+        }
+        MGame game = GameManager.get().get(args[1]);
+        if (game == null) {
+            sendDMessage(player, "minigame.error.id_not_found", "%alias%", label, "%id%", args[1]);
+            return;
+        }
+        game.getEditorGui(player, null).open(player);
     }
 
     private void unsetspawn(CommandSender sender, String label, String[] args) {

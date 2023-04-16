@@ -92,11 +92,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                 .loadSection(minigameType.getType());
     }
 
-    public @Nullable Location getGlobalLobby() {
-        return getGlobalSection().getLocation("lobby");
-    }
-
-
     public void reload() {
         getAll().forEach((k, v) -> v.gameAbort());
         super.reload();
@@ -310,7 +305,14 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             return;
         game.onQuitGame(player);
         playerGames.remove(player);
-        playerSnapshots.remove(player).apply(player);
+        Location respawn = C.getRespawnLocation();
+        if (respawn != null) {
+            EnumSet<PlayerSnapshot.FieldType> values = EnumSet.allOf(PlayerSnapshot.FieldType.class);
+            values.remove(PlayerSnapshot.FieldType.LOCATION);
+            player.teleport(respawn);
+            playerSnapshots.remove(player).apply(player, values);
+        } else
+            playerSnapshots.remove(player).apply(player);
         player.setScoreboard(playerBoards.remove(player));
         Bukkit.getPluginManager().callEvent(new PlayerQuitGameEvent(game, player));
         logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());

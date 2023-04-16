@@ -9,13 +9,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface MTeam {
-    /*void setScore(int value);
-
-    void addScore(int val);
-
-    int getScore();
-
-    void clearScore();*/
 
     @SuppressWarnings("rawtypes")
     MGame getGame();

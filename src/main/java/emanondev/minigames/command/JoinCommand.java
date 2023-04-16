@@ -1,7 +1,8 @@
 package emanondev.minigames.command;
 
 import emanondev.core.command.CoreCommand;
-import emanondev.core.gui.PagedListFGui;
+import emanondev.core.gui.FButton;
+import emanondev.core.gui.PagedMapGui;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.GameManager;
 import emanondev.minigames.MinigameTypes;
@@ -48,16 +49,18 @@ public class JoinCommand extends CoreCommand {
                     sendDMessage(player, "join.error.no_available_game", "%alias%", label);
                     return;
                 }
-                @SuppressWarnings("rawtypes")
-                PagedListFGui<MGame> gui = new PagedListFGui<>(
+                PagedMapGui gui = new PagedMapGui(
                         new DMessage(getPlugin(), player).appendLang("join.gui.title").toLegacy()
                         , 6, player, null, Minigames.get(),
-                        false,
-                        (e, game) ->
-                                GameManager.get().joinGameAsGamer(player, game)
-                        ,
-                        (game) -> game.getGameSelectorItem(player));
-                gui.addElements(values);
+                        true);
+                for (@SuppressWarnings("rawtypes") MGame game : values) {
+                    FButton button = new FButton(gui, () -> game.getGameSelectorItem(player),
+                            (e) -> GameManager.get().joinGameAsGamer(player, game));
+                    if (gui.getButton(game.getJoinGuiSlot()) == null)
+                        gui.setButton(game.getJoinGuiSlot(), button);
+                    else
+                        gui.addButton(button);
+                }
                 gui.open(player);
             }
             case 1 -> {
@@ -71,16 +74,18 @@ public class JoinCommand extends CoreCommand {
                         sendDMessage(player, "join.error.no_available_game", "%alias%", label);
                         return;
                     }
-                    @SuppressWarnings("rawtypes")
-                    PagedListFGui<MGame> gui = new PagedListFGui<>(
+                    PagedMapGui gui = new PagedMapGui(
                             new DMessage(getPlugin(), player).appendLang("join.gui.title").toLegacy()
                             , 6, player, null, Minigames.get(),
-                            true,
-                            (e, game) ->
-                                    GameManager.get().joinGameAsGamer(player, game)
-                            ,
-                            (game) -> game.getGameSelectorItem(player));
-                    gui.addElements(values);
+                            true);
+                    for (@SuppressWarnings("rawtypes") MGame game : values) {
+                        FButton button = new FButton(gui, () -> game.getGameSelectorItem(player),
+                                (e) -> GameManager.get().joinGameAsGamer(player, game));
+                        if (gui.getButton(game.getJoinTypeGuiSlot()) == null)
+                            gui.setButton(game.getJoinTypeGuiSlot(), button);
+                        else
+                            gui.addButton(button);
+                    }
                     gui.open(player);
                     return;
                 }

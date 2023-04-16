@@ -262,6 +262,7 @@ miniarena:
     - "<hover:show_text:\"<#acfad1>Elimina l'Arena\n<#ffffb3><id><#acfad1> è l'id del Arena\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
     - "<hover:show_text:\"<#acfad1>Incolla l'arena nella tua posizione attuale\nPermette anche di modificare i blocchi della\nschematic con il comando update\n<#ffffb3><id><#acfad1> è l'id del Arena\"><click:suggest_command:'/%alias% paste '><#4079ff>/%alias% <#57c9fa>paste <#ffffb3><id></click></hover>"
     - "<hover:show_text:\"<#acfad1>Aggiorna la schematic dell'Arena precedentemente incollata\nl'area seleziona è la medesima di quella a cui è stata incollata\nSolo i blocchi saranno aggiornati\"><click:suggest_command:'/%alias% update'><#4079ff>/%alias% <#57c9fa>update</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Apre una comoda gui per modificare\nl'Arena selezionata\n<#ffffb3><id><#acfad1> è l'id dell'Arena\"><click:suggest_command:'/%alias% gui '><#4079ff>/%alias% <#57c9fa>gui <#ffffb3><id></click></hover>"
   success:
     delete: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Arena <#ffffb3>%id%</#ffffb3> eliminata"
     pasting: "<gradient:#4079ff:#57c9fa:#ffffb3>[Minigame]</gradient><#57c9fa> Piazzamento schematic dell'Arena <#ffffb3>%id%</#ffffb3> in corso"
@@ -329,10 +330,12 @@ minigame:
     - "<hover:show_text:\"<#acfad1>Riavvia il Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% reset '><#4079ff>/%alias% <#57c9fa>reset <#ffffb3><id></click></hover>"
     - "<hover:show_text:\"<#acfad1>Teletrasportati al Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% tp '><#4079ff>/%alias% <#57c9fa>tp <#ffffb3><id></click></hover>"
     - "<hover:show_text:'<#acfad1>Mostra la lista dei Game esistenti\n<#ffffb3>[type]<#acfad1> per filtrare una tipologia di Minigame'><click:run_command:'/%alias% list '><#4079ff>/%alias% <#57c9fa>list <#ffffb3>[type]</click></hover>"
+    - "<hover:show_text:\"<#acfad1>Apre una comoda gui per modificare\nil Game selezionato\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% gui '><#4079ff>/%alias% <#57c9fa>gui <#ffffb3><id></click></hover>"
     - "<hover:show_text:\"<#acfad1>Elimina il Game\n<#ffffb3><id><#acfad1> è l'id del Game\n<#ffffb3><id><#acfad1> è l'id del Game\"><click:suggest_command:'/%alias% delete '><#4079ff>/%alias% <#57c9fa>delete <#ffffb3><id></click></hover>"
     - "<hover:show_text:\"<#acfad1>Imposta lo spawn di ritorno al termine di un Game\"><click:suggest_command:'/%alias% setspawn '><#4079ff>/%alias% <#57c9fa>setspawn </click></hover>"
     - "<hover:show_text:\"<#acfad1>Resetta lo spawn di ritorno al termine di un Game\"><click:suggest_command:'/%alias% unsetspawn '><#4079ff>/%alias% <#57c9fa>unsetspawn </click></hover>"
   error:
+    gui_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% gui <#fab66e><id></hover>"
     create_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% create <#fab66e><id> <type> <arena> <option></hover>"
     delete_params: "<hover:show_text:'<#e060de>Numero di parametri errato'><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% delete <#fab66e><id></hover>"
     invalid_id: "<hover:show_text:\"<#e060de>L'<#fab66e><id></#fab66e> dev'essere una stringa di\ncaratteri numeri e/o trattini bassi\"><gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> L'<id> <#fab66e>%id%</#fab66e> non è valido</hover>"
@@ -356,6 +359,22 @@ minigame:
       - "<#57c9fa>Location: <#ffffb3>%location%</#ffffb3>"
       - ""
       - "<#57c9fa>Fase: <#ffffb3>%phase%"
+  gui:
+    title: "<#4079ff>Game <#57c9fa>%id% <#4079ff>(<#57c9fa>%type%<#4079ff>)"
+    join_gui_slot:
+      - "<#4079ff>In che Slot della gui /join"
+      - "<#4079ff> posizionare il Game?"
+      - "<#57c9fa>Slot: <#ffffb3>%value%"
+      - ""
+      - "<#b3b3b3>Se lo slot è già usato da un'altro Game"
+      - "<#b3b3b3>occuperà il primo slot libero"
+    join_type_gui_slot:
+      - "<#4079ff>In che Slot della gui /join <TYPE>"
+      - "<#4079ff> posizionare il Game?"
+      - "<#57c9fa>Slot: <#ffffb3>%value%"
+      - ""
+      - "<#b3b3b3>Se lo slot è già usato da un'altro Game"
+      - "<#b3b3b3>occuperà il primo slot libero"
 miniarenabuilder:
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArenaBuilder</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare\nun arena per un Game (Arena)'><#fab787>[?]</hover>"
@@ -556,7 +575,7 @@ join:
     join_params: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> /%alias% <#fab66e>[type/game]"
     already_inside_a_game: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Sei già all'interno di una Partita"
     invalid_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste un Gioco chiamato <#fab66e>%type%"
-    invalid_game_or_type: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste una Partita o un Gioco chiamato <#fab66e>%name%"
+    invalid_game_or_minigame: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non esiste una Partita o un Gioco chiamato <#fab66e>%name%"
   gui:
     title: "<#4079ff>Seleziona la Partita"
 leave:

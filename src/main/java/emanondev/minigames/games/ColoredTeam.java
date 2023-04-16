@@ -45,13 +45,6 @@ public abstract class ColoredTeam implements MTeam {
 
     @Override
     public boolean removeUser(@NotNull OfflinePlayer user) {
-        if (getGame().getMaxGamers() == 1) {
-            //String score = getScoreName();
-            if (removeUser(user.getUniqueId())) {
-                return true;
-            }
-            return false;
-        }
         return removeUser(user.getUniqueId());
     }
 

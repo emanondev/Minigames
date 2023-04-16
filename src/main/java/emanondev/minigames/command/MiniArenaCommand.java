@@ -262,7 +262,7 @@ public class MiniArenaCommand extends CoreCommand {
     @Override
     public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("list", "delete", "paste", "gui"));
+            case 1 -> this.complete(args[0], List.of("list", "delete", "paste", "gui", "update"));
             case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
                 case "delete", "paste", "gui" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
                 default -> Collections.emptyList();

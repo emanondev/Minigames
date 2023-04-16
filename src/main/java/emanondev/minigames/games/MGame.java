@@ -2,6 +2,7 @@ package emanondev.minigames.games;
 
 import emanondev.core.CorePlugin;
 import emanondev.core.ItemBuilder;
+import emanondev.core.gui.Gui;
 import emanondev.core.message.DMessage;
 import emanondev.core.util.CorePluginLinked;
 import emanondev.minigames.MessageUtil;
@@ -35,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
+import java.lang.module.ModuleReader;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -381,6 +383,20 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         if (getPhase() != Phase.PLAYING)
             event.setCancelled(true);
     }
+
+    default Gui getEditorGui(Player player) {
+        return getEditorGui(player, null);
+    }
+
+    Gui getEditorGui(Player player, Gui parent);
+
+    void setJoinGuiSlot(int val);
+
+    void setJoinTypeGuiSlot(int val);
+
+    int getJoinGuiSlot();
+
+    int getJoinTypeGuiSlot();
 
     enum Phase {
         STOPPED,
