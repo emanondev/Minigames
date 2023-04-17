@@ -22,8 +22,8 @@ import java.util.*;
 
 public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
 
-    private static final SimpleMessage ERR_UNKNOWN_ACTION = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.unknown_action");
-    private static final SimpleMessage ERR_OUTSIDE_ARENA = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.outside_arena");
+    private static final SimpleMessage ERR_UNKNOWN_ACTION = new SimpleMessage(Minigames.get(), "arenabuilder.deathmatch.error.unknown_action");
+    private static final SimpleMessage ERR_OUTSIDE_ARENA = new SimpleMessage(Minigames.get(), "arenabuilder.deathmatch.error.outside_arena");
     private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
     private LocationOffset3D spectatorsOffset;
 
@@ -44,7 +44,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
 
     @Override
     public @NotNull DMessage getCurrentBossBarMessage() {
-        return new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.bossbar.phase" + getPhase(), "%alias%", getLabel());
+        return new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.deathmatch.bossbar.phase" + getPhase(), "%alias%", getLabel());
     }
 
     @Override
@@ -54,15 +54,15 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                 DMessage teamSet = new DMessage(Minigames.get(), getBuilder());
                 for (DyeColor color : DyeColor.values())
                     if (!spawnLocations.containsKey(color))
-                        teamSet.appendLang("arenabuilder.skywars.repeatmessage.setteamcolor", "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color), "%alias%", getLabel());
+                        teamSet.appendLang("arenabuilder.deathmatch.repeatmessage.setteamcolor", "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color), "%alias%", getLabel());
                 DMessage teamDelete = new DMessage(Minigames.get(), getBuilder());
                 for (DyeColor color : spawnLocations.keySet())
-                    teamDelete.appendLang("arenabuilder.skywars.repeatmessage.deleteteamcolor", "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color), "%alias%", getLabel());
-                yield new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.repeatmessage.phase" + getPhase()
+                    teamDelete.appendLang("arenabuilder.deathmatch.repeatmessage.deleteteamcolor", "%color%", color.name(), "%hexa%", UtilColor.getColorHexa(color), "%alias%", getLabel());
+                yield new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.deathmatch.repeatmessage.phase" + getPhase()
                         , "%setteamsspawn%", teamSet.toString()
                         , "%deleteteamsspawn%", teamDelete.toString(), "%alias%", getLabel());
             }
-            default -> new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.skywars.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
+            default -> new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.deathmatch.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
         };
     }
 
@@ -81,7 +81,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                     }
                     try {
                         setArea(player);
-                        sendDMessage(player, "arenabuilder.skywars.success.select_area",
+                        sendDMessage(player, "arenabuilder.deathmatch.success.select_area",
                                 "%world%", getWorld().getName(),
                                 "%x1%", String.valueOf((int) getArea().getMinX()),
                                 "%x2%", String.valueOf((int) getArea().getMaxX()),
@@ -92,14 +92,14 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
 
                         setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
                     } catch (IncompleteRegionException e) {
-                        sendDMessage(player, "arenabuilder.skywars.error.unselected_area", "%alias%", label);
+                        sendDMessage(player, "arenabuilder.deathmatch.error.unselected_area", "%alias%", label);
                     }
                 }
                 case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
                     switch (args[0].toLowerCase(Locale.ENGLISH)) {
                         case "next" -> {
                             if (spawnLocations.size() >= 2) {
-                                //MessageUtil.sendMessage(player, "arenabuilder.skywars.success.next");
+                                //MessageUtil.sendMessage(player, "arenabuilder.deathmatch.success.next");
                                 setPhaseRaw(DeathMatchArenaBuilder.PHASE_SET_SPECTATOR_SPAWN);
                                 return;
                             } else {
@@ -116,8 +116,8 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                             LocationOffset3D loc = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
                             boolean override = spawnLocations.containsKey(color);
                             spawnLocations.put(color, loc);
-                            sendDMessage(player, override ? "arenabuilder.skywars.success.override_team_spawn"
-                                    : "arenabuilder.skywars.success.set_team_spawn", "%color%", color.name(), "%alias%", label);
+                            sendDMessage(player, override ? "arenabuilder.deathmatch.success.override_team_spawn"
+                                    : "arenabuilder.deathmatch.success.set_team_spawn", "%color%", color.name(), "%alias%", label);
                             if (getPhase() == PHASE_SET_TEAM_SPAWNS && spawnLocations.size() >= 2)
                                 setPhaseRaw(PHASE_SET_TEAM_SPAWNS_OR_NEXT);
                             else
@@ -128,7 +128,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                             //TODO check color value
                             DyeColor color = DyeColor.valueOf(args[1].toUpperCase());
                             spawnLocations.remove(color);
-                            sendDMessage(player, "arenabuilder.skywars.success.deleted_team_spawn",
+                            sendDMessage(player, "arenabuilder.deathmatch.success.deleted_team_spawn",
                                     "%color%", color.name(), "%alias%", label);
                             if (getPhase() == PHASE_SET_TEAM_SPAWNS_OR_NEXT && spawnLocations.size() < 2)
                                 setPhaseRaw(PHASE_SET_TEAM_SPAWNS);
@@ -144,7 +144,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                         case "next" -> {
                             if (spectatorsOffset != null) {
                                 ArenaManager.get().onArenaBuilderCompletedArena(this);
-                                sendDMessage(player, "arenabuilder.skywars.success.completed",
+                                sendDMessage(player, "arenabuilder.deathmatch.success.completed",
                                         UtilsString.merge(ArenaManager.get().get(getId()).getPlaceholders(), "%alias%", label));
                                 return;
                             }
@@ -156,8 +156,8 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                             }
                             boolean override = spectatorsOffset != null;
                             spectatorsOffset = LocationOffset3D.fromLocation(player.getLocation().subtract(getArea().getMin()));
-                            sendDMessage(player, override ? "arenabuilder.skywars.success.override_spectators_spawn"
-                                    : "arenabuilder.skywars.success.set_spectators_spawn", "%alias%", label);
+                            sendDMessage(player, override ? "arenabuilder.deathmatch.success.override_spectators_spawn"
+                                    : "arenabuilder.deathmatch.success.set_spectators_spawn", "%alias%", label);
                             if (getPhase() == PHASE_SET_SPECTATOR_SPAWN)
                                 setPhaseRaw(PHASE_SET_SPECTATOR_SPAWN_OR_NEXT);
                             return;
@@ -263,3 +263,4 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
         }
     }
 }
+
