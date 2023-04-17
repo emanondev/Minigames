@@ -357,8 +357,10 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     default @NotNull String[] getPlaceholders() {
         return new String[]{
                 "%id%", this.getId(),
-                "%option%", this.getOption().getId(),
-                "%arena%", this.getArena().getId(),
+                "%option_id%", this.getOption().getId(),
+                "%arena_id%", this.getArena().getId(),
+                "%option_name%", this.getOption().getId(),
+                "%arena_name%", this.getArena().getId(),
                 "%players%", String.valueOf(this.getGamers().size()),
                 "%spectators%", String.valueOf(this.getSpectators().size()),
                 "%phase%", this.getPhase().name(),

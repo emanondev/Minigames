@@ -180,14 +180,14 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
                 (v) -> setMinDurationEstimation(v.intValue()),
                 () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getMinDurationEstimation())))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                                "minioption.gui.min_duration_estimation", "%value%", String.valueOf(getMinDurationEstimation()))).build()));
+                                "miniarena.gui.min_duration_estimation", "%value%", String.valueOf(getMinDurationEstimation()))).build()));
 
         gui.addButton(new LongEditorFButton(gui, 1, 1, 100,
                 () -> (long) getMaxDurationEstimation(),
                 (v) -> setMaxDurationEstimation(v.intValue()),
                 () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                                "minioption.gui.max_duration_estimation", "%value%",
+                                "miniarena.gui.max_duration_estimation" , "%value%",
                                 String.valueOf(getMaxDurationEstimation()))).build()));
         return gui;
     }

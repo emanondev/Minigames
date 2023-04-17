@@ -151,8 +151,8 @@ public class RaceArena extends AbstractMColorSchemArena {
     }
 
     @Override
-    public Gui getEditorGui(Player player) {
-        Gui gui = super.getEditorGui(player);
+    public Gui getEditorGui(Player player, Gui parent) {
+        Gui gui = super.getEditorGui(player,parent);
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10000,
                 () -> (long) getRewardFirst(),
                 (v) -> setRewardFirst(v.intValue()),

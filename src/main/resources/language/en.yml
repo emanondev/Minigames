@@ -28,7 +28,7 @@ skywars:
   gui:
     selector:
       - "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient>"
-      - "<#57c9fa>%arena%"
+      - "<#57c9fa>%arena_name%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Salta da un'isola all'altra e"
@@ -53,7 +53,7 @@ runrace:
   gui:
     selector:
       - "<gradient:#4079ff:#57c9fa:#ffffb3>[Run Race]</gradient>"
-      - "<#57c9fa>%arena%"
+      - "<#57c9fa>%arena_name%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Corri e salta verso la fine"
@@ -81,7 +81,7 @@ elytrarace:
   gui:
     selector:
       - "<gradient:#4079ff:#57c9fa:#ffffb3>[Elytra Race]</gradient>"
-      - "<#57c9fa>%arena%"
+      - "<#57c9fa>%arena_name%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Corri e salta verso la fine"
@@ -109,7 +109,7 @@ horserace:
   gui:
     selector:
       - "<gradient:#4079ff:#57c9fa:#ffffb3>[Horse Race]</gradient>"
-      - "<#57c9fa>%arena%"
+      - "<#57c9fa>%arena_name%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Cavalca fino alla fine del percorso!"
@@ -136,7 +136,7 @@ boatrace:
   gui:
     selector:
       - "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient>"
-      - "<#57c9fa>%arena%"
+      - "<#57c9fa>%arena_name%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
       - "<#57c9fa>Guida fino alla fine del percorso!"
@@ -282,12 +282,12 @@ miniarena:
       - "<#4079ff>Nome Estetico"
       - "<#57c9fa><#ffffb3>%displayname%"
       - ""
-    min_duration_exstimation:
+    min_duration_estimation:
       - "<#4079ff>Quanto stimi che la partita possa durare al minimo?"
       - "<#57c9fa>Tempo: <#ffffb3>%value% <#57c9fa>min"
       - ""
       - "<#b3b3b3>Serve come placeholder ed informazione per i giocatori"
-    max_duration_exstimation:
+    max_duration_estimation:
       - "<#4079ff>Quanto stimi che la partita possa durare al massimo?"
       - "<#57c9fa>Tempo: <#ffffb3>%value% <#57c9fa>min"
       - ""
@@ -355,7 +355,7 @@ minigame:
       - "<#57c9fa>Game <#ffffb3><b>%id%</b></#ffffb3>"
       - "<#57c9fa>Giocatori: <#ffffb3>%players%</#ffffb3>/<#ffffb3>%maxplayers%</#ffffb3> Spettatori: <#ffffb3>%spectators%"
       - "<#57c9fa>Minigame: <#ffffb3>%type%</#ffffb3>"
-      - "<#57c9fa>Arena: <#ffffb3>%arena%</#ffffb3> Option: <#ffffb3>%option%</#ffffb3>"
+      - "<#57c9fa>Arena: <#ffffb3>%arena_id%</#ffffb3> Option: <#ffffb3>%option_id%</#ffffb3>"
       - "<#57c9fa>Location: <#ffffb3>%location%</#ffffb3>"
       - ""
       - "<#57c9fa>Fase: <#ffffb3>%phase%"

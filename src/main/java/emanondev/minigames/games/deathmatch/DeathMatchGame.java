@@ -301,8 +301,9 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
         new SoundInfo(Sound.ENTITY_PLAYER_DEATH, 1, 1, false).play(player);
+        PlayerStat.DEATHMATCH_DEATHS.add(player,1);
         DeathMatchTeam team = getTeam(player);
-        switchToSpectator(player);
+        switchToSpectator(player); //TODO nope?
         new SoundInfo(Sound.ENTITY_GHAST_DEATH, 1, 1, true).play(player); //self death notify
         getGamers().forEach(gamer -> {
             if (gamer.equals(player)) {
