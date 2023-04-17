@@ -52,7 +52,7 @@ public class DeathMatchType extends MType<DeathMatchArena, DeathMatchOption> {
 
     @Override
     public @NotNull ItemBuilder getGameSelectorBaseItem() {
-        return new ItemBuilder(getSection().getMaterial("display.gui.material", Material.BOW))
+        return new ItemBuilder(getSection().getMaterial("display.gui.material", Material.IRON_SWORD))
                 .setGuiProperty().setCustomModelData(getSection()
                         .getInteger("display.gui.custommodel", null));
     }

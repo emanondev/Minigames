@@ -72,6 +72,18 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.ELYTRARACE_VICTORY;
     }
+    @Override
+    public @NotNull PlayerStat getVictoryFirstStat() {
+        return PlayerStat.ELYTRARACE_VICTORY_FIRST;
+    }
+    @Override
+    public @NotNull PlayerStat getVictorySecondStat() {
+        return PlayerStat.ELYTRARACE_VICTORY_SECOND;
+    }
+    @Override
+    public @NotNull PlayerStat getVictoryThirdStat() {
+        return PlayerStat.ELYTRARACE_VICTORY_THIRD;
+    }
 
     @Deprecated
     public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options

@@ -50,6 +50,18 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
     public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.RUNRACE_VICTORY;
     }
+    @Override
+    public @NotNull PlayerStat getVictoryFirstStat() {
+        return PlayerStat.RUNRACE_VICTORY_FIRST;
+    }
+    @Override
+    public @NotNull PlayerStat getVictorySecondStat() {
+        return PlayerStat.RUNRACE_VICTORY_SECOND;
+    }
+    @Override
+    public @NotNull PlayerStat getVictoryThirdStat() {
+        return PlayerStat.RUNRACE_VICTORY_THIRD;
+    }
 
     @Deprecated
     public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options

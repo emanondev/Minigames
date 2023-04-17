@@ -70,7 +70,7 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
     public void gameStart() {
         super.gameStart();
         for (Player player : getGamers()) {
-            PlayerStat.SKYWARS_PLAYED.add(player, 1);
+            PlayerStat.DEATHMATCH_PLAYED.add(player, 1);
             PlayerStat.GAME_PLAYED.add(player, 1);
         }
         GameStat.PLAY_TIMES.add(this, 1);
@@ -323,8 +323,9 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         if (team != null && team.hasLost())
             setScore(team.getName(), -1);
         if (killer != null && isGamer(killer)) {
-            PlayerStat.SKYWARS_KILLS.add(killer, 1);
+            PlayerStat.DEATHMATCH_KILLS.add(killer, 1);
             givePoints(killer, getMinigameType().getKillPoints());
+            giveGameExp(killer, getMinigameType().getKillExp());
             if (getOption().getKillRewardFiller() != null) {
                 //TODO add sound
                 UtilsInventory.giveAmount(player, getMinigameType().getKillRewardItem(), 1, UtilsInventory.ExcessManage.DROP_EXCESS);
@@ -375,8 +376,9 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         for (UUID user : winner.getUsers()) {
             Player p = Bukkit.getPlayer(user);
             if (p != null && isGamer(p)) {
-                PlayerStat.SKYWARS_VICTORY.add(user, 1);
+                PlayerStat.DEATHMATCH_VICTORY.add(user, 1);
                 givePoints(p, getMinigameType().getWinPoints());
+                giveGameExp(p, getMinigameType().getWinExp());
             }
         }
         this.gameEnd();

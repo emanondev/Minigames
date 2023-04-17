@@ -19,18 +19,37 @@ public class PlayerStat extends Stat<UUID> {
     public static final PlayerStat DEATHMATCH_KILLS = getStat("DEATHMATCH_KILLS");
     public static final PlayerStat DEATHMATCH_VICTORY = getStat("DEATHMATCH_VICTORY");
     public static final PlayerStat DEATHMATCH_PLAYED = getStat("DEATHMATCH_PLAYED");
+
+    public static final PlayerStat SKYWARS_DEATHS = getStat("DEATHMATCH_DEATHS");
     public static final PlayerStat SKYWARS_KILLS = getStat("SKYWARS_KILLS");
     public static final PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
     public static final PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
-    public static final PlayerStat RUNRACE_PLAYED = getStat("RUNRACE_PLAYED");
+
     public static final PlayerStat ELYTRARACE_PLAYED = getStat("ELYTRARACE_PLAYED");
-    public static final PlayerStat HORSERACE_PLAYED = getStat("HORSERACE_PLAYED");
-    public static final PlayerStat BOATRACE_PLAYED = getStat("BOATRACE_PLAYED");
-    public static final PlayerStat HORSERACE_VICTORY = getStat("HORSERACE_VICTORY");
-    public static final PlayerStat BOATRACE_VICTORY = getStat("BOATRACE_VICTORY");
-    public static final PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
-    public static final PlayerStat RUNRACE_VICTORY = getStat("RUNRACE_VICTORY");
     public static final PlayerStat ELYTRARACE_VICTORY = getStat("ELYTRARACE_VICTORY");
+    public static final PlayerStat ELYTRARACE_VICTORY_FIRST = getStat("ELYTRARACE_VICTORY_FIRST");
+    public static final PlayerStat ELYTRARACE_VICTORY_SECOND = getStat("ELYTRARACE_VICTORY_SECOND");
+    public static final PlayerStat ELYTRARACE_VICTORY_THIRD = getStat("ELYTRARACE_VICTORY_THIRD");
+
+    public static final PlayerStat HORSERACE_PLAYED = getStat("HORSERACE_PLAYED");
+    public static final PlayerStat HORSERACE_VICTORY = getStat("HORSERACE_VICTORY");
+    public static final PlayerStat HORSERACE_VICTORY_FIRST = getStat("HORSERACE_VICTORY_FIRST");
+    public static final PlayerStat HORSERACE_VICTORY_SECOND = getStat("HORSERACE_VICTORY_SECOND");
+    public static final PlayerStat HORSERACE_VICTORY_THIRD = getStat("HORSERACE_VICTORY_THIRD");
+
+    public static final PlayerStat RUNRACE_PLAYED = getStat("RUNRACE_PLAYED");
+    public static final PlayerStat RUNRACE_VICTORY = getStat("RUNRACE_VICTORY");
+    public static final PlayerStat RUNRACE_VICTORY_FIRST = getStat("RUNRACE_VICTORY_FIRST");
+    public static final PlayerStat RUNRACE_VICTORY_SECOND = getStat("RUNRACE_VICTORY_SECOND");
+    public static final PlayerStat RUNRACE_VICTORY_THIRD = getStat("RUNRACE_VICTORY_THIRD");
+
+    public static final PlayerStat BOATRACE_PLAYED = getStat("BOATRACE_PLAYED");
+    public static final PlayerStat BOATRACE_VICTORY = getStat("BOATRACE_VICTORY");
+    public static final PlayerStat BOATRACE_VICTORY_FIRST = getStat("BOATRACE_VICTORY_FIRST");
+    public static final PlayerStat BOATRACE_VICTORY_SECOND = getStat("BOATRACE_VICTORY_SECOND");
+    public static final PlayerStat BOATRACE_VICTORY_THIRD = getStat("BOATRACE_VICTORY_THIRD");
+
+    public static final PlayerStat GAME_PLAYED = getStat("GAME_PLAYED");
 
 
     private PlayerStat(@NotNull String id) {

@@ -238,7 +238,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
             getGamers().forEach((p) -> {
                 if (team.containsUser(p)) {
                     winners.add(p);
-                    getVictoryStat().add(p, 1);
+                    getVictoryStat().add(p, 3);
+                    getVictoryFirstStat().add(p,1);
                     givePoints(p, getArena().getRewardFirst());
                     giveGameExp(p, getArena().getRewardFirstExp());
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_first");
@@ -256,7 +257,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                 if (team.containsUser(p)) {
                     winners.add(p);
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_second");
-                    //TODO victorySecond
+                    getVictoryStat().add(p, 2);
+                    getVictorySecondStat().add(p,1);
                     givePoints(p, getArena().getRewardSecond());
                     giveGameExp(p, getArena().getRewardSecondExp());
                 } else
@@ -273,7 +275,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                 if (team.containsUser(p)) {
                     winners.add(p);
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_third");
-                    //TODO victoryThird
+                    getVictoryStat().add(p, 1);
+                    getVictoryThirdStat().add(p,1);
                     givePoints(p, getArena().getRewardThird());
                     giveGameExp(p, getArena().getRewardThirdExp());
                 } else
@@ -354,6 +357,9 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     public abstract @NotNull PlayerStat getPlayedStat();
 
     public abstract @NotNull PlayerStat getVictoryStat();
+    public abstract @NotNull PlayerStat getVictoryFirstStat();
+    public abstract @NotNull PlayerStat getVictorySecondStat();
+    public abstract @NotNull PlayerStat getVictoryThirdStat();
 
 
     @Override
