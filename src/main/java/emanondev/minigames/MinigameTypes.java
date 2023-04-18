@@ -25,6 +25,7 @@ public class MinigameTypes {
         register(ELYTRA_RACE);
         register(HORSE_RACE);
         register(DEATH_MATCH);
+        register(EGGWARS);
     }
 
     @SuppressWarnings("rawtypes")

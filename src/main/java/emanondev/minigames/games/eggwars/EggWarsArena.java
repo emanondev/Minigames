@@ -3,10 +3,12 @@ package emanondev.minigames.games.eggwars;
 import emanondev.minigames.games.AbstractMColorSchemArena;
 import emanondev.minigames.locations.LocationOffset3D;
 import org.bukkit.DyeColor;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+@SerializableAs("EggWarsArena")
 public class EggWarsArena extends AbstractMColorSchemArena {
 
     /*
@@ -17,19 +19,12 @@ public class EggWarsArena extends AbstractMColorSchemArena {
     public EggWarsArena(@NotNull Map<String, Object> map) {
         super(map);
         Map<String, ?> teamMap = (Map<String, ?>) map.get("teams");
-        teamMap.forEach((k, v) -> {
-            spawnLocations.put(DyeColor.valueOf(k),
-                    LocationOffset3D.fromString((String) ((Map<String, ?>) v).get("spawnOffset")));
-            eggLocations.put(DyeColor.valueOf(k),
-                    LocationOffset3D.fromString((String) ((Map<String, ?>) v).get("eggOffset")));
-        });
-
+        teamMap.forEach((k, v) -> spawnLocations.put(DyeColor.valueOf(k), LocationOffset3D.fromString((String) ((Map<String, ?>) v).get("spawnOffset"))));
         if (spawnLocations.size() < 2)
             throw new IllegalStateException("not enough teams");
     }
 
     private final Map<DyeColor, LocationOffset3D> spawnLocations = new EnumMap<>(DyeColor.class);
-    private final Map<DyeColor, LocationOffset3D> eggLocations = new EnumMap<>(DyeColor.class);
 
     @NotNull
     @Override
@@ -40,7 +35,6 @@ public class EggWarsArena extends AbstractMColorSchemArena {
         for (DyeColor color : spawnLocations.keySet()) {
             Map<String, Object> teamInfo = new HashMap<>();
             teamInfo.put("spawnOffset", spawnLocations.get(color).toString());
-            teamInfo.put("eggOffset", eggLocations.get(color).toString());
             teams.put(color.name(), teamInfo);
         }
         return map;
@@ -57,13 +51,4 @@ public class EggWarsArena extends AbstractMColorSchemArena {
             throw new NullPointerException();
         return spawnLocations.get(color);
     }
-
-    @NotNull
-    public LocationOffset3D getEggOffset(@NotNull DyeColor color) {
-        if (!eggLocations.containsKey(color))
-            throw new NullPointerException();
-        return eggLocations.get(color);
-    }
-
-
 }

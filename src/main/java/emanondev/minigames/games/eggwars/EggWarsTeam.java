@@ -10,16 +10,14 @@ import java.util.UUID;
 
 public class EggWarsTeam extends ColoredTeam {
 
-    private final EggWarsGame game;
 
     public EggWarsTeam(@NotNull EggWarsGame game, @NotNull DyeColor color) {
         super(game, color);
-        this.game = game;
     }
 
     @Override
     public boolean addUser(@NotNull UUID user) {
-        if (game.getOption().getTeamMaxSize() <= this.getUsersAmount())
+        if (getGame().getOption().getTeamMaxSize() <= this.getUsersAmount())
             return false;
         return super.addUser(user);
     }
@@ -27,7 +25,7 @@ public class EggWarsTeam extends ColoredTeam {
     public boolean hasLost() {
         for (UUID user : this.getUsers()) {
             Player p = Bukkit.getPlayer(user);
-            if (p != null && game.isGamer(p))
+            if (p != null && getGame().isGamer(p))
                 return false;
         }
         return true;

@@ -25,6 +25,11 @@ public class PlayerStat extends Stat<UUID> {
     public static final PlayerStat SKYWARS_VICTORY = getStat("SKYWARS_VICTORY");
     public static final PlayerStat SKYWARS_PLAYED = getStat("SKYWARS_PLAYED");
 
+    public static final PlayerStat EGGWARS_DEATHS = getStat("DEATHMATCH_DEATHS");
+    public static final PlayerStat EGGWARS_KILLS = getStat("EGGWARS_KILLS");
+    public static final PlayerStat EGGWARS_VICTORY = getStat("EGGWARS_VICTORY");
+    public static final PlayerStat EGGWARS_PLAYED = getStat("EGGWARS_PLAYED");
+
     public static final PlayerStat ELYTRARACE_PLAYED = getStat("ELYTRARACE_PLAYED");
     public static final PlayerStat ELYTRARACE_VICTORY = getStat("ELYTRARACE_VICTORY");
     public static final PlayerStat ELYTRARACE_VICTORY_FIRST = getStat("ELYTRARACE_VICTORY_FIRST");

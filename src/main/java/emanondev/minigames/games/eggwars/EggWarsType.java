@@ -1,8 +1,6 @@
 package emanondev.minigames.games.eggwars;
 
 import emanondev.core.ItemBuilder;
-import emanondev.core.UtilsString;
-import emanondev.core.VaultEconomyHandler;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
@@ -11,7 +9,8 @@ import emanondev.minigames.games.MOption;
 import emanondev.minigames.games.MType;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -29,11 +28,11 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
     @Override
     @NotNull
     public EggWarsArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id, @NotNull String label) {
-        return new EggWarsArenaBuilder(uuid, id, label, Minigames.get());
+        return new EggWarsArenaBuilder(uuid, id, label);
     }
 
     @Override
-    public @NotNull MOption createDefaultOptions() {
+    public @NotNull EggWarsOption createDefaultOptions() {
         return new EggWarsOption();
     }
 
@@ -53,26 +52,36 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
 
     @Override
     public @NotNull ItemBuilder getGameSelectorBaseItem() {
-        return new ItemBuilder(Material.DRAGON_EGG).setGuiProperty();
-    }
-
-    public void applyKillPoints(Player p) {
-        double kp = getSection().loadDouble("kill_points", 2D);
-        if (kp > 0) {
-            new VaultEconomyHandler().addMoney(p, kp);
-            sendDMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(kp));
-        }
-    }
-
-    public void applyWinPoints(Player p) {
-        double win = getSection().loadDouble("win_points", 10D);
-        if (win > 0) {
-            new VaultEconomyHandler().addMoney(p, win);
-            sendDMessage(p, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(win));
-        }
+        return new ItemBuilder(getSection().getMaterial("display.gui.material", Material.BOW))
+                .setGuiProperty().setCustomModelData(getSection()
+                        .getInteger("display.gui.custommodel", null));
     }
 
     public double getSnowballPush() {
-        return this.getSection().loadDouble("snowball_push", 0.5D);
+        return this.getSection().loadDouble("game.snowball_push", 0.5D);
+    }
+
+    public double getSnowballVerticalPush() {
+        return this.getSection().loadDouble("game.snowball_vertical_push", 0.3D);
+    }
+
+    public ItemStack getKillRewardItem() { //TODO description
+        return new ItemBuilder(Material.MAGMA_CREAM).setGuiProperty().addEnchantment(Enchantment.DURABILITY, 1).build();
+    }
+
+    public double getKillPoints() {
+        return getSection().loadDouble("game.kill_points", 2D);
+    }
+
+    public double getWinPoints() {
+        return getSection().loadDouble("game.win_points", 5D);
+    }
+
+    public int getKillExp() {
+        return getSection().loadInteger("game.kill_exp", 2);
+    }
+
+    public int getWinExp() {
+        return getSection().loadInteger("game.win_exp", 5);
     }
 }
