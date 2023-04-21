@@ -25,6 +25,10 @@ public class GamerManager {
         reload();
     }
 
+    public static GamerManager get() {
+        return instance;
+    }
+
     public void reload() {
         @NotNull YMLConfig conf = Minigames.get().getConfig("gamersConfig.yml");
         maxLevel = Math.max(1, conf.getInt("max_level"));
@@ -40,10 +44,6 @@ public class GamerManager {
             }
         }
         gamers.values().forEach(Gamer::save);
-    }
-
-    public static GamerManager get() {
-        return instance;
     }
 
     public @NotNull Gamer getGamer(@NotNull OfflinePlayer user) {

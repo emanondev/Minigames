@@ -21,13 +21,14 @@ public class ARaceTeam<T extends ARaceGame> extends ColoredTeam {
                 return false;
         }
         return true;
-    }    @Override
+    }
+
+    @Override
     public boolean addUser(@NotNull UUID user) {
         if (getGame().getOption().getTeamMaxSize() <= this.getUsersAmount())
             return false;
         return super.addUser(user);
     }
-
 
 
     @Override

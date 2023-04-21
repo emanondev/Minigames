@@ -52,22 +52,12 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private int collectingPlayersCountdown = -1;
     private int endCountdown = -1;
     private int preStartCountdown = -1;
-    private BlockLocation3D loc;    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-    private Phase phase = Phase.STOPPED;    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+    private BlockLocation3D loc;
+    private Phase phase = Phase.STOPPED;
     private int joinGuiSlot;
     private int joinTypeGuiSlot;
-    private boolean enabled;    @Override
-    public Objective getObjective() {
-        return objective;
-    }
+    private boolean enabled;
     private boolean registered = false;
-
     @SuppressWarnings("unchecked")
     public AbstractMGame(@NotNull Map<String, Object> map) {
         this.optionId = (String) map.get("option");
@@ -99,14 +89,33 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.objective = scoreboard.registerNewObjective("game", "dummy", getObjectiveDisplayName(), RenderType.INTEGER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-    }    @Override
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public Objective getObjective() {
+        return objective;
+    }
+
+    @Override
     public Scoreboard getScoreboard() {
         return scoreboard;
     }
 
     protected String getObjectiveDisplayName() {
         return getMinigameType().getDisplayName();
-    }    public void setLocation(@NotNull BlockLocation3D loc) {
+    }
+
+    public void setLocation(@NotNull BlockLocation3D loc) {
         boolean wasStopped = getPhase() != Phase.STOPPED;
         if (!wasStopped)
             this.gameAbort();
@@ -133,7 +142,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             return true;
         }
         return false;
-    }    @Override
+    }
+
+    @Override
     public CompletableFuture<Void> gameInitialize() {
         CompletableFuture<Void> future = new CompletableFuture<>();
         new BukkitRunnable() {
@@ -161,7 +172,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             }
             sendDMessage(target, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
         }
-    }    @Override
+    }
+
+    @Override
     public CompletableFuture<Void> gameRestart() {
         CompletableFuture<Void> future = new CompletableFuture<>();
         new BukkitRunnable() {
@@ -192,7 +205,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             }
             //sendDMessage(target, "generic.obtain_exp", "%amount%", UtilsString.formatOptional2Digit(amount));
         }
-    }    public void restart() {
+    }
+
+    public void restart() {
         gameRestart().whenComplete((value, th) -> {
             MessageUtil.debug(this.getId() + " (" + getMinigameType().getType() + ") Restart terminato");
             if (th != null)
@@ -292,7 +307,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             gameStart();
         }
     }
-
 
 
     @Override
@@ -419,8 +433,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         //timer.cancel();
         registerAsListener(false);
     }
-
-
 
 
     private void registerAsListener(boolean value) {
@@ -551,9 +563,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     protected abstract void assignTeam(Player p);
 
 
-
-
-
     @Override
     public final boolean addSpectator(@NotNull Player player) {
         if (getPhase() != Phase.PLAYING)
@@ -608,7 +617,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     public final Set<Player> getSpectators() {
         return Collections.unmodifiableSet(spectators);
     }
-
 
 
     @Override
@@ -837,9 +845,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             case COLLECTING_PLAYERS, PRE_START -> event.setCancelled(true);
         }
     }
-
-
-
 
 
     public Gui getEditorGui(Player target, Gui parent) {

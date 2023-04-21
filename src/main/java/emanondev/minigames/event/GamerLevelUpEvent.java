@@ -12,6 +12,7 @@ public class GamerLevelUpEvent extends Event implements Cancellable {
     private final int newLevel;
     private final Gamer gamer;
     private boolean cancelled = false;
+
     public GamerLevelUpEvent(Gamer gamer, @Range(from = 2, to = Integer.MAX_VALUE) int i) {
         this.gamer = gamer;
         this.newLevel = i;

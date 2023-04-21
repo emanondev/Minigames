@@ -12,6 +12,7 @@ public class GamerExperienceGainEvent extends Event implements Cancellable {
     private final Gamer gamer;
     private long xp;
     private boolean cancelled = false;
+
     public GamerExperienceGainEvent(Gamer gamer, long xpGain) {
         this.gamer = gamer;
         this.xp = xpGain;

@@ -39,6 +39,22 @@ public abstract class MountedRaceOption extends ARaceOption {
         jumpStrenght = (double) map.getOrDefault("jump_strenght", 0.7);
     }
 
+    private static @NotNull Material getEntityTypeMaterial(@NotNull EntityType type) {
+        return switch (type) {
+            case BOAT -> Material.OAK_BOAT;
+            case CHEST_BOAT -> Material.OAK_CHEST_BOAT;
+            case PIG -> Material.CARROT_ON_A_STICK;
+            case STRIDER -> Material.WARPED_FUNGUS_ON_A_STICK;
+            case MINECART -> Material.MINECART;
+            case CAMEL -> Material.CACTUS;
+            case SKELETON_HORSE -> Material.BONE;
+            case ZOMBIE_HORSE -> Material.ROTTEN_FLESH;
+            case MULE, DONKEY -> Material.CARROT;
+            default -> Material.SADDLE;
+        };
+
+    }
+
     public Entity spawnRide(Location loc) {
         return loc.getWorld().spawn(loc, (type == null ? EntityType.HORSE : type).getEntityClass(), false, (en) -> {
             if (en instanceof Horse horse) {
@@ -116,22 +132,6 @@ public abstract class MountedRaceOption extends ARaceOption {
             if (isAllowedType(type))
                 allowed.add(type);
         return allowed;
-    }
-
-    private static @NotNull Material getEntityTypeMaterial(@NotNull EntityType type) {
-        return switch (type) {
-            case BOAT -> Material.OAK_BOAT;
-            case CHEST_BOAT -> Material.OAK_CHEST_BOAT;
-            case PIG -> Material.CARROT_ON_A_STICK;
-            case STRIDER -> Material.WARPED_FUNGUS_ON_A_STICK;
-            case MINECART -> Material.MINECART;
-            case CAMEL -> Material.CACTUS;
-            case SKELETON_HORSE -> Material.BONE;
-            case ZOMBIE_HORSE -> Material.ROTTEN_FLESH;
-            case MULE, DONKEY -> Material.CARROT;
-            default -> Material.SADDLE;
-        };
-
     }
 
     public @NotNull EntityType getType() {

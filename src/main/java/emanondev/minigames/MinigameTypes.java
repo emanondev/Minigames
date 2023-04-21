@@ -39,6 +39,10 @@ public class MinigameTypes {
         register(EGGWARS);
     }
 
+    public static MinigameTypes get() {
+        return instance;
+    }
+
     @SuppressWarnings("rawtypes")
     private void register(@NotNull MType type) {
         if (!UtilsString.isLowcasedValidID(type.getType()))
@@ -46,10 +50,6 @@ public class MinigameTypes {
         if (types.containsKey(type.getType()))
             throw new IllegalArgumentException("duplicated id '" + type.getType() + "'");
         types.put(type.getType(), type);
-    }
-
-    public static MinigameTypes get() {
-        return instance;
     }
 
     public void reload() {

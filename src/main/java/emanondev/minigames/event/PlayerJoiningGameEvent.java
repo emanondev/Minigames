@@ -14,6 +14,7 @@ public class PlayerJoiningGameEvent extends GameEvent implements Cancellable {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private final Player player;
     private boolean isCancelled = false;
+
     @SuppressWarnings("rawtypes")
     public PlayerJoiningGameEvent(@NotNull MGame game, @NotNull Player player) {
         super(game);

@@ -55,6 +55,21 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         super(user, id, label, Minigames.get());
     }
 
+    private static Color getCheckpointColor(int i) {
+        return switch (i % 10) {
+            case 0 -> Color.fromBGR(Integer.decode("0xeb3434"));
+            case 1 -> Color.fromBGR(Integer.decode("0xeb9f34"));
+            case 2 -> Color.fromBGR(Integer.decode("0xebe234"));
+            case 3 -> Color.fromBGR(Integer.decode("0xb4eb34"));
+            case 4 -> Color.fromBGR(Integer.decode("0x34eb56"));
+            case 5 -> Color.fromBGR(Integer.decode("0x34aeeb"));
+            case 6 -> Color.fromBGR(Integer.decode("0x3440eb"));
+            case 7 -> Color.fromBGR(Integer.decode("0x8334eb"));
+            case 8 -> Color.fromBGR(Integer.decode("0xc934eb"));
+            case 9 -> Color.fromBGR(Integer.decode("0xeb348f"));
+            default -> throw new IllegalStateException("Unexpected value: " + i % 10);
+        };
+    }
 
     @Override
     protected void onPhaseStart() {
@@ -492,22 +507,6 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
 
             fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, timerTick, Particle.FLAME, fallArea, null));
         }
-    }
-
-    private static Color getCheckpointColor(int i) {
-        return switch (i % 10) {
-            case 0 -> Color.fromBGR(Integer.decode("0xeb3434"));
-            case 1 -> Color.fromBGR(Integer.decode("0xeb9f34"));
-            case 2 -> Color.fromBGR(Integer.decode("0xebe234"));
-            case 3 -> Color.fromBGR(Integer.decode("0xb4eb34"));
-            case 4 -> Color.fromBGR(Integer.decode("0x34eb56"));
-            case 5 -> Color.fromBGR(Integer.decode("0x34aeeb"));
-            case 6 -> Color.fromBGR(Integer.decode("0x3440eb"));
-            case 7 -> Color.fromBGR(Integer.decode("0x8334eb"));
-            case 8 -> Color.fromBGR(Integer.decode("0xc934eb"));
-            case 9 -> Color.fromBGR(Integer.decode("0xeb348f"));
-            default -> throw new IllegalStateException("Unexpected value: " + i % 10);
-        };
     }
 }
 

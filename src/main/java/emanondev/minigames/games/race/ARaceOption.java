@@ -151,7 +151,9 @@ public class ARaceOption extends AbstractMOption {
 
     public @Nullable Kit getKit() {
         return kitId == null ? null : KitManager.get().get(kitId);
-    }    @Override
+    }
+
+    @Override
     public int getTeamMaxSize() {
         return perTeamMaxPlayers;
     }
@@ -159,18 +161,18 @@ public class ARaceOption extends AbstractMOption {
     public void setKit(@Nullable Kit kit) {
         kitId = kit == null ? null : kit.getId();
         OptionManager.get().save(this);
-    }    @Override
+    }
+
+    @Override
     public boolean allowSelectingTeam() {
         return getTeamMaxSize() > 1;
     }
-
 
 
     public void setTeamMaxSize(int amount) {
         perTeamMaxPlayers = Math.max(1, Math.min(32, amount));
         OptionManager.get().save(ARaceOption.this);
     }
-
 
 
 }
