@@ -2,7 +2,6 @@ package emanondev.minigames.event.deathmatch;
 
 import emanondev.minigames.event.GameStartEvent;
 import emanondev.minigames.games.deathmatch.DeathMatchGame;
-import emanondev.minigames.games.skywars.SkyWarsGame;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 

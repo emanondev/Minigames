@@ -93,4 +93,7 @@ public abstract class MType<A extends MArena, O extends MOption> implements Core
         return plugin;
     }
 
+    public void reload() {
+    }
+
 }

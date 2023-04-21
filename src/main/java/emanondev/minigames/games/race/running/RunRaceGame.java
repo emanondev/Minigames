@@ -1,9 +1,6 @@
 package emanondev.minigames.games.race.running;
 
-import emanondev.core.message.DMessage;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.Minigames;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.event.runrace.RunRaceStartEvent;
 import emanondev.minigames.event.runrace.RunRaceWinFirstEvent;
@@ -50,38 +47,20 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
     public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.RUNRACE_VICTORY;
     }
+
     @Override
     public @NotNull PlayerStat getVictoryFirstStat() {
         return PlayerStat.RUNRACE_VICTORY_FIRST;
     }
+
     @Override
     public @NotNull PlayerStat getVictorySecondStat() {
         return PlayerStat.RUNRACE_VICTORY_SECOND;
     }
+
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.RUNRACE_VICTORY_THIRD;
-    }
-
-    @Deprecated
-    public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
-        if (getTeam(player) != null)
-            return;
-        MessageUtil.debug(getId() + " assigning team to " + player.getName());
-        for (@SuppressWarnings("rawtypes") ARaceTeam team : getTeams())
-            if (team.getUsersAmount() < getOption().getTeamMaxSize() && team.addUser(player)) {
-                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
-                        "%color%", team.getColor().name());
-                return;
-            }
-        throw new IllegalStateException("unable to add user to a party");
-    }
-
-
-    @Override
-    public void checkGameEnd() {
-        if (getGamers().size() <= 1)
-            this.gameEnd();
     }
 
     @Override

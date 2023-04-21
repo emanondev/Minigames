@@ -187,7 +187,7 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
                 (v) -> setMaxDurationEstimation(v.intValue()),
                 () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                                "miniarena.gui.max_duration_estimation" , "%value%",
+                                "miniarena.gui.max_duration_estimation", "%value%",
                                 String.valueOf(getMaxDurationEstimation()))).build()));
         return gui;
     }

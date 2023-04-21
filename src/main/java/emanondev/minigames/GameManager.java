@@ -22,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -38,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
+import java.io.File;
 import java.util.*;
 
 @SuppressWarnings("rawtypes")
@@ -71,8 +73,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
     }
 
     protected @NotNull YMLSection getGlobalSection() {
-        return Minigames.get().getConfig("minigamesConfig.yml")
-                .loadSection("global");
+        return Minigames.get().getConfig("minigamesConfig.yml").loadSection("global");
     }
 
     public GameManager() {
@@ -88,7 +89,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
 
     @NotNull
     public YMLSection getSection(@SuppressWarnings("rawtypes") @NotNull MType minigameType) {
-        return Minigames.get().getConfig("minigamesConfig.yml")
+        return minigameType.getPlugin().getConfig("types" + File.separator + minigameType.getType())
                 .loadSection(minigameType.getType());
     }
 
@@ -98,12 +99,14 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         long counter = 1;
 
         for (@SuppressWarnings("rawtypes") MGame game : getAll().values()) {
-            new BukkitRunnable() {
-                public void run() {
-                    game.initialize();
-                }
-            }.runTaskLater(Minigames.get(), counter);
-            counter += C.getStartupGameInitializeDelayTicks();
+            if (game.isEnabled()) {
+                new BukkitRunnable() {
+                    public void run() {
+                        game.initialize();
+                    }
+                }.runTaskLater(Minigames.get(), counter);
+                counter += C.getStartupGameInitializeDelayTicks();
+            }
         }
 
     }
@@ -333,6 +336,21 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             return;
         }
         event.setCancelled(true); //outside game bounds or spectator
+    }
+
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    private void event(@NotNull CraftItemEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player))
+            return;
+        @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
+        if (game == null)
+            return;
+        if (game.isGamer(player)) {
+            game.onGamerCraftItem(event);
+            return;
+        }
+        event.setCancelled(true); //spectator
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)

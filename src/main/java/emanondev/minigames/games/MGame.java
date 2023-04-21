@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -36,7 +37,6 @@ import org.jetbrains.annotations.Nullable;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
-import java.lang.module.ModuleReader;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -243,6 +243,10 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      */
     boolean gameCanStart();
 
+    boolean isEnabled();
+
+    void setEnabled(boolean enabled);
+
     Objective getObjective();
 
     Scoreboard getScoreboard();
@@ -360,7 +364,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
                 "%option_id%", this.getOption().getId(),
                 "%arena_id%", this.getArena().getId(),
                 "%option_name%", this.getOption().getId(),
-                "%arena_name%", this.getArena().getId(),
+                "%arena_name%", this.getArena().getDisplayName(),
                 "%players%", String.valueOf(this.getGamers().size()),
                 "%spectators%", String.valueOf(this.getSpectators().size()),
                 "%phase%", this.getPhase().name(),
@@ -399,6 +403,9 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     int getJoinGuiSlot();
 
     int getJoinTypeGuiSlot();
+
+    default void onGamerCraftItem(CraftItemEvent event) {
+    }
 
     enum Phase {
         STOPPED,

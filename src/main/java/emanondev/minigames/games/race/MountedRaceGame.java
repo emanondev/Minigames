@@ -1,8 +1,5 @@
 package emanondev.minigames.games.race;
 
-import emanondev.core.message.DMessage;
-import emanondev.minigames.MessageUtil;
-import emanondev.minigames.Minigames;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -44,27 +41,6 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
     public void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player) {
         onGamerMoveInsideArena(new PlayerMoveEvent(player, event.getFrom(), event.getTo()));
     }
-
-    @Deprecated
-    public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
-        if (getTeam(player) != null) return;
-        MessageUtil.debug(getId() + " assigning team to " + player.getName());
-
-        for (T team : getTeams())
-            if (team.getUsersAmount() < getOption().getTeamMaxSize() && team.addUser(player)) {
-                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
-                        "%color%", team.getColor().name());
-                return;
-            }
-        throw new IllegalStateException("unable to add user to a party");
-    }
-
-
-    @Override
-    public void checkGameEnd() {
-        if (getGamers().size() <= 1) this.gameEnd();
-    }
-
 
     public void onGamerDismountEvent(EntityDismountEvent event, Player player) {
         if (getPhase() == Phase.PLAYING || getPhase() == Phase.PRE_START) {

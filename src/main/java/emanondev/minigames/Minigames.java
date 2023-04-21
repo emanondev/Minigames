@@ -40,6 +40,7 @@ public final class Minigames extends CorePlugin {
     @Override
     public void reload() {
         C.reload();
+        MinigameTypes.get().reload();
         GamerManager.get().reload();
         FillerManager.get().reload();
         KitManager.get().reload();

@@ -1,10 +1,13 @@
 package emanondev.minigames.games.race;
 
+import emanondev.core.message.DMessage;
 import emanondev.minigames.Kit;
+import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.data.GameStat;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.games.AbstractMColorSchemGame;
+import emanondev.minigames.games.ColoredTeam;
 import emanondev.minigames.games.MTeam;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -15,6 +18,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -239,7 +243,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                 if (team.containsUser(p)) {
                     winners.add(p);
                     getVictoryStat().add(p, 3);
-                    getVictoryFirstStat().add(p,1);
+                    getVictoryFirstStat().add(p, 1);
                     givePoints(p, getArena().getRewardFirst());
                     giveGameExp(p, getArena().getRewardFirstExp());
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_first");
@@ -258,7 +262,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                     winners.add(p);
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_second");
                     getVictoryStat().add(p, 2);
-                    getVictorySecondStat().add(p,1);
+                    getVictorySecondStat().add(p, 1);
                     givePoints(p, getArena().getRewardSecond());
                     giveGameExp(p, getArena().getRewardSecondExp());
                 } else
@@ -276,7 +280,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                     winners.add(p);
                     sendDMessage(p, getMinigameType().getType() + ".game.you_won_third");
                     getVictoryStat().add(p, 1);
-                    getVictoryThirdStat().add(p,1);
+                    getVictoryThirdStat().add(p, 1);
                     givePoints(p, getArena().getRewardThird());
                     giveGameExp(p, getArena().getRewardThirdExp());
                 } else
@@ -357,8 +361,11 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     public abstract @NotNull PlayerStat getPlayedStat();
 
     public abstract @NotNull PlayerStat getVictoryStat();
+
     public abstract @NotNull PlayerStat getVictoryFirstStat();
+
     public abstract @NotNull PlayerStat getVictorySecondStat();
+
     public abstract @NotNull PlayerStat getVictoryThirdStat();
 
 
@@ -398,4 +405,32 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
         };
     }
 
+
+    @Deprecated
+    public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
+        if (getTeam(player) != null)
+            return;
+        MessageUtil.debug(getId() + " assigning team to " + player.getName());
+        List<T> teams = new ArrayList<>(getTeams());
+        teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
+        for (T team : teams)
+            if (team.addUser(player)) {
+                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
+                        "%color%", team.getColor().name());
+                return;
+            }
+        throw new IllegalStateException("unable to add user to a party");
+    }
+
+
+    @Override
+    public void checkGameEnd() {
+        if (getGamers().size() <= 1)
+            this.gameEnd();
+    }
+
+    @Override
+    public void onGamerCraftItem(CraftItemEvent event) {
+        event.setCancelled(true);
+    }
 }

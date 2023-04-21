@@ -14,26 +14,21 @@ import emanondev.minigames.event.eggwars.EggWarsWinEvent;
 import emanondev.minigames.games.AbstractMColorSchemGame;
 import emanondev.minigames.games.ColoredTeam;
 import emanondev.minigames.games.DropsFiller;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Snowball;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.EventHandler;
+import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,10 +37,6 @@ import java.util.*;
 
 @SerializableAs("EggWarsGame")
 public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsArena, EggWarsOption> {
-
-    private final HashSet<Block> ignoredChest = new HashSet<>();
-    private final HashSet<Block> filledChests = new HashSet<>();
-
 
     @Override
     protected void craftAndCallGameStartEvent() {
@@ -61,14 +52,16 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
         Collections.shuffle(list);
         list.forEach(this::onGamerAdded);
 
-        ignoredChest.clear();
-        filledChests.clear();
+        //ignoredChest.clear();
+        //filledChests.clear();
 
         super.gamePreStart();
+        menus.clear();
     }
 
     public void gameStart() {
         super.gameStart();
+        this.addedBlocks.clear();
         for (Player player : getGamers()) {
             PlayerStat.EGGWARS_PLAYED.add(player, 1);
             PlayerStat.GAME_PLAYED.add(player, 1);
@@ -136,59 +129,6 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
         }
     }
 
-    @Override
-    public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
-        super.onGamerBlockBreak(event);
-        if (getPhase() == Phase.PLAYING && !event.isCancelled())
-            if (event.getBlock().getType() == Material.CHEST) {
-                if (filledChests.contains(event.getBlock()) || ignoredChest.contains(event.getBlock()))
-                    return;
-                if (!(event.getBlock().getState() instanceof Chest cHolder))
-                    return;
-                onFillChest(cHolder.getBlockInventory());
-                Location dropLoc = event.getBlock().getLocation().add(0.5, 0.5, 0.5);
-                for (ItemStack item : cHolder.getBlockInventory().getContents())
-                    if (!UtilsInventory.isAirOrNull(item))
-                        dropLoc.getWorld().dropItemNaturally(dropLoc, item);
-
-            }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    private void event(InventoryOpenEvent event) {
-        if (!(event.getPlayer() instanceof Player p))
-            return;
-        if (!isGamer(p))
-            return;
-        if (getPhase() != Phase.PLAYING)
-            return;
-        if (event.getInventory().getType() != InventoryType.CHEST)
-            return;
-        if (!(event.getInventory().getHolder() instanceof Chest cHolder))
-            return;
-        Block b = cHolder.getBlock();
-
-        if (filledChests.contains(b) || ignoredChest.contains(b))
-            return;
-        filledChests.add(b);
-        onFillChest(event.getInventory());
-    }
-
-    protected void onFillChest(Inventory inventory) {
-        DropsFiller filler = getOption().getChestsFiller();
-        if (filler != null)
-            filler.fillInventory(inventory);
-    }
-
-    @Override
-    public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
-        if (getPhase() == Phase.PRE_START)
-            event.setCancelled(true);
-        if (event.getBlock().getType() == Material.CHEST) {
-            ignoredChest.add(event.getBlock());
-        }
-    }
-
 
     @Override
     public boolean joinGameAsGamer(@NotNull Player player) {
@@ -196,7 +136,7 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
     }
 
     @Override
-    public void onGamerInventoryOpen(@NotNull InventoryOpenEvent event, @NotNull Player player) {
+    public void onGamerInventoryOpen(@NotNull InventoryOpenEvent event, @NotNull Player player) { //TODO
         if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
             event.getView().getTopInventory().setItem(1, new ItemStack(Material.LAPIS_LAZULI, 64));
     }
@@ -301,7 +241,7 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
         new SoundInfo(Sound.ENTITY_PLAYER_DEATH, 1, 1, false).play(player);
-        PlayerStat.EGGWARS_DEATHS.add(player,1);
+        PlayerStat.EGGWARS_DEATHS.add(player, 1);
         EggWarsTeam team = getTeam(player);
         switchToSpectator(player);
         new SoundInfo(Sound.ENTITY_GHAST_DEATH, 1, 1, true).play(player); //self death notify
@@ -325,8 +265,8 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
             setScore(team.getName(), -1);
         if (killer != null && isGamer(killer)) {
             PlayerStat.EGGWARS_KILLS.add(killer, 1);
-            givePoints(killer, getMinigameType().getKillPoints());
-            giveGameExp(killer, getMinigameType().getKillExp());
+            givePoints(killer, getMinigameType().getDefinitiveKillPoints());
+            giveGameExp(killer, getMinigameType().getDefinitiveKillExp());
             if (getOption().getKillRewardFiller() != null) {
                 //TODO add sound
                 UtilsInventory.giveAmount(player, getMinigameType().getKillRewardItem(), 1, UtilsInventory.ExcessManage.DROP_EXCESS);
@@ -337,6 +277,8 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
                 addScore(team.getName(), 1);
         }
         checkGameEnd();
+
+        //TODO
     }
 
     protected void craftAndCallGamerDeathEvent(Player player, Player killer) {
@@ -415,4 +357,53 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
         filler.getDrops().forEach((d) -> UtilsInventory.giveAmount(event.getPlayer(), d, d.getAmount(), UtilsInventory.ExcessManage.DROP_EXCESS));
     }
 
+    @Override
+    public void onGamerCraftItem(CraftItemEvent event) {
+        event.setCancelled(true);
+    }
+
+    private final HashSet<Block> addedBlocks = new HashSet<>();
+
+    @Override
+    public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
+        super.onGamerBlockPlace(event);
+        if (!event.isCancelled()) {
+            addedBlocks.add(event.getBlock());
+        }
+    }
+
+    @Override
+    public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
+        super.onGamerBlockBreak(event);
+        if (!event.isCancelled() && !addedBlocks.contains(event.getBlock()))
+            event.setCancelled(true); //TODO feedback?
+    }
+
+
+    private final HashMap<Player,ShopsMenu> menus = new HashMap<>();
+    public @NotNull ShopsMenu getMenu(Player target){
+        if (!menus.containsKey(target))
+            menus.put(target,new ShopsMenu(target,this));
+       return menus.get(target);
+    }
+
+    @Override
+    public void onGamerInteractEntity(@NotNull PlayerInteractEntityEvent event) {
+        super.onGamerInteractEntity(event);
+        if (!event.isCancelled() && event.getRightClicked() instanceof Villager)
+            getMenu(event.getPlayer()).open(event.getPlayer());
+    }
+
+    @Override
+    public void onGamerPickupItem(@NotNull EntityPickupItemEvent event, @NotNull Player p){
+        super.onGamerPickupItem(event,p);
+        if (event.isCancelled())
+            return;
+        ItemStack raw = event.getItem().getItemStack();
+        EggWarsGeneratorType type = getMinigameType().getGenerator(raw);
+        if (type!=null){
+            event.getItem().setItemStack(type.getGeneratedItem(p, raw.getAmount()));
+            Bukkit.getScheduler().runTaskLater(getPlugin(),()->{getMenu(p).recalculateCoins();},1L);
+        }
+    }
 }

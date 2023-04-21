@@ -1,11 +1,2 @@
 global:
   defaultWorld: events
-skywars:
-  display:
-    displayName: §eSkywars
-    gui:
-      material: BOW
-      custommodel: 0
-  game:
-    kill_points: 2.0
-    win_points: 10.0

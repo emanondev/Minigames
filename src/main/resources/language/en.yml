@@ -24,10 +24,88 @@ generic:
       - "&aScegli il Kit"
     gameleave_item_description:
       - "&cAbbandona la partita"
+eggwars:
+  gui:
+    selector:
+      - "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient>"
+      - "<#57c9fa>%arena_name%"
+      - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
+      - ""
+      - "<#57c9fa>Distruggi l'uovo degli avversari e poi sterminali!"
+      - "<#57c9fa>Durata <#ffffb3>%min_duration_estimation%-%max_duration_estimation%</#ffffb3> min"
+  shops:
+    items:
+      simple:
+        - ""
+        - "%canbuy_color%<!i>Click <#aaaaaa>(x%buy_amount%)</#aaaaaa>: <#aaaaaa>%coin_price% %coin_name%</#aaaaaa> %canbuy_symbol%"
+        - ""
+        - "<#aaaaaa><!i>Possiedi %coin_color%%coin_has% %coin_name%"
+      simple_and_shift:
+        - ""
+        - "%canbuy_color%<!i>Click <#aaaaaa>(x%buy_amount%)</#aaaaaa>: %coin_color%%coin_price% %coin_name% %canbuy_color%%canbuy_symbol%"
+        - "%canbuy_color%<!i>Shift Click <#aaaaaa>(x%buy_amountmax%)</#aaaaaa>: %coin_color%%coin_pricemax% %coin_name% %canbuy_color%%canbuy_symbol%"
+        - ""
+        - "<#aaaaaa><!i>Possiedi  %coin_color%%coin_has% %coin_name%"
+    menu:
+      title: "Menù"
+      close: "Chiudi Menù"
+      back: "Torna al Menù"
+      blocks: "Blocchi"
+      weapons: "Armi"
+      armor: "Armature"
+      food: "Cibo"
+      tools: "Attrezzi"
+      ranged: "Archi"
+      special: "Oggetti speciali"
+      fastslot:
+        - "Slot Veloce"
+        - "Premi %slot% quando il mouse si trova sopra"
+        - "Un oggetto comprabile per metterlo in questo slot"
+    blocks:
+      title: "Blocchi"
+      slots:
+        11: "<#aaaaaa>Calcestruzzo"
+        20: "<#aaaaaa>Calcestruzzo"
+    weapons:
+      title: "Armi"
+    armor:
+      title: "Armature"
+    food:
+      title: "Cibo"
+    tools:
+      title: "Attrezzi"
+    ranged:
+      title: "Archi"
+    special:
+      title: "Oggetti speciali"
+  generators:
+    iron:
+      - "Iron Coin"
+    gold:
+      - "Gold Coin"
+    diamond:
+      - "Diamond Coin"
+    emerald:
+      - "Emerald Coin"
+  game:
+    game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
+    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
+    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
+    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
+    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s, Seleziona un kit!"
+    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
+    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient> <#57c9fa>Partita iniziata"
+    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient> <#57c9fa>Partita terminata"
+    spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non puoi uscire dall'arena"
+    you_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient><#57c9fa> Hai eliminato <#ffffb3>%who%</#ffffb3>"
+    you_have_been_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient><#57c9fa> Sei stato eliminato!"
+    you_have_been_eliminated_by: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient><#57c9fa> Sei stato eliminato da <#ffffb3>%who%</#ffffb3>!"
+    user_have_been_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient><#ffffb3> %who%</#ffffb3><#57c9fa> è stato eliminato"
+    user_have_been_eliminated_by: "<gradient:#4079ff:#57c9fa:#ffffb3>[EggWars]</gradient><#ffffb3> %who%</#ffffb3><#57c9fa> è stato eliminato da <#ffffb3>%killer%</#ffffb3>"
 deathmatch:
   gui:
     selector:
-      - "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient>"
+      - "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient>"
       - "<#57c9fa>%arena_name%"
       - "<#ffffb3>%players%<#57c9fa>/%maxplayers%"
       - ""
@@ -35,19 +113,19 @@ deathmatch:
       - "<#57c9fa>Durata <#ffffb3>%min_duration_estimation%-%max_duration_estimation%</#ffffb3> min"
   game:
     game_interrupted: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Partita interrotta"
-    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
-    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
-    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
-    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s, Seleziona un kit!"
-    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
-    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Partita iniziata"
-    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient> <#57c9fa>Partita terminata"
+    assign_team: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient> <#57c9fa>Ti è stato assegnato il team <#ffffb3>%color%</#ffffb3>"
+    collectingplayers_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players% inizia in <#ffffb3>%cooldown%</#ffffb3> s"
+    collectingplayers_no_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient> <#57c9fa>Giocatori <#ffffb3>%current_players%</#ffffb3>/%max_players%"
+    prestart_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient> <#57c9fa>La partità comincerà in <#ffffb3>%cooldown%</#ffffb3> s, Seleziona un kit!"
+    end_cooldown_bar: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient> <#57c9fa>Partita terminata, sarai riportato indietro in <#ffffb3>%cooldown%</#ffffb3> s"
+    game_start: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient> <#57c9fa>Partita iniziata"
+    game_end: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient> <#57c9fa>Partita terminata"
     spectator_cannot_go_outside_arena_bar: "<gradient:#ab0b00:#d96a75:#edac8c>[Minigame]</gradient><#e02850> Non puoi uscire dall'arena"
-    you_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient><#57c9fa> Hai eliminato <#ffffb3>%who%</#ffffb3>"
-    you_have_been_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient><#57c9fa> Sei stato eliminato!"
-    you_have_been_eliminated_by: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient><#57c9fa> Sei stato eliminato da <#ffffb3>%who%</#ffffb3>!"
-    user_have_been_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient><#ffffb3> %who%</#ffffb3><#57c9fa> è stato eliminato"
-    user_have_been_eliminated_by: "<gradient:#4079ff:#57c9fa:#ffffb3>[SkyWars]</gradient><#ffffb3> %who%</#ffffb3><#57c9fa> è stato eliminato da <#ffffb3>%killer%</#ffffb3>"
+    you_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient><#57c9fa> Hai eliminato <#ffffb3>%who%</#ffffb3>"
+    you_have_been_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient><#57c9fa> Sei stato eliminato!"
+    you_have_been_eliminated_by: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient><#57c9fa> Sei stato eliminato da <#ffffb3>%who%</#ffffb3>!"
+    user_have_been_eliminated: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient><#ffffb3> %who%</#ffffb3><#57c9fa> è stato eliminato"
+    user_have_been_eliminated_by: "<gradient:#4079ff:#57c9fa:#ffffb3>[DeathMatch]</gradient><#ffffb3> %who%</#ffffb3><#57c9fa> è stato eliminato da <#ffffb3>%killer%</#ffffb3>"
 skywars:
   gui:
     selector:
@@ -184,6 +262,34 @@ boatrace:
     you_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#57c9fa>Sei arrivato terzo!!!"
     player_won_third: "<gradient:#4079ff:#57c9fa:#ffffb3>[Boat Race]</gradient> <#ffffb3>%who%</#ffffb3> <#57c9fa>è arrivato terzo"
 arenabuilder:
+  eggwars:
+    error:
+      unselected_area: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Devi selezionare l'area con worldedit"
+      unknown_action: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Azione non valida"
+      outside_arena: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Devi selezionare un punto all'interno dell'arena"
+      invalid_color: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Colore non valido"
+    success:
+      select_area: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai selezionato l'area dell'arena (&e%world% %x1%:%x2% %y1%:%y2% %z1%:%z2%&a)"
+      override_team_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai cambiato lo spawn per il team &e%color%"
+      set_team_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai impostato lo spawn per il team &e%color%"
+      delete_team_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai rimosso lo spawn per il team &e%color%"
+      set_spectators_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai impostato lo spawn per gli spettatori"
+      override_spectators_spawn: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Hai cambiato lo spawn per gli spettatori"
+      completed: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Schematic salvata, Arena <#ffffb3>%id%</#ffffb3> Creata"
+    repeatmessage:
+      phase1: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona l'area dell'arena con worldedit <u><#ffffb3><click:run_command:'//wand'><hover:show_text:\"<#acfad1>Ottieni l'ascia worldedit per selezionare\">[//wand]</hover></click></#ffffb3></u>\nImposta l'area dell'arena <u><#ffffb3><click:run_command:'/%alias% selectarea'><hover:show_text:\"<#acfad1>Imposta la regione worldedit\nselezionata come l'area dell'arena\ne procedi alla prossima fase\">[Conferma]</hover></click></#ffffb3></u>"
+      phase2: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta lo spawn per i vari team:\nImposta: <#ffffb3>%setteamsspawn%</#ffffb3>\nCancella: <#ffffb3>%deleteteamsspawn%</#ffffb3>"
+      phase3: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta lo spawn per i vari team:\nImposta: <#ffffb3>%setteamsspawn%</#ffffb3>\nCancella: <#ffffb3>%deleteteamsspawn%</#ffffb3>\nProcedi alla prossima fase <#ffffb3><hover:show_text:\"<#acfad1>Conferma definitivamente le posizioni di spawn selezionate\ne continua il settaggio dell'arena\"><click:run_command:'/%alias% next'><u>[Conferma]</u></click></hover></#ffffb3>"
+      phase4: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta lo spawn per gli spettatori: <u><#ffffb3><click:run_command:'/%alias% setspectatorspawn'><hover:show_text:\"<#acfad1>Imposta lo spawn per gli spettatori\nnella tua posizione corrente\">[imposta]</hover></click></#ffffb3></u>"
+      phase5: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Cambia lo spawn per gli spettatori: <u><#ffffb3><click:run_command:'/%alias% setspectatorspawn'><hover:show_text:\"<#acfad1>Imposta lo spawn per gli spettatori\nnella tua posizione corrente\">[imposta]</hover></click></#ffffb3></u>\noppure completa l'arena: <u><#ffffb3><click:run_command:'/%alias% next'><hover:show_text:\"<#acfad1>Conferma e crea l'arena corrente\">[Completa]</hover></click></#ffffb3></u>"
+      setteamcolor: "<hover:show_text:\"<#acfad1>Imposta lo spawn per il team colore <%hexa%>%color%</%hexa%>\nnella tua posizione corrente\"><click:run_command:'/%alias% setteamspawn %color%'><u>[<%hexa%>%color%</%hexa%>]</u></click></hover> "
+      deleteteamcolor: "<hover:show_text:\"<#acfad1>Cancella lo spawn per il team colore <%hexa%>%color%</%hexa%>\"><click:run_command:'/%alias% deleteteamspawn %color%'><u>[<%hexa%>%color%</%hexa%>]</u></click></hover> "
+    bossbar:
+      phase1: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Seleziona l'area dell'arena"
+      phase2: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta il team spawn"
+      phase3: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta i team spawn | Procedi"
+      phase4: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta lo spawn degli spettatori"
+      phase5: "<gradient:#4079ff:#57c9fa:#ffffb3>[ArenaBuilder]</gradient> <#57c9fa>Imposta lo spawn degli spettatori | Procedi"
   deathmatch:
     error:
       unselected_area: "<gradient:#ab0b00:#d96a75:#edac8c>[ArenaBuilder]</gradient><#e02850> Devi selezionare l'area con worldedit"

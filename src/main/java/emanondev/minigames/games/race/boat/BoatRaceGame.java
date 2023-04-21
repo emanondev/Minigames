@@ -38,14 +38,17 @@ public class BoatRaceGame extends MountedRaceGame<ARaceTeam<BoatRaceGame>, BoatR
     public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.BOATRACE_VICTORY;
     }
+
     @Override
     public @NotNull PlayerStat getVictoryFirstStat() {
         return PlayerStat.BOATRACE_VICTORY_FIRST;
     }
+
     @Override
     public @NotNull PlayerStat getVictorySecondStat() {
         return PlayerStat.BOATRACE_VICTORY_SECOND;
     }
+
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.BOATRACE_VICTORY_THIRD;

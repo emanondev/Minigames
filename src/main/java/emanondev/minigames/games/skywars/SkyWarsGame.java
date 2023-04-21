@@ -182,9 +182,8 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
 
     @Override
     public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
-        if (getPhase() == Phase.PRE_START)
-            event.setCancelled(true);
-        if (event.getBlock().getType() == Material.CHEST) {
+        super.onGamerBlockPlace(event);
+        if (!event.isCancelled() && event.getBlock().getType() == Material.CHEST) {
             ignoredChest.add(event.getBlock());
         }
     }
@@ -301,7 +300,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
         new SoundInfo(Sound.ENTITY_PLAYER_DEATH, 1, 1, false).play(player);
-        PlayerStat.SKYWARS_DEATHS.add(player,1);
+        PlayerStat.SKYWARS_DEATHS.add(player, 1);
         SkyWarsTeam team = getTeam(player);
         switchToSpectator(player);
         new SoundInfo(Sound.ENTITY_GHAST_DEATH, 1, 1, true).play(player); //self death notify

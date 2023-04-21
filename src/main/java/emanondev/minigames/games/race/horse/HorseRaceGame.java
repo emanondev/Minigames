@@ -37,14 +37,17 @@ public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, Hor
     public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.HORSERACE_VICTORY;
     }
+
     @Override
     public @NotNull PlayerStat getVictoryFirstStat() {
         return PlayerStat.HORSERACE_VICTORY_FIRST;
     }
+
     @Override
     public @NotNull PlayerStat getVictorySecondStat() {
         return PlayerStat.HORSERACE_VICTORY_SECOND;
     }
+
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.HORSERACE_VICTORY_THIRD;

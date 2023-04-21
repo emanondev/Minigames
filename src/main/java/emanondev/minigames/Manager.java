@@ -92,7 +92,6 @@ public class Manager<T extends Registrable> {
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Updated " + registrable.getClass().getSimpleName() + " &e" + registrable.getId());
     }
 
-
     public void delete(@NotNull T type) {
         delete(type.getId());
     }

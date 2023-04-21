@@ -28,6 +28,10 @@ public class MinigameTypes {
         register(EGGWARS);
     }
 
+    public void reload() {
+        types.values().forEach(MType::reload);
+    }
+
     @SuppressWarnings("rawtypes")
     private void register(@NotNull MType type) {
         if (!UtilsString.isLowcasedValidID(type.getType()))

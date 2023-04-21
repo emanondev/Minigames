@@ -1,0 +1,140 @@
+display:
+  displayName: §eEggWars
+  gui:
+    material: DRAGON_EGG
+game:
+  snowball_push: 0.7
+  snowball_vertical_push: 0.3
+  kill_points: 1.0
+  win_points: 5.0
+  egg_broken_points: 3.0
+  kill_exp: 1.0
+  win_exp: 5.0
+  egg_broken_exp: 3.0
+shops:
+  menu:
+    close:
+      material: BOOK
+    back:
+      material: BOOK
+    blocks:
+      material: WHITE_CONCRETE
+    weapons:
+      material: GOLDEN_SWORD
+    armor:
+      material: IRON_CHESTPLATE
+    food:
+      material: CAKE
+    tools:
+      material: DIAMOND_PICKAXE
+    ranged:
+      material: BOW
+    special:
+      material: ENDER_CHEST
+    fastslot:
+      material: BLACK_STAINED_GLASS_PANE
+  blocks:
+    rows: 6
+    slots:
+      11:
+        price_amount: 1
+        price_type: iron
+        item:
+          material: WHITE_CONCRETE
+          amount: 2
+      20:
+        price_amount: 16
+        price_type: iron
+        item:
+          material: WHITE_CONCRETE
+          amount: 32
+generators:
+  iron:
+    color: "aaaaaa"
+    item:
+      material: IRON_INGOT
+    levels:
+      0:
+        upgrade_cost_type: iron
+        upgrade_cost_amount: 10
+      1:
+        drop_amount: 1
+        drop_frequency_ticks: 20
+        upgrade_cost_type: iron
+        upgrade_cost_amount: 20
+      2:
+        drop_amount: 1
+        drop_frequency_ticks: 15
+        upgrade_cost_type: gold
+        upgrade_cost_amount: 20
+      3:
+        drop_amount: 1
+        drop_frequency_ticks: 10
+        upgrade_cost_type: gold
+        upgrade_cost_amount: 50
+      4:
+        drop_amount: 1
+        drop_frequency_ticks: 5
+  gold:
+    color: "ffff55"
+    item:
+      material: GOLD_INGOT
+    levels:
+      0:
+        upgrade_cost_type: gold
+        upgrade_cost_amount: 5
+      1:
+        drop_amount: 1
+        drop_frequency_ticks: 100
+        upgrade_cost_type: gold
+        upgrade_cost_amount: 10
+      2:
+        drop_amount: 1
+        drop_frequency_ticks: 70
+        upgrade_cost_type: diamond
+        upgrade_cost_amount: 10
+      3:
+        drop_amount: 1
+        drop_frequency_ticks: 40
+        upgrade_cost_type: diamond
+        upgrade_cost_amount: 25
+      4:
+        drop_amount: 1
+        drop_frequency_ticks: 20
+  diamond:
+    color: "55ffff"
+    item:
+      material: DIAMOND
+    levels:
+      0:
+        upgrade_cost_type: diamond
+        upgrade_cost_amount: 5
+      1:
+        drop_amount: 1
+        drop_frequency_ticks: 200
+        upgrade_cost_type: diamond
+        upgrade_cost_amount: 10
+      2:
+        drop_amount: 1
+        drop_frequency_ticks: 100
+        upgrade_cost_type: diamond
+        upgrade_cost_amount: 25
+      3:
+        drop_amount: 1
+        drop_frequency_ticks: 50
+  emerald:
+    color: "46d146"
+    item:
+      material: EMERALD
+    levels:
+      0:
+        upgrade_cost_type: diamond
+        upgrade_cost_amount: 10
+      1:
+        drop_amount: 1
+        drop_frequency_ticks: 300
+        upgrade_cost_type: emerald
+        upgrade_cost_amount: 10
+      2:
+        drop_amount: 1
+        drop_frequency_ticks: 160

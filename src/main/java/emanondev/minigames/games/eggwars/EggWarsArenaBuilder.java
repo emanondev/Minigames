@@ -32,6 +32,8 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
     private static final int PHASE_SET_TEAM_SPAWNS_OR_NEXT = 3;
     private static final int PHASE_SET_SPECTATOR_SPAWN = 4;
     private static final int PHASE_SET_SPECTATOR_SPAWN_OR_NEXT = 5;
+    private static final int PHASE_SET_GENERATORS = 6;
+    private static final int PHASE_SET_VILLAGERS = 7;
 
     public EggWarsArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
         super(user, id, label, Minigames.get());

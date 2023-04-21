@@ -1,16 +1,12 @@
 package emanondev.minigames.games.race.elytra;
 
 import emanondev.core.ItemBuilder;
-import emanondev.core.message.DMessage;
-import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
-import emanondev.minigames.Minigames;
 import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.event.elytrarace.ElytraRaceStartEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinFirstEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinSecondEvent;
 import emanondev.minigames.event.elytrarace.ElytraRaceWinThirdEvent;
-import emanondev.minigames.games.ColoredTeam;
 import emanondev.minigames.games.race.ARaceGame;
 import emanondev.minigames.games.race.ARaceTeam;
 import org.bukkit.Bukkit;
@@ -23,7 +19,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 @SerializableAs(value = "ElytraRaceGame")
 public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraRaceOption> {
@@ -72,40 +69,20 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     public @NotNull PlayerStat getVictoryStat() {
         return PlayerStat.ELYTRARACE_VICTORY;
     }
+
     @Override
     public @NotNull PlayerStat getVictoryFirstStat() {
         return PlayerStat.ELYTRARACE_VICTORY_FIRST;
     }
+
     @Override
     public @NotNull PlayerStat getVictorySecondStat() {
         return PlayerStat.ELYTRARACE_VICTORY_SECOND;
     }
+
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.ELYTRARACE_VICTORY_THIRD;
-    }
-
-    @Deprecated
-    public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
-        if (getTeam(player) != null)
-            return;
-        MessageUtil.debug(getId() + " assigning team to " + player.getName());
-        List<ARaceTeam<ElytraRaceGame>> teams = new ArrayList<>(getTeams());
-        teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
-        for (ARaceTeam<ElytraRaceGame> team : teams)
-            if (team.addUser(player)) {
-                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
-                        "%color%", team.getColor().name());
-                return;
-            }
-        throw new IllegalStateException("unable to add user to a party");
-    }
-
-
-    @Override
-    public void checkGameEnd() {
-        if (getGamers().size() <= 1)
-            this.gameEnd();
     }
 
     public void teleportResetLocation(@NotNull Player player) {

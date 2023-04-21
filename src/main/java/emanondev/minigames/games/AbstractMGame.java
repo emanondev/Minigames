@@ -52,6 +52,17 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private final HashMap<Player, String> kitPreference = new HashMap<>();
     private int joinGuiSlot;
     private int joinTypeGuiSlot;
+    private boolean enabled;
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @SuppressWarnings("unchecked")
     public AbstractMGame(@NotNull Map<String, Object> map) {
@@ -63,6 +74,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             throw new IllegalStateException("Option ID is null");
         this.option = (O) OptionManager.get().get(optionId);
         this.arena = (A) ArenaManager.get().get(arenaId);
+        this.enabled = (Boolean) map.getOrDefault("enabled",true);
         if (this.arena == null)
             throw new IllegalStateException("Arena is null, couldn't find Arena ID '" + arenaId + "'");
         if (this.option == null)
@@ -115,6 +127,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("option", optionId);
         map.put("arena", arenaId);
+        map.put("enabled", enabled);
         map.put("location", loc.toString());
         map.put("join_gui_slot", this.joinGuiSlot);
         map.put("join_type_gui_slot", this.joinTypeGuiSlot);

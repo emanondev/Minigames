@@ -1,0 +1,11 @@
+display:
+  displayName: §eDeathMatch
+  gui:
+    material: IRON_SWORD
+game:
+  snowball_push: 0.7
+  snowball_vertical_push: 0.3
+  kill_points: 2.0
+  win_points: 10.0
+  kill_exp: 2.0
+  win_exp: 10.0
