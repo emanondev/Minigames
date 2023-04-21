@@ -39,30 +39,34 @@ import java.util.concurrent.CompletableFuture;
 public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O extends MOption> extends ARegistrable implements MGame<T, A, O>, Listener {
 
     private final Objective objective;
-    private int collectingPlayersCountdown = -1;
-    private int endCountdown = -1;
-    private int preStartCountdown = -1;
-    private BlockLocation3D loc;
-    private Phase phase = Phase.STOPPED;
-
     private final O option;
     private final A arena;
     private final String optionId;
     private final String arenaId;
     private final HashMap<Player, String> kitPreference = new HashMap<>();
-    private int joinGuiSlot;
-    private int joinTypeGuiSlot;
-    private boolean enabled;
-
-    @Override
+    private final Scoreboard scoreboard;
+    private final HashSet<String> scores = new HashSet<>();
+    private final GameListener gameListener = new GameListener(this);
+    private final Set<Player> spectators = new HashSet<>();
+    private final Set<Player> gamers = new HashSet<>();
+    private int collectingPlayersCountdown = -1;
+    private int endCountdown = -1;
+    private int preStartCountdown = -1;
+    private BlockLocation3D loc;    @Override
     public boolean isEnabled() {
         return enabled;
     }
-
-    @Override
+    private Phase phase = Phase.STOPPED;    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+    private int joinGuiSlot;
+    private int joinTypeGuiSlot;
+    private boolean enabled;    @Override
+    public Objective getObjective() {
+        return objective;
+    }
+    private boolean registered = false;
 
     @SuppressWarnings("unchecked")
     public AbstractMGame(@NotNull Map<String, Object> map) {
@@ -74,7 +78,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             throw new IllegalStateException("Option ID is null");
         this.option = (O) OptionManager.get().get(optionId);
         this.arena = (A) ArenaManager.get().get(arenaId);
-        this.enabled = (Boolean) map.getOrDefault("enabled",true);
+        this.enabled = (Boolean) map.getOrDefault("enabled", true);
         if (this.arena == null)
             throw new IllegalStateException("Arena is null, couldn't find Arena ID '" + arenaId + "'");
         if (this.option == null)
@@ -95,25 +99,14 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.objective = scoreboard.registerNewObjective("game", "dummy", getObjectiveDisplayName(), RenderType.INTEGER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-    }
-
-    protected String getObjectiveDisplayName() {
-        return getMinigameType().getDisplayName();
-    }
-
-    @Override
-    public Objective getObjective() {
-        return objective;
-    }
-
-    private final Scoreboard scoreboard;
-
-    @Override
+    }    @Override
     public Scoreboard getScoreboard() {
         return scoreboard;
     }
 
-    public void setLocation(@NotNull BlockLocation3D loc) {
+    protected String getObjectiveDisplayName() {
+        return getMinigameType().getDisplayName();
+    }    public void setLocation(@NotNull BlockLocation3D loc) {
         boolean wasStopped = getPhase() != Phase.STOPPED;
         if (!wasStopped)
             this.gameAbort();
@@ -134,7 +127,13 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return map;
     }
 
-    @Override
+    public final boolean switchToSpectator(@NotNull Player player) {
+        if (canSwitchToSpectator(player) && removeGamer(player) && spectators.add(player)) {
+            onSpectatorAdded(player);
+            return true;
+        }
+        return false;
+    }    @Override
     public CompletableFuture<Void> gameInitialize() {
         CompletableFuture<Void> future = new CompletableFuture<>();
         new BukkitRunnable() {
@@ -153,7 +152,16 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return future;
     }
 
-    @Override
+    protected void givePoints(Player target, double amount) {
+        if (amount > 0) {
+            try {
+                new VaultEconomyHandler().addMoney(target, amount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            sendDMessage(target, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
+        }
+    }    @Override
     public CompletableFuture<Void> gameRestart() {
         CompletableFuture<Void> future = new CompletableFuture<>();
         new BukkitRunnable() {
@@ -175,7 +183,16 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return future;
     }
 
-    public void restart() {
+    protected void giveGameExp(Player target, int amount) {
+        if (amount > 0) {
+            try {
+                GamerManager.get().getGamer(target).addExperience(amount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //sendDMessage(target, "generic.obtain_exp", "%amount%", UtilsString.formatOptional2Digit(amount));
+        }
+    }    public void restart() {
         gameRestart().whenComplete((value, th) -> {
             MessageUtil.debug(this.getId() + " (" + getMinigameType().getType() + ") Restart terminato");
             if (th != null)
@@ -276,7 +293,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
-    private final HashSet<String> scores = new HashSet<>();
+
 
     @Override
     public void setScore(String score, int value) {
@@ -403,8 +420,8 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         registerAsListener(false);
     }
 
-    private boolean registered = false;
-    private final GameListener gameListener = new GameListener(this);
+
+
 
     private void registerAsListener(boolean value) {
         if (value) {
@@ -533,15 +550,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Deprecated
     protected abstract void assignTeam(Player p);
 
-    private final Set<Player> spectators = new HashSet<>();
 
-    public final boolean switchToSpectator(@NotNull Player player) {
-        if (canSwitchToSpectator(player) && removeGamer(player) && spectators.add(player)) {
-            onSpectatorAdded(player);
-            return true;
-        }
-        return false;
-    }
+
+
 
     @Override
     public final boolean addSpectator(@NotNull Player player) {
@@ -598,7 +609,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return Collections.unmodifiableSet(spectators);
     }
 
-    private final Set<Player> gamers = new HashSet<>();
+
 
     @Override
     public final boolean joinGameAsSpectator(@NotNull Player player) {
@@ -827,27 +838,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
-    protected void givePoints(Player target, double amount) {
-        if (amount > 0) {
-            try {
-                new VaultEconomyHandler().addMoney(target, amount);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            sendDMessage(target, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
-        }
-    }
 
-    protected void giveGameExp(Player target, int amount) {
-        if (amount > 0) {
-            try {
-                GamerManager.get().getGamer(target).addExperience(amount);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            //sendDMessage(target, "generic.obtain_exp", "%amount%", UtilsString.formatOptional2Digit(amount));
-        }
-    }
+
+
 
     public Gui getEditorGui(Player target, Gui parent) {
         PagedMapGui gui = new PagedMapGui(

@@ -24,14 +24,14 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
 
     private static final SimpleMessage ERR_UNKNOWN_ACTION = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.unknown_action");
     private static final SimpleMessage ERR_OUTSIDE_ARENA = new SimpleMessage(Minigames.get(), "arenabuilder.skywars.error.outside_arena");
-    private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
-    private LocationOffset3D spectatorsOffset;
-
     private static final int PHASE_SELECT_AREA = 1;
     private static final int PHASE_SET_TEAM_SPAWNS = 2;
     private static final int PHASE_SET_TEAM_SPAWNS_OR_NEXT = 3;
     private static final int PHASE_SET_SPECTATOR_SPAWN = 4;
     private static final int PHASE_SET_SPECTATOR_SPAWN_OR_NEXT = 5;
+    private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
+    private LocationOffset3D spectatorsOffset;
+    private int timerTick = 0;
 
     public SkyWarsArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
         super(user, id, label, Minigames.get());
@@ -228,8 +228,6 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
         map.put("teams", teams);
         return new SkyWarsArena(map);
     }
-
-    private int timerTick = 0;
 
     @Override
     public void onTimerCall() {

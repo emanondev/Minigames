@@ -46,15 +46,10 @@ public class GenericShopMenu extends MapGui {
         }
     }
 
-    public EggWarsGame getGame(){
-        return getPreviousGui().getGame();
-    }
-
     @Override
     public @NotNull ShopsMenu getPreviousGui() {
         return (ShopsMenu) super.getPreviousGui();
     }
-
 
     protected ItemBuilder craftItem(String path) {
         //TODO enchants
@@ -64,6 +59,10 @@ public class GenericShopMenu extends MapGui {
                 .setAmount(section.getInt(path + ".amount", 1))
                 .setCustomModelData(section.getInteger(path + ".custom_model", null))
                 .setColor(getGame().getTeam(getTargetPlayer()).getColor());
+    }
+
+    public EggWarsGame getGame() {
+        return getPreviousGui().getGame();
     }
 
     private class ShopItem implements GuiButton {

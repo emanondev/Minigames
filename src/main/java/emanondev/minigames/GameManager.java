@@ -67,14 +67,11 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             i++;
         }
     }.runTaskTimer(Minigames.get(), C.getStartupGameInitializeDelayTicks(), 1L);
+    @SuppressWarnings("rawtypes")
+    private final HashMap<Player, MGame> playerGames = new HashMap<>();
+    private final HashMap<Player, Scoreboard> playerBoards = new HashMap<>();
+    private final HashMap<Player, PlayerSnapshot> playerSnapshots = new HashMap<>();
 
-    public static @NotNull GameManager get() {
-        return instance;
-    }
-
-    protected @NotNull YMLSection getGlobalSection() {
-        return Minigames.get().getConfig("minigamesConfig.yml").loadSection("global");
-    }
 
     public GameManager() {
         super("games");
@@ -86,6 +83,9 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             this.gameTickList.add(new ArrayList<>());
     }
 
+    public static @NotNull GameManager get() {
+        return instance;
+    }
 
     @NotNull
     public YMLSection getSection(@SuppressWarnings("rawtypes") @NotNull MType minigameType) {
@@ -133,7 +133,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                 (game.getGameLocation().z + mArena.getSize().getBlockZ()) : ""));
     }
 
-
     public void delete(String id) {
         @Nullable MGame game = get(id);
         if (game != null) {
@@ -144,32 +143,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
             gameTickList.forEach(l -> l.remove(game));
         }
     }
-
-    /**
-     * Generate a new Location for selected arena on selected world
-     */
-    @Contract("_, _ -> new")
-    public @NotNull BlockLocation3D generateLocation(@NotNull MArena arena, @Nullable World world) {
-        int counter = 0;
-        int offset = 500;
-        boolean isValid = false;
-        BlockLocation3D loc = null;
-        if (world == null)
-            world = Bukkit.getWorld(getGlobalSection().getString("defaultWorld", ""));
-        if (world == null)
-            world = Bukkit.getWorlds().get(0);
-        while (!isValid && counter < 500) {
-            loc = new BlockLocation3D(world, 10000 + offset * counter, 0, 10000);
-            isValid = isValidLocation(loc, arena, world);
-            counter++;
-        }
-        if (!isValid) //TODO
-            throw new IllegalStateException();
-        logTetraStar(ChatColor.DARK_RED, "D Generated Game Location at &e"
-                + loc.toString().replace(":", " "));
-        return loc;
-    }
-
 
     public boolean isValidLocation(@NotNull BlockLocation3D loc, @NotNull MArena arena, @NotNull World w) {
         if (arena instanceof MSchemArena schemArena) {
@@ -200,14 +173,33 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         throw new UnsupportedOperationException("invalid arena type");
     }
 
-    @SuppressWarnings("unchecked")
-    public @NotNull <A extends MArena, O extends MOption> Map<String, MGame<?, A, O>> getGameInstances(@NotNull MType<A, O> type) {
-        Map<String, MGame<?, A, O>> map = new HashMap<>();
-        getAll().forEach((k, v) -> {
-            if (v.getMinigameType().equals(type))
-                map.put(k, v);
-        });
-        return map;
+    /**
+     * Generate a new Location for selected arena on selected world
+     */
+    @Contract("_, _ -> new")
+    public @NotNull BlockLocation3D generateLocation(@NotNull MArena arena, @Nullable World world) {
+        int counter = 0;
+        int offset = 500;
+        boolean isValid = false;
+        BlockLocation3D loc = null;
+        if (world == null)
+            world = Bukkit.getWorld(getGlobalSection().getString("defaultWorld", ""));
+        if (world == null)
+            world = Bukkit.getWorlds().get(0);
+        while (!isValid && counter < 500) {
+            loc = new BlockLocation3D(world, 10000 + offset * counter, 0, 10000);
+            isValid = isValidLocation(loc, arena, world);
+            counter++;
+        }
+        if (!isValid) //TODO
+            throw new IllegalStateException();
+        logTetraStar(ChatColor.DARK_RED, "D Generated Game Location at &e"
+                + loc.toString().replace(":", " "));
+        return loc;
+    }
+
+    protected @NotNull YMLSection getGlobalSection() {
+        return Minigames.get().getConfig("minigamesConfig.yml").loadSection("global");
     }
 
     @SuppressWarnings("unchecked")
@@ -218,21 +210,20 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         return map;
     }
 
-    /**
-     * Returns the Game the player is currently on
-     *
-     * @return the Game the player is currently on
-     */
-    @SuppressWarnings("rawtypes")
-    @Nullable
-    public MGame getCurrentGame(@NotNull Player player) {
-        return playerGames.get(player);
+    @SuppressWarnings("unchecked")
+    public @NotNull <A extends MArena, O extends MOption> Map<String, MGame<?, A, O>> getGameInstances(@NotNull MType<A, O> type) {
+        Map<String, MGame<?, A, O>> map = new HashMap<>();
+        getAll().forEach((k, v) -> {
+            if (v.getMinigameType().equals(type))
+                map.put(k, v);
+        });
+        return map;
     }
 
     @SuppressWarnings("rawtypes")
-    private final HashMap<Player, MGame> playerGames = new HashMap<>();
-    private final HashMap<Player, Scoreboard> playerBoards = new HashMap<>();
-    private final HashMap<Player, PlayerSnapshot> playerSnapshots = new HashMap<>();
+    public boolean joinGameAsGamer(Player player, MGame game) {
+        return this.joinGameAsGamer(player, List.of(game));
+    }
 
     @SuppressWarnings("rawtypes")
     public boolean joinGameAsGamer(Player player, List<MGame> gameList) {
@@ -266,9 +257,15 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         return false;
     }
 
+    /**
+     * Returns the Game the player is currently on
+     *
+     * @return the Game the player is currently on
+     */
     @SuppressWarnings("rawtypes")
-    public boolean joinGameAsGamer(Player player, MGame game) {
-        return this.joinGameAsGamer(player, List.of(game));
+    @Nullable
+    public MGame getCurrentGame(@NotNull Player player) {
+        return playerGames.get(player);
     }
 
     @SuppressWarnings("rawtypes")
@@ -302,6 +299,11 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         return false;
     }
 
+    @EventHandler
+    private void event(PlayerQuitEvent event) {
+        quitGame(event.getPlayer());
+    }
+
     public void quitGame(Player player) {
         @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
         if (game == null)
@@ -319,11 +321,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         player.setScoreboard(playerBoards.remove(player));
         Bukkit.getPluginManager().callEvent(new PlayerQuitGameEvent(game, player));
         logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());
-    }
-
-    @EventHandler
-    private void event(PlayerQuitEvent event) {
-        quitGame(event.getPlayer());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)

@@ -16,21 +16,6 @@ import org.jetbrains.annotations.NotNull;
 public class MinigamePlaceholders extends PlaceholderExpansion {
 
     @Override
-    public @NotNull String getIdentifier() {
-        return "minigames";
-    }
-
-    @Override
-    public @NotNull String getAuthor() {
-        return "emanon";
-    }
-
-    @Override
-    public @NotNull String getVersion() {
-        return "1.0";
-    }
-
-    @Override
     public String onRequest(OfflinePlayer player, String params) {
         String[] args = params.split("_");
         try {
@@ -156,5 +141,20 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
             Minigames.get().logInfo("finally format is the format to print the % value");
             return null;
         }
+    }
+
+    @Override
+    public @NotNull String getIdentifier() {
+        return "minigames";
+    }
+
+    @Override
+    public @NotNull String getAuthor() {
+        return "emanon";
+    }
+
+    @Override
+    public @NotNull String getVersion() {
+        return "1.0";
     }
 }

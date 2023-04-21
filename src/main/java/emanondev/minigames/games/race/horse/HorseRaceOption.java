@@ -37,17 +37,6 @@ public class HorseRaceOption extends MountedRaceOption {
     }
 
     @Override
-    protected @NotNull EntityType getDefaultType() {
-        return EntityType.HORSE;
-    }
-
-    @Override
-    protected boolean isAllowedType(@NotNull EntityType type) {
-        return type.getEntityClass() != null && AbstractHorse.class.isAssignableFrom(type.getEntityClass()) && !type.name().contains("LLAMA");
-    }
-
-
-    @Override
     public Gui getEditorGui(Player target, Gui parent) {
         Gui gui = super.getEditorGui(target, parent);
         gui.addButton(new FWrapperButton(gui, new DoubleEditorFButton(gui, 0.1, 0.01, 10, this::getJumpStrenght
@@ -89,6 +78,16 @@ public class HorseRaceOption extends MountedRaceOption {
                 )).build(),
                 () -> List.of(Horse.Style.values())), (e) -> getType() != EntityType.HORSE, () -> getType() != EntityType.HORSE, (e) -> false, () -> null));
         return gui;
+    }
+
+    @Override
+    protected @NotNull EntityType getDefaultType() {
+        return EntityType.HORSE;
+    }
+
+    @Override
+    protected boolean isAllowedType(@NotNull EntityType type) {
+        return type.getEntityClass() != null && AbstractHorse.class.isAssignableFrom(type.getEntityClass()) && !type.name().contains("LLAMA");
     }
 
 }

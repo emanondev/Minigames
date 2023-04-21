@@ -14,16 +14,15 @@ import java.util.*;
 public class ArenaManager extends Manager<MArena> {
 
     private static ArenaManager instance;
-
-    public static ArenaManager get() {
-        return instance;
-    }
-
     private final HashMap<UUID, MArenaBuilder> builders = new HashMap<>();
 
     public ArenaManager() {
         super("arenas");
         instance = this;
+    }
+
+    public static ArenaManager get() {
+        return instance;
     }
 
     public <A extends MArena> @NotNull Map<String, A> getCompatibleArenas(@NotNull MType<A, ?> type) {
@@ -62,12 +61,12 @@ public class ArenaManager extends Manager<MArena> {
         return isBuilding(player.getUniqueId());
     }
 
-    public MArenaBuilder getBuildingArena(OfflinePlayer player) {
-        return getBuildingArena(player.getUniqueId());
-    }
-
     public boolean isBuilding(UUID player) {
         return builders.containsKey(player);
+    }
+
+    public MArenaBuilder getBuildingArena(OfflinePlayer player) {
+        return getBuildingArena(player.getUniqueId());
     }
 
     public MArenaBuilder getBuildingArena(UUID player) {

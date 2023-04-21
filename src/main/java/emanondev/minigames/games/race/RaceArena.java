@@ -32,33 +32,6 @@ public class RaceArena extends AbstractMColorSchemArena {
     private int rewardSecond;
     private int rewardThird;
 
-    public int getRewardFirst() {
-        return rewardFirst;
-    }
-
-    public void setRewardFirst(int rewardFirst) {
-        this.rewardFirst = Math.max(0, rewardFirst);
-        ArenaManager.get().save(this);
-    }
-
-    public int getRewardSecond() {
-        return rewardSecond;
-    }
-
-    public void setRewardSecond(int rewardSecond) {
-        this.rewardSecond = Math.max(0, rewardSecond);
-        ArenaManager.get().save(this);
-    }
-
-    public int getRewardThird() {
-        return rewardThird;
-    }
-
-    public void setRewardThird(int rewardThird) {
-        this.rewardThird = Math.max(0, rewardThird);
-        ArenaManager.get().save(this);
-    }
-
     public RaceArena(@NotNull Map<String, Object> map) {
         super(map);
         Map<String, ?> teamMap = (Map<String, ?>) map.get("teams");
@@ -112,44 +85,6 @@ public class RaceArena extends AbstractMColorSchemArena {
         return map;
     }
 
-    @NotNull
-    public Set<DyeColor> getColors() {
-        return Collections.unmodifiableSet(spawnLocations.keySet());
-    }
-
-    @NotNull
-    public LocationOffset3D getSpawnOffset(@NotNull DyeColor color) {
-        if (!spawnLocations.containsKey(color))
-            throw new NullPointerException();
-        return spawnLocations.get(color);
-    }
-
-    @Contract(" -> new")
-    public List<BoundingBox> getCheckpoints() {
-        List<BoundingBox> list = new ArrayList<>();
-        for (BoundingBox box : checkpoints)
-            list.add(box.clone());
-        return list;
-    }
-
-    @Contract(" -> new")
-    public List<BoundingBox> getFallAreas() {
-        List<BoundingBox> list = new ArrayList<>();
-        for (BoundingBox box : fallAreas)
-            list.add(box.clone());
-        return list;
-    }
-
-    @Contract(" -> new")
-    public BoundingBox getFinishArea() {
-        return finishArea.clone();
-    }
-
-    @Contract(" -> new")
-    public List<LocationOffset3D> getCheckpointsRespawn() {
-        return checkpointsRespawn;
-    }
-
     @Override
     public Gui getEditorGui(Player player, Gui parent) {
         Gui gui = super.getEditorGui(player, parent);
@@ -198,6 +133,33 @@ public class RaceArena extends AbstractMColorSchemArena {
         return gui;
     }
 
+    public int getRewardFirst() {
+        return rewardFirst;
+    }
+
+    public void setRewardFirst(int rewardFirst) {
+        this.rewardFirst = Math.max(0, rewardFirst);
+        ArenaManager.get().save(this);
+    }
+
+    public int getRewardSecond() {
+        return rewardSecond;
+    }
+
+    public void setRewardSecond(int rewardSecond) {
+        this.rewardSecond = Math.max(0, rewardSecond);
+        ArenaManager.get().save(this);
+    }
+
+    public int getRewardThird() {
+        return rewardThird;
+    }
+
+    public void setRewardThird(int rewardThird) {
+        this.rewardThird = Math.max(0, rewardThird);
+        ArenaManager.get().save(this);
+    }
+
     public int getRewardFirstExp() {
         return rewardFirstExp;
 
@@ -211,8 +173,8 @@ public class RaceArena extends AbstractMColorSchemArena {
         return rewardThirdExp;
     }
 
-    public void setRewardFirstExp(int rewardFirstExp) {
-        this.rewardFirstExp = Math.max(0, rewardFirstExp);
+    public void setRewardThirdExp(int rewardThirdExp) {
+        this.rewardThirdExp = Math.max(0, rewardThirdExp);
         ArenaManager.get().save(this);
     }
 
@@ -221,9 +183,47 @@ public class RaceArena extends AbstractMColorSchemArena {
         ArenaManager.get().save(this);
     }
 
-    public void setRewardThirdExp(int rewardThirdExp) {
-        this.rewardThirdExp = Math.max(0, rewardThirdExp);
+    public void setRewardFirstExp(int rewardFirstExp) {
+        this.rewardFirstExp = Math.max(0, rewardFirstExp);
         ArenaManager.get().save(this);
+    }
+
+    @NotNull
+    public Set<DyeColor> getColors() {
+        return Collections.unmodifiableSet(spawnLocations.keySet());
+    }
+
+    @NotNull
+    public LocationOffset3D getSpawnOffset(@NotNull DyeColor color) {
+        if (!spawnLocations.containsKey(color))
+            throw new NullPointerException();
+        return spawnLocations.get(color);
+    }
+
+    @Contract(" -> new")
+    public List<BoundingBox> getCheckpoints() {
+        List<BoundingBox> list = new ArrayList<>();
+        for (BoundingBox box : checkpoints)
+            list.add(box.clone());
+        return list;
+    }
+
+    @Contract(" -> new")
+    public List<BoundingBox> getFallAreas() {
+        List<BoundingBox> list = new ArrayList<>();
+        for (BoundingBox box : fallAreas)
+            list.add(box.clone());
+        return list;
+    }
+
+    @Contract(" -> new")
+    public BoundingBox getFinishArea() {
+        return finishArea.clone();
+    }
+
+    @Contract(" -> new")
+    public List<LocationOffset3D> getCheckpointsRespawn() {
+        return checkpointsRespawn;
     }
 
 }

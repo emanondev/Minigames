@@ -30,12 +30,27 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
     }
 
     @Override
+    public void onEntityDeath(@NotNull EntityDeathEvent event) {
+    }
+
+    @Override
     public @NotNull RunRaceType getMinigameType() {
         return MinigameTypes.RUN_RACE;
     }
 
     @Override
-    public void onEntityDeath(@NotNull EntityDeathEvent event) {
+    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new RunRaceWinFirstEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new RunRaceWinSecondEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new RunRaceWinThirdEvent(team, lineCutter, winners));
     }
 
     @Override
@@ -61,20 +76,5 @@ public class RunRaceGame extends ARaceGame<ARaceTeam<RunRaceGame>, RunRaceOption
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.RUNRACE_VICTORY_THIRD;
-    }
-
-    @Override
-    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new RunRaceWinFirstEvent(team, lineCutter, winners));
-    }
-
-    @Override
-    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new RunRaceWinSecondEvent(team, lineCutter, winners));
-    }
-
-    @Override
-    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new RunRaceWinThirdEvent(team, lineCutter, winners));
     }
 }

@@ -9,6 +9,10 @@ public class DeathMatchStartEvent extends GameStartEvent<DeathMatchGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public DeathMatchStartEvent(@NotNull DeathMatchGame game) {
+        super(game);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -16,9 +20,5 @@ public class DeathMatchStartEvent extends GameStartEvent<DeathMatchGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public DeathMatchStartEvent(@NotNull DeathMatchGame game) {
-        super(game);
     }
 }

@@ -11,6 +11,8 @@ import java.util.*;
 @SerializableAs("EggWarsArena")
 public class EggWarsArena extends AbstractMColorSchemArena {
 
+    private final Map<DyeColor, LocationOffset3D> spawnLocations = new EnumMap<>(DyeColor.class);
+
     /*
      * teams:
      *   <color>: //at least 2
@@ -23,8 +25,6 @@ public class EggWarsArena extends AbstractMColorSchemArena {
         if (spawnLocations.size() < 2)
             throw new IllegalStateException("not enough teams");
     }
-
-    private final Map<DyeColor, LocationOffset3D> spawnLocations = new EnumMap<>(DyeColor.class);
 
     @NotNull
     @Override

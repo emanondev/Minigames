@@ -71,13 +71,13 @@ public class PlayerStat extends Stat<UUID> {
     }
 
     @Override
-    protected @NotNull YMLConfig getConfig() {
-        return conf;
+    protected @NotNull String getId(@NotNull UUID target) {
+        return target.toString();
     }
 
     @Override
-    protected @NotNull String getId(@NotNull UUID target) {
-        return target.toString();
+    protected @NotNull YMLConfig getConfig() {
+        return conf;
     }
 
     public void add(@NotNull OfflinePlayer target, int amount) {

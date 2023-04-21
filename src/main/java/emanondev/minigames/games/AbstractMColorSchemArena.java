@@ -37,32 +37,6 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
     private int minDurationEstimation;
     private int maxDurationEstimation;
 
-    @Override
-    public int getMinDurationEstimation() {
-        return minDurationEstimation;
-    }
-
-    @Override
-    public void setMinDurationEstimation(int minDurationEstimation) {
-        this.minDurationEstimation = Math.max(0, minDurationEstimation);
-        if (this.minDurationEstimation >= this.maxDurationEstimation)
-            this.maxDurationEstimation = this.minDurationEstimation + 1;
-        ArenaManager.get().save(this);
-    }
-
-    @Override
-    public int getMaxDurationEstimation() {
-        return maxDurationEstimation;
-    }
-
-    @Override
-    public void setMaxDurationEstimation(int maxDurationEstimation) {
-        this.maxDurationEstimation = Math.max(1, maxDurationEstimation);
-        if (this.minDurationEstimation >= this.maxDurationEstimation)
-            this.minDurationEstimation = this.maxDurationEstimation - 1;
-        ArenaManager.get().save(this);
-    }
-
     /*
      * schematic: (name)
      * spectatorSpawnOffset: (location)
@@ -96,7 +70,6 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         return future;
     }
 
-
     public @NotNull BlockVector getSize() {
         if (size != null)
             return size.clone();
@@ -118,6 +91,16 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         return clip;
     }
 
+    @Override
+    public @NotNull File getSchematicFile() {
+        return new File(ArenaManager.get().getSchematicsFolder(), schematicName);
+    }
+
+    @Override
+    public void invalidateCache() {
+        schematicCache = null;
+    }
+
     private CompletableFuture<Clipboard> getSchematicAsync() {
         Clipboard clip = schematicCache == null ? null : schematicCache.get();
         if (clip != null)
@@ -128,11 +111,6 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         CompletableFuture<Clipboard> future = WorldEditUtility.load(file, Minigames.get(), true);
         future.whenComplete((val, th) -> schematicCache = new SoftReference<>(val));
         return future;
-    }
-
-    @Override
-    public @NotNull File getSchematicFile() {
-        return new File(ArenaManager.get().getSchematicsFolder(), schematicName);
     }
 
     @NotNull
@@ -164,7 +142,6 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         ArenaManager.get().save(this);
     }
 
-
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
         PagedMapGui gui = new PagedMapGui(
@@ -193,7 +170,28 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
     }
 
     @Override
-    public void invalidateCache() {
-        schematicCache = null;
+    public int getMinDurationEstimation() {
+        return minDurationEstimation;
+    }
+
+    @Override
+    public void setMinDurationEstimation(int minDurationEstimation) {
+        this.minDurationEstimation = Math.max(0, minDurationEstimation);
+        if (this.minDurationEstimation >= this.maxDurationEstimation)
+            this.maxDurationEstimation = this.minDurationEstimation + 1;
+        ArenaManager.get().save(this);
+    }
+
+    @Override
+    public int getMaxDurationEstimation() {
+        return maxDurationEstimation;
+    }
+
+    @Override
+    public void setMaxDurationEstimation(int maxDurationEstimation) {
+        this.maxDurationEstimation = Math.max(1, maxDurationEstimation);
+        if (this.minDurationEstimation >= this.maxDurationEstimation)
+            this.minDurationEstimation = this.maxDurationEstimation - 1;
+        ArenaManager.get().save(this);
     }
 }

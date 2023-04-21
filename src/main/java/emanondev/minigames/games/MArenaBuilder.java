@@ -28,6 +28,8 @@ import java.util.UUID;
 
 public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked {
 
+    private static final int RATEO = 5;
+    private static final int RADIUS = 100;
     private final UUID builder;
     private final BukkitTask timerRunnable;
     private final String id;
@@ -35,14 +37,6 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
     private final String label;
     private final CorePlugin plugin;
     private int phase = 1;
-
-    public @NotNull String getLabel() {
-        return label;
-    }
-
-    public @NotNull CorePlugin getPlugin() {
-        return plugin;
-    }
 
     public MArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label, @NotNull CorePlugin plugin) {
         this.builder = user;
@@ -61,9 +55,15 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
         setPhaseRaw(1);
     }
 
-    protected int getPhase() {
-        return phase;
+    public @Nullable Player getBuilder() {
+        return Bukkit.getPlayer(builder);
     }
+
+    /**
+     * Timer Runnable call
+     * Note: this funcion is called 4 times each second (every 5 game ticks)
+     */
+    public abstract void onTimerCall(/*int timerTick*/);
 
     protected void setPhaseRaw(int phase) {
         this.phase = phase;
@@ -76,7 +76,23 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
         }
     }
 
+    public abstract @NotNull DMessage getCurrentBossBarMessage();
+
     protected abstract void onPhaseStart();
+
+    public abstract @NotNull DMessage getRepeatedMessage();
+
+    public @NotNull String getLabel() {
+        return label;
+    }
+
+    public @NotNull CorePlugin getPlugin() {
+        return plugin;
+    }
+
+    protected int getPhase() {
+        return phase;
+    }
 
     public @NotNull String getId() {
         return id;
@@ -86,10 +102,6 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
         return builder;
     }
 
-    public @Nullable Player getBuilder() {
-        return Bukkit.getPlayer(builder);
-    }
-
     public boolean isBuilder(@NotNull OfflinePlayer player) {
         return isBuilder(player.getUniqueId());
     }
@@ -97,10 +109,6 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
     public boolean isBuilder(@NotNull UUID uuid) {
         return builder.equals(uuid);
     }
-
-    public abstract @NotNull DMessage getCurrentBossBarMessage();
-
-    public abstract @NotNull DMessage getRepeatedMessage();
 
     public abstract void handleCommand(Player sender, String label, @NotNull String[] args);
 
@@ -113,29 +121,17 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
 
     public abstract MArena build();
 
-    /**
-     * Timer Runnable call
-     * Note: this funcion is called 4 times each second (every 5 game ticks)
-     */
-    public abstract void onTimerCall(/*int timerTick*/);
-
-
     protected void spawnParticle(Player p, Particle particle, double x, double y, double z) {
         spawnParticle(p, particle, x, y, z, 1, null);
-    }
-
-    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, int count) {
-        spawnParticle(p, particle, x, y, z, count, null);
-    }
-
-    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, Object data) {
-        spawnParticle(p, particle, x, y, z, 0, data);
     }
 
     protected void spawnParticle(Player p, Particle particle, double x, double y, double z, int count, Object data) {
         p.spawnParticle(particle, x, y, z, count, 0, 0, 0, 0, data);
     }
 
+    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, int count) {
+        spawnParticle(p, particle, x, y, z, count, null);
+    }
 
     protected void spawnParticleCircle(Player p, Particle particle, double x, double y, double z, double radius, boolean rotateHalf) {
         spawnParticleCircle(p, particle, x, y, z, radius, rotateHalf, null);
@@ -156,36 +152,8 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
         spawnParticleBoxEdges(p, particle, box, null);
     }
 
-
-    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box) {
-        spawnParticleBoxFaces(p, tick, particle, box, null);
-    }
-
-    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle) {
-        return spawnParticleWorldEditRegionEdges(p, particle, null);
-    }
-
-
     protected void spawnParticleBoxEdges(Player p, Particle particle, BoundingBox box, Object data) {
         markEdges(p, particle, box.getMin(), box.getMax().add(new Vector(-1, -1, -1)), data);
-    }
-
-
-    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box, Object data) {
-        markFaces(p, tick, particle, box.getMin(), box.getMax().add(new Vector(-1, -1, -1)), data);
-    }
-
-    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle, Object data) {
-        try {
-            Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
-                    .getSelection(BukkitAdapter.adapt(p.getWorld()));
-            markEdges(p, particle, new Vector(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                    sel.getMinimumPoint().getZ()), new Vector(sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                    sel.getMaximumPoint().getZ()), data);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
     }
 
     private void markEdges(Player p, Particle particle, Vector min, Vector max, Object data) {
@@ -212,8 +180,13 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
         }
     }
 
-    private static final int RATEO = 5;
-    private static final int RADIUS = 100;
+    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box) {
+        spawnParticleBoxFaces(p, tick, particle, box, null);
+    }
+
+    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box, Object data) {
+        markFaces(p, tick, particle, box.getMin(), box.getMax().add(new Vector(-1, -1, -1)), data);
+    }
 
     private void markFaces(Player p, int val, Particle particle, Vector min, Vector max, Object data) {
         Location l = p.getLocation();
@@ -240,5 +213,26 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
                 if (Math.abs(max.getBlockX() + 1 + y + z) % RATEO == val % RATEO)
                     spawnParticle(p, particle, max.getBlockX() + 1, y, z, data);
             }
+    }
+
+    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, Object data) {
+        spawnParticle(p, particle, x, y, z, 0, data);
+    }
+
+    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle) {
+        return spawnParticleWorldEditRegionEdges(p, particle, null);
+    }
+
+    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle, Object data) {
+        try {
+            Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
+                    .getSelection(BukkitAdapter.adapt(p.getWorld()));
+            markEdges(p, particle, new Vector(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
+                    sel.getMinimumPoint().getZ()), new Vector(sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
+                    sel.getMaximumPoint().getZ()), data);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }

@@ -12,16 +12,6 @@ import java.util.Set;
 public class ARaceWinEvent<G extends ARaceGame> extends GameEvent<G> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-
-    public static @NotNull HandlerList getHandlerList() {
-        return HANDLERS_LIST;
-    }
-
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return HANDLERS_LIST;
-    }
-
     private final Player lineCutter;
     private final Set<Player> winners;
 
@@ -31,6 +21,15 @@ public class ARaceWinEvent<G extends ARaceGame> extends GameEvent<G> {
         if (!winners.contains(lineCutter))
             throw new IllegalArgumentException("winner doesn't contain linecutter");
         this.winners = Collections.unmodifiableSet(winners);
+    }
+
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLERS_LIST;
+    }
+
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return HANDLERS_LIST;
     }
 
     public Player getLineCutter() {

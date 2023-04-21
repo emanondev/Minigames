@@ -11,15 +11,14 @@ public class OptionManager extends Manager<MOption> {
 
     private static OptionManager instance;
 
-    public static OptionManager get() {
-        return instance;
-    }
-
     public OptionManager() {
         super("options");
         instance = this;
     }
 
+    public static OptionManager get() {
+        return instance;
+    }
 
     public <O extends MOption> @NotNull Map<String, O> getCompatibles(@NotNull MType<?, O> type) {
         HashMap<String, O> map = new HashMap<>();

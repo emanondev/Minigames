@@ -27,6 +27,8 @@ import java.util.*;
 
 public class MiniDropGroupCommand extends CoreCommand {
 
+    private static final int DEFAULT_WEIGHT = 10;
+
     public MiniDropGroupCommand() {
         super("minidropgroup", Minigames.get(), Perms.COMMAND_MINIDROPGROUP, "Edit drop groups");
     }
@@ -57,27 +59,8 @@ public class MiniDropGroupCommand extends CoreCommand {
         }
     }
 
-    private static final int DEFAULT_WEIGHT = 10;
-
     private void help(CommandSender sender, String label, String[] args) {
         sendDMessage(sender, "minidropgroup.help", "%alias%", label);
-    }
-
-    private void delete(CommandSender sender, String label, String[] args) {
-        if (args.length <= 1) {
-            sendDMessage(sender, "minidropgroup.error.delete_params", "%alias%", label);
-            return;
-        }
-        String id = args[1].toLowerCase(Locale.ENGLISH);
-        DropGroup group = DropGroupManager.get().get(id);
-        if (group == null) {
-            sendDMessage(sender, "minidropgroup.error.id_not_found", "%id%", id, "%alias%", label);
-            return;
-        }
-        //TODO is used?
-        DropGroupManager.get().delete(group);
-        sendDMessage(sender, "minidropgroup.success.delete", "%id%", id, "%alias%", label);
-
     }
 
     private void create(CommandSender sender, String label, String[] args) {
@@ -209,6 +192,23 @@ public class MiniDropGroupCommand extends CoreCommand {
         sendDMessage(player, "minidropgroup.success.addchest", "%alias%", label, "%weight%", String.valueOf(weight), "%items%", String.valueOf(items.size()), "%id%", id);
     }
 
+    private void gui(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 1) {
+            sendDMessage(player, "minidropgroup.error.gui_params", "%alias%", label);
+            return;
+        }
+        DropGroup group = DropGroupManager.get().get(args[1]);
+        if (group == null) {
+            sendDMessage(player, "minidropgroup.error.id_not_found", "%alias%", label, "%id%", args[1]);
+            return;
+        }
+        group.getEditorGui(player).open(player);
+    }
+
     private void list(CommandSender sender, String label, String[] args) {
         DMessage msg = new DMessage(getPlugin(), sender).appendLang("minidropgroup.success.list_prefix").newLine();
         boolean color = true;
@@ -226,21 +226,21 @@ public class MiniDropGroupCommand extends CoreCommand {
         msg.send();
     }
 
-    private void gui(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            this.playerOnlyNotify(sender);
-            return;
-        }
+    private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
-            sendDMessage(player, "minidropgroup.error.gui_params", "%alias%", label);
+            sendDMessage(sender, "minidropgroup.error.delete_params", "%alias%", label);
             return;
         }
-        DropGroup group = DropGroupManager.get().get(args[1]);
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        DropGroup group = DropGroupManager.get().get(id);
         if (group == null) {
-            sendDMessage(player, "minidropgroup.error.id_not_found", "%alias%", label, "%id%", args[1]);
+            sendDMessage(sender, "minidropgroup.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
-        group.getEditorGui(player).open(player);
+        //TODO is used?
+        DropGroupManager.get().delete(group);
+        sendDMessage(sender, "minidropgroup.success.delete", "%id%", id, "%alias%", label);
+
     }
 
     @Override

@@ -38,19 +38,6 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
     }
 
     @NotNull
-    @Override
-    public Map<String, Object> serialize() {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        List<ItemStack> items = drops.getItems();
-        for (int i = 0; i < items.size(); i++) {
-            String key = String.valueOf(drops.getWeights().get(i));
-            map.putIfAbsent(key, new ArrayList<String>());
-            ((ArrayList<String>) map.get(key)).add(GsonUtil.toJson(items.get(i)));
-        }
-        return map;
-    }
-
-    @NotNull
     public static DropGroup deserialize(Map<String, Object> map) {
         RandomItemContainer<ItemStack> drops = new RandomItemContainer<>();
         for (String key : map.keySet()) {
@@ -67,20 +54,23 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
         return new DropGroup(drops);
     }
 
-    public void addWeight(@NotNull ItemStack stack, int weight) {
-        drops.addItem(stack, weight);
-        DropGroupManager.get().save(this);
-    }
-
-    public int getWeight(@NotNull ItemStack stack) {
-        return drops.getWeight(stack);
+    @NotNull
+    @Override
+    public Map<String, Object> serialize() {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        List<ItemStack> items = drops.getItems();
+        for (int i = 0; i < items.size(); i++) {
+            String key = String.valueOf(drops.getWeights().get(i));
+            map.putIfAbsent(key, new ArrayList<String>());
+            ((ArrayList<String>) map.get(key)).add(GsonUtil.toJson(items.get(i)));
+        }
+        return map;
     }
 
     public void remove(@NotNull ItemStack stack) {
         drops.deleteItem(stack);
         DropGroupManager.get().save(this);
     }
-
 
     public String[] getPlaceholders() {
         return new String[]{
@@ -109,6 +99,15 @@ public class DropGroup extends ARegistrable implements ConfigurationSerializable
                 .setDescription(new DMessage(Minigames.get(), player).appendLang("minidropgroup.gui.info", "%id%", getId())).build(),
                 (e) -> false));
         return gui;
+    }
+
+    public int getWeight(@NotNull ItemStack stack) {
+        return drops.getWeight(stack);
+    }
+
+    public void addWeight(@NotNull ItemStack stack, int weight) {
+        drops.addItem(stack, weight);
+        DropGroupManager.get().save(this);
     }
 
     public ItemStack getDrop() {

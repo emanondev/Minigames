@@ -94,6 +94,12 @@ public final class Minigames extends CorePlugin {
         this.registerCommand(new LeaveCommand());
     }
 
+    @Override
+    public void load() {
+        instance = this;
+        registerConfigurationSerializables();
+    }
+
     private void registerConfigurationSerializables() {
         ConfigurationSerialization.registerClass(BlockLocation2D.class);
         ConfigurationSerialization.registerClass(BlockLocation3D.class);
@@ -102,11 +108,5 @@ public final class Minigames extends CorePlugin {
         ConfigurationSerialization.registerClass(Kit.class);
         ConfigurationSerialization.registerClass(DropGroup.class);
         ConfigurationSerialization.registerClass(DropsFiller.class);
-    }
-
-    @Override
-    public void load() {
-        instance = this;
-        registerConfigurationSerializables();
     }
 }

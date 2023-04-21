@@ -17,18 +17,9 @@ import java.util.Map;
 public class Manager<T extends Registrable> {
 
     private final String subFolder;
-
-    public @NotNull File getFolder() {
-        return new File(Minigames.get().getDataFolder(), subFolder);
-    }
-
-    public @NotNull YMLConfig getConfig(String fileName) {
-        return Minigames.get().getConfig(subFolder + File.separator + fileName);
-    }
-
-
     private final HashMap<String, T> registrables = new HashMap<>();
     private final HashMap<String, YMLConfig> registrablesFile = new HashMap<>();
+
 
     public Manager(@NotNull String subFolder) {
         this.subFolder = subFolder;
@@ -56,19 +47,12 @@ public class Manager<T extends Registrable> {
         }
     }
 
-    public @Nullable T get(@NotNull String id) {
-        return registrables.get(id.toLowerCase(Locale.ENGLISH));
+    public @NotNull File getFolder() {
+        return new File(Minigames.get().getDataFolder(), subFolder);
     }
 
-
-    public @NotNull Map<String, T> getAll() {
-        return Collections.unmodifiableMap(registrables);
-    }
-
-
-    public void register(@NotNull String id, @NotNull T registrable, @NotNull OfflinePlayer player) {
-        register(id, registrable, getConfig(player.getName()));
-        save(registrable);
+    public @NotNull YMLConfig getConfig(String fileName) {
+        return Minigames.get().getConfig(subFolder + File.separator + fileName);
     }
 
     public void register(@NotNull String id, @NotNull T registrable, @NotNull YMLConfig config) {
@@ -80,6 +64,19 @@ public class Manager<T extends Registrable> {
         registrables.put(registrable.getId(), registrable);
         registrablesFile.put(registrable.getId(), config);
         Minigames.get().logTetraStar(ChatColor.DARK_RED, "D Registered " + registrable.getClass().getSimpleName() + " &e" + id);
+    }
+
+    public @Nullable T get(@NotNull String id) {
+        return registrables.get(id.toLowerCase(Locale.ENGLISH));
+    }
+
+    public @NotNull Map<String, T> getAll() {
+        return Collections.unmodifiableMap(registrables);
+    }
+
+    public void register(@NotNull String id, @NotNull T registrable, @NotNull OfflinePlayer player) {
+        register(id, registrable, getConfig(player.getName()));
+        save(registrable);
     }
 
     public void save(@NotNull T registrable) {

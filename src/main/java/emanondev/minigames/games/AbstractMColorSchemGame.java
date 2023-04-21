@@ -22,6 +22,9 @@ import java.util.concurrent.CompletableFuture;
 public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends MSchemArena & MColorableTeamArena, O extends MOption>
         extends AbstractMGame<T, A, O> implements MSchemGame<T, A, O> {
 
+    private static final double MARGIN_WORLD_BORDER_RESTRICTION = 0.25;
+    private static final int SEE_WORLD_BORDER_DISTANCE = 6;
+    private static final int CLEAR_MARGIN = 128;
     private final boolean isSquared; // count as squared even if the area is pretty small
     private final List<WorldBorder> borders = new ArrayList<>();
     private final List<BoundingBox> cacheArea = new ArrayList<>();
@@ -29,59 +32,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     private final BoundingBox hiddenBorderArea;
     private final Map<DyeColor, T> teams = new LinkedHashMap<>();
     private final HashSet<Chunk> clearedEntitiesBefore = new HashSet<>();
-
     private BoundingBox boxCache;
-
-    private static final double MARGIN_WORLD_BORDER_RESTRICTION = 0.25;
-    private static final int SEE_WORLD_BORDER_DISTANCE = 6;
-    private static final int CLEAR_MARGIN = 128;
-
-    private int getClosestBorder(Vector loc) {
-        BoundingBox box = getBoundingBox();
-        double d0 = loc.distanceSquared(new Vector(box.getMinX(), loc.getY(), box.getMinZ()));
-        double d1 = loc.distanceSquared(new Vector(box.getMinX(), loc.getY(), box.getMaxZ()));
-        double d2 = loc.distanceSquared(new Vector(box.getMaxX(), loc.getY(), box.getMinZ()));
-        double d3 = loc.distanceSquared(new Vector(box.getMaxX(), loc.getY(), box.getMaxZ()));
-        if (d0 < d1 && d0 < d2 && d0 < d3)
-            return 0;
-        if (d1 < d2 && d1 < d3)
-            return 1;
-        if (d2 < d3)
-            return 2;
-        return 3;
-    }
-
-    private void sendUpdateBorder(Player player) {
-        if (!getOption().getShowArenaBorders())
-            return;
-        Integer id = bordersId.get(player);
-        if (hiddenBorderArea.contains(player.getLocation().toVector()))
-            if (id == null)
-                return;
-            else {
-                player.setWorldBorder(null);
-                bordersId.remove(player);
-                return;
-            }
-        if (id == null) {
-            if (isSquared) {
-                bordersId.put(player, 0);
-                player.setWorldBorder(borders.get(0));
-                return;
-            }
-            int closest = getClosestBorder(player.getLocation().toVector());
-            bordersId.put(player, closest);
-            player.setWorldBorder(borders.get(closest));
-            return;
-        }
-        if (isSquared)
-            return;
-        int closest = getClosestBorder(player.getLocation().toVector());
-        if (cacheArea.get(closest).contains(player.getLocation().toVector()))
-            return;
-        bordersId.put(player, closest);
-        player.setWorldBorder(borders.get(closest));
-    }
 
     public AbstractMColorSchemGame(@NotNull Map<String, Object> map) {
         super(map);
@@ -121,6 +72,19 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         }
         hiddenBorderArea = box.clone().expand(-SEE_WORLD_BORDER_DISTANCE, 999, -SEE_WORLD_BORDER_DISTANCE);
 
+    }
+
+    protected abstract @NotNull T craftTeam(@NotNull DyeColor color);
+
+    @NotNull
+    @Contract("-> new")
+    public BoundingBox getBoundingBox() {
+        if (boxCache == null) {
+            BlockVector dim = getArena().getSize();
+            boxCache = new BoundingBox(getGameLocation().x, getGameLocation().y, getGameLocation().z,
+                    getGameLocation().x + dim.getBlockX(), getGameLocation().y + dim.getBlockY(), getGameLocation().z + dim.getBlockZ());
+        }
+        return boxCache.clone();
     }
 
     @Override
@@ -215,7 +179,95 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         return future;
     }
 
-    protected abstract @NotNull T craftTeam(@NotNull DyeColor color);
+    @Override
+    public void gameAbort() {
+        switch (getPhase()) {
+            case PRE_START, PLAYING, END -> {
+                for (Player player : getGamers())
+                    player.setWorldBorder(null);
+                for (Player player : getSpectators())
+                    player.setWorldBorder(null);
+            }
+        }
+        teams.values().forEach(ColoredTeam::clear);
+        super.gameAbort();
+    }
+
+    public void onGamerAdded(@NotNull Player player) {
+        super.onGamerAdded(player);
+        sendUpdateBorder(player); //unrequired maybe
+    }
+
+    @Override
+    public void onSpectatorRemoved(@NotNull Player player) {
+        player.setWorldBorder(null);
+        super.onSpectatorRemoved(player);
+    }
+
+    @Override
+    public void onGamerRemoved(@NotNull Player player) {
+        player.setWorldBorder(null);
+        super.onGamerRemoved(player);
+    }
+
+    @Override
+    public void onSpectatorAdded(@NotNull Player player) {
+        super.onSpectatorAdded(player);
+        //TODO may work differently player.teleport(getArena().getSpectatorsOffset().add(getGameLocation()));
+        sendUpdateBorder(player);
+    }
+
+    public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
+        super.onGamerMoveInsideArena(event);
+        sendUpdateBorder(event.getPlayer());
+    }
+
+    private void sendUpdateBorder(Player player) {
+        if (!getOption().getShowArenaBorders())
+            return;
+        Integer id = bordersId.get(player);
+        if (hiddenBorderArea.contains(player.getLocation().toVector()))
+            if (id == null)
+                return;
+            else {
+                player.setWorldBorder(null);
+                bordersId.remove(player);
+                return;
+            }
+        if (id == null) {
+            if (isSquared) {
+                bordersId.put(player, 0);
+                player.setWorldBorder(borders.get(0));
+                return;
+            }
+            int closest = getClosestBorder(player.getLocation().toVector());
+            bordersId.put(player, closest);
+            player.setWorldBorder(borders.get(closest));
+            return;
+        }
+        if (isSquared)
+            return;
+        int closest = getClosestBorder(player.getLocation().toVector());
+        if (cacheArea.get(closest).contains(player.getLocation().toVector()))
+            return;
+        bordersId.put(player, closest);
+        player.setWorldBorder(borders.get(closest));
+    }
+
+    private int getClosestBorder(Vector loc) {
+        BoundingBox box = getBoundingBox();
+        double d0 = loc.distanceSquared(new Vector(box.getMinX(), loc.getY(), box.getMinZ()));
+        double d1 = loc.distanceSquared(new Vector(box.getMinX(), loc.getY(), box.getMaxZ()));
+        double d2 = loc.distanceSquared(new Vector(box.getMaxX(), loc.getY(), box.getMinZ()));
+        double d3 = loc.distanceSquared(new Vector(box.getMaxX(), loc.getY(), box.getMaxZ()));
+        if (d0 < d1 && d0 < d2 && d0 < d3)
+            return 0;
+        if (d1 < d2 && d1 < d3)
+            return 1;
+        if (d2 < d3)
+            return 2;
+        return 3;
+    }
 
     @Override
     public @Nullable T getTeam(@NotNull UUID player) {
@@ -226,67 +278,10 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         return null;
     }
 
-    @NotNull
-    @Contract("-> new")
-    public BoundingBox getBoundingBox() {
-        if (boxCache == null) {
-            BlockVector dim = getArena().getSize();
-            boxCache = new BoundingBox(getGameLocation().x, getGameLocation().y, getGameLocation().z,
-                    getGameLocation().x + dim.getBlockX(), getGameLocation().y + dim.getBlockY(), getGameLocation().z + dim.getBlockZ());
-        }
-        return boxCache.clone();
-    }
-
-    @Override
-    public boolean containsLocation(@NotNull Location loc) {
-        return Objects.equals(loc.getWorld(), this.getWorld()) && (boxCache == null ? getBoundingBox().contains(loc.toVector()) : boxCache.contains(loc.toVector()));
-    }
-
     @Override
     public @NotNull Collection<T> getTeams() {
         return Collections.unmodifiableCollection(teams.values());
     }
-
-    public void onGamerMoveOutsideArena(@NotNull PlayerMoveEvent event) {
-        if (event.getTo().getY() < (boxCache == null ? getBoundingBox().getMinY() : boxCache.getMinY()))
-            onGamerFallOutsideArena(event);
-        else {
-            Location to = event.getFrom().clone();
-            to.setY(event.getTo().getY());
-            event.setTo(to);
-        }
-    }
-
-
-    public void onGamerTeleport(@NotNull PlayerTeleportEvent event) {
-        if (!Objects.equals(event.getTo().getWorld(), event.getFrom().getWorld())) {
-            onFakeGamerDeath(event.getPlayer(), null, false);
-            return; //teleported away by something ?
-        }
-        if (!containsLocation(event.getTo()))
-            event.setCancelled(true);
-    }
-
-    public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
-        super.onGamerMoveInsideArena(event);
-        sendUpdateBorder(event.getPlayer());
-    }
-
-    @Override
-    public void onSpectatorMove(@NotNull PlayerMoveEvent event) {
-        if (event.getTo().getZ() > getBoundingBox().getMaxZ() || event.getTo().getZ() < getBoundingBox().getMinZ()
-                || event.getTo().getX() > getBoundingBox().getMaxX() || event.getTo().getX() < getBoundingBox().getMinX())
-            event.setCancelled(true);
-        else
-            sendUpdateBorder(event.getPlayer());
-    }
-
-    public void onGamerAdded(@NotNull Player player) {
-        super.onGamerAdded(player);
-        sendUpdateBorder(player); //unrequired maybe
-    }
-
-    protected abstract void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event);
 
     public void teleportResetLocation(@NotNull Player player) {
         MessageUtil.debug("resetting location " + player.getName() + " " + getPhase().name());
@@ -303,36 +298,36 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
     }
 
     @Override
-    public void onSpectatorAdded(@NotNull Player player) {
-        super.onSpectatorAdded(player);
-        //TODO may work differently player.teleport(getArena().getSpectatorsOffset().add(getGameLocation()));
-        sendUpdateBorder(player);
+    public boolean containsLocation(@NotNull Location loc) {
+        return Objects.equals(loc.getWorld(), this.getWorld()) && (boxCache == null ? getBoundingBox().contains(loc.toVector()) : boxCache.contains(loc.toVector()));
     }
 
-    @Override
-    public void onSpectatorRemoved(@NotNull Player player) {
-        player.setWorldBorder(null);
-        super.onSpectatorRemoved(player);
-    }
-
-    @Override
-    public void onGamerRemoved(@NotNull Player player) {
-        player.setWorldBorder(null);
-        super.onGamerRemoved(player);
-    }
-
-    @Override
-    public void gameAbort() {
-        switch (getPhase()) {
-            case PRE_START, PLAYING, END -> {
-                for (Player player : getGamers())
-                    player.setWorldBorder(null);
-                for (Player player : getSpectators())
-                    player.setWorldBorder(null);
-            }
+    public void onGamerTeleport(@NotNull PlayerTeleportEvent event) {
+        if (!Objects.equals(event.getTo().getWorld(), event.getFrom().getWorld())) {
+            onFakeGamerDeath(event.getPlayer(), null, false);
+            return; //teleported away by something ?
         }
-        teams.values().forEach(ColoredTeam::clear);
-        super.gameAbort();
+        if (!containsLocation(event.getTo()))
+            event.setCancelled(true);
+    }
+
+    public void onGamerMoveOutsideArena(@NotNull PlayerMoveEvent event) {
+        if (event.getTo().getY() < (boxCache == null ? getBoundingBox().getMinY() : boxCache.getMinY()))
+            onGamerFallOutsideArena(event);
+        else {
+            Location to = event.getFrom().clone();
+            to.setY(event.getTo().getY());
+            event.setTo(to);
+        }
+    }
+
+    @Override
+    public void onSpectatorMove(@NotNull PlayerMoveEvent event) {
+        if (event.getTo().getZ() > getBoundingBox().getMaxZ() || event.getTo().getZ() < getBoundingBox().getMinZ()
+                || event.getTo().getX() > getBoundingBox().getMaxX() || event.getTo().getX() < getBoundingBox().getMinX())
+            event.setCancelled(true);
+        else
+            sendUpdateBorder(event.getPlayer());
     }
 
     public boolean overlaps(@NotNull Chunk chunk) {
@@ -350,4 +345,6 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             clearedEntitiesBefore.add(chunk);
         }
     }
+
+    protected abstract void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event);
 }

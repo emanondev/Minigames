@@ -63,27 +63,40 @@ public class MiniKitCommand extends CoreCommand {
         };
     }
 
+    private void help(CommandSender sender, String label, String[] args) {
+        sendDMessage(sender, "minikit.help", "%alias%", label);
+    }
 
-    private void gui(CommandSender sender, String label, String[] args) {
+    private void create(CommandSender sender, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
         if (args.length <= 1) {
-            sendDMessage(player, "minikit.error.gui_params", "%alias%", label);
+            sendDMessage(player, "minikit.error.create_params", "%alias%", label);
             return;
         }
-        Kit group = KitManager.get().get(args[1]);
-        if (group == null) {
-            sendDMessage(player, "minikit.error.id_not_found", "%alias%", label, "%id%", args[1]);
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        Kit group = KitManager.get().get(id);
+        if (group != null) {
+            sendDMessage(player, "minikit.error.id_already_used", "%id%", id, "%alias%", label);
             return;
         }
-        group.getEditorGui(player).open(player);
+        try {
+            KitManager.get().register(args[1].toLowerCase(Locale.ENGLISH), Kit.fromPlayer(player), player);
+            sendDMessage(player, "minikit.success.create", "%id%", id, "%alias%", label);
+        } catch (IllegalArgumentException e) {
+            sendDMessage(player, "minikit.error.invalid_id", "%id%", id, "%alias%", label);
+        }
     }
 
-    private void price(CommandSender sender, String label, String[] args) {
-        if (args.length != 3) {
-            sendDMessage(sender, "minikit.error.price_params", "%alias%", label);
+    private void update(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 1) {
+            sendDMessage(sender, "minikit.error.update_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
@@ -92,13 +105,9 @@ public class MiniKitCommand extends CoreCommand {
             sendDMessage(sender, "minikit.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
-        Integer price = this.readInt(args[2]);
-        if (price == null || price < 0) {
-            sendDMessage(sender, "minikit.error.invalid_price", "%price%", args[2], "%alias%", label);
-            return;
-        }
-        kit.setPrice(price);
-        sendDMessage(sender, "minikit.success.price", "%id%", id, "%alias%", label);
+        kit.updateSnapshot(player);
+        sendDMessage(sender, "minikit.success.update", "%id%", id, "%alias%", label);
+
     }
 
     private void apply(CommandSender sender, String label, String[] args) {
@@ -125,13 +134,9 @@ public class MiniKitCommand extends CoreCommand {
         sendDMessage(sender, "minikit.success.apply", "%id%", id, "%alias%", label);
     }
 
-    private void update(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            this.playerOnlyNotify(sender);
-            return;
-        }
-        if (args.length <= 1) {
-            sendDMessage(sender, "minikit.error.update_params", "%alias%", label);
+    private void price(CommandSender sender, String label, String[] args) {
+        if (args.length != 3) {
+            sendDMessage(sender, "minikit.error.price_params", "%alias%", label);
             return;
         }
         String id = args[1].toLowerCase(Locale.ENGLISH);
@@ -140,52 +145,30 @@ public class MiniKitCommand extends CoreCommand {
             sendDMessage(sender, "minikit.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
-        kit.updateSnapshot(player);
-        sendDMessage(sender, "minikit.success.update", "%id%", id, "%alias%", label);
-
-    }
-
-    private void help(CommandSender sender, String label, String[] args) {
-        sendDMessage(sender, "minikit.help", "%alias%", label);
-    }
-
-    private void delete(CommandSender sender, String label, String[] args) {
-        if (args.length <= 1) {
-            sendDMessage(sender, "minikit.error.delete_params", "%alias%", label);
+        Integer price = this.readInt(args[2]);
+        if (price == null || price < 0) {
+            sendDMessage(sender, "minikit.error.invalid_price", "%price%", args[2], "%alias%", label);
             return;
         }
-        String id = args[1].toLowerCase(Locale.ENGLISH);
-        Kit kit = KitManager.get().get(id);
-        if (kit == null) {
-            sendDMessage(sender, "minikit.error.id_not_found", "%id%", id, "%alias%", label);
-            return;
-        }
-        //TODO is used?
-        KitManager.get().delete(kit);
-        sendDMessage(sender, "minikit.success.delete", "%id%", id, "%alias%", label);
+        kit.setPrice(price);
+        sendDMessage(sender, "minikit.success.price", "%id%", id, "%alias%", label);
     }
 
-    private void create(CommandSender sender, String label, String[] args) {
+    private void gui(CommandSender sender, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
         if (args.length <= 1) {
-            sendDMessage(player, "minikit.error.create_params", "%alias%", label);
+            sendDMessage(player, "minikit.error.gui_params", "%alias%", label);
             return;
         }
-        String id = args[1].toLowerCase(Locale.ENGLISH);
-        Kit group = KitManager.get().get(id);
-        if (group != null) {
-            sendDMessage(player, "minikit.error.id_already_used", "%id%", id, "%alias%", label);
+        Kit group = KitManager.get().get(args[1]);
+        if (group == null) {
+            sendDMessage(player, "minikit.error.id_not_found", "%alias%", label, "%id%", args[1]);
             return;
         }
-        try {
-            KitManager.get().register(args[1].toLowerCase(Locale.ENGLISH), Kit.fromPlayer(player), player);
-            sendDMessage(player, "minikit.success.create", "%id%", id, "%alias%", label);
-        } catch (IllegalArgumentException e) {
-            sendDMessage(player, "minikit.error.invalid_id", "%id%", id, "%alias%", label);
-        }
+        group.getEditorGui(player).open(player);
     }
 
     private void list(CommandSender sender, String label, String[] args) {
@@ -203,5 +186,21 @@ public class MiniKitCommand extends CoreCommand {
             color = !color;
         }
         msg.send();
+    }
+
+    private void delete(CommandSender sender, String label, String[] args) {
+        if (args.length <= 1) {
+            sendDMessage(sender, "minikit.error.delete_params", "%alias%", label);
+            return;
+        }
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        Kit kit = KitManager.get().get(id);
+        if (kit == null) {
+            sendDMessage(sender, "minikit.error.id_not_found", "%id%", id, "%alias%", label);
+            return;
+        }
+        //TODO is used?
+        KitManager.get().delete(kit);
+        sendDMessage(sender, "minikit.success.delete", "%id%", id, "%alias%", label);
     }
 }

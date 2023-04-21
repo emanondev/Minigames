@@ -9,6 +9,10 @@ public class RunRaceStartEvent extends GameStartEvent<RunRaceGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public RunRaceStartEvent(@NotNull RunRaceGame game) {
+        super(game);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -16,9 +20,5 @@ public class RunRaceStartEvent extends GameStartEvent<RunRaceGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public RunRaceStartEvent(@NotNull RunRaceGame game) {
-        super(game);
     }
 }

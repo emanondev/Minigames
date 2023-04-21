@@ -24,8 +24,32 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
     private final List<String> dropGroups = new ArrayList<>();
     private final List<Double> chances = new ArrayList<>();
 
+    public static DropsFiller deserialize(Map<String, Object> map) {
+        DropsFiller dropContainer = new DropsFiller();
+        if (map.containsKey("groups"))
+            dropContainer.dropGroups.addAll((Collection<? extends String>) map.get("groups"));
+        if (map.containsKey("chances"))
+            dropContainer.chances.addAll((Collection<? extends Double>) map.get("chances"));
+        if (dropContainer.dropGroups.size() != dropContainer.chances.size())
+            throw new IllegalArgumentException();
+        return dropContainer;
+    }
+
     public void fillInventory(@NotNull Inventory inv) {
         inv.addItem(getDrops().toArray(new ItemStack[0]));
+    }
+
+    public @NotNull List<ItemStack> getDrops() {
+        ArrayList<ItemStack> list = new ArrayList<>();
+        for (int i = 0; i < dropGroups.size(); i++) {
+            if (Math.random() > chances.get(i))
+                continue;
+            DropGroup group = DropGroupManager.get().get(dropGroups.get(i));
+            if (group == null)
+                continue;
+            list.add(group.getDrop());
+        }
+        return list;
     }
 
     public Gui getEditorGui(@NotNull Player player) {
@@ -61,23 +85,6 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
         return found;
     }
 
-    private class ResearchDropGroupButton extends ResearchFButton<DropGroup> {
-        public ResearchDropGroupButton(Gui gui) {
-            super(gui, () -> new ItemBuilder(Material.PAPER).setGuiProperty().setDescription(
-                            new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList("minidropsfiller.gui.add_group")).build()
-                    , (name, group) -> group.getId().toLowerCase(Locale.ENGLISH).contains(name.toLowerCase(Locale.ENGLISH)),
-                    (e, dropGroup) -> {
-                        addGroup(dropGroup, 1);
-                        gui.setButton(DropsFiller.this.getSize() - 1, getEditorButton(gui, DropsFiller.this.getSize() - 1));
-                        gui.addButton(new ResearchDropGroupButton(gui));
-                        gui.open(e.getWhoClicked());
-                        return false;
-                    }, (dropGroup) -> new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(
-                                    new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList("minidropsfiller.gui.group_selector", dropGroup.getPlaceholders()))
-                            .build(), () -> DropGroupManager.get().getAll().values());
-        }
-    }
-
     private GuiButton getEditorButton(Gui gui, int slot) {
         return new LongEditorFButton(gui, 10, 1, 100,
                 () -> getChancePercent(slot),
@@ -87,10 +94,6 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
                                 getGroup(slot).getPlaceholders(),
                                 "%chance%", String.valueOf(getChancePercent(slot))
                         ))).build());
-    }
-
-    public int getSize() {
-        return dropGroups.size();
     }
 
     public void addGroup(@NotNull DropGroup group, double chance) {
@@ -136,21 +139,12 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
         return DropGroupManager.get().get(dropGroups.get(slot));
     }
 
-    public @NotNull List<ItemStack> getDrops() {
-        ArrayList<ItemStack> list = new ArrayList<>();
-        for (int i = 0; i < dropGroups.size(); i++) {
-            if (Math.random() > chances.get(i))
-                continue;
-            DropGroup group = DropGroupManager.get().get(dropGroups.get(i));
-            if (group == null)
-                continue;
-            list.add(group.getDrop());
-        }
-        return list;
-    }
-
     public String[] getPlaceholders() {
         return new String[]{"%size%", String.valueOf(getSize()), "%id%", getId()};
+    }
+
+    public int getSize() {
+        return dropGroups.size();
     }
 
     @NotNull
@@ -161,15 +155,21 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
         return map;
     }
 
-    public static DropsFiller deserialize(Map<String, Object> map) {
-        DropsFiller dropContainer = new DropsFiller();
-        if (map.containsKey("groups"))
-            dropContainer.dropGroups.addAll((Collection<? extends String>) map.get("groups"));
-        if (map.containsKey("chances"))
-            dropContainer.chances.addAll((Collection<? extends Double>) map.get("chances"));
-        if (dropContainer.dropGroups.size() != dropContainer.chances.size())
-            throw new IllegalArgumentException();
-        return dropContainer;
+    private class ResearchDropGroupButton extends ResearchFButton<DropGroup> {
+        public ResearchDropGroupButton(Gui gui) {
+            super(gui, () -> new ItemBuilder(Material.PAPER).setGuiProperty().setDescription(
+                            new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList("minidropsfiller.gui.add_group")).build()
+                    , (name, group) -> group.getId().toLowerCase(Locale.ENGLISH).contains(name.toLowerCase(Locale.ENGLISH)),
+                    (e, dropGroup) -> {
+                        addGroup(dropGroup, 1);
+                        gui.setButton(DropsFiller.this.getSize() - 1, getEditorButton(gui, DropsFiller.this.getSize() - 1));
+                        gui.addButton(new ResearchDropGroupButton(gui));
+                        gui.open(e.getWhoClicked());
+                        return false;
+                    }, (dropGroup) -> new ItemBuilder(Material.CHEST).setGuiProperty().setDescription(
+                                    new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList("minidropsfiller.gui.group_selector", dropGroup.getPlaceholders()))
+                            .build(), () -> DropGroupManager.get().getAll().values());
+        }
     }
 
 }

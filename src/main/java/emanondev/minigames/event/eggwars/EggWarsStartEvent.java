@@ -9,6 +9,10 @@ public class EggWarsStartEvent extends GameStartEvent<EggWarsGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public EggWarsStartEvent(@NotNull EggWarsGame game) {
+        super(game);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -16,9 +20,5 @@ public class EggWarsStartEvent extends GameStartEvent<EggWarsGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public EggWarsStartEvent(@NotNull EggWarsGame game) {
-        super(game);
     }
 }

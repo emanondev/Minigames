@@ -44,10 +44,10 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     private static final int PHASE_FALLING_ZONES = 9;
 
     private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
-    private LocationOffset3D spectatorsOffset;
     private final List<BoundingBox> checkPoints = new ArrayList<>();
     private final List<LocationOffset3D> checkPointsRespawn = new ArrayList<>();
     private final List<BoundingBox> fallAreas = new ArrayList<>();
+    private LocationOffset3D spectatorsOffset;
     private BoundingBox endArea;
     private int timerTick = 0;
 

@@ -23,19 +23,6 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
     private int price;
     private int unlockLevel;
     private ItemStack guiSelectorItem;
-
-    @NotNull
-    public String getDisplayName() {
-        return displayName != null ? displayName : getId() != null ? getId() : "";
-    }
-
-    public void setDisplayName(String displayName) {
-        if (displayName.isEmpty())
-            this.displayName = null;
-        else
-            this.displayName = displayName;
-    }
-
     private String displayName;
 
     public Kit(@NotNull Map<String, Object> map) {
@@ -76,7 +63,6 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         KitManager.get().save(this);
     }
 
-
     public void updateSnapshot(@NotNull Player player) {
         this.snap.loadFrom(player, PlayerSnapshot.FieldType.INVENTORY, PlayerSnapshot.FieldType.ARMOR, PlayerSnapshot.FieldType.EXTRACONTENTS);
         KitManager.get().save(this);
@@ -98,28 +84,8 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         return map;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
-    public String[] getPlaceholders() {
-        return new String[]{
-                "%price%", price == 0 ? "-free-" : String.valueOf(price), "%id%", getId(),
-                "%displayname%", getDisplayName()
-        };
-    }
-
-    public int getUnlockLevel() {
-        return unlockLevel;
-    }
-
-    public void setUnlockLevel(int unlockLevel) {
-        this.unlockLevel = Math.max(0, unlockLevel);
-    }
-
-    public void setPrice(int val) {
-        this.price = Math.max(0, val);
-        KitManager.get().save(this);
+    public Gui getEditorGui(@NotNull Player player) {
+        return getEditorGui(player, null);
     }
 
     public Gui getEditorGui(@NotNull Player target, @Nullable Gui parent) {
@@ -158,19 +124,28 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         return gui;
     }
 
-    public Gui getEditorGui(@NotNull Player player) {
-        return getEditorGui(player, null);
+    public String[] getPlaceholders() {
+        return new String[]{
+                "%price%", price == 0 ? "-free-" : String.valueOf(price), "%id%", getId(),
+                "%displayname%", getDisplayName()
+        };
+    }
+
+    @NotNull
+    public String getDisplayName() {
+        return displayName != null ? displayName : getId() != null ? getId() : "";
+    }
+
+    public void setDisplayName(String displayName) {
+        if (displayName.isEmpty())
+            this.displayName = null;
+        else
+            this.displayName = displayName;
     }
 
     public ItemBuilder getGuiSelectorItemRaw() {
         return (this.guiSelectorItem == null ? new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty() :
                 new ItemBuilder(this.guiSelectorItem));
-    }
-
-    public ItemBuilder getGuiSelectorItem(Player target) {
-        return getGuiSelectorItemRaw().setDescription(new DMessage(Minigames.get(), target)
-                .appendLang("generic.gui.kitselector_description",
-                        getPlaceholders()));
     }
 
     public void setGuiSelectorItem(ItemStack item) {
@@ -179,5 +154,28 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         else
             guiSelectorItem = new ItemBuilder(item).setGuiProperty().build();
         KitManager.get().save(this);
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public int getUnlockLevel() {
+        return unlockLevel;
+    }
+
+    public void setUnlockLevel(int unlockLevel) {
+        this.unlockLevel = Math.max(0, unlockLevel);
+    }
+
+    public void setPrice(int val) {
+        this.price = Math.max(0, val);
+        KitManager.get().save(this);
+    }
+
+    public ItemBuilder getGuiSelectorItem(Player target) {
+        return getGuiSelectorItemRaw().setDescription(new DMessage(Minigames.get(), target)
+                .appendLang("generic.gui.kitselector_description",
+                        getPlaceholders()));
     }
 }

@@ -31,6 +31,14 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
         return Objects.equals(loc.getWorld(), world) && area.contains(loc.toVector());
     }
 
+    public Vector getAreaMin() {
+        return getArea().getMin();
+    }
+
+    public BoundingBox getArea() {
+        return area.clone();
+    }
+
     protected void setArea(@NotNull Player player) throws IncompleteRegionException {
         world = player.getWorld();
         Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
@@ -38,14 +46,6 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
         area = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
                 sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
                 sel.getMaximumPoint().getZ());
-    }
-
-    public BoundingBox getArea() {
-        return area.clone();
-    }
-
-    public Vector getAreaMin() {
-        return getArea().getMin();
     }
 
     public World getWorld() {

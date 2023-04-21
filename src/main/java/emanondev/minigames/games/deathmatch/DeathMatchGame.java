@@ -47,9 +47,8 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
     private final HashSet<Block> filledChests = new HashSet<>();
 
 
-    @Override
-    protected void craftAndCallGameStartEvent() {
-        Bukkit.getPluginManager().callEvent(new DeathMatchStartEvent(this));
+    public DeathMatchGame(@NotNull Map<String, Object> map) {
+        super(map);
     }
 
     @Override
@@ -79,6 +78,17 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         });
     }
 
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new DeathMatchStartEvent(this));
+    }
+
+    public boolean canAddGamer(@NotNull Player player) {
+        return switch (getPhase()) {
+            case PRE_START, COLLECTING_PLAYERS -> super.canAddGamer(player);
+            default -> false;
+        };
+    }
 
     /**
      * Assign a party to user or throw an exception
@@ -104,8 +114,90 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
 
     }
 
-    public DeathMatchGame(@NotNull Map<String, Object> map) {
-        super(map);
+    @Override
+    public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL)
+            event.setCancelled(true);
+    }
+
+    @Override
+    public void onEntityDeath(@NotNull EntityDeathEvent event) {
+
+    }
+
+    @Override
+    public void onGamerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player player) {
+
+    }
+
+    @Override
+    public void onEntityRegainHealth(@NotNull EntityRegainHealthEvent event) {
+
+    }
+
+    @Override
+    public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
+        super.onGamerBlockBreak(event);
+        if (getPhase() == Phase.PLAYING && !event.isCancelled())
+            if (event.getBlock().getType() == Material.CHEST) {
+                if (filledChests.contains(event.getBlock()) || ignoredChest.contains(event.getBlock()))
+                    return;
+                if (!(event.getBlock().getState() instanceof Chest cHolder))
+                    return;
+                onFillChest(cHolder.getBlockInventory());
+                Location dropLoc = event.getBlock().getLocation().add(0.5, 0.5, 0.5);
+                for (ItemStack item : cHolder.getBlockInventory().getContents())
+                    if (!UtilsInventory.isAirOrNull(item))
+                        dropLoc.getWorld().dropItemNaturally(dropLoc, item);
+
+            }
+    }
+
+    protected void onFillChest(Inventory inventory) {
+        DropsFiller filler = getOption().getChestsFiller();
+        if (filler != null)
+            filler.fillInventory(inventory);
+    }
+
+    @Override
+    public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
+        if (getPhase() == Phase.PRE_START)
+            event.setCancelled(true);
+        if (event.getBlock().getType() == Material.CHEST) {
+            ignoredChest.add(event.getBlock());
+        }
+    }
+
+    @Override
+    public void onGamerInteract(@NotNull PlayerInteractEvent event) {
+        super.onGamerInteract(event);
+        if (getPhase() != Phase.PLAYING)
+            return;
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
+        DropsFiller filler = getOption().getKillRewardFiller();
+        if (filler == null)
+            return;
+        ItemStack item = event.getItem();
+        if (UtilsInventory.isAirOrNull(item))
+            return;
+        if (!item.isSimilar(getMinigameType().getKillRewardItem()))
+            return;
+        event.setCancelled(true); //TODO feedback
+        new SoundInfo(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1, 1, true).play(event.getPlayer());
+        item.setAmount(item.getAmount() - 1);
+        event.getPlayer().getInventory().setItem(event.getHand(), item);
+        filler.getDrops().forEach((d) -> UtilsInventory.giveAmount(event.getPlayer(), d, d.getAmount(), UtilsInventory.ExcessManage.DROP_EXCESS));
+    }
+
+    @Override
+    public void onGamerInventoryClick(@NotNull InventoryClickEvent event, @NotNull Player player) {
+        super.onGamerInventoryClick(event, player);
+        if (event.isCancelled())
+            return;
+        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
+            if (event.getRawSlot() == 1) //TODO test with numbered clicks
+                event.setCancelled(true);
     }
 
     @Override
@@ -136,22 +228,20 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         }
     }
 
-    @Override
-    public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
-        super.onGamerBlockBreak(event);
-        if (getPhase() == Phase.PLAYING && !event.isCancelled())
-            if (event.getBlock().getType() == Material.CHEST) {
-                if (filledChests.contains(event.getBlock()) || ignoredChest.contains(event.getBlock()))
-                    return;
-                if (!(event.getBlock().getState() instanceof Chest cHolder))
-                    return;
-                onFillChest(cHolder.getBlockInventory());
-                Location dropLoc = event.getBlock().getLocation().add(0.5, 0.5, 0.5);
-                for (ItemStack item : cHolder.getBlockInventory().getContents())
-                    if (!UtilsInventory.isAirOrNull(item))
-                        dropLoc.getWorld().dropItemNaturally(dropLoc, item);
+    protected void craftAndCallGamerDeathEvent(Player player, Player killer) {
+        Bukkit.getPluginManager().callEvent(new DeathMatchDeathEvent(this, player, killer));
+    }
 
-            }
+    protected void craftAndCallWinEvent(DeathMatchTeam winner) {
+        if (winner == null)
+            return;
+        HashSet<Player> players = new HashSet<>();
+        for (UUID user : winner.getUsers()) {
+            Player player = Bukkit.getPlayer(user);
+            if (player != null && getGamers().contains(player))
+                players.add(player);
+        }
+        Bukkit.getPluginManager().callEvent(new DeathMatchWinEvent(this, players));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -174,99 +264,6 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         onFillChest(event.getInventory());
     }
 
-    protected void onFillChest(Inventory inventory) {
-        DropsFiller filler = getOption().getChestsFiller();
-        if (filler != null)
-            filler.fillInventory(inventory);
-    }
-
-    @Override
-    public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
-        if (getPhase() == Phase.PRE_START)
-            event.setCancelled(true);
-        if (event.getBlock().getType() == Material.CHEST) {
-            ignoredChest.add(event.getBlock());
-        }
-    }
-
-
-    @Override
-    public boolean joinGameAsGamer(@NotNull Player player) {
-        return addGamer(player);
-    }
-
-    @Override
-    public void onGamerInventoryOpen(@NotNull InventoryOpenEvent event, @NotNull Player player) {
-        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
-            event.getView().getTopInventory().setItem(1, new ItemStack(Material.LAPIS_LAZULI, 64));
-    }
-
-    @Override
-    public void onGamerInventoryClose(@NotNull InventoryCloseEvent event, @NotNull Player player) {
-        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
-            event.getView().getTopInventory().setItem(1, null);
-    }
-
-
-    @Override
-    public void onGamerInventoryClick(@NotNull InventoryClickEvent event, @NotNull Player player) {
-        super.onGamerInventoryClick(event, player);
-        if (event.isCancelled())
-            return;
-        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
-            if (event.getRawSlot() == 1) //TODO test with numbered clicks
-                event.setCancelled(true);
-    }
-
-    @Override
-    public void onGamerCombustEvent(@NotNull EntityCombustEvent event, @NotNull Player player) {
-
-    }
-
-    @Override
-    public void onGamerHitByProjectile(@NotNull ProjectileHitEvent event) {
-        if (event.getEntity() instanceof Snowball) { //adds push
-            if (!getPhase().equals(Phase.PLAYING))
-                return;
-            if (!(event.getHitEntity() instanceof Player hitted))
-                return;
-            if (event.getEntity().getShooter() instanceof Player launcher &&
-                    Objects.equals(getTeam(launcher), getTeam(hitted)))
-                return;
-            double push = getMinigameType().getSnowballPush();
-            if (push != 0) {
-                event.getHitEntity().setVelocity(event.getEntity().getVelocity().setY(0).normalize().multiply(push).setY(getMinigameType().getSnowballVerticalPush()));
-            }
-        }
-    }
-
-
-    @Override
-    public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL)
-            event.setCancelled(true);
-    }
-
-    @Override
-    public void onEntityDeath(@NotNull EntityDeathEvent event) {
-
-    }
-
-    @Override
-    public void onGamerDamaging(@NotNull EntityDamageByEntityEvent event, @NotNull Player damager, boolean direct) {
-
-    }
-
-    @Override
-    public void onGamerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player player) {
-
-    }
-
-    @Override
-    public void onEntityRegainHealth(@NotNull EntityRegainHealthEvent event) {
-
-    }
-
     @Override
     public int getMaxGamers() {
         return getArena().getColors().size() * getOption().getTeamMaxSize();
@@ -275,6 +272,36 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
     @Override
     public @NotNull DeathMatchType getMinigameType() {
         return MinigameTypes.DEATH_MATCH;
+    }
+
+    public void checkGameEnd() {
+        if (getPhase() != Phase.PLAYING)
+            return;
+        int alive = 0;
+        DeathMatchTeam winner = null;
+        for (DeathMatchTeam party : this.getTeams())
+            if (!party.hasLost()) {
+                winner = party;
+                alive++;
+            }
+        craftAndCallWinEvent(winner);
+        if (alive == 0) {
+            new IllegalStateException("no winner").printStackTrace();
+            gameEnd();
+        }
+        if (alive != 1)
+            return;
+
+        //has won
+        for (UUID user : winner.getUsers()) {
+            Player p = Bukkit.getPlayer(user);
+            if (p != null && isGamer(p)) {
+                PlayerStat.DEATHMATCH_VICTORY.add(user, 1);
+                givePoints(p, getMinigameType().getWinPoints());
+                giveGameExp(p, getMinigameType().getWinExp());
+            }
+        }
+        this.gameEnd();
     }
 
     @Override
@@ -339,80 +366,48 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         checkGameEnd();
     }
 
-    protected void craftAndCallGamerDeathEvent(Player player, Player killer) {
-        Bukkit.getPluginManager().callEvent(new DeathMatchDeathEvent(this, player, killer));
-    }
+    @Override
+    public void onGamerDamaging(@NotNull EntityDamageByEntityEvent event, @NotNull Player damager, boolean direct) {
 
-    protected void craftAndCallWinEvent(DeathMatchTeam winner) {
-        if (winner == null)
-            return;
-        HashSet<Player> players = new HashSet<>();
-        for (UUID user : winner.getUsers()) {
-            Player player = Bukkit.getPlayer(user);
-            if (player != null && getGamers().contains(player))
-                players.add(player);
-        }
-        Bukkit.getPluginManager().callEvent(new DeathMatchWinEvent(this, players));
-    }
-
-    public void checkGameEnd() {
-        if (getPhase() != Phase.PLAYING)
-            return;
-        int alive = 0;
-        DeathMatchTeam winner = null;
-        for (DeathMatchTeam party : this.getTeams())
-            if (!party.hasLost()) {
-                winner = party;
-                alive++;
-            }
-        craftAndCallWinEvent(winner);
-        if (alive == 0) {
-            new IllegalStateException("no winner").printStackTrace();
-            gameEnd();
-        }
-        if (alive != 1)
-            return;
-
-        //has won
-        for (UUID user : winner.getUsers()) {
-            Player p = Bukkit.getPlayer(user);
-            if (p != null && isGamer(p)) {
-                PlayerStat.DEATHMATCH_VICTORY.add(user, 1);
-                givePoints(p, getMinigameType().getWinPoints());
-                giveGameExp(p, getMinigameType().getWinExp());
-            }
-        }
-        this.gameEnd();
-    }
-
-
-    public boolean canAddGamer(@NotNull Player player) {
-        return switch (getPhase()) {
-            case PRE_START, COLLECTING_PLAYERS -> super.canAddGamer(player);
-            default -> false;
-        };
     }
 
     @Override
-    public void onGamerInteract(@NotNull PlayerInteractEvent event) {
-        super.onGamerInteract(event);
-        if (getPhase() != Phase.PLAYING)
-            return;
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
-            return;
-        DropsFiller filler = getOption().getKillRewardFiller();
-        if (filler == null)
-            return;
-        ItemStack item = event.getItem();
-        if (UtilsInventory.isAirOrNull(item))
-            return;
-        if (!item.isSimilar(getMinigameType().getKillRewardItem()))
-            return;
-        event.setCancelled(true); //TODO feedback
-        new SoundInfo(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1, 1, true).play(event.getPlayer());
-        item.setAmount(item.getAmount() - 1);
-        event.getPlayer().getInventory().setItem(event.getHand(), item);
-        filler.getDrops().forEach((d) -> UtilsInventory.giveAmount(event.getPlayer(), d, d.getAmount(), UtilsInventory.ExcessManage.DROP_EXCESS));
+    public boolean joinGameAsGamer(@NotNull Player player) {
+        return addGamer(player);
+    }
+
+    @Override
+    public void onGamerInventoryOpen(@NotNull InventoryOpenEvent event, @NotNull Player player) {
+        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
+            event.getView().getTopInventory().setItem(1, new ItemStack(Material.LAPIS_LAZULI, 64));
+    }
+
+    @Override
+    public void onGamerInventoryClose(@NotNull InventoryCloseEvent event, @NotNull Player player) {
+        if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
+            event.getView().getTopInventory().setItem(1, null);
+    }
+
+    @Override
+    public void onGamerCombustEvent(@NotNull EntityCombustEvent event, @NotNull Player player) {
+
+    }
+
+    @Override
+    public void onGamerHitByProjectile(@NotNull ProjectileHitEvent event) {
+        if (event.getEntity() instanceof Snowball) { //adds push
+            if (!getPhase().equals(Phase.PLAYING))
+                return;
+            if (!(event.getHitEntity() instanceof Player hitted))
+                return;
+            if (event.getEntity().getShooter() instanceof Player launcher &&
+                    Objects.equals(getTeam(launcher), getTeam(hitted)))
+                return;
+            double push = getMinigameType().getSnowballPush();
+            if (push != 0) {
+                event.getHitEntity().setVelocity(event.getEntity().getVelocity().setY(0).normalize().multiply(push).setY(getMinigameType().getSnowballVerticalPush()));
+            }
+        }
     }
 
 }

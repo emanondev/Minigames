@@ -20,14 +20,20 @@ public class BlockLocation3D extends BlockLocation2D {
         this.y = y;
     }
 
-    @NotNull
-    public Location toLocation() {
-        return new Location(getWorld(), x, y, z);
-    }
-
     private BlockLocation3D(@NotNull Map<String, Object> map) {
         super(map);
         this.y = (int) map.get("y");
+    }
+
+    @NotNull
+    public static BlockLocation3D fromString(@NotNull String from) {
+        String[] args = from.split(":");
+        return new BlockLocation3D(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+    }
+
+    @NotNull
+    public Location toLocation() {
+        return new Location(getWorld(), x, y, z);
     }
 
     @NotNull
@@ -36,12 +42,6 @@ public class BlockLocation3D extends BlockLocation2D {
         Map<String, Object> map = super.serialize();
         map.put("y", y);
         return map;
-    }
-
-    @NotNull
-    public static BlockLocation3D fromString(@NotNull String from) {
-        String[] args = from.split(":");
-        return new BlockLocation3D(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
     }
 
     @Override

@@ -9,23 +9,21 @@ import org.jetbrains.annotations.Range;
 
 public class GamerLevelUpEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return HANDLERS_LIST;
+    private final int newLevel;
+    private final Gamer gamer;
+    private boolean cancelled = false;
+    public GamerLevelUpEvent(Gamer gamer, @Range(from = 2, to = Integer.MAX_VALUE) int i) {
+        this.gamer = gamer;
+        this.newLevel = i;
     }
 
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
 
-    private final int newLevel;
-    private final Gamer gamer;
-    private boolean cancelled = false;
-
-    public GamerLevelUpEvent(Gamer gamer, @Range(from = 2, to = Integer.MAX_VALUE) int i) {
-        this.gamer = gamer;
-        this.newLevel = i;
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return HANDLERS_LIST;
     }
 
     public @Range(from = 2, to = Integer.MAX_VALUE) int getNewLevel() {

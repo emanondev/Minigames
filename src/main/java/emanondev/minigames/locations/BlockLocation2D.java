@@ -25,17 +25,23 @@ public class BlockLocation2D implements ConfigurationSerializable {
         this.z = z;
     }
 
-    @Nullable
-    public World getWorld() {
-        return Bukkit.getWorld(worldName);
-    }
-
     protected BlockLocation2D(@NotNull Map<String, Object> map) {
         this.worldName = (String) map.get("world");
         this.x = (int) map.get("x");
         this.z = (int) map.get("z");
         if (worldName == null)
             throw new IllegalStateException("invalid world");
+    }
+
+    @NotNull
+    public static BlockLocation2D fromString(@NotNull String from) {
+        String[] args = from.split(":");
+        return new BlockLocation2D(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+    }
+
+    @Nullable
+    public World getWorld() {
+        return Bukkit.getWorld(worldName);
     }
 
     @NotNull
@@ -46,12 +52,6 @@ public class BlockLocation2D implements ConfigurationSerializable {
         map.put("x", x);
         map.put("z", z);
         return map;
-    }
-
-    @NotNull
-    public static BlockLocation2D fromString(@NotNull String from) {
-        String[] args = from.split(":");
-        return new BlockLocation2D(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
     }
 
     @Override

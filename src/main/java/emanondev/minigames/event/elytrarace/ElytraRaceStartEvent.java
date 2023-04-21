@@ -9,6 +9,10 @@ public class ElytraRaceStartEvent extends GameStartEvent<ElytraRaceGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public ElytraRaceStartEvent(@NotNull ElytraRaceGame game) {
+        super(game);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -16,9 +20,5 @@ public class ElytraRaceStartEvent extends GameStartEvent<ElytraRaceGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public ElytraRaceStartEvent(@NotNull ElytraRaceGame game) {
-        super(game);
     }
 }

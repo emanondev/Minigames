@@ -13,6 +13,10 @@ public class ElytraRaceWinSecondEvent extends ARaceWinEvent<ElytraRaceGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public ElytraRaceWinSecondEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        super(team, lineCutter, winners);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -20,9 +24,5 @@ public class ElytraRaceWinSecondEvent extends ARaceWinEvent<ElytraRaceGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public ElytraRaceWinSecondEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        super(team, lineCutter, winners);
     }
 }

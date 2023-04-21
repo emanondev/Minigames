@@ -9,23 +9,21 @@ import org.jetbrains.annotations.Range;
 
 public class GamerExperienceGainEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return HANDLERS_LIST;
+    private final Gamer gamer;
+    private long xp;
+    private boolean cancelled = false;
+    public GamerExperienceGainEvent(Gamer gamer, long xpGain) {
+        this.gamer = gamer;
+        this.xp = xpGain;
     }
 
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
 
-    private long xp;
-    private final Gamer gamer;
-    private boolean cancelled = false;
-
-    public GamerExperienceGainEvent(Gamer gamer, long xpGain) {
-        this.gamer = gamer;
-        this.xp = xpGain;
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return HANDLERS_LIST;
     }
 
     public @Range(from = 0, to = Long.MAX_VALUE) long getExperienceGain() {

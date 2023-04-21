@@ -81,71 +81,6 @@ public abstract class MountedRaceOption extends ARaceOption {
         return map;
     }
 
-
-    public @NotNull EntityType getType() {
-        return type == null ? getDefaultType() : type;
-    }
-
-    public void setType(@Nullable EntityType type) {
-        if (type != null && !isAllowedType(type))
-            throw new IllegalStateException();
-        this.type = type;
-        OptionManager.get().save(this);
-    }
-
-    public @Nullable Horse.Color getHorseColor() {
-        return horseColor;
-    }
-
-    public void setHorseColor(@Nullable Horse.Color horseColor) {
-        this.horseColor = horseColor;
-        OptionManager.get().save(this);
-    }
-
-    public @Nullable Horse.Style getHorseStyle() {
-        return horseStyle;
-    }
-
-    public void setHorseStyle(@Nullable Horse.Style horseStyle) {
-        this.horseStyle = horseStyle;
-        OptionManager.get().save(this);
-    }
-
-    public double getBaseSpeed() {
-        return baseSpeed;
-    }
-
-    public void setBaseSpeed(double baseSpeed) {
-        this.baseSpeed = Math.max(0.01, baseSpeed);
-        OptionManager.get().save(this);
-    }
-
-    public @Nullable Boat.Type getBoatType() {
-        return boatType;
-    }
-
-    public void setBoatType(@Nullable Boat.Type boatType) {
-        this.boatType = boatType;
-        OptionManager.get().save(this);
-    }
-
-    public double getJumpStrenght() {
-        return jumpStrenght;
-    }
-
-    public void setJumpStrenght(double jumpStrenght) {
-        this.jumpStrenght = Math.max(0.01, jumpStrenght);
-        OptionManager.get().save(this);
-    }
-
-    protected Set<EntityType> getAllowedTypes() {
-        SortedSet<EntityType> allowed = new TreeSet<>(Comparator.comparing(Enum::name));
-        for (EntityType type : EntityType.values())
-            if (isAllowedType(type))
-                allowed.add(type);
-        return allowed;
-    }
-
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
         Gui gui = super.getEditorGui(target, parent);
@@ -175,9 +110,13 @@ public abstract class MountedRaceOption extends ARaceOption {
         return gui;
     }
 
-    protected abstract @NotNull EntityType getDefaultType();
-
-    protected abstract boolean isAllowedType(@NotNull EntityType type);
+    protected Set<EntityType> getAllowedTypes() {
+        SortedSet<EntityType> allowed = new TreeSet<>(Comparator.comparing(Enum::name));
+        for (EntityType type : EntityType.values())
+            if (isAllowedType(type))
+                allowed.add(type);
+        return allowed;
+    }
 
     private static @NotNull Material getEntityTypeMaterial(@NotNull EntityType type) {
         return switch (type) {
@@ -193,5 +132,65 @@ public abstract class MountedRaceOption extends ARaceOption {
             default -> Material.SADDLE;
         };
 
+    }
+
+    public @NotNull EntityType getType() {
+        return type == null ? getDefaultType() : type;
+    }
+
+    public void setType(@Nullable EntityType type) {
+        if (type != null && !isAllowedType(type))
+            throw new IllegalStateException();
+        this.type = type;
+        OptionManager.get().save(this);
+    }
+
+    public double getBaseSpeed() {
+        return baseSpeed;
+    }
+
+    public void setBaseSpeed(double baseSpeed) {
+        this.baseSpeed = Math.max(0.01, baseSpeed);
+        OptionManager.get().save(this);
+    }
+
+    protected abstract boolean isAllowedType(@NotNull EntityType type);
+
+    protected abstract @NotNull EntityType getDefaultType();
+
+    public @Nullable Horse.Color getHorseColor() {
+        return horseColor;
+    }
+
+    public void setHorseColor(@Nullable Horse.Color horseColor) {
+        this.horseColor = horseColor;
+        OptionManager.get().save(this);
+    }
+
+    public @Nullable Horse.Style getHorseStyle() {
+        return horseStyle;
+    }
+
+    public void setHorseStyle(@Nullable Horse.Style horseStyle) {
+        this.horseStyle = horseStyle;
+        OptionManager.get().save(this);
+    }
+
+    public @Nullable Boat.Type getBoatType() {
+        return boatType;
+    }
+
+    public void setBoatType(@Nullable Boat.Type boatType) {
+        this.boatType = boatType;
+        OptionManager.get().save(this);
+    }
+
+    public double getJumpStrenght() {
+        return jumpStrenght;
+    }
+
+    public void setJumpStrenght(double jumpStrenght) {
+        this.jumpStrenght = Math.max(0.01, jumpStrenght);
+        OptionManager.get().save(this);
     }
 }

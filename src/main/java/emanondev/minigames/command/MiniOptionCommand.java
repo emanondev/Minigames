@@ -71,6 +71,34 @@ public class MiniOptionCommand extends CoreCommand {
         sendDMessage(sender, "minioption.help", "%alias%", label);
     }
 
+    private void create(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length != 3) {
+            sendDMessage(player, "minioption.error.create_params", "%alias%", label);
+            return;
+        }
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        MOption group = OptionManager.get().get(id);
+        if (group != null) {
+            sendDMessage(player, "minioption.error.id_already_used", "%id%", id, "%alias%", label);
+            return;
+        }
+        @SuppressWarnings("rawtypes")
+        MType type = MinigameTypes.get().getType(args[2]);
+        if (type == null) {
+            sendDMessage(player, "minioption.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
+            return;
+        }
+        try {
+            OptionManager.get().register(id, type.createDefaultOptions(), player);
+            sendDMessage(player, "minioption.success.create", "%id%", id, "%type%", type.getType(), "%alias%", label);
+        } catch (IllegalArgumentException e) {
+            sendDMessage(player, "minioption.error.invalid_id", "%id%", id, "%alias%", label);
+        }
+    }
 
     private void clone(CommandSender sender, String label, String[] args) {
         if (!(sender instanceof Player player)) {
@@ -103,50 +131,21 @@ public class MiniOptionCommand extends CoreCommand {
         }
     }
 
-
-    private void delete(CommandSender sender, String label, String[] args) {
-        if (args.length <= 1) {
-            sendDMessage(sender, "minioption.error.delete_params", "%alias%", label);
-            return;
-        }
-        String id = args[1].toLowerCase(Locale.ENGLISH);
-        MOption group = OptionManager.get().get(id);
-        if (group == null) {
-            sendDMessage(sender, "minioption.error.id_not_found", "%id%", id, "%alias%", label);
-            return;
-        }
-        //TODO is used???
-        OptionManager.get().delete(group);
-        sendDMessage(sender, "minioption.success.delete", "%id%", id, "%alias%", label);
-    }
-
-    private void create(CommandSender sender, String label, String[] args) {
+    private void gui(CommandSender sender, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
             return;
         }
-        if (args.length != 3) {
-            sendDMessage(player, "minioption.error.create_params", "%alias%", label);
+        if (args.length <= 1) {
+            sendDMessage(player, "minioption.error.gui_params", "%alias%", label);
             return;
         }
-        String id = args[1].toLowerCase(Locale.ENGLISH);
-        MOption group = OptionManager.get().get(id);
-        if (group != null) {
-            sendDMessage(player, "minioption.error.id_already_used", "%id%", id, "%alias%", label);
+        MOption option = OptionManager.get().get(args[1]);
+        if (option == null) {
+            sendDMessage(player, "minioption.error.id_not_found", "%alias%", label, "%id%", args[1]);
             return;
         }
-        @SuppressWarnings("rawtypes")
-        MType type = MinigameTypes.get().getType(args[2]);
-        if (type == null) {
-            sendDMessage(player, "minioption.error.invalid_minigametype", "%type%", args[2], "%alias%", label);
-            return;
-        }
-        try {
-            OptionManager.get().register(id, type.createDefaultOptions(), player);
-            sendDMessage(player, "minioption.success.create", "%id%", id, "%type%", type.getType(), "%alias%", label);
-        } catch (IllegalArgumentException e) {
-            sendDMessage(player, "minioption.error.invalid_id", "%id%", id, "%alias%", label);
-        }
+        option.getEditorGui(player, null).open(player);
     }
 
     private void list(CommandSender sender, String label, String[] args) {
@@ -167,20 +166,19 @@ public class MiniOptionCommand extends CoreCommand {
         msg.send();
     }
 
-    private void gui(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            this.playerOnlyNotify(sender);
-            return;
-        }
+    private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
-            sendDMessage(player, "minioption.error.gui_params", "%alias%", label);
+            sendDMessage(sender, "minioption.error.delete_params", "%alias%", label);
             return;
         }
-        MOption option = OptionManager.get().get(args[1]);
-        if (option == null) {
-            sendDMessage(player, "minioption.error.id_not_found", "%alias%", label, "%id%", args[1]);
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        MOption group = OptionManager.get().get(id);
+        if (group == null) {
+            sendDMessage(sender, "minioption.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
-        option.getEditorGui(player, null).open(player);
+        //TODO is used???
+        OptionManager.get().delete(group);
+        sendDMessage(sender, "minioption.success.delete", "%id%", id, "%alias%", label);
     }
 }

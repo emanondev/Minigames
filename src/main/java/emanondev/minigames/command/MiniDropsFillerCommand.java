@@ -62,22 +62,6 @@ public class MiniDropsFillerCommand extends CoreCommand {
         sendDMessage(sender, "minidropsfiller.help", "%alias%", label);
     }
 
-    private void delete(CommandSender sender, String label, String[] args) {
-        if (args.length <= 1) {
-            sendDMessage(sender, "minidropsfiller.error.delete_params", "%alias%", label);
-            return;
-        }
-        String id = args[1].toLowerCase(Locale.ENGLISH);
-        DropsFiller group = FillerManager.get().get(id);
-        if (group == null) {
-            sendDMessage(sender, "minidropsfiller.error.id_not_found", "%id%", id, "%alias%", label);
-            return;
-        }
-        //TODO is used?
-        FillerManager.get().delete(group);
-        sendDMessage(sender, "minidropsfiller.success.delete", "%id%", id, "%alias%", label);
-    }
-
     private void create(CommandSender sender, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             this.playerOnlyNotify(sender);
@@ -101,6 +85,23 @@ public class MiniDropsFillerCommand extends CoreCommand {
         }
     }
 
+    private void gui(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 1) {
+            sendDMessage(player, "minidropsfiller.error.gui_params", "%alias%", label);
+            return;
+        }
+        DropsFiller group = FillerManager.get().get(args[1]);
+        if (group == null) {
+            sendDMessage(player, "minidropsfiller.error.id_not_found", "%alias%", label, "%id%", args[1]);
+            return;
+        }
+        group.getEditorGui(player, null).open(player);
+    }
+
     private void list(CommandSender sender, String label, String[] args) {
         DMessage msg = new DMessage(getPlugin(), sender).appendLang("minidropsfiller.success.list_prefix").newLine();
         boolean color = true;
@@ -118,20 +119,19 @@ public class MiniDropsFillerCommand extends CoreCommand {
         msg.send();
     }
 
-    private void gui(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            this.playerOnlyNotify(sender);
-            return;
-        }
+    private void delete(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
-            sendDMessage(player, "minidropsfiller.error.gui_params", "%alias%", label);
+            sendDMessage(sender, "minidropsfiller.error.delete_params", "%alias%", label);
             return;
         }
-        DropsFiller group = FillerManager.get().get(args[1]);
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        DropsFiller group = FillerManager.get().get(id);
         if (group == null) {
-            sendDMessage(player, "minidropsfiller.error.id_not_found", "%alias%", label, "%id%", args[1]);
+            sendDMessage(sender, "minidropsfiller.error.id_not_found", "%id%", id, "%alias%", label);
             return;
         }
-        group.getEditorGui(player, null).open(player);
+        //TODO is used?
+        FillerManager.get().delete(group);
+        sendDMessage(sender, "minidropsfiller.success.delete", "%id%", id, "%alias%", label);
     }
 }

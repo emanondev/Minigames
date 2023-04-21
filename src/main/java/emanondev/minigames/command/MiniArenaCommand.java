@@ -30,6 +30,11 @@ import java.util.*;
 
 public class MiniArenaCommand extends CoreCommand {
 
+    private static final int RATEO = 5;
+    private static final int RADIUS = 100;
+    private final HashMap<UUID, SchemInfo> pasted = new HashMap<>();
+    private BukkitTask task;
+
     /* //TODO filter list with type
      * list
      * delete <id>
@@ -61,9 +66,7 @@ public class MiniArenaCommand extends CoreCommand {
     private void spawnParticleBoxFaces(Player p, int tick, BoundingBox box) {
         markFaces(p, tick, box.getMin(), box.getMax());
     }
-
-    private static final int RATEO = 5;
-    private static final int RADIUS = 100;
+    //from MArenaBuilder END
 
     private void markFaces(Player p, int val, Vector min, Vector max) {
         Location l = p.getLocation();
@@ -95,14 +98,6 @@ public class MiniArenaCommand extends CoreCommand {
     private void spawnParticle(Player p, double x, double y, double z) {
         p.spawnParticle(Particle.WAX_OFF, x, y, z, 0, 0, 0, 0, 0, null);
     }
-    //from MArenaBuilder END
-
-    private BukkitTask task;
-
-    public void reload() {
-        //restart task?
-    }
-
 
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
@@ -120,29 +115,57 @@ public class MiniArenaCommand extends CoreCommand {
         }
     }
 
-    private final HashMap<UUID, SchemInfo> pasted = new HashMap<>();
+    @Override
+    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
+        return switch (args.length) {
+            case 1 -> this.complete(args[0], List.of("list", "delete", "paste", "gui", "update"));
+            case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
+                case "delete", "paste", "gui" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
+                default -> Collections.emptyList();
+            };
+            default -> Collections.emptyList();
+        };
+    }
 
-    private static class SchemInfo {
-        private final BoundingBox box;
-        private final String id;
-        private final UUID user;
-        private final World world;
+    public void reload() {
+        //restart task?
+    }
 
-        private SchemInfo(@NotNull String id, @NotNull BoundingBox box, @NotNull UUID user, @NotNull World world) {
-            this.id = id;
-            this.box = box;
-            this.user = user;
-            this.world = world;
+    private void help(CommandSender sender, String label, String[] args) {
+        sendDMessage(sender, "miniarena.help", "%alias%", label);
+    }
+
+    private void list(CommandSender sender, String label, String[] args) {
+        DMessage msg = new DMessage(getPlugin(), sender).appendLang("miniarena.success.list_prefix").newLine();
+        boolean color = true;
+        Color color1 = new Color(66, 233, 245);
+        Color color2 = new Color(66, 179, 245);
+        ArrayList<MArena> list = new ArrayList<>(ArenaManager.get().getAll().values());
+        list.sort(Comparator.comparing(Registrable::getId));
+        for (MArena arena : list) {
+            msg.appendHover(
+                    new DMessage(getPlugin(), sender).appendLang("miniarena.success.list_info",
+                            UtilsString.merge(arena.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
+                            .appendRunCommand("/" + label + " gui " + arena.getId(), arena.getId())).append(" ");
+            color = !color;
         }
+        msg.send();
+    }
 
-        public void show() {
-            Player player = Bukkit.getPlayer(user);
-            if (player == null)
-                return;
-
-            //TODO spawn particles
+    private void delete(CommandSender sender, String label, String[] args) {
+        if (args.length <= 1) {
+            sendDMessage(sender, "miniarena.error.delete_params", "%alias%", label);
+            return;
         }
-
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        MArena arena = ArenaManager.get().get(id);
+        if (arena == null) {
+            sendDMessage(sender, "miniarena.error.id_not_found", "%id%", id, "%alias%", label);
+            return;
+        }
+        //TODO is used???
+        ArenaManager.get().delete(arena);
+        sendDMessage(sender, "miniarena.success.delete", "%id%", id, "%alias%", label);
     }
 
     //miniarena paste <id> [-confirm]
@@ -259,52 +282,26 @@ public class MiniArenaCommand extends CoreCommand {
         arena.getEditorGui(player, null).open(player);
     }
 
-    @Override
-    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
-        return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("list", "delete", "paste", "gui", "update"));
-            case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case "delete", "paste", "gui" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
-                default -> Collections.emptyList();
-            };
-            default -> Collections.emptyList();
-        };
-    }
+    private static class SchemInfo {
+        private final BoundingBox box;
+        private final String id;
+        private final UUID user;
+        private final World world;
 
-    private void help(CommandSender sender, String label, String[] args) {
-        sendDMessage(sender, "miniarena.help", "%alias%", label);
-    }
+        private SchemInfo(@NotNull String id, @NotNull BoundingBox box, @NotNull UUID user, @NotNull World world) {
+            this.id = id;
+            this.box = box;
+            this.user = user;
+            this.world = world;
+        }
 
-    private void delete(CommandSender sender, String label, String[] args) {
-        if (args.length <= 1) {
-            sendDMessage(sender, "miniarena.error.delete_params", "%alias%", label);
-            return;
-        }
-        String id = args[1].toLowerCase(Locale.ENGLISH);
-        MArena arena = ArenaManager.get().get(id);
-        if (arena == null) {
-            sendDMessage(sender, "miniarena.error.id_not_found", "%id%", id, "%alias%", label);
-            return;
-        }
-        //TODO is used???
-        ArenaManager.get().delete(arena);
-        sendDMessage(sender, "miniarena.success.delete", "%id%", id, "%alias%", label);
-    }
+        public void show() {
+            Player player = Bukkit.getPlayer(user);
+            if (player == null)
+                return;
 
-    private void list(CommandSender sender, String label, String[] args) {
-        DMessage msg = new DMessage(getPlugin(), sender).appendLang("miniarena.success.list_prefix").newLine();
-        boolean color = true;
-        Color color1 = new Color(66, 233, 245);
-        Color color2 = new Color(66, 179, 245);
-        ArrayList<MArena> list = new ArrayList<>(ArenaManager.get().getAll().values());
-        list.sort(Comparator.comparing(Registrable::getId));
-        for (MArena arena : list) {
-            msg.appendHover(
-                    new DMessage(getPlugin(), sender).appendLang("miniarena.success.list_info",
-                            UtilsString.merge(arena.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
-                            .appendRunCommand("/" + label + " gui " + arena.getId(), arena.getId())).append(" ");
-            color = !color;
+            //TODO spawn particles
         }
-        msg.send();
+
     }
 }

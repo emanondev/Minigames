@@ -32,6 +32,26 @@ public class MiniGameCommand extends CoreCommandPlus {
     }
 
     @Override
+    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 0) {
+            help(sender, label, args);
+            return;
+        }
+        switch (args[0].toLowerCase(Locale.ENGLISH)) {
+            case "create" -> create(sender, label, args);
+            case "tp" -> tp(sender, label, args);
+            case "stop" -> stop(sender, label, args);
+            case "gui" -> gui(sender, label, args);
+            case "reset" -> reset(sender, label, args);
+            case "list" -> list(sender, label, args);
+            case "delete" -> delete(sender, label, args);
+            case "setspawn" -> setspawn(sender, label, args);
+            case "unsetspawn" -> unsetspawn(sender, label, args);
+            default -> help(sender, label, args);
+        }
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
@@ -68,120 +88,9 @@ public class MiniGameCommand extends CoreCommandPlus {
         };
     }
 
-    @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (args.length == 0) {
-            help(sender, label, args);
-            return;
-        }
-        switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "create" -> create(sender, label, args);
-            case "tp" -> tp(sender, label, args);
-            case "stop" -> stop(sender, label, args);
-            case "gui" -> gui(sender, label, args);
-            case "reset" -> reset(sender, label, args);
-            case "list" -> list(sender, label, args);
-            case "delete" -> delete(sender, label, args);
-            case "setspawn" -> setspawn(sender, label, args);
-            case "unsetspawn" -> unsetspawn(sender, label, args);
-            default -> help(sender, label, args);
-        }
-    }
-
-    private void gui(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            this.playerOnlyNotify(sender);
-            return;
-        }
-        if (args.length <= 1) {
-            sendDMessage(player, "minigame.error.gui_params", "%alias%", label);
-            return;
-        }
-        MGame game = GameManager.get().get(args[1]);
-        if (game == null) {
-            sendDMessage(player, "minigame.error.id_not_found", "%alias%", label, "%id%", args[1]);
-            return;
-        }
-        game.getEditorGui(player, null).open(player);
-    }
-
-    private void unsetspawn(CommandSender sender, String label, String[] args) {
-        C.setRespawnLocation(null);
-        sendDMessage(sender, "minigame.success.unsetspawn", "%alias%", label);
-    }
-
-    private void setspawn(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            this.playerOnlyNotify(sender);
-            return;
-        }
-        C.setRespawnLocation(player.getLocation());
-        sendDMessage(sender, "minigame.success.setspawn", "%alias%", label);
-    }
-
-    private void tp(CommandSender sender, String label, String[] args) {
-        sendDMessage(sender, "not_implemented");
-    }
-
-    private void stop(CommandSender sender, String label, String[] args) {
-        sendDMessage(sender, "not_implemented");
-    }
-
-    private void reset(CommandSender sender, String label, String[] args) {
-        sendDMessage(sender, "not_implemented");
-    }
-
-    private void delete(CommandSender sender, String label, String[] args) {
-        if (args.length <= 1) {
-            sendDMessage(sender, "minigame.error.delete_params", "%alias%", label);
-            return;
-        }
-        String id = args[1].toLowerCase(Locale.ENGLISH);
-        @SuppressWarnings("rawtypes")
-        MGame group = GameManager.get().get(id);
-        if (group == null) {
-            sendDMessage(sender, "minigame.error.id_not_found", "%id%", id, "%alias%", label);
-            return;
-        }
-        GameManager.get().delete(group);
-        sendDMessage(sender, "minigame.success.delete", "%id%", id, "%alias%", label);
-    }
-
-    //minigame list [type]
-    private void list(CommandSender sender, String label, String[] args) {
-        @SuppressWarnings("rawtypes")
-        MType type = null;
-        if (args.length > 1) {
-            type = MinigameTypes.get().getType(args[1]);
-            if (type == null) {
-                sendDMessage(sender, "minigame.error.invalid_minigametype", "%type%", args[1], "%alias%", label);
-                return;
-            }
-        }
-
-        DMessage msg = new DMessage(getPlugin(), sender).appendLang("minigame.success.list_prefix").newLine();
-        boolean color = true;
-        Color color1 = new Color(66, 233, 245);
-        Color color2 = new Color(66, 179, 245);
-        @SuppressWarnings("rawtypes")
-        ArrayList<MGame> list = new ArrayList<>(GameManager.get().getAll().values());
-        list.sort(Comparator.comparing(Registrable::getId));
-        for (@SuppressWarnings("rawtypes") MGame game : list) {
-            if (type == null || game.getMinigameType().equals(type)) {
-                msg.appendHover(
-                        new DMessage(getPlugin(), sender).appendLang("minigame.success.list_info",
-                                UtilsString.merge(game.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
-                                .appendRunCommand("/" + label + " tp " + game.getId(), game.getId())).append(" ");
-                color = !color;
-            }
-        }
-        msg.send();
-    }
-
     private void help(CommandSender sender, String label, String[] args) {
         sendDMessage(sender, "minigame.help", "%alias%", label);
     }
-
 
     //create id type arena option
     @SuppressWarnings("unchecked")
@@ -233,5 +142,95 @@ public class MiniGameCommand extends CoreCommandPlus {
         GameManager.get().register(id, mGame, player);
         mGame.initialize();
         sendDMessage(player, "minigame.success.create", UtilsString.merge(mGame.getPlaceholders(), "%alias%", label));
+    }
+
+    private void tp(CommandSender sender, String label, String[] args) {
+        sendDMessage(sender, "not_implemented");
+    }
+
+    private void stop(CommandSender sender, String label, String[] args) {
+        sendDMessage(sender, "not_implemented");
+    }
+
+    private void gui(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        if (args.length <= 1) {
+            sendDMessage(player, "minigame.error.gui_params", "%alias%", label);
+            return;
+        }
+        MGame game = GameManager.get().get(args[1]);
+        if (game == null) {
+            sendDMessage(player, "minigame.error.id_not_found", "%alias%", label, "%id%", args[1]);
+            return;
+        }
+        game.getEditorGui(player, null).open(player);
+    }
+
+    private void reset(CommandSender sender, String label, String[] args) {
+        sendDMessage(sender, "not_implemented");
+    }
+
+    //minigame list [type]
+    private void list(CommandSender sender, String label, String[] args) {
+        @SuppressWarnings("rawtypes")
+        MType type = null;
+        if (args.length > 1) {
+            type = MinigameTypes.get().getType(args[1]);
+            if (type == null) {
+                sendDMessage(sender, "minigame.error.invalid_minigametype", "%type%", args[1], "%alias%", label);
+                return;
+            }
+        }
+
+        DMessage msg = new DMessage(getPlugin(), sender).appendLang("minigame.success.list_prefix").newLine();
+        boolean color = true;
+        Color color1 = new Color(66, 233, 245);
+        Color color2 = new Color(66, 179, 245);
+        @SuppressWarnings("rawtypes")
+        ArrayList<MGame> list = new ArrayList<>(GameManager.get().getAll().values());
+        list.sort(Comparator.comparing(Registrable::getId));
+        for (@SuppressWarnings("rawtypes") MGame game : list) {
+            if (type == null || game.getMinigameType().equals(type)) {
+                msg.appendHover(
+                        new DMessage(getPlugin(), sender).appendLang("minigame.success.list_info",
+                                UtilsString.merge(game.getPlaceholders(), "%alias%", label)), new DMessage(getPlugin(), sender).append(color ? color1 : color2)
+                                .appendRunCommand("/" + label + " tp " + game.getId(), game.getId())).append(" ");
+                color = !color;
+            }
+        }
+        msg.send();
+    }
+
+    private void delete(CommandSender sender, String label, String[] args) {
+        if (args.length <= 1) {
+            sendDMessage(sender, "minigame.error.delete_params", "%alias%", label);
+            return;
+        }
+        String id = args[1].toLowerCase(Locale.ENGLISH);
+        @SuppressWarnings("rawtypes")
+        MGame group = GameManager.get().get(id);
+        if (group == null) {
+            sendDMessage(sender, "minigame.error.id_not_found", "%id%", id, "%alias%", label);
+            return;
+        }
+        GameManager.get().delete(group);
+        sendDMessage(sender, "minigame.success.delete", "%id%", id, "%alias%", label);
+    }
+
+    private void setspawn(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            this.playerOnlyNotify(sender);
+            return;
+        }
+        C.setRespawnLocation(player.getLocation());
+        sendDMessage(sender, "minigame.success.setspawn", "%alias%", label);
+    }
+
+    private void unsetspawn(CommandSender sender, String label, String[] args) {
+        C.setRespawnLocation(null);
+        sendDMessage(sender, "minigame.success.unsetspawn", "%alias%", label);
     }
 }

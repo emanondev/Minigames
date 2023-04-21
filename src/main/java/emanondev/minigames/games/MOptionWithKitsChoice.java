@@ -19,17 +19,17 @@ public interface MOptionWithKitsChoice extends MOption {
         addKitId(kit.getId());
     }
 
+    public void addKitId(@Nullable String kitId);
+
     default void removeKit(@NotNull Kit kit) {
         removeKitId(kit.getId());
     }
 
+    public void removeKitId(@Nullable String kitId);
+
     default void toggleKit(@NotNull Kit kit) {
         toggleKitId(kit.getId());
     }
-
-    public void addKitId(@Nullable String kitId);
-
-    public void removeKitId(@Nullable String kitId);
 
     default void toggleKitId(@Nullable String kitId) {
         if (hasKitId(kitId))

@@ -24,9 +24,6 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
 
     private static final SimpleMessage ERR_UNKNOWN_ACTION = new SimpleMessage(Minigames.get(), "arenabuilder.eggwars.error.unknown_action");
     private static final SimpleMessage ERR_OUTSIDE_ARENA = new SimpleMessage(Minigames.get(), "arenabuilder.eggwars.error.outside_arena");
-    private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
-    private LocationOffset3D spectatorsOffset;
-
     private static final int PHASE_SELECT_AREA = 1;
     private static final int PHASE_SET_TEAM_SPAWNS = 2;
     private static final int PHASE_SET_TEAM_SPAWNS_OR_NEXT = 3;
@@ -34,6 +31,9 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
     private static final int PHASE_SET_SPECTATOR_SPAWN_OR_NEXT = 5;
     private static final int PHASE_SET_GENERATORS = 6;
     private static final int PHASE_SET_VILLAGERS = 7;
+    private final HashMap<DyeColor, LocationOffset3D> spawnLocations = new HashMap<>();
+    private LocationOffset3D spectatorsOffset;
+    private int timerTick = 0;
 
     public EggWarsArenaBuilder(@NotNull UUID user, @NotNull String id, @NotNull String label) {
         super(user, id, label, Minigames.get());
@@ -230,8 +230,6 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
         map.put("teams", teams);
         return new EggWarsArena(map);
     }
-
-    private int timerTick = 0;
 
     @Override
     public void onTimerCall() {

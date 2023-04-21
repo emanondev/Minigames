@@ -54,66 +54,6 @@ public class ARaceOption extends AbstractMOption {
         return map;
     }
 
-    public @Nullable Kit getKit() {
-        return kitId == null ? null : KitManager.get().get(kitId);
-    }
-
-    public boolean getAllowPve() {
-        return allowPve;
-    }
-
-    public void setAllowPve(boolean value) {
-        this.allowPve = value;
-        OptionManager.get().save(this);
-    }
-
-    public boolean getAllowPvp() {
-        return allowPvp;
-    }
-
-    public void setAllowPvp(boolean value) {
-        this.allowPvp = value;
-        OptionManager.get().save(this);
-    }
-
-    public void setAllowFallDamage(boolean value) {
-        this.allowFallDamage = value;
-        OptionManager.get().save(this);
-    }
-
-    public boolean getAllowFallDamage() {
-        return allowFallDamage;
-    }
-
-    public void setAllowEnvironmentDamage(boolean value) {
-        this.allowEnvironmentDamage = value;
-        OptionManager.get().save(this);
-    }
-
-    public boolean getAllowEnvironmentDamage() {
-        return allowEnvironmentDamage;
-    }
-
-    @Override
-    public int getTeamMaxSize() {
-        return perTeamMaxPlayers;
-    }
-
-    @Override
-    public boolean allowSelectingTeam() {
-        return getTeamMaxSize() > 1;
-    }
-
-    public void setKit(@Nullable Kit kit) {
-        kitId = kit == null ? null : kit.getId();
-        OptionManager.get().save(this);
-    }
-
-    public void setTeamMaxSize(int amount) {
-        perTeamMaxPlayers = Math.max(1, Math.min(32, amount));
-        OptionManager.get().save(ARaceOption.this);
-    }
-
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
         Gui gui = super.getEditorGui(target, parent);
@@ -172,5 +112,65 @@ public class ARaceOption extends AbstractMOption {
         ));
         return gui;
     }
+
+    public boolean getAllowPvp() {
+        return allowPvp;
+    }
+
+    public boolean getAllowPve() {
+        return allowPve;
+    }
+
+    public void setAllowPve(boolean value) {
+        this.allowPve = value;
+        OptionManager.get().save(this);
+    }
+
+    public boolean getAllowFallDamage() {
+        return allowFallDamage;
+    }
+
+    public void setAllowFallDamage(boolean value) {
+        this.allowFallDamage = value;
+        OptionManager.get().save(this);
+    }
+
+    public boolean getAllowEnvironmentDamage() {
+        return allowEnvironmentDamage;
+    }
+
+    public void setAllowEnvironmentDamage(boolean value) {
+        this.allowEnvironmentDamage = value;
+        OptionManager.get().save(this);
+    }
+
+    public void setAllowPvp(boolean value) {
+        this.allowPvp = value;
+        OptionManager.get().save(this);
+    }
+
+    public @Nullable Kit getKit() {
+        return kitId == null ? null : KitManager.get().get(kitId);
+    }    @Override
+    public int getTeamMaxSize() {
+        return perTeamMaxPlayers;
+    }
+
+    public void setKit(@Nullable Kit kit) {
+        kitId = kit == null ? null : kit.getId();
+        OptionManager.get().save(this);
+    }    @Override
+    public boolean allowSelectingTeam() {
+        return getTeamMaxSize() > 1;
+    }
+
+
+
+    public void setTeamMaxSize(int amount) {
+        perTeamMaxPlayers = Math.max(1, Math.min(32, amount));
+        OptionManager.get().save(ARaceOption.this);
+    }
+
+
 
 }

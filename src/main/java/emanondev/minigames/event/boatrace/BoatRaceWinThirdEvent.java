@@ -13,6 +13,10 @@ public class BoatRaceWinThirdEvent extends ARaceWinEvent<BoatRaceGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public BoatRaceWinThirdEvent(@NotNull ARaceTeam<BoatRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        super(team, lineCutter, winners);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -20,9 +24,5 @@ public class BoatRaceWinThirdEvent extends ARaceWinEvent<BoatRaceGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public BoatRaceWinThirdEvent(@NotNull ARaceTeam<BoatRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        super(team, lineCutter, winners);
     }
 }

@@ -49,9 +49,8 @@ public abstract class MType<A extends MArena, O extends MOption> implements Core
 
     }
 
-    @NotNull
-    public YMLSection getSection() {
-        return section;
+    public final @NotNull CorePlugin getPlugin() {
+        return plugin;
     }
 
     @NotNull
@@ -86,12 +85,12 @@ public abstract class MType<A extends MArena, O extends MOption> implements Core
     }
 
     @NotNull
-    public abstract ItemBuilder getGameSelectorBaseItem();
-
-
-    public final @NotNull CorePlugin getPlugin() {
-        return plugin;
+    public YMLSection getSection() {
+        return section;
     }
+
+    @NotNull
+    public abstract ItemBuilder getGameSelectorBaseItem();
 
     public void reload() {
     }

@@ -17,6 +17,17 @@ import java.util.*;
 public class MinigameTypes {
 
 
+    public static final SkyWarsType SKYWARS = new SkyWarsType();
+    public static final EggWarsType EGGWARS = new EggWarsType();
+    public static final RunRaceType RUN_RACE = new RunRaceType();
+    public static final ElytraRaceType ELYTRA_RACE = new ElytraRaceType();
+    public static final HorseRaceType HORSE_RACE = new HorseRaceType();
+    public static final BoatRaceType BOAT_RACE = new BoatRaceType();
+    public static final DeathMatchType DEATH_MATCH = new DeathMatchType();
+    private static MinigameTypes instance;
+    @SuppressWarnings("rawtypes")
+    private final HashMap<String, MType> types = new HashMap<>();
+
     public MinigameTypes() {
         instance = this;
         register(SKYWARS);
@@ -28,10 +39,6 @@ public class MinigameTypes {
         register(EGGWARS);
     }
 
-    public void reload() {
-        types.values().forEach(MType::reload);
-    }
-
     @SuppressWarnings("rawtypes")
     private void register(@NotNull MType type) {
         if (!UtilsString.isLowcasedValidID(type.getType()))
@@ -41,14 +48,13 @@ public class MinigameTypes {
         types.put(type.getType(), type);
     }
 
-    private static MinigameTypes instance;
-
     public static MinigameTypes get() {
         return instance;
     }
 
-    @SuppressWarnings("rawtypes")
-    private final HashMap<String, MType> types = new HashMap<>();
+    public void reload() {
+        types.values().forEach(MType::reload);
+    }
 
     @SuppressWarnings("rawtypes")
     public final @NotNull Collection<MType> getTypes() {
@@ -63,13 +69,5 @@ public class MinigameTypes {
     public @Nullable MType getType(String id) {
         return types.get(id.toLowerCase(Locale.ENGLISH));
     }
-
-    public static final SkyWarsType SKYWARS = new SkyWarsType();
-    public static final EggWarsType EGGWARS = new EggWarsType();
-    public static final RunRaceType RUN_RACE = new RunRaceType();
-    public static final ElytraRaceType ELYTRA_RACE = new ElytraRaceType();
-    public static final HorseRaceType HORSE_RACE = new HorseRaceType();
-    public static final BoatRaceType BOAT_RACE = new BoatRaceType();
-    public static final DeathMatchType DEATH_MATCH = new DeathMatchType();
 
 }

@@ -24,6 +24,14 @@ public class LocationOffset3D implements ConfigurationSerializable {
         this.pitch = pitch;
     }
 
+    private LocationOffset3D(@NotNull Map<String, Object> map) {
+        this.x = (double) map.get("x");
+        this.y = (double) map.get("y");
+        this.z = (double) map.get("z");
+        this.yaw = (float) map.get("yaw");
+        this.pitch = (float) map.get("pitch");
+    }
+
     @NotNull
     @Contract("_ -> new")
     public static LocationOffset3D fromLocation(@NotNull Location loc) {
@@ -32,16 +40,17 @@ public class LocationOffset3D implements ConfigurationSerializable {
 
     @NotNull
     @Contract("_ -> new")
-    public Location add(@NotNull BlockLocation3D bLoc) {
-        return new Location(bLoc.getWorld(), bLoc.x + x, bLoc.y + y, bLoc.z + z, yaw, pitch);
+    public static LocationOffset3D fromString(@NotNull String from) {
+        String[] args = from.split(":");
+        return new LocationOffset3D(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2])
+                , Float.parseFloat(args[3]), Float.parseFloat(args[4]));
+
     }
 
-    private LocationOffset3D(@NotNull Map<String, Object> map) {
-        this.x = (double) map.get("x");
-        this.y = (double) map.get("y");
-        this.z = (double) map.get("z");
-        this.yaw = (float) map.get("yaw");
-        this.pitch = (float) map.get("pitch");
+    @NotNull
+    @Contract("_ -> new")
+    public Location add(@NotNull BlockLocation3D bLoc) {
+        return new Location(bLoc.getWorld(), bLoc.x + x, bLoc.y + y, bLoc.z + z, yaw, pitch);
     }
 
     @NotNull
@@ -54,15 +63,6 @@ public class LocationOffset3D implements ConfigurationSerializable {
         map.put("yaw", yaw);
         map.put("pitch", pitch);
         return map;
-    }
-
-    @NotNull
-    @Contract("_ -> new")
-    public static LocationOffset3D fromString(@NotNull String from) {
-        String[] args = from.split(":");
-        return new LocationOffset3D(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2])
-                , Float.parseFloat(args[3]), Float.parseFloat(args[4]));
-
     }
 
     @Override

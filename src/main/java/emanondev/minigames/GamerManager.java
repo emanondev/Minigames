@@ -15,19 +15,8 @@ import java.util.UUID;
 public class GamerManager {
     private static GamerManager instance = null;
     private final HashMap<UUID, Gamer> gamers = new HashMap<>();
-
-
-    public @NotNull Gamer getGamer(@NotNull UUID user) {
-        if (gamers.containsKey(user))
-            return gamers.get(user);
-        Gamer gamer = new Gamer(user);
-        gamers.put(gamer.getUniqueId(), gamer);
-        return gamer;
-    }
-
-    public @NotNull Gamer getGamer(@NotNull OfflinePlayer user) {
-        return getGamer(user.getUniqueId());
-    }
+    private final HashMap<Integer, Long> levelupExp = new HashMap<>();
+    private int maxLevel;
 
     public GamerManager() {
         if (instance != null)
@@ -35,26 +24,6 @@ public class GamerManager {
         GamerManager.instance = this;
         reload();
     }
-
-    public static GamerManager get() {
-        return instance;
-    }
-
-
-    private final HashMap<Integer, Long> levelupExp = new HashMap<>();
-
-    private int maxLevel;
-
-    public @Range(from = 1, to = Integer.MAX_VALUE) int getMaxLevel() {
-        return maxLevel;
-    }
-
-    public @Range(from = 0, to = Long.MAX_VALUE) long getLevelUpExperience(@Range(from = 1, to = Integer.MAX_VALUE) int level) {
-        if (level >= maxLevel)
-            return Long.MAX_VALUE;//TODO should i return -1? throw new IllegalArgumentException();
-        return levelupExp.getOrDefault(level, Long.MAX_VALUE);
-    }
-
 
     public void reload() {
         @NotNull YMLConfig conf = Minigames.get().getConfig("gamersConfig.yml");
@@ -71,6 +40,32 @@ public class GamerManager {
             }
         }
         gamers.values().forEach(Gamer::save);
+    }
+
+    public static GamerManager get() {
+        return instance;
+    }
+
+    public @NotNull Gamer getGamer(@NotNull OfflinePlayer user) {
+        return getGamer(user.getUniqueId());
+    }
+
+    public @NotNull Gamer getGamer(@NotNull UUID user) {
+        if (gamers.containsKey(user))
+            return gamers.get(user);
+        Gamer gamer = new Gamer(user);
+        gamers.put(gamer.getUniqueId(), gamer);
+        return gamer;
+    }
+
+    public @Range(from = 1, to = Integer.MAX_VALUE) int getMaxLevel() {
+        return maxLevel;
+    }
+
+    public @Range(from = 0, to = Long.MAX_VALUE) long getLevelUpExperience(@Range(from = 1, to = Integer.MAX_VALUE) int level) {
+        if (level >= maxLevel)
+            return Long.MAX_VALUE;//TODO should i return -1? throw new IllegalArgumentException();
+        return levelupExp.getOrDefault(level, Long.MAX_VALUE);
     }
 
     public YMLSection getDatabaseSection(Gamer gamer) {

@@ -9,6 +9,10 @@ public class BoatRaceStartEvent extends GameStartEvent<BoatRaceGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public BoatRaceStartEvent(@NotNull BoatRaceGame game) {
+        super(game);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -16,9 +20,5 @@ public class BoatRaceStartEvent extends GameStartEvent<BoatRaceGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public BoatRaceStartEvent(@NotNull BoatRaceGame game) {
-        super(game);
     }
 }

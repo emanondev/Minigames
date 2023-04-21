@@ -11,27 +11,33 @@ public interface MOption extends ConfigurationSerializable, Cloneable, Registrab
         getEditorGui(who).open(who);
     }
 
-    void setAllowSpectators(boolean allowSpectators);
+    default Gui getEditorGui(Player player) {
+        return getEditorGui(player, null);
+    }
 
-    void setCollectingPlayersPhaseCooldownMax(int value);
-
-    void setEndPhaseCooldownMax(int value);
-
-    void setPreStartPhaseCooldownMax(int value);
+    Gui getEditorGui(Player player, Gui parent);
 
     int getCollectingPlayersPhaseCooldownMax();
 
+    void setCollectingPlayersPhaseCooldownMax(int value);
+
     int getEndPhaseCooldownMax();
+
+    void setEndPhaseCooldownMax(int value);
 
     int getPreStartPhaseCooldownMax();
 
-    int getTeamMaxSize();
+    void setPreStartPhaseCooldownMax(int value);
 
-    boolean getAllowSpectators();
+    int getTeamMaxSize();
 
     /*
     @NotNull
     List<Kit> getKits();*/
+
+    boolean getAllowSpectators();
+
+    void setAllowSpectators(boolean allowSpectators);
 
     boolean allowSelectingTeam();
 
@@ -40,12 +46,6 @@ public interface MOption extends ConfigurationSerializable, Cloneable, Registrab
         return new String[]{
                 "%id%", getId(), "%type%", name.endsWith("Option") ? name.substring(0, name.length() - 6) : name
         };
-    }
-
-    Gui getEditorGui(Player player, Gui parent);
-
-    default Gui getEditorGui(Player player) {
-        return getEditorGui(player, null);
     }
 
     boolean getShowArenaBorders();

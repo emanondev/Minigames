@@ -48,6 +48,10 @@ public class MiniGamerCommand extends CoreCommand {
         }
     }
 
+    private void help(CommandSender sender, String label) {
+        sendDMessage(sender, "minigamer.help", "%label%", label);
+    }
+
     private void info(CommandSender sender, String label, String[] args) {
         if (args.length == 1 && !(sender instanceof Player)) {
             sendDMessage(sender, "minigamer.error.info_params", "%label%", label);
@@ -165,7 +169,6 @@ public class MiniGamerCommand extends CoreCommand {
         sendDMessage(sender, "minigamer.success.setxp", "%amount%", String.valueOf(amount), "%name%", target.getName(), "%label%", label);
     }
 
-
     private void setlv(CommandSender sender, String label, String[] args) {
         if (args.length <= 1) {
             sendDMessage(sender, "minigamer.error.setlv_params", "%label%", label);
@@ -192,11 +195,6 @@ public class MiniGamerCommand extends CoreCommand {
         Gamer gamer = GamerManager.get().getGamer(target);
         gamer.setLevel(amount);
         sendDMessage(sender, "minigamer.success.setlv", "%amount%", String.valueOf(amount), "%name%", target.getName(), "%label%", label);
-    }
-
-
-    private void help(CommandSender sender, String label) {
-        sendDMessage(sender, "minigamer.help", "%label%", label);
     }
 
     /*

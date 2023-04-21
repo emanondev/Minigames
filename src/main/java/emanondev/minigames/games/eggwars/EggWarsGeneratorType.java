@@ -15,19 +15,17 @@ import org.jetbrains.annotations.Range;
 import java.util.HashMap;
 
 public class EggWarsGeneratorType {
+    public static final NamespacedKey DATA_KEY = new NamespacedKey(Minigames.get(), "eggwars_coin");
     private final String id;
     private final HashMap<Integer, Double> dropRateo5ticks = new HashMap<>();
     private final int maxLevel;
     private final HashMap<Integer, Integer> levelupPriceAmount = new HashMap<>();
-    private HashMap<Integer, String> levelupPriceTypeRaw = new HashMap<>();
     private final HashMap<Integer, EggWarsGeneratorType> levelupPriceType = new HashMap<>();
-
-    public Material getMaterial() {
-        return material;
-    }
-
     private final Material material;
     private final Integer customModelData;
+    private final String hexColor;
+    private HashMap<Integer, String> levelupPriceTypeRaw = new HashMap<>();
+
 
     /*
     <id>:
@@ -130,9 +128,12 @@ public class EggWarsGeneratorType {
         }
     }
 
-
     public String getType() {
         return id;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 
     void validateUpgradeCosts(EggWarsType mType) {
@@ -153,8 +154,6 @@ public class EggWarsGeneratorType {
                 .setGuiProperty().setCustomModelData(customModelData).setDescription(new DMessage(Minigames.get(), target)
                         .appendLang("eggwars.generators." + getType())).build();
     }
-
-    public static final NamespacedKey DATA_KEY = new NamespacedKey(Minigames.get(), "eggwars_coin");
 
     public boolean canLevelUp(int currentLevel) {
         return currentLevel < maxLevel;
@@ -178,14 +177,12 @@ public class EggWarsGeneratorType {
         return dropRateo5ticks.get(currentLevel);
     }
 
-    private final String hexColor;
+    public String miniColor() {
+        return "<#" + hexColor() + ">";
+    }
 
     public String hexColor() {
         return hexColor;
-    }
-
-    public String miniColor() {
-        return "<#" + hexColor() + ">";
     }
 
     public String miniColorEnd() {

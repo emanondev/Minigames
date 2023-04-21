@@ -48,20 +48,16 @@ public class Gamer {
         return Bukkit.getPlayer(user);
     }
 
-    public @Range(from = 0, to = Long.MAX_VALUE) long getExperience() {
-        return xp;
+    public @Range(from = 0, to = Long.MAX_VALUE) long getExperienceToLevelUp() {
+        return Math.max(0, getLevelUpExperience() - getExperience());
     }
 
     public @Range(from = 0, to = Long.MAX_VALUE) long getLevelUpExperience() {
         return getManager().getLevelUpExperience(getLevel());
     }
 
-    public @Range(from = 0, to = Long.MAX_VALUE) long getExperienceToLevelUp() {
-        return Math.max(0, getLevelUpExperience() - getExperience());
-    }
-
-    public @Range(from = 1, to = Integer.MAX_VALUE) int getLevel() {
-        return lv;
+    public @Range(from = 0, to = Long.MAX_VALUE) long getExperience() {
+        return xp;
     }
 
     public void setExperience(@Range(from = 0, to = Long.MAX_VALUE) long exp) {
@@ -73,6 +69,14 @@ public class Gamer {
             this.xp = exp;
             recalculateLevel();
         }
+    }
+
+    private GamerManager getManager() {
+        return GamerManager.get();
+    }
+
+    public @Range(from = 1, to = Integer.MAX_VALUE) int getLevel() {
+        return lv;
     }
 
     public void setLevel(@Range(from = 1, to = Integer.MAX_VALUE) int lv) {
@@ -118,11 +122,6 @@ public class Gamer {
         }
         save();
     }
-
-    private GamerManager getManager() {
-        return GamerManager.get();
-    }
-
 
     public void reset() {
         this.setLevel(1);

@@ -20,12 +20,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
+    private final HashMap<String, EggWarsGeneratorType> generatorTypes = new HashMap<>();
+
     public EggWarsType() {
         super("eggwars", EggWarsArena.class, EggWarsOption.class, Minigames.get());
         ConfigurationSerialization.registerClass(EggWarsArena.class);
         ConfigurationSerialization.registerClass(EggWarsOption.class);
         ConfigurationSerialization.registerClass(EggWarsGame.class);
         reload();
+    }
+
+    private void registerType(EggWarsGeneratorType type) {
+        if (!UtilsString.isLowcasedValidID(type.getType()))
+            throw new IllegalArgumentException("invalid id '" + type.getType() + "'");
+        if (generatorTypes.containsKey(type.getType()))
+            throw new IllegalArgumentException("duplicated id '" + type.getType() + "'");
+        generatorTypes.put(type.getType(), type);
     }
 
     @Override
@@ -58,6 +68,23 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
         return new ItemBuilder(getSection().getMaterial("display.gui.material", Material.BOW))
                 .setGuiProperty().setCustomModelData(getSection()
                         .getInteger("display.gui.custommodel", null));
+    }
+
+    public void reload() {
+        generatorTypes.clear();
+        for (String key : getSection().getKeys("generators")) {
+            try {
+                EggWarsGeneratorType type = new EggWarsGeneratorType(key, getSection().loadSection("generators." + key));
+                registerType(type);
+            } catch (IllegalArgumentException e) {
+                Minigames.get().logIssue(e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        for (EggWarsGeneratorType type : generatorTypes.values()) {
+            type.validateUpgradeCosts(this);
+        }
     }
 
     public double getSnowballPush() {
@@ -94,33 +121,6 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
 
     public int getEggBrokenExp() {
         return getSection().loadInteger("game.egg_broken_exp", 5);
-    }
-
-    private final HashMap<String, EggWarsGeneratorType> generatorTypes = new HashMap<>();
-
-    public void reload() {
-        generatorTypes.clear();
-        for (String key : getSection().getKeys("generators")) {
-            try {
-                EggWarsGeneratorType type = new EggWarsGeneratorType(key, getSection().loadSection("generators." + key));
-                registerType(type);
-            } catch (IllegalArgumentException e){
-                Minigames.get().logIssue(e.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        for (EggWarsGeneratorType type : generatorTypes.values()) {
-            type.validateUpgradeCosts(this);
-        }
-    }
-
-    private void registerType(EggWarsGeneratorType type) {
-        if (!UtilsString.isLowcasedValidID(type.getType()))
-            throw new IllegalArgumentException("invalid id '" + type.getType() + "'");
-        if (generatorTypes.containsKey(type.getType()))
-            throw new IllegalArgumentException("duplicated id '" + type.getType() + "'");
-        generatorTypes.put(type.getType(), type);
     }
 
     public @Nullable EggWarsGeneratorType getGenerator(ItemStack item) {

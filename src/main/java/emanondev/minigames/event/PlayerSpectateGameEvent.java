@@ -11,17 +11,16 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerSpectateGameEvent extends GameEvent {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-
-    public static @NotNull HandlerList getHandlerList() {
-        return HANDLERS_LIST;
-    }
-
     private final Player player;
 
     @SuppressWarnings("rawtypes")
     public PlayerSpectateGameEvent(@NotNull MGame game, @NotNull Player player) {
         super(game);
         this.player = player;
+    }
+
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLERS_LIST;
     }
 
     public @NotNull Player getPlayer() {

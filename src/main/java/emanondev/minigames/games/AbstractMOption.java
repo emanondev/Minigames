@@ -25,52 +25,12 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
     private int endPhaseCooldownMax;
     private int preStartPhaseCooldownMax;
 
-    @Override
-    public void setAllowSpectators(boolean allowSpectators) {
-        this.allowSpectators = allowSpectators;
-        OptionManager.get().save(this);
-    }
-
-    @Override
-    public void setCollectingPlayersPhaseCooldownMax(int value) {
-        collectingPlayersPhaseCooldownMax = Math.max(1, Math.min(180, value));
-        OptionManager.get().save(this);
-    }
-
-    @Override
-    public void setEndPhaseCooldownMax(int value) {
-        endPhaseCooldownMax = Math.max(1, Math.min(60, value));
-        OptionManager.get().save(this);
-    }
-
-    @Override
-    public void setPreStartPhaseCooldownMax(int value) {
-        this.preStartPhaseCooldownMax = Math.max(1, Math.min(60, value));
-        OptionManager.get().save(this);
-    }
-
-
     public AbstractMOption(@NotNull Map<String, Object> map) {
         collectingPlayersPhaseCooldownMax = (int) map.getOrDefault("collectingplayersphasecooldownmax", 27);
         endPhaseCooldownMax = (int) map.getOrDefault("endphasecooldownmax", 10);
         preStartPhaseCooldownMax = (int) map.getOrDefault("prestartphasecooldownmax", 3);
         allowSpectators = (boolean) map.getOrDefault("allowSpectators", true);
         showArenaBorders = (boolean) map.getOrDefault("showArenaBorders", true);
-    }
-
-    @Override
-    public int getCollectingPlayersPhaseCooldownMax() {
-        return collectingPlayersPhaseCooldownMax;
-    }
-
-    @Override
-    public int getEndPhaseCooldownMax() {
-        return endPhaseCooldownMax;
-    }
-
-    @Override
-    public int getPreStartPhaseCooldownMax() {
-        return preStartPhaseCooldownMax;
     }
 
     @NotNull
@@ -83,11 +43,6 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
         map.put("allowSpectators", allowSpectators);
         map.put("showArenaBorders", showArenaBorders);
         return map;
-    }
-
-    @Override
-    public boolean getAllowSpectators() {
-        return allowSpectators;
     }
 
     @Override
@@ -129,6 +84,50 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
         }
         ));
         return gui;
+    }
+
+    @Override
+    public int getCollectingPlayersPhaseCooldownMax() {
+        return collectingPlayersPhaseCooldownMax;
+    }
+
+    @Override
+    public void setCollectingPlayersPhaseCooldownMax(int value) {
+        collectingPlayersPhaseCooldownMax = Math.max(1, Math.min(180, value));
+        OptionManager.get().save(this);
+    }
+
+    @Override
+    public int getEndPhaseCooldownMax() {
+        return endPhaseCooldownMax;
+    }
+
+    @Override
+    public void setEndPhaseCooldownMax(int value) {
+        endPhaseCooldownMax = Math.max(1, Math.min(60, value));
+        OptionManager.get().save(this);
+    }
+
+    @Override
+    public int getPreStartPhaseCooldownMax() {
+        return preStartPhaseCooldownMax;
+    }
+
+    @Override
+    public void setPreStartPhaseCooldownMax(int value) {
+        this.preStartPhaseCooldownMax = Math.max(1, Math.min(60, value));
+        OptionManager.get().save(this);
+    }
+
+    @Override
+    public boolean getAllowSpectators() {
+        return allowSpectators;
+    }
+
+    @Override
+    public void setAllowSpectators(boolean allowSpectators) {
+        this.allowSpectators = allowSpectators;
+        OptionManager.get().save(this);
     }
 
     @Override

@@ -26,22 +26,6 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
                 this.onFakeGamerDeath(player, null, true);
     }
 
-    public void teleportResetLocation(@NotNull Player player) {
-        Entity vehicle = player.getVehicle();
-        super.teleportResetLocation(player);
-        if (isGamer(player) && (getPhase() == Phase.PRE_START || getPhase() == Phase.PLAYING)) {
-            Location loc = player.getLocation();
-            Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
-                getOption().spawnRide(loc).addPassenger(player);
-                if (vehicle != null && vehicle.isValid()) vehicle.remove();
-            }, 1L);
-        }
-    }
-
-    public void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player) {
-        onGamerMoveInsideArena(new PlayerMoveEvent(player, event.getFrom(), event.getTo()));
-    }
-
     public void onGamerDismountEvent(EntityDismountEvent event, Player player) {
         if (getPhase() == Phase.PLAYING || getPhase() == Phase.PRE_START) {
             Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
@@ -53,15 +37,8 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
         }
     }
 
-
-    public void onQuitGame(@NotNull Player player) {
-        boolean gamer = isGamer(player);
-        super.onQuitGame(player);
-        if (gamer && player.getVehicle() != null) {
-            Entity vehicle = player.getVehicle();
-            vehicle.removePassenger(player);
-            vehicle.remove();
-        }
+    public void onGamerVehicleMoveEvent(VehicleMoveEvent event, Player player) {
+        onGamerMoveInsideArena(new PlayerMoveEvent(player, event.getFrom(), event.getTo()));
     }
 
     public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
@@ -82,6 +59,28 @@ public abstract class MountedRaceGame<T extends ARaceTeam, O extends MountedRace
             }, 1L);
             event.setCancelled(false); //TODO bugged
             */
+        }
+    }
+
+    public void teleportResetLocation(@NotNull Player player) {
+        Entity vehicle = player.getVehicle();
+        super.teleportResetLocation(player);
+        if (isGamer(player) && (getPhase() == Phase.PRE_START || getPhase() == Phase.PLAYING)) {
+            Location loc = player.getLocation();
+            Bukkit.getScheduler().runTaskLater(getMinigameType().getPlugin(), () -> {
+                getOption().spawnRide(loc).addPassenger(player);
+                if (vehicle != null && vehicle.isValid()) vehicle.remove();
+            }, 1L);
+        }
+    }
+
+    public void onQuitGame(@NotNull Player player) {
+        boolean gamer = isGamer(player);
+        super.onQuitGame(player);
+        if (gamer && player.getVehicle() != null) {
+            Entity vehicle = player.getVehicle();
+            vehicle.removePassenger(player);
+            vehicle.remove();
         }
     }
 

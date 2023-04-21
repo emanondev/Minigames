@@ -32,12 +32,12 @@ public class GameStat extends Stat<MGame> {
     }
 
     @Override
-    protected @NotNull YMLConfig getConfig() {
-        return conf;
+    protected @NotNull String getId(@NotNull MGame target) {
+        return target.getId();
     }
 
     @Override
-    protected @NotNull String getId(@NotNull MGame target) {
-        return target.getId();
+    protected @NotNull YMLConfig getConfig() {
+        return conf;
     }
 }

@@ -22,63 +22,10 @@ import java.util.*;
 @SerializableAs("DeathMatchOption")
 public class DeathMatchOption extends AbstractMOption implements MOptionWithKitsChoice {
 
-    public void setTeamMaxPlayers(int value) {
-        this.perTeamMaxPlayers = Math.max(1, Math.min(32, value));
-        OptionManager.get().save(this);
-    }
-
-    public void setChestFillerId(@Nullable String chestFillerId) {
-        this.chestFillerId = chestFillerId;
-        OptionManager.get().save(this);
-    }
-
-    public boolean hasKitId(String kit) {
-        return kit != null && kits.contains(kit);
-    }
-
-    public void addKitId(@Nullable String kitId) {
-        if (kitId != null && !kits.contains(kitId)) {
-            this.kits.add(kitId);
-            OptionManager.get().save(this);
-        }
-    }
-
-    public void removeKitId(@Nullable String kitId) {
-        if (kitId != null && kits.contains(kitId)) {
-            this.kits.remove(kitId);
-            OptionManager.get().save(this);
-        }
-    }
-
-    public void toggleKitId(@Nullable String kitId) {
-        if (this.kits.contains(kitId))
-            removeKitId(kitId);
-        else
-            addKitId(kitId);
-    }
-
-    public void setKillKewardFillerId(@Nullable String killKewardFillerId) {
-        this.killKewardFillerId = killKewardFillerId;
-        OptionManager.get().save(this);
-    }
-
-    public @Nullable String getChestFillerId() {
-        return chestFillerId;
-    }
-
-    public @Nullable String getKillKewardFillerId() {
-        return killKewardFillerId;
-    }
-
+    private final List<String> kits = new ArrayList<>();
     private int perTeamMaxPlayers;
     private String chestFillerId;
     private String killKewardFillerId;
-    private final List<String> kits = new ArrayList<>();
-
-    @Override
-    public int getTeamMaxSize() {
-        return perTeamMaxPlayers;
-    }
 
     public DeathMatchOption() {
         this(new HashMap<>());
@@ -102,7 +49,6 @@ public class DeathMatchOption extends AbstractMOption implements MOptionWithKits
         map.put("kits", kits);
         return map;
     }
-
 
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
@@ -167,6 +113,43 @@ public class DeathMatchOption extends AbstractMOption implements MOptionWithKits
         return gui;
     }
 
+    @Override
+    public int getTeamMaxSize() {
+        return perTeamMaxPlayers;
+    }
+
+    public void setTeamMaxPlayers(int value) {
+        this.perTeamMaxPlayers = Math.max(1, Math.min(32, value));
+        OptionManager.get().save(this);
+    }
+
+    public @Nullable String getChestFillerId() {
+        return chestFillerId;
+    }
+
+    public void setChestFillerId(@Nullable String chestFillerId) {
+        this.chestFillerId = chestFillerId;
+        OptionManager.get().save(this);
+    }
+
+    public @Nullable String getKillKewardFillerId() {
+        return killKewardFillerId;
+    }
+
+    public void setKillKewardFillerId(@Nullable String killKewardFillerId) {
+        this.killKewardFillerId = killKewardFillerId;
+        OptionManager.get().save(this);
+    }
+
+    public @NotNull List<String> getKitsId() {
+        return Collections.unmodifiableList(kits);
+    }
+
+    @Override
+    public boolean allowSelectingTeam() {
+        return getTeamMaxSize() > 1;
+    }
+
     public @Nullable DropsFiller getChestsFiller() {
         return this.chestFillerId == null ? null : FillerManager.get().get(this.chestFillerId);
     }
@@ -186,13 +169,29 @@ public class DeathMatchOption extends AbstractMOption implements MOptionWithKits
         return list;
     }
 
-    public @NotNull List<String> getKitsId() {
-        return Collections.unmodifiableList(kits);
+    public boolean hasKitId(String kit) {
+        return kit != null && kits.contains(kit);
     }
 
-    @Override
-    public boolean allowSelectingTeam() {
-        return getTeamMaxSize() > 1;
+    public void addKitId(@Nullable String kitId) {
+        if (kitId != null && !kits.contains(kitId)) {
+            this.kits.add(kitId);
+            OptionManager.get().save(this);
+        }
+    }
+
+    public void removeKitId(@Nullable String kitId) {
+        if (kitId != null && kits.contains(kitId)) {
+            this.kits.remove(kitId);
+            OptionManager.get().save(this);
+        }
+    }
+
+    public void toggleKitId(@Nullable String kitId) {
+        if (this.kits.contains(kitId))
+            removeKitId(kitId);
+        else
+            addKitId(kitId);
     }
 
 }

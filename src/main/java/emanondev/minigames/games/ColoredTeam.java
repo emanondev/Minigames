@@ -28,10 +28,6 @@ public abstract class ColoredTeam implements MTeam {
         team.setPrefix(chatColor.toString() + "⬛ " + ChatColor.WHITE); //smaller ■
     }
 
-    public ChatColor getChatColor() {
-        return chatColor;
-    }
-
     @Override
     @SuppressWarnings("rawtypes")
     public AbstractMGame getGame() {
@@ -71,11 +67,6 @@ public abstract class ColoredTeam implements MTeam {
         return false;
     }
 
-    @NotNull
-    public DyeColor getColor() {
-        return color;
-    }
-
     @Override
     public boolean containsUser(@NotNull UUID user) {
         return users.contains(user);
@@ -101,6 +92,9 @@ public abstract class ColoredTeam implements MTeam {
         users.clear();
     }
 
+    public ChatColor getChatColor() {
+        return chatColor;
+    }
 
     @Override
     public String getName() {
@@ -108,5 +102,10 @@ public abstract class ColoredTeam implements MTeam {
             for (UUID user : users)
                 return Bukkit.getOfflinePlayer(user).getName();
         return color.name().toLowerCase(Locale.ENGLISH);
+    }
+
+    @NotNull
+    public DyeColor getColor() {
+        return color;
     }
 }

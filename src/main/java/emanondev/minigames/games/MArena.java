@@ -11,14 +11,14 @@ public interface MArena extends ConfigurationSerializable, Cloneable, Registrabl
 
     @NotNull LocationOffset3D getSpectatorsOffset();
 
-    @NotNull String getDisplayName();
-
-    void setDisplayName(@Nullable String displayName);
-
     default @NotNull String[] getPlaceholders() {
         String name = getClass().getSimpleName();
         return new String[]{"%id%", getId(), "%displayname%", getDisplayName(), "%type%", name.endsWith("Arena") ? name.substring(0, name.length() - 5) : name};
     }
+
+    @NotNull String getDisplayName();
+
+    void setDisplayName(@Nullable String displayName);
 
     default Gui getEditorGui(Player player) {
         return getEditorGui(player, null);

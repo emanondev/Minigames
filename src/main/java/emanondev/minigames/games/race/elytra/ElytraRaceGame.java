@@ -26,15 +26,18 @@ import java.util.Set;
 public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraRaceOption> {
 
 
+    public ElytraRaceGame(@NotNull Map<String, Object> map) {
+        super(map);
+    }
+
     @Override
     protected void craftAndCallGameStartEvent() {
         Bukkit.getPluginManager().callEvent(new ElytraRaceStartEvent(this));
     }
 
-    public ElytraRaceGame(@NotNull Map<String, Object> map) {
-        super(map);
+    @Override
+    public void onEntityDeath(@NotNull EntityDeathEvent event) {
     }
-
 
     @Override
     public @NotNull ElytraRaceType getMinigameType() {
@@ -56,8 +59,22 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
         Bukkit.getPluginManager().callEvent(new ElytraRaceWinThirdEvent(team, lineCutter, winners));
     }
 
-    @Override
-    public void onEntityDeath(@NotNull EntityDeathEvent event) {
+    public void teleportResetLocation(@NotNull Player player) {
+        super.teleportResetLocation(player);
+        if (isGamer(player) && (getPhase() == Phase.PRE_START || getPhase() == Phase.PLAYING)) {
+            player.getInventory().setItem(EquipmentSlot.CHEST, new ItemBuilder(Material.ELYTRA)
+                    .setGuiProperty().addEnchantment(Enchantment.BINDING_CURSE, 1).build());
+            if (getPhase() == Phase.PLAYING && player.getLocation().getBlock().getRelative(BlockFace.DOWN).isPassable())
+                player.setGliding(true);
+        }
+    }
+
+    public void gameStart() {
+        super.gameStart();
+        for (Player player : getGamers()) {
+            player.getInventory().setItem(EquipmentSlot.CHEST, new ItemBuilder(Material.ELYTRA)
+                    .setGuiProperty().addEnchantment(Enchantment.BINDING_CURSE, 1).build());
+        }
     }
 
     @Override
@@ -83,23 +100,5 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.ELYTRARACE_VICTORY_THIRD;
-    }
-
-    public void teleportResetLocation(@NotNull Player player) {
-        super.teleportResetLocation(player);
-        if (isGamer(player) && (getPhase() == Phase.PRE_START || getPhase() == Phase.PLAYING)) {
-            player.getInventory().setItem(EquipmentSlot.CHEST, new ItemBuilder(Material.ELYTRA)
-                    .setGuiProperty().addEnchantment(Enchantment.BINDING_CURSE, 1).build());
-            if (getPhase() == Phase.PLAYING && player.getLocation().getBlock().getRelative(BlockFace.DOWN).isPassable())
-                player.setGliding(true);
-        }
-    }
-
-    public void gameStart() {
-        super.gameStart();
-        for (Player player : getGamers()) {
-            player.getInventory().setItem(EquipmentSlot.CHEST, new ItemBuilder(Material.ELYTRA)
-                    .setGuiProperty().addEnchantment(Enchantment.BINDING_CURSE, 1).build());
-        }
     }
 }

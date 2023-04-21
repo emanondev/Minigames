@@ -22,15 +22,16 @@ public class ShopsMenu extends MapGui {
 
 
     private final HashMap<String, Gui> subGuis = new HashMap<>();
-    private BackButton backButton;
     private final EggWarsGame game;
+    private final HashMap<EggWarsGeneratorType, Integer> coinsCache = new HashMap<>();
+    private BackButton backButton;
 
     @Deprecated
-    public ShopsMenu(@NotNull Player p){//TODO remove
-        this(p,null);
+    public ShopsMenu(@NotNull Player p) {//TODO remove
+        this(p, null);
     }
 
-    public ShopsMenu(@NotNull Player p,@NotNull EggWarsGame game) {
+    public ShopsMenu(@NotNull Player p, @NotNull EggWarsGame game) {
         super(new DMessage(Minigames.get(), p).appendLang("eggwars.shops.menu.title"), 3, p, null, Minigames.get());
         this.game = game;
         this.setButton(10, new ShopButton("blocks"));
@@ -52,7 +53,7 @@ public class ShopsMenu extends MapGui {
         this.setButton(26, new FastButton(8));
     }
 
-    public @NotNull EggWarsGame getGame(){
+    public @NotNull EggWarsGame getGame() {
         return game;
     }
 
@@ -75,16 +76,6 @@ public class ShopsMenu extends MapGui {
         return backButton;
     }
 
-
-    private final HashMap<EggWarsGeneratorType, Integer> coinsCache = new HashMap<>();
-    public void recalculateCoins() {
-        MinigameTypes.EGGWARS.getGenerators().forEach(g -> coinsCache.put(g, 0));
-        getTargetPlayer().getInventory().forEach((item) -> {
-            EggWarsGeneratorType g = MinigameTypes.EGGWARS.getGenerator(item);
-            if (g != null)
-                coinsCache.put(g, coinsCache.get(g) + item.getAmount());
-        });
-    }
     public int getCoins(@NotNull EggWarsGeneratorType type) {
         return coinsCache.get(type);
     }
@@ -93,6 +84,27 @@ public class ShopsMenu extends MapGui {
     public void onOpen(@NotNull InventoryOpenEvent event) {
         super.onOpen(event);
         this.recalculateCoins();
+    }
+
+    public void recalculateCoins() {
+        MinigameTypes.EGGWARS.getGenerators().forEach(g -> coinsCache.put(g, 0));
+        getTargetPlayer().getInventory().forEach((item) -> {
+            EggWarsGeneratorType g = MinigameTypes.EGGWARS.getGenerator(item);
+            if (g != null)
+                coinsCache.put(g, coinsCache.get(g) + item.getAmount());
+        });
+    }
+
+    private ItemBuilder craftItem(String path, String... holders) {
+        //TODO enchants
+        @NotNull YMLSection section = MinigameTypes.EGGWARS.getSection();
+        return new ItemBuilder(
+                section.getMaterial(path + ".material", Material.STONE))
+                .setAmount(section.getInt(path + ".amount", 1))
+                .setCustomModelData(section.getInteger(path + ".custom_model", null))
+                .setDescription(new DMessage(Minigames.get(), getTargetPlayer()).appendLang(
+                        "eggwars." + path, holders
+                )).setGuiProperty();
     }
 
     private class ShopButton implements GuiButton {
@@ -186,18 +198,6 @@ public class ShopsMenu extends MapGui {
         public @NotNull Gui getGui() {
             return ShopsMenu.this;
         }
-    }
-
-    private ItemBuilder craftItem(String path, String... holders) {
-        //TODO enchants
-        @NotNull YMLSection section = MinigameTypes.EGGWARS.getSection();
-        return new ItemBuilder(
-                section.getMaterial(path + ".material", Material.STONE))
-                .setAmount(section.getInt(path + ".amount", 1))
-                .setCustomModelData(section.getInteger(path + ".custom_model", null))
-                .setDescription(new DMessage(Minigames.get(), getTargetPlayer()).appendLang(
-                        "eggwars." + path, holders
-                )).setGuiProperty();
     }
 
 

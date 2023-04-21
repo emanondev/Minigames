@@ -43,8 +43,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MGame<T extends MTeam, A extends MArena, O extends MOption> extends CorePluginLinked, ConfigurationSerializable, Cloneable, Registrable {
 
-    @NotNull BlockLocation3D getGameLocation();
-
     @Nullable
     default T getTeam(@NotNull OfflinePlayer player) {
         return getTeam(player.getUniqueId());
@@ -54,12 +52,6 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     @NotNull Collection<T> getTeams();
 
-    @NotNull Phase getPhase();
-
-    @NotNull O getOption();
-
-    @NotNull A getArena();
-
     default boolean isOngoing() {
         return switch (getPhase()) {
             case PRE_START, PLAYING, END -> true;
@@ -67,33 +59,19 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         };
     }
 
-    int getMaxGamers();
-
-    @NotNull MType<A, O> getMinigameType();
+    @NotNull Phase getPhase();
 
     default boolean canSwitchToSpectator(Player player) {
         return getOption().getAllowSpectators();
     }
 
+    @NotNull O getOption();
+
     boolean addSpectator(@NotNull Player player);
-
-    boolean removeSpectator(@NotNull Player player);
-
-    boolean isSpectator(@NotNull Player player);
-
-    @NotNull Set<Player> getSpectators();
 
     boolean addGamer(@NotNull Player player);
 
     void teleportResetLocation(@NotNull Player player);
-
-    boolean canAddGamer(@NotNull Player player);
-
-    boolean removeGamer(@NotNull Player player);
-
-    boolean isGamer(@NotNull Player player);
-
-    @NotNull Set<Player> getGamers();
 
     @NotNull
     default Set<Player> getGamers(@NotNull T team) {
@@ -105,11 +83,13 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         return players;
     }
 
-    boolean containsLocation(@NotNull Location loc);
+    @NotNull Set<Player> getGamers();
 
     default boolean containsLocation(@NotNull Entity en) {
         return containsLocation(en.getLocation());
     }
+
+    boolean containsLocation(@NotNull Location loc);
 
     default boolean containsLocation(@NotNull Block b) {
         return containsLocation(b.getLocation());
@@ -128,16 +108,6 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     @Nullable World getWorld();
 
-    /**
-     * must set phase to RESTART and call gameRestart()
-     * <p>
-     * also do anything which should be done when the game start for the first time and do not need to be done on game restart
-     *
-     * @return
-     */
-    CompletableFuture<Void> gameInitialize();
-
-
     default void initialize() {
         gameInitialize().whenComplete((value, th) -> {
             MessageUtil.debug(this.getId() + " (" + getMinigameType().getType() + ") Inizializzazione terminata");
@@ -149,13 +119,32 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     }
 
     /**
+     * must set phase to RESTART and call gameRestart()
+     * <p>
+     * also do anything which should be done when the game start for the first time and do not need to be done on game restart
+     *
+     * @return
+     */
+    CompletableFuture<Void> gameInitialize();
+
+    @NotNull MType<A, O> getMinigameType();
+
+    /**
+     * kick users out of the game, cancel any task of the game
+     * finally set phase STOPPED
+     * <p>
+     * to restart the game someone has to call gameInizialize
+     */
+    void gameAbort();
+
+    void restart();
+
+    /**
      * reset any variables which needs to be cleared on game restart
      * after that register the timer task
      * and finally set the COLLECTING_PLAYERS phase
      */
     CompletableFuture<Void> gameRestart();
-
-    void restart();
 
     void gameCollectingPlayers();
 
@@ -180,10 +169,6 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      */
     void gamePreStartTimer();
 
-    void setScore(String score, int value);
-
-    int getScore(String score);
-
     void resetScore(String score);
 
     void resetScores();
@@ -191,6 +176,10 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
     default void addScore(String score, int value) {
         setScore(score, getScore(score) + value);
     }
+
+    void setScore(String score, int value);
+
+    int getScore(String score);
 
     /**
      * im'not sure what this method should do phase is PLAYING
@@ -215,7 +204,6 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      */
     void gameEndTimer();
 
-
     default void gameRestartTimer() {
     }
 
@@ -224,14 +212,6 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
      * finally set RESTART phase and calls gameRestart()
      */
     void gameClose();
-
-    /**
-     * kick users out of the game, cancel any task of the game
-     * finally set phase STOPPED
-     * <p>
-     * to restart the game someone has to call gameInizialize
-     */
-    void gameAbort();
 
     /**
      * @return true if the game can switch from COLLECTING_PLAYER phase to PRE_START phase
@@ -318,6 +298,14 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
             removeGamer(player);
     }
 
+    boolean isSpectator(@NotNull Player player);
+
+    boolean removeSpectator(@NotNull Player player);
+
+    boolean isGamer(@NotNull Player player);
+
+    boolean removeGamer(@NotNull Player player);
+
     boolean joinGameAsGamer(@NotNull Player player);
 
     boolean joinGameAsSpectator(@NotNull Player player);
@@ -376,6 +364,16 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         };
     }
 
+    boolean canAddGamer(@NotNull Player player);
+
+    @NotNull A getArena();
+
+    @NotNull Set<Player> getSpectators();
+
+    int getMaxGamers();
+
+    @NotNull BlockLocation3D getGameLocation();
+
     default void onGamerMountEvent(EntityMountEvent event, Player player) {
     }
 
@@ -396,15 +394,19 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
 
     Gui getEditorGui(Player player, Gui parent);
 
-    void setJoinGuiSlot(int val);
-
-    void setJoinTypeGuiSlot(int val);
-
     int getJoinGuiSlot();
+
+    void setJoinGuiSlot(int val);
 
     int getJoinTypeGuiSlot();
 
+    void setJoinTypeGuiSlot(int val);
+
     default void onGamerCraftItem(CraftItemEvent event) {
+    }
+
+    default @NotNull CorePlugin getPlugin() {
+        return getMinigameType().getPlugin();
     }
 
     enum Phase {
@@ -418,9 +420,5 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
         public String getTranslatedName(CommandSender target) {
             return Minigames.get().getLanguageConfig(target).getString("generic.phase_name." + this.name().toLowerCase(Locale.ENGLISH));
         }
-    }
-
-    default @NotNull CorePlugin getPlugin() {
-        return getMinigameType().getPlugin();
     }
 }

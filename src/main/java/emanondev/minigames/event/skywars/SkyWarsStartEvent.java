@@ -9,6 +9,10 @@ public class SkyWarsStartEvent extends GameStartEvent<SkyWarsGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public SkyWarsStartEvent(@NotNull SkyWarsGame game) {
+        super(game);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -16,9 +20,5 @@ public class SkyWarsStartEvent extends GameStartEvent<SkyWarsGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public SkyWarsStartEvent(@NotNull SkyWarsGame game) {
-        super(game);
     }
 }

@@ -13,6 +13,10 @@ public class RunRaceWinSecondEvent extends ARaceWinEvent<RunRaceGame> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
+    public RunRaceWinSecondEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        super(team, lineCutter, winners);
+    }
+
     public static @NotNull HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
@@ -20,9 +24,5 @@ public class RunRaceWinSecondEvent extends ARaceWinEvent<RunRaceGame> {
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
-    }
-
-    public RunRaceWinSecondEvent(@NotNull ARaceTeam<RunRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        super(team, lineCutter, winners);
     }
 }

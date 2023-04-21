@@ -30,6 +30,26 @@ public class BoatRaceGame extends MountedRaceGame<ARaceTeam<BoatRaceGame>, BoatR
     }
 
     @Override
+    public @NotNull ARaceType<BoatRaceOption> getMinigameType() {
+        return MinigameTypes.BOAT_RACE;
+    }
+
+    @Override
+    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<BoatRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new BoatRaceWinFirstEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<BoatRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new BoatRaceWinSecondEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<BoatRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new BoatRaceWinThirdEvent(team, lineCutter, winners));
+    }
+
+    @Override
     public @NotNull PlayerStat getPlayedStat() {
         return PlayerStat.BOATRACE_PLAYED;
     }
@@ -52,27 +72,6 @@ public class BoatRaceGame extends MountedRaceGame<ARaceTeam<BoatRaceGame>, BoatR
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.BOATRACE_VICTORY_THIRD;
-    }
-
-    @Override
-    public @NotNull ARaceType<BoatRaceOption> getMinigameType() {
-        return MinigameTypes.BOAT_RACE;
-    }
-
-
-    @Override
-    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<BoatRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new BoatRaceWinFirstEvent(team, lineCutter, winners));
-    }
-
-    @Override
-    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<BoatRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new BoatRaceWinSecondEvent(team, lineCutter, winners));
-    }
-
-    @Override
-    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<BoatRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new BoatRaceWinThirdEvent(team, lineCutter, winners));
     }
 
 }

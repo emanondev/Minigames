@@ -14,13 +14,6 @@ public class ARaceTeam<T extends ARaceGame> extends ColoredTeam {
         super(game, color);
     }
 
-    @Override
-    public boolean addUser(@NotNull UUID user) {
-        if (getGame().getOption().getTeamMaxSize() <= this.getUsersAmount())
-            return false;
-        return super.addUser(user);
-    }
-
     public boolean hasLost() {
         for (UUID user : this.getUsers()) {
             Player p = Bukkit.getPlayer(user);
@@ -28,7 +21,14 @@ public class ARaceTeam<T extends ARaceGame> extends ColoredTeam {
                 return false;
         }
         return true;
+    }    @Override
+    public boolean addUser(@NotNull UUID user) {
+        if (getGame().getOption().getTeamMaxSize() <= this.getUsersAmount())
+            return false;
+        return super.addUser(user);
     }
+
+
 
     @Override
     public T getGame() {
