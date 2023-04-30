@@ -32,7 +32,7 @@ public interface MTeam {
     @NotNull
     Set<UUID> getUsers();
 
-    void clear();
+    void reset();
 
     ChatColor getChatColor();
 

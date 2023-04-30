@@ -19,6 +19,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.EnderChest;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
@@ -29,6 +30,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +43,13 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
 
     private final HashSet<Block> addedBlocks = new HashSet<>();
     private final HashMap<Player, ShopsMenu> menus = new HashMap<>();
+    private final HashMap<DyeColor, Inventory> enderChests = new HashMap<>(); //is that ok?
+
+    public Inventory getTeamEnderChest(EggWarsTeam team){
+        if (!enderChests.containsKey(team.getColor()))
+            enderChests.put(team.getColor(),Bukkit.createInventory(null,InventoryType.ENDER_CHEST));
+        return enderChests.get(team.getColor());
+    }//TODO test
 
     public EggWarsGame(@NotNull Map<String, Object> map) {
         super(map);
@@ -48,18 +57,15 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
 
     @Override
     public void gamePreStart() {
-        //MessageUtil.debug(  getId() + " gamePREPreStart");
         //TODO assignTeams!
 
         List<Player> list = new ArrayList<>(this.getGamers());
         Collections.shuffle(list);
         list.forEach(this::onGamerAdded);
 
-        //ignoredChest.clear();
-        //filledChests.clear();
-
         super.gamePreStart();
         menus.clear();
+        enderChests.clear();
     }
 
     public void gameStart() {
@@ -379,7 +385,6 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
 
     @Override
     public void onGamerCombustEvent(@NotNull EntityCombustEvent event, @NotNull Player player) {
-
     }
 
     @Override

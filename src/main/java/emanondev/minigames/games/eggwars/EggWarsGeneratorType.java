@@ -5,6 +5,7 @@ import emanondev.core.UtilsString;
 import emanondev.core.YMLSection;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.Minigames;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -18,12 +19,18 @@ public class EggWarsGeneratorType {
     public static final NamespacedKey DATA_KEY = new NamespacedKey(Minigames.get(), "eggwars_coin");
     private final String id;
     private final HashMap<Integer, Double> dropRateo5ticks = new HashMap<>();
+
+    public int getMaxLevel() {
+        return maxLevel;
+    }
+
     private final int maxLevel;
     private final HashMap<Integer, Integer> levelupPriceAmount = new HashMap<>();
     private final HashMap<Integer, EggWarsGeneratorType> levelupPriceType = new HashMap<>();
     private final Material material;
     private final Integer customModelData;
     private final String hexColor;
+    private final Color color;
     private HashMap<Integer, String> levelupPriceTypeRaw = new HashMap<>();
 
 
@@ -122,6 +129,7 @@ public class EggWarsGeneratorType {
             if (hexColor.length() != 6 || value >= 256 * 256 * 256 || value < 0)
                 throw new IllegalStateException("Eggwars Generator &e" + id +
                         " &fhas no valid hex color on &e/types/eggwars.yml &f-> &egenerators." + id + ".color:");
+            color = Color.fromRGB(value);
         } catch (Exception e) {
             throw new IllegalStateException("Eggwars Generator &e" + id +
                     " &fhas no valid hex color on &e/types/eggwars.yml &f-> &egenerators." + id + ".color:");
@@ -187,5 +195,9 @@ public class EggWarsGeneratorType {
 
     public String miniColorEnd() {
         return "</#" + hexColor() + ">";
+    }
+
+    public Color getColor() {
+        return color;
     }
 }

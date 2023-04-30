@@ -189,7 +189,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
                     player.setWorldBorder(null);
             }
         }
-        teams.values().forEach(ColoredTeam::clear);
+        teams.values().forEach(ColoredTeam::reset);
         super.gameAbort();
     }
 

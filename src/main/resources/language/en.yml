@@ -533,6 +533,13 @@ minigame:
       - ""
       - "<#b3b3b3>Se lo slot è già usato da un'altro Game"
       - "<#b3b3b3>occuperà il primo slot libero"
+    enable_disable:
+      - "<#4079ff>Clicca per abilitare o disabilitare il Game"
+      - "<#57c9fa>Attualmente il Game è abilitato? <#ffffb3>%value%"
+      - ""
+      - "<#b3b3b3>Disabilitare il Game interromperà la partita corrente"
+      - "<#b3b3b3>e impedirà alle persone di joinare finchè non sarà riabilitato"
+
 miniarenabuilder:
   help:
     - "<gradient:#4079ff:#57c9fa:#ffffb3><b>MiniArenaBuilder</b></gradient> <hover:show_text:'<#acfad1>Questo comando permette di configurare\nun arena per un Game (Arena)'><#fab787>[?]</hover>"

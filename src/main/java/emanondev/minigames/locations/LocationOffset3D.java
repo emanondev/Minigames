@@ -2,11 +2,13 @@ package emanondev.minigames.locations;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class LocationOffset3D implements ConfigurationSerializable {
 
@@ -22,6 +24,19 @@ public class LocationOffset3D implements ConfigurationSerializable {
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LocationOffset3D that = (LocationOffset3D) o;
+        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && Float.compare(that.yaw, yaw) == 0 && Float.compare(that.pitch, pitch) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z, yaw, pitch);
     }
 
     private LocationOffset3D(@NotNull Map<String, Object> map) {
@@ -69,5 +84,15 @@ public class LocationOffset3D implements ConfigurationSerializable {
     @NotNull
     public String toString() {
         return x + ":" + y + ":" + z + ":" + yaw + ":" + pitch;
+    }
+
+    @NotNull
+    public Vector getDirection() {
+        Vector vector = new Vector();
+        vector.setY(-Math.sin(Math.toRadians(pitch)));
+        double xz = Math.cos(Math.toRadians(pitch));
+        vector.setX(-xz * Math.sin(Math.toRadians(yaw)));
+        vector.setZ(xz * Math.cos(Math.toRadians(yaw)));
+        return vector;
     }
 }

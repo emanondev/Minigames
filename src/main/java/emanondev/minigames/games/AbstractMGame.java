@@ -4,10 +4,7 @@ import emanondev.core.ItemBuilder;
 import emanondev.core.SoundInfo;
 import emanondev.core.UtilsString;
 import emanondev.core.VaultEconomyHandler;
-import emanondev.core.gui.Gui;
-import emanondev.core.gui.LongEditorFButton;
-import emanondev.core.gui.PagedListFGui;
-import emanondev.core.gui.PagedMapGui;
+import emanondev.core.gui.*;
 import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.*;
@@ -58,6 +55,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     private int joinTypeGuiSlot;
     private boolean enabled;
     private boolean registered = false;
+
     @SuppressWarnings("unchecked")
     public AbstractMGame(@NotNull Map<String, Object> map) {
         this.optionId = (String) map.get("option");
@@ -98,7 +96,14 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void setEnabled(boolean enabled) {
+        if (this.enabled == enabled)
+            return;
         this.enabled = enabled;
+        GameManager.get().save(this);
+        if (enabled)
+            this.initialize();
+        else
+            this.gameAbort();
     }
 
     @Override
@@ -186,7 +191,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
                     kitPreference.clear();
                     for (T team : getTeams())
-                        team.clear();
+                        team.reset();
                     future.complete(null);
                 } catch (Throwable t) {
                     future.completeExceptionally(t);
@@ -846,11 +851,17 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
-
     public Gui getEditorGui(Player target, Gui parent) {
         PagedMapGui gui = new PagedMapGui(
                 new DMessage(Minigames.get(), target).appendLang("minigame.gui.title", getPlaceholders()),
                 6, target, parent, Minigames.get());
+        gui.addButton(new FButton(gui, () -> new ItemBuilder(isEnabled()?Material.LIME_CONCRETE:Material.RED_CONCRETE)
+                 .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                         "minigame.gui.enable_disable", "%value%",String.valueOf(isEnabled())
+                 )).build(), (e) -> {
+            this.setEnabled(!this.isEnabled());
+            return true;
+        }));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
                 () -> (long) getJoinGuiSlot(),
                 (v) -> setJoinGuiSlot(v.intValue()),

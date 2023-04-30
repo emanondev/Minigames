@@ -148,6 +148,30 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
             }
     }
 
+
+    protected void spawnParticleLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance){
+        spawnParticleLine(p,particle,x, y, z, direction,maxDistance,null);
+    }
+
+    protected void spawnParticleLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance,  Object data){
+        markLine(p,particle,x, y, z, direction,maxDistance,data);
+    }
+
+
+    private void markLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance, Object data) {
+        int i = 0;
+        double xD = direction.getX();
+        double yD = direction.getY();
+        double zD = direction.getZ();
+        double dirDistance = xD*xD+yD*yD+zD*zD;
+        if (dirDistance==0)
+            return;
+        while (i*(dirDistance)<maxDistance*maxDistance){
+            spawnParticle(p, particle, x+xD*i, y+yD*i, z+zD*i, 1, data);
+            i++;
+        }
+    }
+
     protected void spawnParticleBoxEdges(Player p, Particle particle, BoundingBox box) {
         spawnParticleBoxEdges(p, particle, box, null);
     }

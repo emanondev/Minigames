@@ -88,7 +88,7 @@ public abstract class ColoredTeam implements MTeam {
     }
 
     @Override
-    public void clear() {
+    public void reset() {
         users.clear();
     }
 

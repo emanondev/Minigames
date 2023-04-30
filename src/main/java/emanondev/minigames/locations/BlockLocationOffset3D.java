@@ -2,10 +2,12 @@ package emanondev.minigames.locations;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class BlockLocationOffset3D implements ConfigurationSerializable {
 
@@ -17,6 +19,25 @@ public class BlockLocationOffset3D implements ConfigurationSerializable {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    public static BlockLocationOffset3D fromLocation(@NotNull Location loc) {
+        return new BlockLocationOffset3D(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BlockLocationOffset3D that = (BlockLocationOffset3D) o;
+        return x == that.x && y == that.y && z == that.z;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
     }
 
     private BlockLocationOffset3D(@NotNull Map<String, Object> map) {
