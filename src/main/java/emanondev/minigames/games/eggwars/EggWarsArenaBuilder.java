@@ -438,7 +438,7 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
                             return;
                         }
                         case "undo" -> {
-                            if (noBuildAreas.size() > 0) {
+                            if (!noBuildAreas.isEmpty()) {
                                 noBuildAreas.remove(noBuildAreas.size() - 1);
                                 sendDMessage(player, "arenabuilder.race.success.deleted_last_nobuildarea",
                                         "%alias%", label);

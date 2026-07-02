@@ -341,7 +341,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
                 .setDescription(new DMessage(getMinigameType().getPlugin(), player).appendLang(
                         getMinigameType().getType() + ".gui.selector", getPlaceholders())
                 );
-        if (getGamers().size() > 0 && canAddGamer(player))
+        if (!getGamers().isEmpty() && canAddGamer(player))
             result.addEnchantment(Enchantment.DURABILITY, 1);
         return result.build();
     }

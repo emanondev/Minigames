@@ -19,13 +19,25 @@ public class EggWarsArena extends AbstractMColorSchemArena {
     private final HashSet<LocationOffset3D> villagers = new HashSet<>();
     private final HashMap<String,HashMap<BlockLocationOffset3D,Integer>> generatorsRaw = new HashSet<>();
     private final HashMap<EggWarsGeneratorType,HashMap<BlockLocationOffset3D,Integer>> generators = new HashSet<>();
-    private final int teamsSize;
-    private final LocationOffset3D spectatorsOffset;
+    private int teamsSize;
+    private LocationOffset3D spectatorsOffset;
     private final HashSet<BoundingBox> noBuildAreas = new HashSet<>();
     /*
      * teams:
      *   <color>: //at least 2
      *     spawnoffset: (schematic offset)
+     *     eggoffsetblock: (schematic offset)
+     *     respawnoffset: (schematic offset)
+     *  villagersoffsets:
+     *   -
+     *   -
+     * generators:
+     *   <type>: //ex oro
+     *     <location>: level
+     *     <location2>: level
+     * spectatorsOffset:  (schematic offset)
+     * areenoBuild:
+     *
      */
     public EggWarsArena(@NotNull Map<String, Object> map) {
         super(map);

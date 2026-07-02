@@ -373,7 +373,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                         }
                     }
                     case "undofallingzone" -> {
-                        if (fallAreas.size() > 0) {
+                        if (!fallAreas.isEmpty()) {
                             fallAreas.remove(fallAreas.size() - 1);
                             sendDMessage(player, "arenabuilder.race.success.deleted_last_fallingzone",
                                     "%alias%", label);

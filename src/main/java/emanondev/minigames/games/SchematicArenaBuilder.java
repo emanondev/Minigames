@@ -5,6 +5,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.CorePlugin;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public abstract class SchematicArenaBuilder extends MArenaBuilder {
 
 
+    @Getter
     private World world;
     private BoundingBox area;
 
@@ -46,10 +48,6 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
         area = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
                 sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
                 sel.getMaximumPoint().getZ());
-    }
-
-    public World getWorld() {
-        return world;
     }
 
     public BoundingBox getWorldEditSection(Player p) {

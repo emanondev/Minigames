@@ -19,7 +19,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.EnderChest;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
@@ -45,15 +44,15 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
     private final HashMap<Player, ShopsMenu> menus = new HashMap<>();
     private final HashMap<DyeColor, Inventory> enderChests = new HashMap<>(); //is that ok?
 
-    public Inventory getTeamEnderChest(EggWarsTeam team){
-        if (!enderChests.containsKey(team.getColor()))
-            enderChests.put(team.getColor(),Bukkit.createInventory(null,InventoryType.ENDER_CHEST));
-        return enderChests.get(team.getColor());
-    }//TODO test
-
     public EggWarsGame(@NotNull Map<String, Object> map) {
         super(map);
     }
+
+    public Inventory getTeamEnderChest(EggWarsTeam team) {
+        if (!enderChests.containsKey(team.getColor()))
+            enderChests.put(team.getColor(), Bukkit.createInventory(null, InventoryType.ENDER_CHEST));
+        return enderChests.get(team.getColor());
+    }//TODO test
 
     @Override
     public void gamePreStart() {
@@ -79,11 +78,6 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
         getTeams().forEach(team -> {
             if (!team.hasLost()) setScore(team.getName(), 0);
         });
-    }
-
-    @Override
-    protected void craftAndCallGameStartEvent() {
-        Bukkit.getPluginManager().callEvent(new EggWarsStartEvent(this));
     }
 
     public boolean canAddGamer(@NotNull Player player) {
@@ -214,50 +208,6 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
     }
 
     @Override
-    protected @NotNull EggWarsTeam craftTeam(@NotNull DyeColor color) {
-        return new EggWarsTeam(this, color);
-    }
-
-    @Override
-    protected void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event) {
-        switch (getPhase()) {
-            case PLAYING -> {
-                Player damager = null;
-                boolean direct = false;
-                if (event.getPlayer().getLastDamageCause() instanceof EntityDamageByEntityEvent evt) {
-                    if (evt.getDamager() instanceof Player) {
-                        direct = true;
-                        damager = (Player) evt.getDamager();
-                    } else if (evt.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter)
-                        damager = shooter;
-                    else if (evt.getDamager() instanceof TNTPrimed tnt && tnt.getSource() instanceof Player terrorist)
-                        damager = terrorist;
-                }
-                onFakeGamerDeath(event.getPlayer(), damager, direct);
-                if (isSpectator(event.getPlayer()))
-                    teleportResetLocation(event.getPlayer());
-            }
-            case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
-        }
-    }
-
-    protected void craftAndCallGamerDeathEvent(Player player, Player killer) {
-        Bukkit.getPluginManager().callEvent(new EggWarsDeathEvent(this, player, killer));
-    }
-
-    protected void craftAndCallWinEvent(EggWarsTeam winner) {
-        if (winner == null)
-            return;
-        HashSet<Player> players = new HashSet<>();
-        for (UUID user : winner.getUsers()) {
-            Player player = Bukkit.getPlayer(user);
-            if (player != null && getGamers().contains(player))
-                players.add(player);
-        }
-        Bukkit.getPluginManager().callEvent(new EggWarsWinEvent(this, players));
-    }
-
-    @Override
     public int getMaxGamers() {
         return getArena().getColors().size() * getOption().getTeamMaxSize();
     }
@@ -306,7 +256,7 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
     public boolean gameCanStart() {
         int counter = 0;
         for (EggWarsTeam team : getTeams())
-            if (getGamers(team).size() > 0)
+            if (!getGamers(team).isEmpty())
                 counter++;
         return counter >= 2;
     }
@@ -407,5 +357,54 @@ public class EggWarsGame extends AbstractMColorSchemGame<EggWarsTeam, EggWarsAre
     @Override
     public void onGamerCraftItem(CraftItemEvent event) {
         event.setCancelled(true);
+    }
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new EggWarsStartEvent(this));
+    }
+
+    @Override
+    protected @NotNull EggWarsTeam craftTeam(@NotNull DyeColor color) {
+        return new EggWarsTeam(this, color);
+    }
+
+    @Override
+    protected void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event) {
+        switch (getPhase()) {
+            case PLAYING -> {
+                Player damager = null;
+                boolean direct = false;
+                if (event.getPlayer().getLastDamageCause() instanceof EntityDamageByEntityEvent evt) {
+                    if (evt.getDamager() instanceof Player) {
+                        direct = true;
+                        damager = (Player) evt.getDamager();
+                    } else if (evt.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter)
+                        damager = shooter;
+                    else if (evt.getDamager() instanceof TNTPrimed tnt && tnt.getSource() instanceof Player terrorist)
+                        damager = terrorist;
+                }
+                onFakeGamerDeath(event.getPlayer(), damager, direct);
+                if (isSpectator(event.getPlayer()))
+                    teleportResetLocation(event.getPlayer());
+            }
+            case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
+        }
+    }
+
+    protected void craftAndCallGamerDeathEvent(Player player, Player killer) {
+        Bukkit.getPluginManager().callEvent(new EggWarsDeathEvent(this, player, killer));
+    }
+
+    protected void craftAndCallWinEvent(EggWarsTeam winner) {
+        if (winner == null)
+            return;
+        HashSet<Player> players = new HashSet<>();
+        for (UUID user : winner.getUsers()) {
+            Player player = Bukkit.getPlayer(user);
+            if (player != null && getGamers().contains(player))
+                players.add(player);
+        }
+        Bukkit.getPluginManager().callEvent(new EggWarsWinEvent(this, players));
     }
 }

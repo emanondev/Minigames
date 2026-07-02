@@ -188,14 +188,14 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     @Override
     public boolean gameCanPreStart() {
-        return getGamers().size() >= 1;
+        return !getGamers().isEmpty();
     } //TODO autostart se solo, cambiare in 2+
 
     @Override
     public boolean gameCanStart() {
         int counter = 0;
         for (T team : getTeams())
-            if (getGamers(team).size() > 0)
+            if (!getGamers(team).isEmpty())
                 counter++;
         return counter >= 1; //TODO autostart se solo, cambiare in 2+
     }
@@ -220,7 +220,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     public void onQuitGame(@NotNull Player player) {
         super.onQuitGame(player);
-        if (getGamers().size() == 0 && getPhase() == Phase.PLAYING) {
+        if (getGamers().isEmpty() && getPhase() == Phase.PLAYING) {
             this.gameEnd();
         }
     }

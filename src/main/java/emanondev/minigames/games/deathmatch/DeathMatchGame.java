@@ -313,7 +313,7 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
     public boolean gameCanStart() {
         int counter = 0;
         for (DeathMatchTeam team : getTeams())
-            if (getGamers(team).size() > 0)
+            if (!getGamers(team).isEmpty())
                 counter++;
         return counter >= 2;
     }

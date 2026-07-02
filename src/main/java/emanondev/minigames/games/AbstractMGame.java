@@ -519,7 +519,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 player.getInventory().setHeldItemSlot(4);
                 if (getOption().allowSelectingTeam()) //only if you can choose a kit
                     player.getInventory().setItem(2, Configurations.getTeamSelectorItem(player));
-                if (getOption() instanceof MOptionWithKitsChoice opt && opt.getKits().size() > 0) //only if you can choose a kit
+                if (getOption() instanceof MOptionWithKitsChoice opt && !opt.getKits().isEmpty()) //only if you can choose a kit
                     player.getInventory().setItem(4, Configurations.getKitSelectorItem(player));
                 player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
             }
@@ -529,7 +529,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 teleportResetLocation(player);
                 Configurations.applyGamePreStartSnapshot(player);
                 player.getInventory().setHeldItemSlot(4);
-                if (getOption() instanceof MOptionWithKitsChoice opt && opt.getKits().size() > 0) //only if you can choose a kit
+                if (getOption() instanceof MOptionWithKitsChoice opt && !opt.getKits().isEmpty()) //only if you can choose a kit
                     player.getInventory().setItem(4, Configurations.getKitSelectorItem(player));
                 player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
             }
@@ -768,7 +768,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (getPhase() == Phase.COLLECTING_PLAYERS || getPhase() == Phase.PRE_START)
             switch (event.getPlayer().getInventory().getHeldItemSlot()) {
                 case 4 -> {
-                    if (getOption() instanceof MOptionWithKitsChoice opt && opt.getKits().size() > 0)
+                    if (getOption() instanceof MOptionWithKitsChoice opt && !opt.getKits().isEmpty())
                         getKitSelectorGui(event.getPlayer()).open(event.getPlayer());
                 }
                 case 2 -> {

@@ -1,6 +1,7 @@
 package emanondev.minigames.games;
 
 
+import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -17,6 +18,7 @@ public abstract class ColoredTeam implements MTeam {
     @SuppressWarnings("rawtypes")
     private final AbstractMGame game;
     private final Team team;
+    @Getter
     private final ChatColor chatColor;
 
     public ColoredTeam(@SuppressWarnings("rawtypes") @NotNull AbstractMGame game, @NotNull DyeColor color) {
@@ -90,10 +92,6 @@ public abstract class ColoredTeam implements MTeam {
     @Override
     public void reset() {
         users.clear();
-    }
-
-    public ChatColor getChatColor() {
-        return chatColor;
     }
 
     @Override

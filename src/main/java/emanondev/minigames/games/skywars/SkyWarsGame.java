@@ -312,7 +312,7 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
     public boolean gameCanStart() {
         int counter = 0;
         for (SkyWarsTeam team : getTeams())
-            if (getGamers(team).size() > 0)
+            if (!getGamers(team).isEmpty())
                 counter++;
         return counter >= 2;
     }
