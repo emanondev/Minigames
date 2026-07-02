@@ -209,11 +209,11 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     @Override
     public void onGamerDamaging(@NotNull EntityDamageByEntityEvent event, @NotNull Player damager, boolean direct) {
-        if (event.getEntity() instanceof Player && !getOption().getAllowPvp()) {
+        if (event.getEntity() instanceof Player && !getOption().isAllowedPvp()) {
             event.setCancelled(true);
             return;
         }
-        if (!(event.getEntity() instanceof Player) && !getOption().getAllowPve()) {
+        if (!(event.getEntity() instanceof Player) && !getOption().isAllowedPve()) {
             event.setCancelled(true);
         }
     }
@@ -375,8 +375,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     @Override
     public void onGameEntityDamaged(@NotNull EntityDamageEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (!getOption().getAllowFallDamage()) event.setCancelled(true);
-        } else if (!getOption().getAllowEnvironmentDamage()) event.setCancelled(true);
+            if (!getOption().isAllowedFallDamage()) event.setCancelled(true);
+        } else if (!getOption().isAllowedEnvironmentDamage()) event.setCancelled(true);
     }
 
     @Override
@@ -410,8 +410,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
 
     public void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player hitPlayer) {
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (!getOption().getAllowFallDamage()) event.setCancelled(true);
-        } else if (!getOption().getAllowEnvironmentDamage()) event.setCancelled(true);
+            if (!getOption().isAllowedFallDamage()) event.setCancelled(true);
+        } else if (!getOption().isAllowedEnvironmentDamage()) event.setCancelled(true);
         super.onGamerDamaged(event, hitPlayer);
     }
 

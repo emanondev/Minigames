@@ -11,6 +11,7 @@ import emanondev.minigames.KitManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
 import emanondev.minigames.games.AbstractMOption;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -24,44 +25,49 @@ import java.util.Objects;
 
 public class ARaceOption extends AbstractMOption {
 
-    private boolean allowPvp;
-    private boolean allowPve;
-    private boolean allowFallDamage;
-    private boolean allowEnvironmentDamage;
+    @Getter
+    private boolean allowedPvp;
+    @Getter
+    private boolean allowedPve;
+    @Getter
+    private boolean allowedFallDamage;
+    @Getter
+    private boolean allowedEnvironmentDamage;
     private String kitId;
-    private int perTeamMaxPlayers;
+    @Getter
+    private int teamMaxSize;
 
     public ARaceOption(@NotNull Map<String, Object> map) {
         super(map);
-        perTeamMaxPlayers = Math.max(1, (int) map.getOrDefault("maxPlayersPerTeam", 1));
+        teamMaxSize = Math.max(1, (int) map.getOrDefault("maxPlayersPerTeam", 1));
         kitId = (String) map.get("kit");
-        allowPvp = (boolean) map.getOrDefault("allowPvp", false);
-        allowPve = (boolean) map.getOrDefault("allowPve", false);
-        allowFallDamage = (boolean) map.getOrDefault("allowFallDamage", false);
-        allowEnvironmentDamage = (boolean) map.getOrDefault("allowEnvironmentDamage", false);
+        allowedPvp = (boolean) map.getOrDefault("allowPvp", false);
+        allowedPve = (boolean) map.getOrDefault("allowPve", false);
+        allowedFallDamage = (boolean) map.getOrDefault("allowFallDamage", false);
+        allowedEnvironmentDamage = (boolean) map.getOrDefault("allowEnvironmentDamage", false);
     }
 
     @NotNull
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = super.serialize();
-        map.put("maxPlayersPerTeam", perTeamMaxPlayers);
+        map.put("maxPlayersPerTeam", teamMaxSize);
         map.put("kit", kitId);
-        map.put("allowPvp", allowPvp);
-        map.put("allowPve", allowPve);
-        map.put("allowFallDamage", allowFallDamage);
-        map.put("allowEnvironmentDamage", allowEnvironmentDamage);
+        map.put("allowPvp", allowedPvp);
+        map.put("allowPve", allowedPve);
+        map.put("allowFallDamage", allowedFallDamage);
+        map.put("allowEnvironmentDamage", allowedEnvironmentDamage);
         return map;
     }
 
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
         Gui gui = super.getEditorGui(target, parent);
-        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) perTeamMaxPlayers
+        gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) teamMaxSize
                 , (v) -> setTeamMaxSize(v.intValue()),
-                () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(perTeamMaxPlayers)
+                () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().setAmount(teamMaxSize)
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                                "minioption.gui.team_max_players", "%value%", String.valueOf(perTeamMaxPlayers))).build()));
+                                "minioption.gui.team_max_players", "%value%", String.valueOf(teamMaxSize))).build()));
         gui.addButton(new ResearchFButton<>(gui,
                 () -> new ItemBuilder(Material.IRON_CHESTPLATE).setGuiProperty().setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.kit_selector", "%selected%", kitId == null ? "-none-" : kitId
@@ -79,83 +85,62 @@ public class ARaceOption extends AbstractMOption {
                         "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", "free")).build(),
                 () -> KitManager.get().getAll().values()));
         gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                allowPvp ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                "minioption.gui.allow_pvp", "%value%", String.valueOf(allowPvp))).build(),
+                allowedPvp ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                "minioption.gui.allow_pvp", "%value%", String.valueOf(allowedPvp))).build(),
                 (e) -> {
-                    this.setAllowPvp(!this.getAllowPvp());
+                    this.setAllowedPvp(!this.isAllowedPvp());
                     return true;
                 }
         ));
         gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.BOW).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                allowPve ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                "minioption.gui.allow_pve", "%value%", String.valueOf(allowPve))).build(),
+                allowedPve ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                "minioption.gui.allow_pve", "%value%", String.valueOf(allowedPve))).build(),
                 (e) -> {
-                    this.setAllowPve(!this.getAllowPve());
+                    this.setAllowedPve(!this.isAllowedPve());
                     return true;
                 }
         ));
         gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.LEATHER_BOOTS).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                allowFallDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                "minioption.gui.allow_fall_damage", "%value%", String.valueOf(allowFallDamage))).build(),
+                allowedFallDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                "minioption.gui.allow_fall_damage", "%value%", String.valueOf(allowedFallDamage))).build(),
                 (e) -> {
-                    this.setAllowFallDamage(!this.getAllowFallDamage());
+                    this.setAllowedFallDamage(!this.isAllowedFallDamage());
                     return true;
                 }
         ));
         gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.LAVA_BUCKET).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
-                allowEnvironmentDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                "minioption.gui.allow_environment_damage", "%value%", String.valueOf(allowEnvironmentDamage))).build(),
+                allowedEnvironmentDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                "minioption.gui.allow_environment_damage", "%value%", String.valueOf(allowedEnvironmentDamage))).build(),
                 (e) -> {
-                    this.setAllowEnvironmentDamage(!this.getAllowEnvironmentDamage());
+                    this.setAllowedEnvironmentDamage(!this.isAllowedEnvironmentDamage());
                     return true;
                 }
         ));
         return gui;
     }
 
-    public boolean getAllowPvp() {
-        return allowPvp;
-    }
-
-    public boolean getAllowPve() {
-        return allowPve;
-    }
-
-    public void setAllowPve(boolean value) {
-        this.allowPve = value;
+    public void setAllowedPve(boolean value) {
+        this.allowedPve = value;
         OptionManager.get().save(this);
     }
 
-    public boolean getAllowFallDamage() {
-        return allowFallDamage;
-    }
-
-    public void setAllowFallDamage(boolean value) {
-        this.allowFallDamage = value;
+    public void setAllowedFallDamage(boolean value) {
+        this.allowedFallDamage = value;
         OptionManager.get().save(this);
     }
 
-    public boolean getAllowEnvironmentDamage() {
-        return allowEnvironmentDamage;
-    }
-
-    public void setAllowEnvironmentDamage(boolean value) {
-        this.allowEnvironmentDamage = value;
+    public void setAllowedEnvironmentDamage(boolean value) {
+        this.allowedEnvironmentDamage = value;
         OptionManager.get().save(this);
     }
 
-    public void setAllowPvp(boolean value) {
-        this.allowPvp = value;
+    public void setAllowedPvp(boolean value) {
+        this.allowedPvp = value;
         OptionManager.get().save(this);
     }
 
     public @Nullable Kit getKit() {
         return kitId == null ? null : KitManager.get().get(kitId);
-    }
-
-    @Override
-    public int getTeamMaxSize() {
-        return perTeamMaxPlayers;
     }
 
     public void setKit(@Nullable Kit kit) {
@@ -170,7 +155,7 @@ public class ARaceOption extends AbstractMOption {
 
 
     public void setTeamMaxSize(int amount) {
-        perTeamMaxPlayers = Math.max(1, Math.min(32, amount));
+        teamMaxSize = Math.max(1, Math.min(32, amount));
         OptionManager.get().save(ARaceOption.this);
     }
 

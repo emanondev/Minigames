@@ -334,8 +334,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void resetScores() {
-        for (String score : scores)
+        for (String score : scores) {
             scoreboard.resetScores(score);
+        }
     }
 
     @Override
@@ -381,8 +382,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void gameEnd() {
         MessageUtil.debug(getId() + " gameEnd");
-        if (this.phase != Phase.PLAYING)
+        if (this.phase != Phase.PLAYING) {
             throw new IllegalStateException();
+        }
         getGamers().forEach(player -> getMinigameType().GAME_END_MESSAGE.send(player));
         endCountdown = getOption().getEndPhaseCooldownMax();
         resetScores();
@@ -432,8 +434,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             GameManager.get().quitGame(player);
             getMinigameType().GAME_INTERRUPTED_MESSAGE.send(player);
         }
-        if (phase == Phase.STOPPED)
+        if (phase == Phase.STOPPED) {
             return;
+        }
         phase = Phase.STOPPED;
         //timer.cancel();
         registerAsListener(false);
@@ -492,8 +495,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     public final boolean addGamer(@NotNull Player player) {
         return switch (getPhase()) {
             case COLLECTING_PLAYERS, PRE_START, PLAYING -> {
-                if (!canAddGamer(player))
+                if (!canAddGamer(player)) {
                     yield false;
+                }
                 if (gamers.add(player)) {
                     onGamerAdded(player);
                     yield true;
@@ -507,8 +511,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void onGamerAdded(@NotNull Player player) {
         resetGamer(player);
-        for (Player spectator : getSpectators())
+        for (Player spectator : getSpectators()) {
             player.hidePlayer(Minigames.get(), spectator);
+        }
     }
 
     public void resetGamer(@NotNull Player player) {
@@ -517,10 +522,12 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 teleportResetLocation(player);
                 Configurations.applyGameCollectingPlayersSnapshot(player);
                 player.getInventory().setHeldItemSlot(4);
-                if (getOption().allowSelectingTeam()) //only if you can choose a kit
+                if (getOption().allowSelectingTeam()) { //only if you can choose a kit
                     player.getInventory().setItem(2, Configurations.getTeamSelectorItem(player));
-                if (getOption() instanceof MOptionWithKitsChoice opt && !opt.getKits().isEmpty()) //only if you can choose a kit
+                }
+                if (getOption() instanceof MOptionWithKitsChoice opt && !opt.getKits().isEmpty()) { //only if you can choose a kit
                     player.getInventory().setItem(4, Configurations.getKitSelectorItem(player));
+                }
                 player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
             }
             case PRE_START -> {
@@ -529,8 +536,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                 teleportResetLocation(player);
                 Configurations.applyGamePreStartSnapshot(player);
                 player.getInventory().setHeldItemSlot(4);
-                if (getOption() instanceof MOptionWithKitsChoice opt && !opt.getKits().isEmpty()) //only if you can choose a kit
+                if (getOption() instanceof MOptionWithKitsChoice opt && !opt.getKits().isEmpty()) { //only if you can choose a kit
                     player.getInventory().setItem(4, Configurations.getKitSelectorItem(player));
+                }
                 player.getInventory().setItem(8, Configurations.getGameLeaveItem(player));
             }
             case PLAYING -> {
@@ -545,8 +553,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public boolean canAddGamer(@NotNull Player player) {
-        if (getMaxGamers() <= gamers.size())
+        if (getMaxGamers() <= gamers.size()) {
             return false;
+        }
         return !gamers.contains(player);
     }
 
@@ -570,8 +579,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public final boolean addSpectator(@NotNull Player player) {
-        if (getPhase() != Phase.PLAYING)
+        if (getPhase() != Phase.PLAYING) {
             return false;
+        }
         if (isGamer(player)) {
             if (canSwitchToSpectator(player) && switchToSpectator(player)) {
                 onSpectatorAdded(player);
@@ -588,8 +598,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void onSpectatorRemoved(@NotNull Player player) {
-        for (Player gamer : getGamers())
+        for (Player gamer : getGamers()) {
             gamer.showPlayer(Minigames.get(), player);
+        }
         for (Player spectator : getSpectators()) {
             spectator.showPlayer(Minigames.get(), player);
             player.showPlayer(Minigames.get(), spectator);
@@ -599,8 +610,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void onGamerRemoved(@NotNull Player player) {
-        for (Player spectator : getSpectators())
+        for (Player spectator : getSpectators()) {
             player.showPlayer(Minigames.get(), spectator);
+        }
     }
 
     @Override
@@ -637,10 +649,12 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
 
     @Override
     public void onGamerPvpDamage(@NotNull EntityDamageByEntityEvent event, @NotNull Player p, @NotNull Player damager, boolean directDamage) {
-        if (p.equals(damager)) //TODO cant arrowhit himself
+        if (p.equals(damager)) { //TODO cant arrowhit himself
             return;
-        if (event.getDamager() instanceof Player && Objects.equals(getTeam(p), getTeam(damager))) //TODO flag?
+        }
+        if (event.getDamager() instanceof Player && Objects.equals(getTeam(p), getTeam(damager))) { //TODO flag?
             event.setCancelled(true);
+        }
     }
 
     /**
@@ -678,8 +692,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
      */
     @Override
     public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
-        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END) {
             event.setCancelled(true);
+        }
     }
 
     /**
@@ -687,8 +702,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
      */
     @Override
     public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
-        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END)
+        if (getPhase() != Phase.PLAYING && getPhase() != Phase.END) {
             event.setCancelled(true);
+        }
     }
 
     /**
@@ -709,8 +725,9 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public void onSpectatorAdded(@NotNull Player player) {
         Configurations.applyGameSpectatorSnapshot(player);
-        for (Player gamer : getGamers())
+        for (Player gamer : getGamers()) {
             gamer.hidePlayer(Minigames.get(), player);
+        }
         for (Player spectator : getSpectators()) {
             spectator.showPlayer(Minigames.get(), player);
             player.showPlayer(Minigames.get(), spectator);

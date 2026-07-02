@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.jetbrains.annotations.NotNull;
-import org.spigotmc.event.entity.EntityDismountEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 
 import java.util.Map;
 import java.util.Objects;

@@ -36,8 +36,8 @@ import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spigotmc.event.entity.EntityDismountEvent;
-import org.spigotmc.event.entity.EntityMountEvent;
+import org.bukkit.event.entity.EntityMountEvent;
+import org.bukkit.event.entity.EntityMountEvent;
 
 import java.io.File;
 import java.util.*;
