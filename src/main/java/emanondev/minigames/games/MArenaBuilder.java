@@ -2,6 +2,7 @@ package emanondev.minigames.games;
 
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.CorePlugin;
 import emanondev.core.UtilsString;
@@ -185,9 +186,10 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
         try {
             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
                     .getSelection(BukkitAdapter.adapt(p.getWorld()));
-            markEdges(p, particle, new Vector(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                    sel.getMinimumPoint().getZ()), new Vector(sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                    sel.getMaximumPoint().getZ()), data);
+            BlockVector3 min = sel.getMinimumPoint();
+            BlockVector3 max = sel.getMaximumPoint();
+            markEdges(p, particle, new Vector(min.x(), min.y(), min.z()),
+                    new Vector(max.x(), max.y(), max.z()), data);
         } catch (Exception e) {
             return false;
         }
