@@ -42,22 +42,6 @@ public abstract class MountedRaceOption extends ARaceOption {
         jumpStrenght = (double) map.getOrDefault("jump_strenght", 0.7);
     }
 
-    private static @NotNull Material getEntityTypeMaterial(@NotNull EntityType type) {
-        return switch (type) {
-            case BOAT -> Material.OAK_BOAT;
-            case CHEST_BOAT -> Material.OAK_CHEST_BOAT;
-            case PIG -> Material.CARROT_ON_A_STICK;
-            case STRIDER -> Material.WARPED_FUNGUS_ON_A_STICK;
-            case MINECART -> Material.MINECART;
-            case CAMEL -> Material.CACTUS;
-            case SKELETON_HORSE -> Material.BONE;
-            case ZOMBIE_HORSE -> Material.ROTTEN_FLESH;
-            case MULE, DONKEY -> Material.CARROT;
-            default -> Material.SADDLE;
-        };
-
-    }
-
     public Entity spawnRide(Location loc) {
         return loc.getWorld().spawn(loc, (type == null ? EntityType.HORSE : type).getEntityClass(), false, (en) -> {
             if (en instanceof Horse horse) {
@@ -129,14 +113,6 @@ public abstract class MountedRaceOption extends ARaceOption {
         return gui;
     }
 
-    protected Set<EntityType> getAllowedTypes() {
-        SortedSet<EntityType> allowed = new TreeSet<>(Comparator.comparing(Enum::name));
-        for (EntityType type : EntityType.values())
-            if (isAllowedType(type))
-                allowed.add(type);
-        return allowed;
-    }
-
     public @NotNull EntityType getType() {
         return type == null ? getDefaultType() : type;
     }
@@ -152,10 +128,6 @@ public abstract class MountedRaceOption extends ARaceOption {
         this.baseSpeed = Math.max(0.01, baseSpeed);
         OptionManager.get().save(this);
     }
-
-    protected abstract boolean isAllowedType(@NotNull EntityType type);
-
-    protected abstract @NotNull EntityType getDefaultType();
 
     public @Nullable Horse.Color getHorseColor() {
         return horseColor;
@@ -187,5 +159,33 @@ public abstract class MountedRaceOption extends ARaceOption {
     public void setJumpStrenght(double jumpStrenght) {
         this.jumpStrenght = Math.max(0.01, jumpStrenght);
         OptionManager.get().save(this);
+    }
+
+    protected Set<EntityType> getAllowedTypes() {
+        SortedSet<EntityType> allowed = new TreeSet<>(Comparator.comparing(Enum::name));
+        for (EntityType type : EntityType.values())
+            if (isAllowedType(type))
+                allowed.add(type);
+        return allowed;
+    }
+
+    protected abstract boolean isAllowedType(@NotNull EntityType type);
+
+    protected abstract @NotNull EntityType getDefaultType();
+
+    private static @NotNull Material getEntityTypeMaterial(@NotNull EntityType type) {
+        return switch (type) {
+            case BOAT -> Material.OAK_BOAT;
+            case CHEST_BOAT -> Material.OAK_CHEST_BOAT;
+            case PIG -> Material.CARROT_ON_A_STICK;
+            case STRIDER -> Material.WARPED_FUNGUS_ON_A_STICK;
+            case MINECART -> Material.MINECART;
+            case CAMEL -> Material.CACTUS;
+            case SKELETON_HORSE -> Material.BONE;
+            case ZOMBIE_HORSE -> Material.ROTTEN_FLESH;
+            case MULE, DONKEY -> Material.CARROT;
+            default -> Material.SADDLE;
+        };
+
     }
 }

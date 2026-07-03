@@ -78,11 +78,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         });
     }
 
-    @Override
-    protected void craftAndCallGameStartEvent() {
-        Bukkit.getPluginManager().callEvent(new SkyWarsStartEvent(this));
-    }
-
     public boolean canAddGamer(@NotNull Player player) {
         return switch (getPhase()) {
             case PRE_START, COLLECTING_PLAYERS -> super.canAddGamer(player);
@@ -153,12 +148,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
             }
     }
 
-    protected void onFillChest(Inventory inventory) {
-        DropsFiller filler = getOption().getChestsFiller();
-        if (filler != null)
-            filler.fillInventory(inventory);
-    }
-
     @Override
     public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
         super.onGamerBlockPlace(event);
@@ -197,74 +186,6 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
         if (event.getView().getTopInventory().getType() == InventoryType.ENCHANTING)
             if (event.getRawSlot() == 1) //TODO test with numbered clicks
                 event.setCancelled(true);
-    }
-
-    @Override
-    protected @NotNull SkyWarsTeam craftTeam(@NotNull DyeColor color) {
-        return new SkyWarsTeam(this, color);
-    }
-
-    @Override
-    protected void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event) {
-        switch (getPhase()) {
-            case PLAYING -> {
-                Player damager = null;
-                boolean direct = false;
-                if (event.getPlayer().getLastDamageCause() instanceof EntityDamageByEntityEvent evt) {
-                    switch (evt.getDamager()) {
-                        case Player player -> {
-                            direct = true;
-                            damager = player;
-                        }
-                        case Projectile projectile when projectile.getShooter() instanceof Player shooter ->
-                                damager = shooter;
-                        case TNTPrimed tnt when tnt.getSource() instanceof Player terrorist -> damager = terrorist;
-                        default -> {
-                        }
-                    }
-                }
-                onFakeGamerDeath(event.getPlayer(), damager, direct);
-                if (isSpectator(event.getPlayer()))
-                    teleportResetLocation(event.getPlayer());
-            }
-            case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
-        }
-    }
-
-    protected void craftAndCallGamerDeathEvent(Player player, Player killer) {
-        Bukkit.getPluginManager().callEvent(new SkyWarsDeathEvent(this, player, killer));
-    }
-
-    protected void craftAndCallWinEvent(SkyWarsTeam winner) {
-        if (winner == null)
-            return;
-        HashSet<Player> players = new HashSet<>();
-        for (UUID user : winner.getUsers()) {
-            Player player = Bukkit.getPlayer(user);
-            if (player != null && getGamers().contains(player))
-                players.add(player);
-        }
-        Bukkit.getPluginManager().callEvent(new SkyWarsWinEvent(this, players));
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    private void event(InventoryOpenEvent event) {
-        if (!(event.getPlayer() instanceof Player p))
-            return;
-        if (!isGamer(p))
-            return;
-        if (getPhase() != Phase.PLAYING)
-            return;
-        if (event.getInventory().getType() != InventoryType.CHEST)
-            return;
-        if (!(event.getInventory().getHolder() instanceof Chest cHolder))
-            return;
-        Block b = cHolder.getBlock();
-
-        if (filledChests.contains(b) || ignoredChest.contains(b))
-            return;
-        filledChests.add(b);
-        onFillChest(event.getInventory());
     }
 
     @Override
@@ -411,6 +332,85 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 event.getHitEntity().setVelocity(event.getEntity().getVelocity().setY(0).normalize().multiply(push).setY(getMinigameType().getSnowballVerticalPush()));
             }
         }
+    }
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new SkyWarsStartEvent(this));
+    }
+
+    protected void onFillChest(Inventory inventory) {
+        DropsFiller filler = getOption().getChestsFiller();
+        if (filler != null)
+            filler.fillInventory(inventory);
+    }
+
+    @Override
+    protected @NotNull SkyWarsTeam craftTeam(@NotNull DyeColor color) {
+        return new SkyWarsTeam(this, color);
+    }
+
+    @Override
+    protected void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event) {
+        switch (getPhase()) {
+            case PLAYING -> {
+                Player damager = null;
+                boolean direct = false;
+                if (event.getPlayer().getLastDamageCause() instanceof EntityDamageByEntityEvent evt) {
+                    switch (evt.getDamager()) {
+                        case Player player -> {
+                            direct = true;
+                            damager = player;
+                        }
+                        case Projectile projectile when projectile.getShooter() instanceof Player shooter ->
+                                damager = shooter;
+                        case TNTPrimed tnt when tnt.getSource() instanceof Player terrorist -> damager = terrorist;
+                        default -> {
+                        }
+                    }
+                }
+                onFakeGamerDeath(event.getPlayer(), damager, direct);
+                if (isSpectator(event.getPlayer()))
+                    teleportResetLocation(event.getPlayer());
+            }
+            case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
+        }
+    }
+
+    protected void craftAndCallGamerDeathEvent(Player player, Player killer) {
+        Bukkit.getPluginManager().callEvent(new SkyWarsDeathEvent(this, player, killer));
+    }
+
+    protected void craftAndCallWinEvent(SkyWarsTeam winner) {
+        if (winner == null)
+            return;
+        HashSet<Player> players = new HashSet<>();
+        for (UUID user : winner.getUsers()) {
+            Player player = Bukkit.getPlayer(user);
+            if (player != null && getGamers().contains(player))
+                players.add(player);
+        }
+        Bukkit.getPluginManager().callEvent(new SkyWarsWinEvent(this, players));
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void event(InventoryOpenEvent event) {
+        if (!(event.getPlayer() instanceof Player p))
+            return;
+        if (!isGamer(p))
+            return;
+        if (getPhase() != Phase.PLAYING)
+            return;
+        if (event.getInventory().getType() != InventoryType.CHEST)
+            return;
+        if (!(event.getInventory().getHolder() instanceof Chest cHolder))
+            return;
+        Block b = cHolder.getBlock();
+
+        if (filledChests.contains(b) || ignoredChest.contains(b))
+            return;
+        filledChests.add(b);
+        onFillChest(event.getInventory());
     }
 
 }

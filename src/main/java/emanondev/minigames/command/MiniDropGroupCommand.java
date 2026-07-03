@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class MiniDropGroupCommand extends CoreCommand {
 
@@ -57,6 +57,23 @@ public class MiniDropGroupCommand extends CoreCommand {
             default -> help(sender, label, args);
 
         }
+    }
+
+    @Override
+    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
+        return switch (args.length) {
+            case 1 -> this.complete(args[0], List.of("create", "addhand", "addchest", "gui", "list", "delete"));
+            case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
+                case "addhand", "addchest", "gui", "delete" ->
+                        this.complete(args[1], DropGroupManager.get().getAll().keySet());
+                default -> Collections.emptyList();
+            };
+            case 3 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
+                case "addhand", "addchest" -> this.complete(args[2], List.of("10", "50", "100"));
+                default -> Collections.emptyList();
+            };
+            default -> Collections.emptyList();
+        };
     }
 
     private void help(CommandSender sender, String label, String[] args) {
@@ -241,21 +258,5 @@ public class MiniDropGroupCommand extends CoreCommand {
         DropGroupManager.get().delete(group);
         sendDMessage(sender, "minidropgroup.success.delete", "%id%", id, "%alias%", label);
 
-    }
-
-    @Override
-    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
-        return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("create", "addhand", "addchest", "gui", "list", "delete"));
-            case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case "addhand", "addchest", "gui", "delete" -> this.complete(args[1], DropGroupManager.get().getAll().keySet());
-                default -> Collections.emptyList();
-            };
-            case 3 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case "addhand", "addchest" -> this.complete(args[2], List.of("10", "50", "100"));
-                default -> Collections.emptyList();
-            };
-            default -> Collections.emptyList();
-        };
     }
 }

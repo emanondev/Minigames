@@ -34,17 +34,6 @@ public class BoatRaceOption extends MountedRaceOption {
         super(map);
     }
 
-    private static @NotNull Material getBoatTypeMaterial(@Nullable Boat.Type type) {
-        if (type == null)
-            return Material.OAK_BOAT;
-        try {
-            return Material.valueOf(type + "_BOAT");
-        } catch (Throwable t) {
-            return Material.OAK_BOAT;
-        }
-
-    }
-
     @Override
     public Gui getEditorGui(Player target, Gui parent) {
         Gui gui = super.getEditorGui(target, parent);
@@ -77,5 +66,16 @@ public class BoatRaceOption extends MountedRaceOption {
     @Override
     protected boolean isAllowedType(@NotNull EntityType type) {
         return type.getEntityClass() != null && Boat.class.isAssignableFrom(type.getEntityClass());
+    }
+
+    private static @NotNull Material getBoatTypeMaterial(@Nullable Boat.Type type) {
+        if (type == null)
+            return Material.OAK_BOAT;
+        try {
+            return Material.valueOf(type + "_BOAT");
+        } catch (Throwable t) {
+            return Material.OAK_BOAT;
+        }
+
     }
 }

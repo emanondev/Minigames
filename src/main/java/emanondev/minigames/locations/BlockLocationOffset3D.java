@@ -21,10 +21,22 @@ public class BlockLocationOffset3D implements ConfigurationSerializable {
         this.z = z;
     }
 
+    private BlockLocationOffset3D(@NotNull Map<String, Object> map) {
+        this.x = (int) map.get("x");
+        this.y = (int) map.get("y");
+        this.z = (int) map.get("z");
+    }
+
     @NotNull
     @Contract("_ -> new")
     public static BlockLocationOffset3D fromLocation(@NotNull Location loc) {
         return new BlockLocationOffset3D(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    @NotNull
+    public static BlockLocationOffset3D fromString(@NotNull String from) {
+        String[] args = from.split(":");
+        return new BlockLocationOffset3D(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
     }
 
     @Override
@@ -38,18 +50,6 @@ public class BlockLocationOffset3D implements ConfigurationSerializable {
     @Override
     public int hashCode() {
         return Objects.hash(x, y, z);
-    }
-
-    private BlockLocationOffset3D(@NotNull Map<String, Object> map) {
-        this.x = (int) map.get("x");
-        this.y = (int) map.get("y");
-        this.z = (int) map.get("z");
-    }
-
-    @NotNull
-    public static BlockLocationOffset3D fromString(@NotNull String from) {
-        String[] args = from.split(":");
-        return new BlockLocationOffset3D(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
     }
 
     @NotNull

@@ -78,19 +78,6 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         return size;
     }
 
-    @Deprecated
-    private Clipboard getSchematic() {
-        Clipboard clip = schematicCache == null ? null : schematicCache.get();
-        if (clip != null)
-            return clip;
-        File file = getSchematicFile();
-        if (!file.isFile())
-            throw new IllegalStateException("selected schematic do not exist");
-        clip = WorldEditUtility.load(file);
-        schematicCache = new SoftReference<>(clip);
-        return clip;
-    }
-
     @Override
     public @NotNull File getSchematicFile() {
         return new File(ArenaManager.get().getSchematicsFolder(), schematicName);
@@ -99,18 +86,6 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
     @Override
     public void invalidateCache() {
         schematicCache = null;
-    }
-
-    private CompletableFuture<Clipboard> getSchematicAsync() {
-        Clipboard clip = schematicCache == null ? null : schematicCache.get();
-        if (clip != null)
-            return CompletableFuture.completedFuture(clip);
-        File file = getSchematicFile();
-        if (!file.isFile())
-            throw new IllegalStateException("selected schematic do not exist");
-        CompletableFuture<Clipboard> future = WorldEditUtility.load(file, Minigames.get(), true);
-        future.whenComplete((val, th) -> schematicCache = new SoftReference<>(val));
-        return future;
     }
 
     @NotNull
@@ -193,5 +168,30 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         if (this.minDurationEstimation >= this.maxDurationEstimation)
             this.minDurationEstimation = this.maxDurationEstimation - 1;
         ArenaManager.get().save(this);
+    }
+
+    @Deprecated
+    private Clipboard getSchematic() {
+        Clipboard clip = schematicCache == null ? null : schematicCache.get();
+        if (clip != null)
+            return clip;
+        File file = getSchematicFile();
+        if (!file.isFile())
+            throw new IllegalStateException("selected schematic do not exist");
+        clip = WorldEditUtility.load(file);
+        schematicCache = new SoftReference<>(clip);
+        return clip;
+    }
+
+    private CompletableFuture<Clipboard> getSchematicAsync() {
+        Clipboard clip = schematicCache == null ? null : schematicCache.get();
+        if (clip != null)
+            return CompletableFuture.completedFuture(clip);
+        File file = getSchematicFile();
+        if (!file.isFile())
+            throw new IllegalStateException("selected schematic do not exist");
+        CompletableFuture<Clipboard> future = WorldEditUtility.load(file, Minigames.get(), true);
+        future.whenComplete((val, th) -> schematicCache = new SoftReference<>(val));
+        return future;
     }
 }

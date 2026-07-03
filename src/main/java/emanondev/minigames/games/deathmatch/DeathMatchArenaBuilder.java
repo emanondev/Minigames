@@ -38,11 +38,6 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
     }
 
     @Override
-    protected void onPhaseStart() {
-        timerTick = 0;
-    }
-
-    @Override
     public @NotNull DMessage getCurrentBossBarMessage() {
         return new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.deathmatch.bossbar.phase" + getPhase(), "%alias%", getLabel());
     }
@@ -62,7 +57,8 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                         , "%setteamsspawn%", teamSet.toString()
                         , "%deleteteamsspawn%", teamDelete.toString(), "%alias%", getLabel());
             }
-            default -> new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.deathmatch.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
+            default ->
+                    new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.deathmatch.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
         };
     }
 
@@ -178,17 +174,20 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
             case 1 -> switch (getPhase()) {
                 case PHASE_SELECT_AREA -> complete(args[0], List.of("selectarea"));
                 case PHASE_SET_TEAM_SPAWNS -> complete(args[0], List.of("setteamspawn", "deleteteamspawn"));
-                case PHASE_SET_TEAM_SPAWNS_OR_NEXT -> complete(args[0], List.of("setteamspawn", "deleteteamspawn", "next"));
+                case PHASE_SET_TEAM_SPAWNS_OR_NEXT ->
+                        complete(args[0], List.of("setteamspawn", "deleteteamspawn", "next"));
                 case PHASE_SET_SPECTATOR_SPAWN -> complete(args[0], List.of("setspectatorspawn"));
                 case PHASE_SET_SPECTATOR_SPAWN_OR_NEXT -> complete(args[0], List.of("setspectatorspawn", "next"));
                 default -> Collections.emptyList();
             };
             case 2 -> switch (getPhase()) {
-                case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                    case "setteamspawn" -> complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c));
-                    case "deleteteamspawn" -> complete(args[1], DyeColor.class, spawnLocations::containsKey);
-                    default -> Collections.emptyList();
-                };
+                case PHASE_SET_TEAM_SPAWNS, PHASE_SET_TEAM_SPAWNS_OR_NEXT ->
+                        switch (args[0].toLowerCase(Locale.ENGLISH)) {
+                            case "setteamspawn" ->
+                                    complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c));
+                            case "deleteteamspawn" -> complete(args[1], DyeColor.class, spawnLocations::containsKey);
+                            default -> Collections.emptyList();
+                        };
                 default -> Collections.emptyList();
             };
             default -> Collections.emptyList();
@@ -259,6 +258,11 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
                     spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y + 1, min.getZ() + spectatorsOffset.z);
             }
         }
+    }
+
+    @Override
+    protected void onPhaseStart() {
+        timerTick = 0;
     }
 }
 

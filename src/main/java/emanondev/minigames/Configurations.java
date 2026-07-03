@@ -30,15 +30,6 @@ public class Configurations {
         player.setFlying(true);
     }
 
-    private static void applySnapshot(@NotNull Player player, @NotNull String path) {
-        PlayerSnapshot snap = ((PlayerSnapshot) Minigames.get().getConfig("configurations" + File.separator + "snapshots.yml")
-                .get(path));
-        if (snap != null)
-            snap.apply(player);
-        else
-            MessageUtil.debug("No snapshot found at &e" + path + "&f on file &econfigurations" + File.separator + "snapshots.yml");
-    }
-
     public static void applyGamePreStartSnapshot(@NotNull Player player) {
         applySnapshot(player, "prestart");
     }
@@ -64,20 +55,6 @@ public class Configurations {
     @NotNull
     public static ItemStack getKitSelectorItem(@NotNull Player player) {
         return getItem(player, "kit_selector", "items.kit_selector").build();
-    }
-
-    @NotNull
-    @Deprecated
-    private static ItemBuilder getItem(@NotNull Player player, @NotNull String path, @Nullable String pathText, String... holders) {
-        YMLConfig conf = Minigames.get().getConfig("configurations" + File.separator + "items.yml");
-        ItemBuilder b = conf.contains(path) ? conf.getGuiItem(path, new ItemBuilder(Material.STONE)) : null;
-        if (b == null) {
-            b = new ItemBuilder(Material.STONE);
-            MessageUtil.debug("No item found at &e" + path + "&f on file &econfigurations" + File.separator + "items.yml");
-        }
-        if (pathText != null)
-            b.setDescription(MessageUtil.getMultiMessage(player, pathText, holders), false);
-        return b.setGuiProperty();
     }
 
     @Contract("_ -> new")
@@ -114,16 +91,6 @@ public class Configurations {
         return getSoundInfo("collecting_players_cooldown_tick");
     }
 
-    private static @NotNull SoundInfo getSoundInfo(@NotNull String path) {
-        SoundInfo sInfo = Minigames.get().getConfig("configurations" + File.separator + "sounds.yml")
-                .getSoundInfo(path, null);
-        if (sInfo == null) {
-            MessageUtil.debug("No SoundInfo found at &e" + path + "&f on file &econfigurations" + File.separator + "sounds.yml");
-            return defSound;
-        }
-        return sInfo;
-    }
-
     public static SoundInfo getPreStartPhaseCooldownTickSound() {
         return getSoundInfo("prestart_cooldown_tick");
     }
@@ -141,5 +108,38 @@ public class Configurations {
         for (UUID uuid : team.getUsers())
             b.addLore(ChatColor.WHITE + Bukkit.getOfflinePlayer(uuid).getName());
         return b.build();
+    }
+
+    private static void applySnapshot(@NotNull Player player, @NotNull String path) {
+        PlayerSnapshot snap = ((PlayerSnapshot) Minigames.get().getConfig("configurations" + File.separator + "snapshots.yml")
+                .get(path));
+        if (snap != null)
+            snap.apply(player);
+        else
+            MessageUtil.debug("No snapshot found at &e" + path + "&f on file &econfigurations" + File.separator + "snapshots.yml");
+    }
+
+    @NotNull
+    @Deprecated
+    private static ItemBuilder getItem(@NotNull Player player, @NotNull String path, @Nullable String pathText, String... holders) {
+        YMLConfig conf = Minigames.get().getConfig("configurations" + File.separator + "items.yml");
+        ItemBuilder b = conf.contains(path) ? conf.getGuiItem(path, new ItemBuilder(Material.STONE)) : null;
+        if (b == null) {
+            b = new ItemBuilder(Material.STONE);
+            MessageUtil.debug("No item found at &e" + path + "&f on file &econfigurations" + File.separator + "items.yml");
+        }
+        if (pathText != null)
+            b.setDescription(MessageUtil.getMultiMessage(player, pathText, holders), false);
+        return b.setGuiProperty();
+    }
+
+    private static @NotNull SoundInfo getSoundInfo(@NotNull String path) {
+        SoundInfo sInfo = Minigames.get().getConfig("configurations" + File.separator + "sounds.yml")
+                .getSoundInfo(path, null);
+        if (sInfo == null) {
+            MessageUtil.debug("No SoundInfo found at &e" + path + "&f on file &econfigurations" + File.separator + "sounds.yml");
+            return defSound;
+        }
+        return sInfo;
     }
 }

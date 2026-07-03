@@ -73,29 +73,6 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
         return gui;
     }
 
-    private boolean clear() {
-        boolean found = false;
-        for (int i = 0; i < getSize(); i++) {
-            if (getChance(i) <= 0) {
-                removeGroup(i);
-                i--;
-                found = true;
-            }
-        }
-        return found;
-    }
-
-    private GuiButton getEditorButton(Gui gui, int slot) {
-        return new LongEditorFButton(gui, 10, 1, 100,
-                () -> getChancePercent(slot),
-                (chance) -> setChancePercent(slot, chance),
-                () -> new ItemBuilder(Material.CHEST)
-                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList("minidropsfiller.gui.group_info", UtilsString.merge(
-                                getGroup(slot).getPlaceholders(),
-                                "%chance%", String.valueOf(getChancePercent(slot))
-                        ))).build());
-    }
-
     public void addGroup(@NotNull DropGroup group, double chance) {
         if (chance <= 0 || !group.isRegistered())
             throw new IllegalArgumentException();
@@ -153,6 +130,29 @@ public class DropsFiller extends ARegistrable implements ConfigurationSerializab
         map.put("groups", new ArrayList<>(dropGroups));
         map.put("chances", new ArrayList<>(chances));
         return map;
+    }
+
+    private boolean clear() {
+        boolean found = false;
+        for (int i = 0; i < getSize(); i++) {
+            if (getChance(i) <= 0) {
+                removeGroup(i);
+                i--;
+                found = true;
+            }
+        }
+        return found;
+    }
+
+    private GuiButton getEditorButton(Gui gui, int slot) {
+        return new LongEditorFButton(gui, 10, 1, 100,
+                () -> getChancePercent(slot),
+                (chance) -> setChancePercent(slot, chance),
+                () -> new ItemBuilder(Material.CHEST)
+                        .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLangList("minidropsfiller.gui.group_info", UtilsString.merge(
+                                getGroup(slot).getPlaceholders(),
+                                "%chance%", String.valueOf(getChancePercent(slot))
+                        ))).build());
     }
 
     private class ResearchDropGroupButton extends ResearchFButton<DropGroup> {

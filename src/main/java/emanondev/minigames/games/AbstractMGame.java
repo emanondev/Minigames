@@ -118,10 +118,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return scoreboard;
     }
 
-    protected String getObjectiveDisplayName() {
-        return getMinigameType().getDisplayName();
-    }
-
     public void setLocation(@NotNull BlockLocation3D loc) {
         boolean wasStopped = getPhase() != Phase.STOPPED;
         if (!wasStopped)
@@ -170,17 +166,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return future;
     }
 
-    protected void givePoints(Player target, double amount) {
-        if (amount > 0) {
-            try {
-                new VaultEconomyHandler().addMoney(target, amount);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            sendDMessage(target, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
-        }
-    }
-
     @Override
     public CompletableFuture<Void> gameRestart() {
         CompletableFuture<Void> future = new CompletableFuture<>();
@@ -201,17 +186,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             }
         }.runTask(Minigames.get());
         return future;
-    }
-
-    protected void giveGameExp(Player target, int amount) {
-        if (amount > 0) {
-            try {
-                GamerManager.get().getGamer(target).addExperience(amount);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            //sendDMessage(target, "generic.obtain_exp", "%amount%", UtilsString.formatOptional2Digit(amount));
-        }
     }
 
     public void restart() {
@@ -235,7 +209,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         preStartCountdown = getOption().getPreStartPhaseCooldownMax();
         collectingPlayersCountdown = getOption().getCollectingPlayersPhaseCooldownMax();
     }
-
 
     @Override
     public void gameCollectingPlayersTimer() {
@@ -315,13 +288,11 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
-
     @Override
     public void setScore(String score, int value) {
         objective.getScore(score).setScore(value);
         scores.add(score);
     }
-
 
     @Override
     public int getScore(String score) {
@@ -372,8 +343,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
         //TODO notify game started?
     }
-
-    protected abstract void craftAndCallGameStartEvent();
 
     @Override
     public void gamePlayingTimer() {
@@ -442,25 +411,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         phase = Phase.STOPPED;
         //timer.cancel();
         registerAsListener(false);
-    }
-
-
-    private void registerAsListener(boolean value) {
-        if (value) {
-            if (!registered) {
-                Minigames.get().registerListener(this);
-                Minigames.get().registerListener(gameListener);
-                registered = !registered;
-                MessageUtil.debug(getId() + " registered listener");
-            }
-        } else {
-            if (registered) {
-                Minigames.get().unregisterListener(this);
-                Minigames.get().unregisterListener(gameListener);
-                registered = !registered;
-                MessageUtil.debug(getId() + " UNregistered listener");
-            }
-        }
     }
 
     @Override
@@ -561,7 +511,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         return !gamers.contains(player);
     }
 
-
     @Override
     public boolean removeGamer(@NotNull Player player) {
         if (gamers.remove(player)) {
@@ -570,14 +519,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
         return false;
     }
-
-
-    /**
-     * Assign a party to user or throw an exception
-     */
-    @Deprecated
-    protected abstract void assignTeam(Player p);
-
 
     @Override
     public final boolean addSpectator(@NotNull Player player) {
@@ -609,7 +550,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         }
     }
 
-
     @Override
     public void onGamerRemoved(@NotNull Player player) {
         for (Player spectator : getSpectators()) {
@@ -636,7 +576,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     public final Set<Player> getSpectators() {
         return Collections.unmodifiableSet(spectators);
     }
-
 
     @Override
     public final boolean joinGameAsSpectator(@NotNull Player player) {
@@ -768,7 +707,6 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             event.setCancelled(true);
     }
 
-
     /**
      * Handle any player interaction with entities inside arena
      */
@@ -798,61 +736,12 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             }
     }
 
-    private @NotNull Gui getTeamSelectorGui(@NotNull Player player) {
-        PagedListFGui<T> gui = new PagedListFGui<>(
-                new DMessage(getMinigameType().getPlugin(), player).appendLang("generic.gui.teamselector_title").toLegacy(), 3,
-                player, null, Minigames.get(), false,
-                (evt, team) -> {
-                    if (team.containsUser(player))
-                        onGamerLeaveTeam(player, team);
-                    else
-                        onGamerChooseTeam(player, team);
-                    return true;
-                }, (team) -> Configurations.getTeamItem(player, team));
-        gui.addElements(getTeams());
-        gui.updateInventory();
-        return gui;
-    }
-
-    protected boolean onGamerChooseTeam(@NotNull OfflinePlayer player, @NotNull T team) {
-        T pTeam = getTeam(player);
-        if (team == pTeam)
-            return true;
-        if (pTeam != null)
-            pTeam.removeUser(player);
-        return team.addUser(player);
-    }
-
-    protected boolean onGamerLeaveTeam(@NotNull OfflinePlayer player, @NotNull T team) {
-        return team.removeUser(player);
-    }
-
     @Override
     public void onSpectatorInteract(@NotNull PlayerInteractEvent event) {
         event.setCancelled(true);
         //TODO clock
         if (event.getPlayer().getInventory().getHeldItemSlot() == 8) //only if you can choose a kit
             GameManager.get().quitGame(event.getPlayer());
-    }
-
-    private PagedListFGui<Kit> getKitSelectorGui(Player player) {
-        PagedListFGui<Kit> gui = new PagedListFGui<>(
-                new DMessage(getMinigameType().getPlugin(), player).appendLang("generic.gui.kitselector_title").toLegacy(), 3,
-                player, null, Minigames.get(), true,
-                (evt, kit) -> {
-                    MessageUtil.debug(player.getName() + " selected kit " + kit.getId());
-                    if (kit.getId().equals(kitPreference.get(player)))
-                        kitPreference.remove(player);
-                    else
-                        kitPreference.put(player, kit.getId());
-                    return true;
-                }, (kit) -> kit.getGuiSelectorItem(player).addEnchantment(Enchantment.UNBREAKING,
-                kit.getId()
-                        .equals(kitPreference.get(player)) ? 1 : 0).build());
-        if (getOption() instanceof MOptionWithKitsChoice opt)
-            gui.addElements(opt.getKits());
-        gui.updateInventory();
-        return gui;
     }
 
     public void onGamerInventoryClick(@NotNull InventoryClickEvent event, @NotNull Player player) {
@@ -874,10 +763,10 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         PagedMapGui gui = new PagedMapGui(
                 new DMessage(Minigames.get(), target).appendLang("minigame.gui.title", getPlaceholders()),
                 6, target, parent, Minigames.get());
-        gui.addButton(new FButton(gui, () -> new ItemBuilder(isEnabled()?Material.LIME_CONCRETE:Material.RED_CONCRETE)
-                 .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
-                         "minigame.gui.enable_disable", "%value%",String.valueOf(isEnabled())
-                 )).build(), (e) -> {
+        gui.addButton(new FButton(gui, () -> new ItemBuilder(isEnabled() ? Material.LIME_CONCRETE : Material.RED_CONCRETE)
+                .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
+                        "minigame.gui.enable_disable", "%value%", String.valueOf(isEnabled())
+                )).build(), (e) -> {
             this.setEnabled(!this.isEnabled());
             return true;
         }));
@@ -916,5 +805,106 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
     @Override
     public int getJoinTypeGuiSlot() {
         return this.joinTypeGuiSlot;
+    }
+
+    protected String getObjectiveDisplayName() {
+        return getMinigameType().getDisplayName();
+    }
+
+    protected void givePoints(Player target, double amount) {
+        if (amount > 0) {
+            try {
+                new VaultEconomyHandler().addMoney(target, amount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            sendDMessage(target, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
+        }
+    }
+
+    protected void giveGameExp(Player target, int amount) {
+        if (amount > 0) {
+            try {
+                GamerManager.get().getGamer(target).addExperience(amount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //sendDMessage(target, "generic.obtain_exp", "%amount%", UtilsString.formatOptional2Digit(amount));
+        }
+    }
+
+    protected abstract void craftAndCallGameStartEvent();
+
+    /**
+     * Assign a party to user or throw an exception
+     */
+    @Deprecated
+    protected abstract void assignTeam(Player p);
+
+    protected boolean onGamerChooseTeam(@NotNull OfflinePlayer player, @NotNull T team) {
+        T pTeam = getTeam(player);
+        if (team == pTeam)
+            return true;
+        if (pTeam != null)
+            pTeam.removeUser(player);
+        return team.addUser(player);
+    }
+
+    protected boolean onGamerLeaveTeam(@NotNull OfflinePlayer player, @NotNull T team) {
+        return team.removeUser(player);
+    }
+
+    private void registerAsListener(boolean value) {
+        if (value) {
+            if (!registered) {
+                Minigames.get().registerListener(this);
+                Minigames.get().registerListener(gameListener);
+                registered = !registered;
+                MessageUtil.debug(getId() + " registered listener");
+            }
+        } else {
+            if (registered) {
+                Minigames.get().unregisterListener(this);
+                Minigames.get().unregisterListener(gameListener);
+                registered = !registered;
+                MessageUtil.debug(getId() + " UNregistered listener");
+            }
+        }
+    }
+
+    private @NotNull Gui getTeamSelectorGui(@NotNull Player player) {
+        PagedListFGui<T> gui = new PagedListFGui<>(
+                new DMessage(getMinigameType().getPlugin(), player).appendLang("generic.gui.teamselector_title").toLegacy(), 3,
+                player, null, Minigames.get(), false,
+                (evt, team) -> {
+                    if (team.containsUser(player))
+                        onGamerLeaveTeam(player, team);
+                    else
+                        onGamerChooseTeam(player, team);
+                    return true;
+                }, (team) -> Configurations.getTeamItem(player, team));
+        gui.addElements(getTeams());
+        gui.updateInventory();
+        return gui;
+    }
+
+    private PagedListFGui<Kit> getKitSelectorGui(Player player) {
+        PagedListFGui<Kit> gui = new PagedListFGui<>(
+                new DMessage(getMinigameType().getPlugin(), player).appendLang("generic.gui.kitselector_title").toLegacy(), 3,
+                player, null, Minigames.get(), true,
+                (evt, kit) -> {
+                    MessageUtil.debug(player.getName() + " selected kit " + kit.getId());
+                    if (kit.getId().equals(kitPreference.get(player)))
+                        kitPreference.remove(player);
+                    else
+                        kitPreference.put(player, kit.getId());
+                    return true;
+                }, (kit) -> kit.getGuiSelectorItem(player).addEnchantment(Enchantment.UNBREAKING,
+                kit.getId()
+                        .equals(kitPreference.get(player)) ? 1 : 0).build());
+        if (getOption() instanceof MOptionWithKitsChoice opt)
+            gui.addElements(opt.getKits());
+        gui.updateInventory();
+        return gui;
     }
 }

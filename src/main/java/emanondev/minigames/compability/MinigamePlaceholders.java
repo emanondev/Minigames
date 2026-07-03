@@ -33,7 +33,8 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
                         case "players" -> String.valueOf(game.getGamers().size());
                         case "spectators" -> String.valueOf(game.getSpectators());
                         case "maxplayers" -> String.valueOf(game.getMaxGamers());
-                        case "phase" -> game.getPhase().getTranslatedName(player.isOnline() ? player.getPlayer() : null);
+                        case "phase" ->
+                                game.getPhase().getTranslatedName(player.isOnline() ? player.getPlayer() : null);
                         default -> {
                             Minigames.get().logIssue("Unable to parse placeholder %" + getIdentifier() + "_" + params + "% time unit " + args[1] + " doesn't match with existing ones");
                             yield "0";
@@ -89,7 +90,8 @@ public class MinigamePlaceholders extends PlaceholderExpansion {
                         case "xp", "exp", "experience" -> String.valueOf(gamer.getExperience());
                         case "lv", "level" -> String.valueOf(gamer.getLevel());
                         case "xptolevelup", "experiencetolevelup" -> String.valueOf(gamer.getExperienceToLevelUp());
-                        case "xptoleveluppercent", "experiencetoleveluppercent" -> UtilsString.formatOptional2Digit(((double) gamer.getExperience()) / gamer.getLevelUpExperience() * 100); //TODO allow to choose format
+                        case "xptoleveluppercent", "experiencetoleveluppercent" ->
+                                UtilsString.formatOptional2Digit(((double) gamer.getExperience()) / gamer.getLevelUpExperience() * 100); //TODO allow to choose format
                         case "levelupxp", "levelupexperience" -> String.valueOf(gamer.getLevelUpExperience());
                         case "xpbar" -> { //minigame_player_xpbar[_lenght][_symbol][_color1][_color2]
                             int lenght = 30;

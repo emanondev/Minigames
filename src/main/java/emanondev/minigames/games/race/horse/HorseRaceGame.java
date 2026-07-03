@@ -24,28 +24,8 @@ public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, Hor
     }
 
     @Override
-    protected void craftAndCallGameStartEvent() {
-        Bukkit.getPluginManager().callEvent(new HorseRaceStartEvent(this));
-    }
-
-    @Override
     public @NotNull HorseRaceType getMinigameType() {
         return MinigameTypes.HORSE_RACE;
-    }
-
-    @Override
-    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new HorseRaceWinFirstEvent(team, lineCutter, winners));
-    }
-
-    @Override
-    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new HorseRaceWinSecondEvent(team, lineCutter, winners));
-    }
-
-    @Override
-    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new HorseRaceWinThirdEvent(team, lineCutter, winners));
     }
 
     @Override
@@ -71,6 +51,26 @@ public class HorseRaceGame extends MountedRaceGame<ARaceTeam<HorseRaceGame>, Hor
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.HORSERACE_VICTORY_THIRD;
+    }
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new HorseRaceStartEvent(this));
+    }
+
+    @Override
+    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new HorseRaceWinFirstEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new HorseRaceWinSecondEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<HorseRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new HorseRaceWinThirdEvent(team, lineCutter, winners));
     }
 
 }

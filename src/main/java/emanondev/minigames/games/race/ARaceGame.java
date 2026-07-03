@@ -96,12 +96,6 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
         return future;
     }
 
-    @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected @NotNull T craftTeam(@NotNull DyeColor color) {
-        return (T) new ARaceTeam(this, color);
-    }
-
     public void onGamerMoveInsideArena(@NotNull PlayerMoveEvent event) {
         super.onGamerMoveInsideArena(event);
         if (isSpectator(event.getPlayer())) return;
@@ -129,32 +123,6 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
                 onGamerFallOutsideArena(event);
                 return;
             }
-    }
-
-    @Override
-    protected void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event) {
-        switch (getPhase()) {
-            case PLAYING -> {
-                Player damager = null;
-                boolean direct = false;
-                if (event.getPlayer().getLastDamageCause() instanceof EntityDamageByEntityEvent evt) {
-                    switch (evt.getDamager()) {
-                        case Player player -> {
-                            direct = true;
-                            damager = player;
-                        }
-                        case Projectile projectile when projectile.getShooter() instanceof Player shooter ->
-                                damager = shooter;
-                        case TNTPrimed tnt when tnt.getSource() instanceof Player terrorist -> damager = terrorist;
-                        default -> {
-                        }
-                    }
-                }
-                onFakeGamerDeath(event.getPlayer(), damager, direct);
-                if (isSpectator(event.getPlayer())) teleportResetLocation(event.getPlayer());
-            }
-            case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
-        }
     }
 
     public void teleportResetLocation(@NotNull Player player) {
@@ -259,6 +227,138 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
         event.setCancelled(true);
     }
 
+    public void gameStart() {
+        super.gameStart();
+        for (Player player : getGamers()) {
+            getPlayedStat().add(player, 1);
+            PlayerStat.GAME_PLAYED.add(player, 1);
+        }
+        GameStat.PLAY_TIMES.add(this, 1);
+        getTeams().forEach(team -> {
+            if (!team.hasLost()) setScore(team.getName(), 0);
+        });
+    }
+
+    public abstract @NotNull PlayerStat getPlayedStat();
+
+    public boolean canAddGamer(@NotNull Player player) {
+        return switch (getPhase()) {
+            case PRE_START, COLLECTING_PLAYERS -> super.canAddGamer(player);
+            case PLAYING -> {
+                if (!super.canAddGamer(player))
+                    yield false;
+                boolean wasIn = false;
+                for (MTeam team : getTeams())
+                    if (team.containsUser(player)) {
+                        wasIn = true;
+                        break;
+                    }
+                yield wasIn;
+            }
+            default -> false;
+        };
+    }
+
+    @Deprecated
+    public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
+        if (getTeam(player) != null)
+            return;
+        MessageUtil.debug(getId() + " assigning team to " + player.getName());
+        List<T> teams = new ArrayList<>(getTeams());
+        teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
+        for (T team : teams)
+            if (team.addUser(player)) {
+                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
+                        "%color%", team.getColor().name());
+                return;
+            }
+        throw new IllegalStateException("unable to add user to a party");
+    }
+    //TODO blockbucket
+
+    @Override
+    public void onGameEntityDamaged(@NotNull EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            if (!getOption().isAllowedFallDamage()) event.setCancelled(true);
+        } else if (!getOption().isAllowedEnvironmentDamage()) event.setCancelled(true);
+    }
+
+    @Override
+    public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) event.setCancelled(true);
+    }
+
+    @Override
+    public void onGamerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player player) {
+    }
+
+    @Override
+    public void onEntityRegainHealth(@NotNull EntityRegainHealthEvent event) {//ok
+    }
+
+    /**
+     * Handle block break done by one of playingPlayers
+     */
+    @Override
+    public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
+        event.setCancelled(true);
+    }
+
+    /**
+     * Handle block place done by one of playingPlayers
+     */
+    @Override
+    public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
+        event.setCancelled(true);
+    }
+
+    public void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player hitPlayer) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            if (!getOption().isAllowedFallDamage()) event.setCancelled(true);
+        } else if (!getOption().isAllowedEnvironmentDamage()) event.setCancelled(true);
+        super.onGamerDamaged(event, hitPlayer);
+    }
+
+    public abstract @NotNull PlayerStat getVictoryStat();
+
+    public abstract @NotNull PlayerStat getVictoryFirstStat();
+
+    public abstract @NotNull PlayerStat getVictorySecondStat();
+
+    public abstract @NotNull PlayerStat getVictoryThirdStat();
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected @NotNull T craftTeam(@NotNull DyeColor color) {
+        return (T) new ARaceTeam(this, color);
+    }
+
+    @Override
+    protected void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event) {
+        switch (getPhase()) {
+            case PLAYING -> {
+                Player damager = null;
+                boolean direct = false;
+                if (event.getPlayer().getLastDamageCause() instanceof EntityDamageByEntityEvent evt) {
+                    switch (evt.getDamager()) {
+                        case Player player -> {
+                            direct = true;
+                            damager = player;
+                        }
+                        case Projectile projectile when projectile.getShooter() instanceof Player shooter ->
+                                damager = shooter;
+                        case TNTPrimed tnt when tnt.getSource() instanceof Player terrorist -> damager = terrorist;
+                        default -> {
+                        }
+                    }
+                }
+                onFakeGamerDeath(event.getPlayer(), damager, direct);
+                if (isSpectator(event.getPlayer())) teleportResetLocation(event.getPlayer());
+            }
+            case PRE_START, COLLECTING_PLAYERS, END -> teleportResetLocation(event.getPlayer());
+        }
+    }
+
     protected void onGamerReachRaceFinishArea(Player player) {
         @Nullable T team = getTeam(player);
         if (team == null) {
@@ -322,108 +422,8 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     }
 
     protected abstract void craftAndCallWinFirstEvent(@NotNull T team, @NotNull Player lineCutter, @NotNull Set<Player> winners);
-    //TODO blockbucket
 
     protected abstract void craftAndCallWinSecondEvent(@NotNull T team, @NotNull Player lineCutter, @NotNull Set<Player> winners);
 
     protected abstract void craftAndCallWinThirdEvent(@NotNull T team, @NotNull Player lineCutter, @NotNull Set<Player> winners);
-
-    public void gameStart() {
-        super.gameStart();
-        for (Player player : getGamers()) {
-            getPlayedStat().add(player, 1);
-            PlayerStat.GAME_PLAYED.add(player, 1);
-        }
-        GameStat.PLAY_TIMES.add(this, 1);
-        getTeams().forEach(team -> {
-            if (!team.hasLost()) setScore(team.getName(), 0);
-        });
-    }
-
-    public abstract @NotNull PlayerStat getPlayedStat();
-
-    public boolean canAddGamer(@NotNull Player player) {
-        return switch (getPhase()) {
-            case PRE_START, COLLECTING_PLAYERS -> super.canAddGamer(player);
-            case PLAYING -> {
-                if (!super.canAddGamer(player))
-                    yield false;
-                boolean wasIn = false;
-                for (MTeam team : getTeams())
-                    if (team.containsUser(player)) {
-                        wasIn = true;
-                        break;
-                    }
-                yield wasIn;
-            }
-            default -> false;
-        };
-    }
-
-    @Deprecated
-    public void assignTeam(@NotNull Player player) {//TODO choose how to fill with options
-        if (getTeam(player) != null)
-            return;
-        MessageUtil.debug(getId() + " assigning team to " + player.getName());
-        List<T> teams = new ArrayList<>(getTeams());
-        teams.sort(Comparator.comparingInt(ColoredTeam::getUsersAmount));
-        for (T team : teams)
-            if (team.addUser(player)) {
-                new DMessage(Minigames.get(), player).appendLang(getMinigameType().getType() + ".game.assign_team",
-                        "%color%", team.getColor().name());
-                return;
-            }
-        throw new IllegalStateException("unable to add user to a party");
-    }
-
-    @Override
-    public void onGameEntityDamaged(@NotNull EntityDamageEvent event) {
-        if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (!getOption().isAllowedFallDamage()) event.setCancelled(true);
-        } else if (!getOption().isAllowedEnvironmentDamage()) event.setCancelled(true);
-    }
-
-    @Override
-    public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) event.setCancelled(true);
-    }
-
-    @Override
-    public void onGamerRegainHealth(@NotNull EntityRegainHealthEvent event, @NotNull Player player) {
-    }
-
-    @Override
-    public void onEntityRegainHealth(@NotNull EntityRegainHealthEvent event) {//ok
-    }
-
-    /**
-     * Handle block break done by one of playingPlayers
-     */
-    @Override
-    public void onGamerBlockBreak(@NotNull BlockBreakEvent event) {
-        event.setCancelled(true);
-    }
-
-    /**
-     * Handle block place done by one of playingPlayers
-     */
-    @Override
-    public void onGamerBlockPlace(@NotNull BlockPlaceEvent event) {
-        event.setCancelled(true);
-    }
-
-    public void onGamerDamaged(@NotNull EntityDamageEvent event, @NotNull Player hitPlayer) {
-        if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (!getOption().isAllowedFallDamage()) event.setCancelled(true);
-        } else if (!getOption().isAllowedEnvironmentDamage()) event.setCancelled(true);
-        super.onGamerDamaged(event, hitPlayer);
-    }
-
-    public abstract @NotNull PlayerStat getVictoryStat();
-
-    public abstract @NotNull PlayerStat getVictoryFirstStat();
-
-    public abstract @NotNull PlayerStat getVictorySecondStat();
-
-    public abstract @NotNull PlayerStat getVictoryThirdStat();
 }

@@ -65,20 +65,7 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
      */
     public abstract void onTimerCall(/*int timerTick*/);
 
-    protected void setPhaseRaw(int phase) {
-        this.phase = phase;
-        bar.setTitle(getCurrentBossBarMessage().toLegacy());
-        onPhaseStart();
-        Player p = getBuilder();
-        if (p != null) {
-            bar.addPlayer(p);
-            getRepeatedMessage().send();
-        }
-    }
-
     public abstract @NotNull DMessage getCurrentBossBarMessage();
-
-    protected abstract void onPhaseStart();
 
     public abstract @NotNull DMessage getRepeatedMessage();
 
@@ -88,10 +75,6 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
 
     public @NotNull CorePlugin getPlugin() {
         return plugin;
-    }
-
-    protected int getPhase() {
-        return phase;
     }
 
     public @NotNull String getId() {
@@ -121,6 +104,23 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
 
     public abstract MArena build();
 
+    protected void setPhaseRaw(int phase) {
+        this.phase = phase;
+        bar.setTitle(getCurrentBossBarMessage().toLegacy());
+        onPhaseStart();
+        Player p = getBuilder();
+        if (p != null) {
+            bar.addPlayer(p);
+            getRepeatedMessage().send();
+        }
+    }
+
+    protected abstract void onPhaseStart();
+
+    protected int getPhase() {
+        return phase;
+    }
+
     protected void spawnParticle(Player p, Particle particle, double x, double y, double z) {
         spawnParticle(p, particle, x, y, z, 1, null);
     }
@@ -149,27 +149,12 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
     }
 
 
-    protected void spawnParticleLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance){
-        spawnParticleLine(p,particle,x, y, z, direction,maxDistance,null);
+    protected void spawnParticleLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance) {
+        spawnParticleLine(p, particle, x, y, z, direction, maxDistance, null);
     }
 
-    protected void spawnParticleLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance,  Object data){
-        markLine(p,particle,x, y, z, direction,maxDistance,data);
-    }
-
-
-    private void markLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance, Object data) {
-        int i = 0;
-        double xD = direction.getX();
-        double yD = direction.getY();
-        double zD = direction.getZ();
-        double dirDistance = xD*xD+yD*yD+zD*zD;
-        if (dirDistance==0)
-            return;
-        while (i*(dirDistance)<maxDistance*maxDistance){
-            spawnParticle(p, particle, x+xD*i, y+yD*i, z+zD*i, 1, data);
-            i++;
-        }
+    protected void spawnParticleLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance, Object data) {
+        markLine(p, particle, x, y, z, direction, maxDistance, data);
     }
 
     protected void spawnParticleBoxEdges(Player p, Particle particle, BoundingBox box) {
@@ -178,6 +163,49 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
 
     protected void spawnParticleBoxEdges(Player p, Particle particle, BoundingBox box, Object data) {
         markEdges(p, particle, box.getMin(), box.getMax().add(new Vector(-1, -1, -1)), data);
+    }
+
+    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box) {
+        spawnParticleBoxFaces(p, tick, particle, box, null);
+    }
+
+    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box, Object data) {
+        markFaces(p, tick, particle, box.getMin(), box.getMax().add(new Vector(-1, -1, -1)), data);
+    }
+
+    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, Object data) {
+        spawnParticle(p, particle, x, y, z, 0, data);
+    }
+
+    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle) {
+        return spawnParticleWorldEditRegionEdges(p, particle, null);
+    }
+
+    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle, Object data) {
+        try {
+            Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
+                    .getSelection(BukkitAdapter.adapt(p.getWorld()));
+            markEdges(p, particle, new Vector(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
+                    sel.getMinimumPoint().getZ()), new Vector(sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
+                    sel.getMaximumPoint().getZ()), data);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    private void markLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance, Object data) {
+        int i = 0;
+        double xD = direction.getX();
+        double yD = direction.getY();
+        double zD = direction.getZ();
+        double dirDistance = xD * xD + yD * yD + zD * zD;
+        if (dirDistance == 0)
+            return;
+        while (i * (dirDistance) < maxDistance * maxDistance) {
+            spawnParticle(p, particle, x + xD * i, y + yD * i, z + zD * i, 1, data);
+            i++;
+        }
     }
 
     private void markEdges(Player p, Particle particle, Vector min, Vector max, Object data) {
@@ -202,14 +230,6 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
             spawnParticle(p, particle, min.getX(), max.getY() + 1, i, 1, data);
             spawnParticle(p, particle, max.getX() + 1, max.getY() + 1, i, 1, data);
         }
-    }
-
-    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box) {
-        spawnParticleBoxFaces(p, tick, particle, box, null);
-    }
-
-    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box, Object data) {
-        markFaces(p, tick, particle, box.getMin(), box.getMax().add(new Vector(-1, -1, -1)), data);
     }
 
     private void markFaces(Player p, int val, Particle particle, Vector min, Vector max, Object data) {
@@ -237,26 +257,5 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
                 if (Math.abs(max.getBlockX() + 1 + y + z) % RATEO == val % RATEO)
                     spawnParticle(p, particle, max.getBlockX() + 1, y, z, data);
             }
-    }
-
-    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, Object data) {
-        spawnParticle(p, particle, x, y, z, 0, data);
-    }
-
-    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle) {
-        return spawnParticleWorldEditRegionEdges(p, particle, null);
-    }
-
-    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle, Object data) {
-        try {
-            Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
-                    .getSelection(BukkitAdapter.adapt(p.getWorld()));
-            markEdges(p, particle, new Vector(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                    sel.getMinimumPoint().getZ()), new Vector(sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                    sel.getMaximumPoint().getZ()), data);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
     }
 }

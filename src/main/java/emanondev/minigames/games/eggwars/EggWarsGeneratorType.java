@@ -140,19 +140,6 @@ public class EggWarsGeneratorType {
         return id;
     }
 
-    void validateUpgradeCosts(EggWarsType mType) {
-        for (Integer level : levelupPriceTypeRaw.keySet()) {
-            EggWarsGeneratorType type = mType.getGenerator(levelupPriceTypeRaw.get(level));
-            if (type == null) {
-                type = this;
-                Minigames.get().logIssue("Eggwars Generator &e" + id + " &fhas invalid cost type &e" + levelupPriceTypeRaw.get(level) +
-                        " &fon &e/types/eggwars.yml &f-> &egenerators." + id + ".levels." + level + ".upgrade_cost_type:");
-            }
-            levelupPriceType.put(level, type);
-        }
-        levelupPriceTypeRaw = null; //trashed
-    }
-
     public ItemStack getGeneratedItem(Player target, @Range(from = 1, to = Integer.MAX_VALUE) int amount) {
         return new ItemBuilder(material).setAmount(amount).addNamespacedKey(DATA_KEY, PersistentDataType.STRING, getType())
                 .setGuiProperty().setCustomModelData(customModelData).setDescription(new DMessage(Minigames.get(), target)
@@ -191,6 +178,19 @@ public class EggWarsGeneratorType {
 
     public String miniColorEnd() {
         return "</#" + hexColor() + ">";
+    }
+
+    void validateUpgradeCosts(EggWarsType mType) {
+        for (Integer level : levelupPriceTypeRaw.keySet()) {
+            EggWarsGeneratorType type = mType.getGenerator(levelupPriceTypeRaw.get(level));
+            if (type == null) {
+                type = this;
+                Minigames.get().logIssue("Eggwars Generator &e" + id + " &fhas invalid cost type &e" + levelupPriceTypeRaw.get(level) +
+                        " &fon &e/types/eggwars.yml &f-> &egenerators." + id + ".levels." + level + ".upgrade_cost_type:");
+            }
+            levelupPriceType.put(level, type);
+        }
+        levelupPriceTypeRaw = null; //trashed
     }
 
 }

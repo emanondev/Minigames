@@ -35,6 +35,15 @@ public class GenericShopMenu extends MapGui {
         this.setButton(this.getInventory().getSize() - 1, getPreviousGui().getButton(26));
     }
 
+    @Override
+    public @NotNull ShopsMenu getPreviousGui() {
+        return (ShopsMenu) super.getPreviousGui();
+    }
+
+    public EggWarsGame getGame() {
+        return getPreviousGui().getGame();
+    }
+
     protected void fill() {
         for (String key : MinigameTypes.EGGWARS.getSection().getKeys("shops." + id + ".slots")) {
             try {
@@ -46,11 +55,6 @@ public class GenericShopMenu extends MapGui {
         }
     }
 
-    @Override
-    public @NotNull ShopsMenu getPreviousGui() {
-        return (ShopsMenu) super.getPreviousGui();
-    }
-
     protected ItemBuilder craftItem(String path) {
         //TODO enchants
         @NotNull YMLSection section = MinigameTypes.EGGWARS.getSection(); //
@@ -59,10 +63,6 @@ public class GenericShopMenu extends MapGui {
                 .setAmount(section.getInt(path + ".amount", 1))
                 .setCustomModelData(section.getInteger(path + ".custom_model", null))
                 .setColor(getGame().getTeam(getTargetPlayer()).getColor());
-    }
-
-    public EggWarsGame getGame() {
-        return getPreviousGui().getGame();
     }
 
     private class ShopItem implements GuiButton {

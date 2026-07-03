@@ -53,6 +53,24 @@ public class MiniArenaBuilderCommand extends CoreCommand {
         }
     }
 
+    //cmd create <id> <type>
+    @Override
+    public List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @Nullable Location location) {
+        if (!(sender instanceof Player who))
+            return Collections.emptyList();
+        ArenaManager arenaMan = ArenaManager.get();
+        if (!arenaMan.isBuilding(who))
+            return switch (args.length) {
+                case 1 -> complete(args[0], List.of("create"));
+                case 3 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
+                    case "create" -> complete(args[2], MinigameTypes.get().getTypes(), MType::getType, (t) -> true);
+                    default -> Collections.emptyList();
+                };
+                default -> Collections.emptyList();
+            };
+        return arenaMan.getBuildingArena(who).handleComplete(args);
+    }
+
     private void help(@NotNull Player sender, @NotNull String label, @NotNull String[] args) {
         sendDMessage(sender, "miniarenabuilder.help", "%alias%", label);
     }
@@ -95,25 +113,6 @@ public class MiniArenaBuilderCommand extends CoreCommand {
             return;
         }
         sendDMessage(sender, "miniarenabuilder.error.not_creating", "%alias%", label);
-    }
-
-
-    //cmd create <id> <type>
-    @Override
-    public List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @Nullable Location location) {
-        if (!(sender instanceof Player who))
-            return Collections.emptyList();
-        ArenaManager arenaMan = ArenaManager.get();
-        if (!arenaMan.isBuilding(who))
-            return switch (args.length) {
-                case 1 -> complete(args[0], List.of("create"));
-                case 3 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                    case "create" -> complete(args[2], MinigameTypes.get().getTypes(), MType::getType, (t) -> true);
-                    default -> Collections.emptyList();
-                };
-                default -> Collections.emptyList();
-            };
-        return arenaMan.getBuildingArena(who).handleComplete(args);
     }
 
 }

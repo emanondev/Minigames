@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class MiniDropsFillerCommand extends CoreCommand {
 

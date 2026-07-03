@@ -34,8 +34,6 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.bukkit.event.entity.EntityDismountEvent;
-import org.bukkit.event.entity.EntityMountEvent;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;

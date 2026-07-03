@@ -17,11 +17,12 @@ public class EggWarsArena extends AbstractMColorSchemArena {
     private final Map<DyeColor, BlockLocationOffset3D> eggs = new EnumMap<>(DyeColor.class);
     private final Map<DyeColor, LocationOffset3D> respawnLocations = new EnumMap<>(DyeColor.class);
     private final HashSet<LocationOffset3D> villagers = new HashSet<>();
-    private final HashMap<String,HashMap<BlockLocationOffset3D,Integer>> generatorsRaw = new HashMap<>();
-    private final HashMap<EggWarsGeneratorType,HashMap<BlockLocationOffset3D,Integer>> generators = new HashMap<>();
+    private final HashMap<String, HashMap<BlockLocationOffset3D, Integer>> generatorsRaw = new HashMap<>();
+    private final HashMap<EggWarsGeneratorType, HashMap<BlockLocationOffset3D, Integer>> generators = new HashMap<>();
+    private final HashSet<BoundingBox> noBuildAreas = new HashSet<>();
     private int teamsSize;
     private LocationOffset3D spectatorsOffset;
-    private final HashSet<BoundingBox> noBuildAreas = new HashSet<>();
+
     /*
      * teams:
      *   <color>: //at least 2

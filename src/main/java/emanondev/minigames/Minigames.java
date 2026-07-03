@@ -26,11 +26,6 @@ public final class Minigames extends CorePlugin {
     }
 
     @Override
-    protected boolean registerReloadCommand() {
-        return true;
-    }
-
-    @Override
     public void disable() {
         GameManager.get().getAll().values().forEach(MGame::gameAbort);
         ArrayList<MArenaBuilder> coll = new ArrayList<>(ArenaManager.get().getAllBuildings());
@@ -80,6 +75,17 @@ public final class Minigames extends CorePlugin {
 
     }
 
+    @Override
+    public void load() {
+        instance = this;
+        registerConfigurationSerializables();
+    }
+
+    @Override
+    protected boolean registerReloadCommand() {
+        return true;
+    }
+
     private void registerCommands() {
         this.registerCommand(new MiniGamerCommand());
         this.registerCommand(new MiniKitCommand());
@@ -92,12 +98,6 @@ public final class Minigames extends CorePlugin {
         this.registerCommand(new FastJoinCommand());
         this.registerCommand(new JoinCommand());
         this.registerCommand(new LeaveCommand());
-    }
-
-    @Override
-    public void load() {
-        instance = this;
-        registerConfigurationSerializables();
     }
 
     private void registerConfigurationSerializables() {

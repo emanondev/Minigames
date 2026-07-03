@@ -70,16 +70,6 @@ public class PlayerStat extends Stat<UUID> {
         return stat;
     }
 
-    @Override
-    protected @NotNull String getId(@NotNull UUID target) {
-        return target.toString();
-    }
-
-    @Override
-    protected @NotNull YMLConfig getConfig() {
-        return conf;
-    }
-
     public void add(@NotNull OfflinePlayer target, int amount) {
         add(target.getUniqueId(), amount);
     }
@@ -118,5 +108,15 @@ public class PlayerStat extends Stat<UUID> {
 
     public int getLastThreeMonths(@NotNull OfflinePlayer target) {
         return getLastThreeMonths(target.getUniqueId());
+    }
+
+    @Override
+    protected @NotNull String getId(@NotNull UUID target) {
+        return target.toString();
+    }
+
+    @Override
+    protected @NotNull YMLConfig getConfig() {
+        return conf;
     }
 }

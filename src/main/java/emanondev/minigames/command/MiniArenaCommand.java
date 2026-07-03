@@ -25,8 +25,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.File;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class MiniArenaCommand extends CoreCommand {
 
@@ -62,11 +62,43 @@ public class MiniArenaCommand extends CoreCommand {
         }.runTaskTimer(getPlugin(), 20L, 20L);
     }
 
+    @Override
+    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 0) {
+            help(sender, label, args);
+            return;
+        }
+        switch (args[0].toLowerCase(Locale.ENGLISH)) {
+            case "list" -> list(sender, label, args);
+            case "delete" -> delete(sender, label, args);
+            case "paste" -> paste(sender, label, args);
+            case "update" -> update(sender, label, args);
+            case "gui" -> gui(sender, label, args);
+            default -> help(sender, label, args);
+        }
+    }
+    //from MArenaBuilder END
+
+    @Override
+    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
+        return switch (args.length) {
+            case 1 -> this.complete(args[0], List.of("list", "delete", "paste", "gui", "update"));
+            case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
+                case "delete", "paste", "gui" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
+                default -> Collections.emptyList();
+            };
+            default -> Collections.emptyList();
+        };
+    }
+
+    public void reload() {
+        //restart task?
+    }
+
     //from MArenaBuilder START
     private void spawnParticleBoxFaces(Player p, int tick, BoundingBox box) {
         markFaces(p, tick, box.getMin(), box.getMax());
     }
-    //from MArenaBuilder END
 
     private void markFaces(Player p, int val, Vector min, Vector max) {
         Location l = p.getLocation();
@@ -97,38 +129,6 @@ public class MiniArenaCommand extends CoreCommand {
 
     private void spawnParticle(Player p, double x, double y, double z) {
         p.spawnParticle(Particle.WAX_OFF, x, y, z, 0, 0, 0, 0, 0, null);
-    }
-
-    @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (args.length == 0) {
-            help(sender, label, args);
-            return;
-        }
-        switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "list" -> list(sender, label, args);
-            case "delete" -> delete(sender, label, args);
-            case "paste" -> paste(sender, label, args);
-            case "update" -> update(sender, label, args);
-            case "gui" -> gui(sender, label, args);
-            default -> help(sender, label, args);
-        }
-    }
-
-    @Override
-    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args, @Nullable Location location) {
-        return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("list", "delete", "paste", "gui", "update"));
-            case 2 -> switch (args[0].toLowerCase(Locale.ENGLISH)) {
-                case "delete", "paste", "gui" -> this.complete(args[1], ArenaManager.get().getAll().keySet());
-                default -> Collections.emptyList();
-            };
-            default -> Collections.emptyList();
-        };
-    }
-
-    public void reload() {
-        //restart task?
     }
 
     private void help(CommandSender sender, String label, String[] args) {

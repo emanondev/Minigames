@@ -31,32 +31,12 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     }
 
     @Override
-    protected void craftAndCallGameStartEvent() {
-        Bukkit.getPluginManager().callEvent(new ElytraRaceStartEvent(this));
-    }
-
-    @Override
     public void onEntityDeath(@NotNull EntityDeathEvent event) {
     }
 
     @Override
     public @NotNull ElytraRaceType getMinigameType() {
         return MinigameTypes.ELYTRA_RACE;
-    }
-
-    @Override
-    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new ElytraRaceWinFirstEvent(team, lineCutter, winners));
-    }
-
-    @Override
-    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new ElytraRaceWinSecondEvent(team, lineCutter, winners));
-    }
-
-    @Override
-    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
-        Bukkit.getPluginManager().callEvent(new ElytraRaceWinThirdEvent(team, lineCutter, winners));
     }
 
     public void teleportResetLocation(@NotNull Player player) {
@@ -100,5 +80,25 @@ public class ElytraRaceGame extends ARaceGame<ARaceTeam<ElytraRaceGame>, ElytraR
     @Override
     public @NotNull PlayerStat getVictoryThirdStat() {
         return PlayerStat.ELYTRARACE_VICTORY_THIRD;
+    }
+
+    @Override
+    protected void craftAndCallGameStartEvent() {
+        Bukkit.getPluginManager().callEvent(new ElytraRaceStartEvent(this));
+    }
+
+    @Override
+    protected void craftAndCallWinFirstEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new ElytraRaceWinFirstEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinSecondEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new ElytraRaceWinSecondEvent(team, lineCutter, winners));
+    }
+
+    @Override
+    protected void craftAndCallWinThirdEvent(@NotNull ARaceTeam<ElytraRaceGame> team, @NotNull Player lineCutter, @NotNull Set<Player> winners) {
+        Bukkit.getPluginManager().callEvent(new ElytraRaceWinThirdEvent(team, lineCutter, winners));
     }
 }

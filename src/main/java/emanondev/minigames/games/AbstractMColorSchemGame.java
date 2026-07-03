@@ -76,8 +76,6 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
 
     }
 
-    protected abstract @NotNull T craftTeam(@NotNull DyeColor color);
-
     @NotNull
     @Contract("-> new")
     public BoundingBox getBoundingBox() {
@@ -224,53 +222,6 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         sendUpdateBorder(event.getPlayer());
     }
 
-    private void sendUpdateBorder(Player player) {
-        if (!getOption().getShowArenaBorders())
-            return;
-        Integer id = bordersId.get(player);
-        if (hiddenBorderArea.contains(player.getLocation().toVector()))
-            if (id == null)
-                return;
-            else {
-                player.setWorldBorder(null);
-                bordersId.remove(player);
-                return;
-            }
-        if (id == null) {
-            if (isSquared) {
-                bordersId.put(player, 0);
-                player.setWorldBorder(borders.getFirst());
-                return;
-            }
-            int closest = getClosestBorder(player.getLocation().toVector());
-            bordersId.put(player, closest);
-            player.setWorldBorder(borders.get(closest));
-            return;
-        }
-        if (isSquared)
-            return;
-        int closest = getClosestBorder(player.getLocation().toVector());
-        if (cacheArea.get(closest).contains(player.getLocation().toVector()))
-            return;
-        bordersId.put(player, closest);
-        player.setWorldBorder(borders.get(closest));
-    }
-
-    private int getClosestBorder(Vector loc) {
-        BoundingBox box = getBoundingBox();
-        double d0 = loc.distanceSquared(new Vector(box.getMinX(), loc.getY(), box.getMinZ()));
-        double d1 = loc.distanceSquared(new Vector(box.getMinX(), loc.getY(), box.getMaxZ()));
-        double d2 = loc.distanceSquared(new Vector(box.getMaxX(), loc.getY(), box.getMinZ()));
-        double d3 = loc.distanceSquared(new Vector(box.getMaxX(), loc.getY(), box.getMaxZ()));
-        if (d0 < d1 && d0 < d2 && d0 < d3)
-            return 0;
-        if (d1 < d2 && d1 < d3)
-            return 1;
-        if (d2 < d3)
-            return 2;
-        return 3;
-    }
-
     @Override
     public @Nullable T getTeam(@NotNull UUID player) {
         for (T team : teams.values()) {
@@ -349,5 +300,54 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         }
     }
 
+    protected abstract @NotNull T craftTeam(@NotNull DyeColor color);
+
     protected abstract void onGamerFallOutsideArena(@NotNull PlayerMoveEvent event);
+
+    private void sendUpdateBorder(Player player) {
+        if (!getOption().getShowArenaBorders())
+            return;
+        Integer id = bordersId.get(player);
+        if (hiddenBorderArea.contains(player.getLocation().toVector()))
+            if (id == null)
+                return;
+            else {
+                player.setWorldBorder(null);
+                bordersId.remove(player);
+                return;
+            }
+        if (id == null) {
+            if (isSquared) {
+                bordersId.put(player, 0);
+                player.setWorldBorder(borders.getFirst());
+                return;
+            }
+            int closest = getClosestBorder(player.getLocation().toVector());
+            bordersId.put(player, closest);
+            player.setWorldBorder(borders.get(closest));
+            return;
+        }
+        if (isSquared)
+            return;
+        int closest = getClosestBorder(player.getLocation().toVector());
+        if (cacheArea.get(closest).contains(player.getLocation().toVector()))
+            return;
+        bordersId.put(player, closest);
+        player.setWorldBorder(borders.get(closest));
+    }
+
+    private int getClosestBorder(Vector loc) {
+        BoundingBox box = getBoundingBox();
+        double d0 = loc.distanceSquared(new Vector(box.getMinX(), loc.getY(), box.getMinZ()));
+        double d1 = loc.distanceSquared(new Vector(box.getMinX(), loc.getY(), box.getMaxZ()));
+        double d2 = loc.distanceSquared(new Vector(box.getMaxX(), loc.getY(), box.getMinZ()));
+        double d3 = loc.distanceSquared(new Vector(box.getMaxX(), loc.getY(), box.getMaxZ()));
+        if (d0 < d1 && d0 < d2 && d0 < d3)
+            return 0;
+        if (d1 < d2 && d1 < d3)
+            return 1;
+        if (d2 < d3)
+            return 2;
+        return 3;
+    }
 }

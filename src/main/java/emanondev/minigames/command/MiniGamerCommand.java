@@ -48,6 +48,31 @@ public class MiniGamerCommand extends CoreCommand {
         }
     }
 
+    /*
+    info [player]
+    addxp <xp> [player]
+    addlv <lv> [player]
+    setlv <lv> [player]
+    setxp <xp> [player]
+    reset [player]
+     */
+    @Override
+    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
+        return switch (args.length) {
+            case 1 -> complete(args[0], List.of("info", "addxp", "addlv", "setxp", "setlv", "reset"));
+            case 2 -> switch (args[1].toLowerCase(Locale.ENGLISH)) {
+                case "info", "reset" -> completePlayerNames(sender, args[1]);
+                case "addxp", "addlv", "setxp", "setlv" -> List.of("1", "10", "100", "1000");
+                default -> Collections.emptyList();
+            };
+            case 3 -> switch (args[1].toLowerCase(Locale.ENGLISH)) {
+                case "addxp", "addlv", "setxp", "setlv" -> completePlayerNames(sender, args[2]);
+                default -> Collections.emptyList();
+            };
+            default -> Collections.emptyList();
+        };
+    }
+
     private void help(CommandSender sender, String label) {
         sendDMessage(sender, "minigamer.help", "%label%", label);
     }
@@ -195,30 +220,5 @@ public class MiniGamerCommand extends CoreCommand {
         Gamer gamer = GamerManager.get().getGamer(target);
         gamer.setLevel(amount);
         sendDMessage(sender, "minigamer.success.setlv", "%amount%", String.valueOf(amount), "%name%", target.getName(), "%label%", label);
-    }
-
-    /*
-    info [player]
-    addxp <xp> [player]
-    addlv <lv> [player]
-    setlv <lv> [player]
-    setxp <xp> [player]
-    reset [player]
-     */
-    @Override
-    public @Nullable List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
-        return switch (args.length) {
-            case 1 -> complete(args[0], List.of("info", "addxp", "addlv", "setxp", "setlv", "reset"));
-            case 2 -> switch (args[1].toLowerCase(Locale.ENGLISH)) {
-                case "info", "reset" -> completePlayerNames(sender, args[1]);
-                case "addxp", "addlv", "setxp", "setlv" -> List.of("1", "10", "100", "1000");
-                default -> Collections.emptyList();
-            };
-            case 3 -> switch (args[1].toLowerCase(Locale.ENGLISH)) {
-                case "addxp", "addlv", "setxp", "setlv" -> completePlayerNames(sender, args[2]);
-                default -> Collections.emptyList();
-            };
-            default -> Collections.emptyList();
-        };
     }
 }

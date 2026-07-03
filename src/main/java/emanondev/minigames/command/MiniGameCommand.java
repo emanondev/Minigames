@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class MiniGameCommand extends CoreCommandPlus {
 
@@ -55,10 +55,12 @@ public class MiniGameCommand extends CoreCommandPlus {
     @SuppressWarnings("unchecked")
     public List<String> onComplete(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args, @Nullable Location location) {
         return switch (args.length) {
-            case 1 -> this.complete(args[0], List.of("gui", "create", "list", "delete", "tp", "setspawn", "unsetspawn", "stop", "reset", "gui"));
+            case 1 ->
+                    this.complete(args[0], List.of("gui", "create", "list", "delete", "tp", "setspawn", "unsetspawn", "stop", "reset", "gui"));
             case 2 -> switch (args[0].toLowerCase()) {
                 case "list" -> this.complete(args[1], MinigameTypes.get().getTypesId());
-                case "gui", "delete", "tp", "stop", "reset" -> this.complete(args[1], GameManager.get().getAll().keySet());
+                case "gui", "delete", "tp", "stop", "reset" ->
+                        this.complete(args[1], GameManager.get().getAll().keySet());
                 default -> Collections.emptyList();
             };
             case 3 -> switch (args[0].toLowerCase()) {

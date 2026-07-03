@@ -26,19 +26,6 @@ public class LocationOffset3D implements ConfigurationSerializable {
         this.pitch = pitch;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LocationOffset3D that = (LocationOffset3D) o;
-        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && Float.compare(that.yaw, yaw) == 0 && Float.compare(that.pitch, pitch) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y, z, yaw, pitch);
-    }
-
     private LocationOffset3D(@NotNull Map<String, Object> map) {
         this.x = (double) map.get("x");
         this.y = (double) map.get("y");
@@ -60,6 +47,19 @@ public class LocationOffset3D implements ConfigurationSerializable {
         return new LocationOffset3D(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2])
                 , Float.parseFloat(args[3]), Float.parseFloat(args[4]));
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LocationOffset3D that = (LocationOffset3D) o;
+        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && Float.compare(that.yaw, yaw) == 0 && Float.compare(that.pitch, pitch) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z, yaw, pitch);
     }
 
     @NotNull

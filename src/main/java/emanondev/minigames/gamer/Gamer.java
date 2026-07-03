@@ -71,10 +71,6 @@ public class Gamer {
         }
     }
 
-    private GamerManager getManager() {
-        return GamerManager.get();
-    }
-
     public @Range(from = 1, to = Integer.MAX_VALUE) int getLevel() {
         return lv;
     }
@@ -105,6 +101,15 @@ public class Gamer {
         section.set("xp", xp <= 0 ? null : xp);
     }
 
+    public void reset() {
+        this.setLevel(1);
+        this.setExperience(0);
+    }
+
+    private GamerManager getManager() {
+        return GamerManager.get();
+    }
+
     private void recalculateLevel() {
         if (lv >= getManager().getMaxLevel())
             return;
@@ -121,10 +126,5 @@ public class Gamer {
             nextXp = getManager().getLevelUpExperience(lv);
         }
         save();
-    }
-
-    public void reset() {
-        this.setLevel(1);
-        this.setExperience(0);
     }
 }

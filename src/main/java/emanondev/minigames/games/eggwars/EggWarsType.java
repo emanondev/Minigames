@@ -30,14 +30,6 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
         reload();
     }
 
-    private void registerType(EggWarsGeneratorType type) {
-        if (!UtilsString.isLowcasedValidID(type.getType()))
-            throw new IllegalArgumentException("invalid id '" + type.getType() + "'");
-        if (generatorTypes.containsKey(type.getType()))
-            throw new IllegalArgumentException("duplicated id '" + type.getType() + "'");
-        generatorTypes.put(type.getType(), type);
-    }
-
     @Override
     @NotNull
     public EggWarsArenaBuilder getArenaBuilder(@NotNull UUID uuid, @NotNull String id, @NotNull String label) {
@@ -146,5 +138,13 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
 
     public Collection<EggWarsGeneratorType> getGenerators() {
         return generatorTypes.values();
+    }
+
+    private void registerType(EggWarsGeneratorType type) {
+        if (!UtilsString.isLowcasedValidID(type.getType()))
+            throw new IllegalArgumentException("invalid id '" + type.getType() + "'");
+        if (generatorTypes.containsKey(type.getType()))
+            throw new IllegalArgumentException("duplicated id '" + type.getType() + "'");
+        generatorTypes.put(type.getType(), type);
     }
 }
