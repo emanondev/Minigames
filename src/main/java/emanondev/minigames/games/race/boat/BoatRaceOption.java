@@ -58,7 +58,7 @@ public class BoatRaceOption extends MountedRaceOption {
                     gui.open(event.getWhoClicked());
                     return true;
                 },
-                (Boat.Type type) -> new ItemBuilder(getBoatTypeMaterial(type)).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                (Boat.Type type) -> new ItemBuilder(getBoatTypeMaterial(type)).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                         type == getBoatType() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.boat_type_description", "%type%", type.name().toLowerCase(Locale.ENGLISH)
                 )).build(),

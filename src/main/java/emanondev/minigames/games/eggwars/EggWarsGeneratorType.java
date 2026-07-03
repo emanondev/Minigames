@@ -5,6 +5,7 @@ import emanondev.core.UtilsString;
 import emanondev.core.YMLSection;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.Minigames;
+import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -20,16 +21,15 @@ public class EggWarsGeneratorType {
     private final String id;
     private final HashMap<Integer, Double> dropRateo5ticks = new HashMap<>();
 
-    public int getMaxLevel() {
-        return maxLevel;
-    }
-
+    @Getter
     private final int maxLevel;
     private final HashMap<Integer, Integer> levelupPriceAmount = new HashMap<>();
     private final HashMap<Integer, EggWarsGeneratorType> levelupPriceType = new HashMap<>();
+    @Getter
     private final Material material;
     private final Integer customModelData;
     private final String hexColor;
+    @Getter
     private final Color color;
     private HashMap<Integer, String> levelupPriceTypeRaw = new HashMap<>();
 
@@ -140,10 +140,6 @@ public class EggWarsGeneratorType {
         return id;
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
     void validateUpgradeCosts(EggWarsType mType) {
         for (Integer level : levelupPriceTypeRaw.keySet()) {
             EggWarsGeneratorType type = mType.getGenerator(levelupPriceTypeRaw.get(level));
@@ -197,7 +193,4 @@ public class EggWarsGeneratorType {
         return "</#" + hexColor() + ">";
     }
 
-    public Color getColor() {
-        return color;
-    }
 }

@@ -9,6 +9,7 @@ import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
 import emanondev.minigames.*;
 import emanondev.minigames.locations.BlockLocation3D;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O extends MOption> extends ARegistrable implements MGame<T, A, O>, Listener {
 
     private final Objective objective;
@@ -396,7 +398,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         if (endCountdown >= 1) {
             for (Player player : getGamers()) {
                 Firework fire = (Firework) player.getLocation().getWorld().spawnEntity(player.getLocation()
-                        .add(Math.random() * 6 - 3, 2, Math.random() * 6 - 3), EntityType.FIREWORK);
+                        .add(Math.random() * 6 - 3, 2, Math.random() * 6 - 3), EntityType.FIREWORK_ROCKET);
                 FireworkMeta meta = fire.getFireworkMeta();
                 meta.addEffect(FireworkEffect.builder().withColor(
                         Color.fromBGR((int) (Math.random() * 256), (int) (Math.random() * 256), (int) (Math.random() * 256)),
@@ -844,7 +846,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
                     else
                         kitPreference.put(player, kit.getId());
                     return true;
-                }, (kit) -> kit.getGuiSelectorItem(player).addEnchantment(Enchantment.DURABILITY,
+                }, (kit) -> kit.getGuiSelectorItem(player).addEnchantment(Enchantment.UNBREAKING,
                 kit.getId()
                         .equals(kitPreference.get(player)) ? 1 : 0).build());
         if (getOption() instanceof MOptionWithKitsChoice opt)
@@ -882,13 +884,13 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
                 () -> (long) getJoinGuiSlot(),
                 (v) -> setJoinGuiSlot(v.intValue()),
-                () -> new ItemBuilder(Material.COMPASS).setAmount(Math.max(1, Math.min(101, getJoinGuiSlot())))
+                () -> new ItemBuilder(Material.COMPASS).setAmount(Math.clamp(getJoinGuiSlot(), 1, 101))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minigame.gui.join_gui_slot", "%value%", String.valueOf(getJoinGuiSlot()))).build()));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
                 () -> (long) getJoinTypeGuiSlot(),
                 (v) -> setJoinTypeGuiSlot(v.intValue()),
-                () -> new ItemBuilder(Material.RECOVERY_COMPASS).setAmount(Math.max(1, Math.min(101, getJoinTypeGuiSlot())))
+                () -> new ItemBuilder(Material.RECOVERY_COMPASS).setAmount(Math.clamp(getJoinTypeGuiSlot(), 1, 101))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minigame.gui.join_type_gui_slot", "%value%", String.valueOf(getJoinTypeGuiSlot()))).build()));
         return gui;

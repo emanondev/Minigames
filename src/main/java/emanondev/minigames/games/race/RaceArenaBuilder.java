@@ -3,6 +3,7 @@ package emanondev.minigames.games.race;
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
@@ -55,27 +56,6 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         super(user, id, label, Minigames.get());
     }
 
-    private static Color getCheckpointColor(int i) {
-        return switch (i % 10) {
-            case 0 -> Color.fromBGR(Integer.decode("0xeb3434"));
-            case 1 -> Color.fromBGR(Integer.decode("0xeb9f34"));
-            case 2 -> Color.fromBGR(Integer.decode("0xebe234"));
-            case 3 -> Color.fromBGR(Integer.decode("0xb4eb34"));
-            case 4 -> Color.fromBGR(Integer.decode("0x34eb56"));
-            case 5 -> Color.fromBGR(Integer.decode("0x34aeeb"));
-            case 6 -> Color.fromBGR(Integer.decode("0x3440eb"));
-            case 7 -> Color.fromBGR(Integer.decode("0x8334eb"));
-            case 8 -> Color.fromBGR(Integer.decode("0xc934eb"));
-            case 9 -> Color.fromBGR(Integer.decode("0xeb348f"));
-            default -> throw new IllegalStateException("Unexpected value: " + i % 10);
-        };
-    }
-
-    @Override
-    protected void onPhaseStart() {
-        timerTick = 0;
-    }
-
     @Override
     public @NotNull DMessage getCurrentBossBarMessage() {
         return new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.race.bossbar.phase" + getPhase(), "%alias%", getLabel());
@@ -96,7 +76,8 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                         , "%setteamsspawn%", teamSet.toString()
                         , "%deleteteamsspawn%", teamDelete.toString(), "%alias%", getLabel());
             }
-            default -> new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.race.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
+            default ->
+                    new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.race.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
         };
     }
 
@@ -209,9 +190,10 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             World world = player.getWorld();
                             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
                                     .getSelection(BukkitAdapter.adapt(world));
-                            BoundingBox checkPointArea = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX() + 1, sel.getMaximumPoint().getY() + 1,
-                                    sel.getMaximumPoint().getZ() + 1);
+                            BlockVector3 min = sel.getMinimumPoint();
+                            BlockVector3 max = sel.getMaximumPoint();
+                            BoundingBox checkPointArea = new BoundingBox(min.x(), min.y(), min.z(),
+                                    max.x() + 1, max.y() + 1, max.z() + 1);
                             if (!checkPointArea.overlaps(getArea())) {
                                 ERR_SELECTED_AREA_OUTSIDE_ARENA.send(player, "%alias%", label);
 
@@ -257,11 +239,11 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "undo" -> {
                         sendDMessage(player, "race.arenabuilder.success.undo_checkpoint", "%alias%", label);
-                        checkPoints.remove(checkPoints.size() - 1);
+                        checkPoints.removeLast();
                         setPhaseRaw(PHASE_CHECKPOINT_AREA_OR_NEXT);
                     }
                     case "checkpointrespawnloc" -> {
-                        if (!checkPoints.get(checkPoints.size() - 1).contains(player.getLocation().toVector())) {
+                        if (!checkPoints.getLast().contains(player.getLocation().toVector())) {
                             ERR_OUTSIDE_CHECKPOINT.send(player, "%alias%", label);
                             return;
                         }
@@ -279,9 +261,10 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             World world = player.getWorld();
                             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
                                     .getSelection(BukkitAdapter.adapt(world));
-                            BoundingBox finishArea = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX() + 1, sel.getMaximumPoint().getY() + 1,
-                                    sel.getMaximumPoint().getZ() + 1);
+                            BlockVector3 min = sel.getMinimumPoint();
+                            BlockVector3 max = sel.getMaximumPoint();
+                            BoundingBox finishArea = new BoundingBox(min.x(), min.y(), min.z(),
+                                    max.x() + 1, max.y() + 1, max.z() + 1);
                             if (!finishArea.overlaps(getArea())) {
                                 ERR_SELECTED_AREA_OUTSIDE_ARENA.send(player, "%alias%", label);
                                 return;
@@ -337,9 +320,10 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                             World world = player.getWorld();
                             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
                                     .getSelection(BukkitAdapter.adapt(world));
-                            BoundingBox fallArea = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX() + 1, sel.getMaximumPoint().getY() + 1,
-                                    sel.getMaximumPoint().getZ() + 1);
+                            BlockVector3 min = sel.getMinimumPoint();
+                            BlockVector3 max = sel.getMaximumPoint();
+                            BoundingBox fallArea = new BoundingBox(min.x(), min.y(), min.z(),
+                                    max.x() + 1, max.y() + 1, max.z() + 1);
                             if (!fallArea.overlaps(getArea())) {
                                 ERR_SELECTED_AREA_OUTSIDE_ARENA.send(player, "%alias%", label);
                                 return;
@@ -374,7 +358,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                     }
                     case "undofallingzone" -> {
                         if (!fallAreas.isEmpty()) {
-                            fallAreas.remove(fallAreas.size() - 1);
+                            fallAreas.removeLast();
                             sendDMessage(player, "arenabuilder.race.success.deleted_last_fallingzone",
                                     "%alias%", label);
                         }
@@ -388,7 +372,8 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
     @Override
     public List<String> handleComplete(@NotNull String[] args) {
         return switch (getPhase()) {
-            case PHASE_SELECT_AREA -> args.length == 1 ? complete(args[0], List.of("selectarea")) : Collections.emptyList();
+            case PHASE_SELECT_AREA ->
+                    args.length == 1 ? complete(args[0], List.of("selectarea")) : Collections.emptyList();
             case PHASE_SET_TEAM_SPAWNS -> args.length == 1 ? complete(args[0], List.of("setteamspawn")) :
                     args.length == 2 ? complete(args[1], DyeColor.class, (DyeColor c) -> !spawnLocations.containsKey(c)) : Collections.emptyList();
             case PHASE_SET_TEAM_SPAWNS_OR_NEXT -> {
@@ -403,7 +388,8 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             case PHASE_CHECKPOINT_AREA_OR_NEXT -> complete(args[0], List.of("checkpointarea", "next", "clear"));
             case PHASE_CHECKPOINT_SPAWN -> complete(args[0], List.of("checkpointrespawnloc", "undo"));
             case PHASE_FINISH_AREA -> complete(args[0], List.of("finisharea"));
-            case PHASE_FALLING_ZONES -> complete(args[0], List.of("fallingzone", "next", "undofinisharea", "undofallingzone"));
+            case PHASE_FALLING_ZONES ->
+                    complete(args[0], List.of("fallingzone", "next", "undofinisharea", "undofallingzone"));
             default -> throw new IllegalStateException("Unexpected value: " + getPhase());
         };
     }
@@ -482,7 +468,7 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
             Vector min = getAreaMin();
             if (!getArea().equals(getWorldEditSection(p)))
                 spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
-            spawnLocations.forEach((k, v) -> spawnParticleCircle(p, Particle.REDSTONE, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
+            spawnLocations.forEach((k, v) -> spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
                     0.4, timerTick % 4 == 0, new Particle.DustOptions(k.getColor(), 1F)));
             if (spectatorsOffset != null) {
                 spawnParticleCircle(p, Particle.WAX_ON, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y, min.getZ() + spectatorsOffset.z,
@@ -491,10 +477,10 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                     spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y + 1, min.getZ() + spectatorsOffset.z);
             }
             for (int i = 0; i < checkPoints.size(); i++) {
-                spawnParticleBoxEdges(p, Particle.REDSTONE, checkPoints.get(i), new Particle.DustOptions(getCheckpointColor(i), 1F));
+                spawnParticleBoxEdges(p, Particle.DUST, checkPoints.get(i), new Particle.DustOptions(getCheckpointColor(i), 1F));
             }
             for (int j = 0; j < checkPointsRespawn.size(); j++) {
-                spawnParticleCircle(p, Particle.REDSTONE, min.getX() + checkPointsRespawn.get(j).x, min.getY() +
+                spawnParticleCircle(p, Particle.DUST, min.getX() + checkPointsRespawn.get(j).x, min.getY() +
                                 checkPointsRespawn.get(j).y, min.getZ() + checkPointsRespawn.get(j).z, 0.4,
                         timerTick % 4 == 0, new Particle.DustOptions(getCheckpointColor(j), 0.5F));
                 if (timerTick % 4 == 0)
@@ -503,10 +489,31 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
                                 checkPointsRespawn.get(j).y + 0.5 + (0.5 * (i)), min.getZ() + checkPointsRespawn.get(j).z);
             }
             if (endArea != null)
-                spawnParticleBoxEdges(p, Particle.REDSTONE, endArea, new Particle.DustOptions(getCheckpointColor(checkPoints.size()), 2F));
+                spawnParticleBoxEdges(p, Particle.DUST, endArea, new Particle.DustOptions(getCheckpointColor(checkPoints.size()), 2F));
 
             fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, timerTick, Particle.FLAME, fallArea, null));
         }
+    }
+
+    @Override
+    protected void onPhaseStart() {
+        timerTick = 0;
+    }
+
+    private static Color getCheckpointColor(int i) {
+        return switch (i % 10) {
+            case 0 -> Color.fromBGR(Integer.decode("0xeb3434"));
+            case 1 -> Color.fromBGR(Integer.decode("0xeb9f34"));
+            case 2 -> Color.fromBGR(Integer.decode("0xebe234"));
+            case 3 -> Color.fromBGR(Integer.decode("0xb4eb34"));
+            case 4 -> Color.fromBGR(Integer.decode("0x34eb56"));
+            case 5 -> Color.fromBGR(Integer.decode("0x34aeeb"));
+            case 6 -> Color.fromBGR(Integer.decode("0x3440eb"));
+            case 7 -> Color.fromBGR(Integer.decode("0x8334eb"));
+            case 8 -> Color.fromBGR(Integer.decode("0xc934eb"));
+            case 9 -> Color.fromBGR(Integer.decode("0xeb348f"));
+            default -> throw new IllegalStateException("Unexpected value: " + i % 10);
+        };
     }
 }
 

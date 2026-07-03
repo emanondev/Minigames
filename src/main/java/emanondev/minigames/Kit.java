@@ -6,6 +6,7 @@ import emanondev.core.gui.*;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.games.ARegistrable;
 import emanondev.minigames.games.Registrable;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -20,7 +21,9 @@ import java.util.Map;
 public class Kit extends ARegistrable implements ConfigurationSerializable, Registrable {
 
     private final PlayerSnapshot snap;
+    @Getter
     private int price;
+    @Getter
     private int unlockLevel;
     private ItemStack guiSelectorItem;
     private String displayName;
@@ -154,14 +157,6 @@ public class Kit extends ARegistrable implements ConfigurationSerializable, Regi
         else
             guiSelectorItem = new ItemBuilder(item).setGuiProperty().build();
         KitManager.get().save(this);
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public int getUnlockLevel() {
-        return unlockLevel;
     }
 
     public void setUnlockLevel(int unlockLevel) {

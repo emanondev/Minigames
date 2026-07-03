@@ -250,7 +250,7 @@ public class DeathMatchArenaBuilder extends SchematicArenaBuilder {
             Vector min = getAreaMin();
             if (!getArea().equals(getWorldEditSection(p)))
                 spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
-            spawnLocations.forEach((k, v) -> spawnParticleCircle(p, Particle.REDSTONE, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
+            spawnLocations.forEach((k, v) -> spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
                     0.4, timerTick % 4 == 0, new Particle.DustOptions(k.getColor(), 1F)));
             if (spectatorsOffset != null) {
                 spawnParticleCircle(p, Particle.WAX_ON, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y, min.getZ() + spectatorsOffset.z,

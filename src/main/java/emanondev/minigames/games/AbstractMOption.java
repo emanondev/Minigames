@@ -53,23 +53,23 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10,
                 () -> (long) getCollectingPlayersPhaseCooldownMax(),
                 (v) -> setCollectingPlayersPhaseCooldownMax(v.intValue()),
-                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getCollectingPlayersPhaseCooldownMax())))
+                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.clamp(getCollectingPlayersPhaseCooldownMax(), 1, 101))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minioption.gui.collecting_players_phase_max_cooldown", "%value%", String.valueOf(getCollectingPlayersPhaseCooldownMax()))).build()));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) getEndPhaseCooldownMax(),
                 (v) -> setEndPhaseCooldownMax(v.intValue()),
-                () -> Configurations.getEndPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getEndPhaseCooldownMax())))
+                () -> Configurations.getEndPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.clamp(getEndPhaseCooldownMax(), 1, 101))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minioption.gui.end_phase_max_cooldown", "%value%", String.valueOf(getEndPhaseCooldownMax()))).build()));
         gui.addButton(new LongEditorFButton(gui, 1, 1, 10, () -> (long) getPreStartPhaseCooldownMax()
                 , (v) -> setPreStartPhaseCooldownMax(v.intValue()),
-                () -> Configurations.getPreStartPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getPreStartPhaseCooldownMax())))
+                () -> Configurations.getPreStartPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.clamp(getPreStartPhaseCooldownMax(), 1, 101))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "minioption.gui.pre_start_phase_max_cooldown", "%value%", String.valueOf(getPreStartPhaseCooldownMax()))).build()));
         gui.addButton(new FButton(gui, () ->
                 new ItemBuilder(Material.VEX_SPAWN_EGG).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer())
                                 .appendLang("minioption.gui.allow_spectators", "%value%", String.valueOf(getAllowSpectators())))
-                        .setGuiProperty().addEnchantment(Enchantment.DURABILITY, getAllowSpectators() ? 1 : 0).build(), (event) -> {
+                        .setGuiProperty().addEnchantment(Enchantment.UNBREAKING, getAllowSpectators() ? 1 : 0).build(), (event) -> {
             setAllowSpectators(!getAllowSpectators());
             return true;
         }
@@ -78,7 +78,7 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
                 new ItemBuilder(Material.BARRIER).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer())
                                 .appendLang("minioption.gui.show_arena_borders", "%value%",
                                         String.valueOf(getAllowSpectators())))
-                        .setGuiProperty().addEnchantment(Enchantment.DURABILITY, getShowArenaBorders() ? 1 : 0).build(), (event) -> {
+                        .setGuiProperty().addEnchantment(Enchantment.UNBREAKING, getShowArenaBorders() ? 1 : 0).build(), (event) -> {
             setShowArenaBorders(!getShowArenaBorders());
             return true;
         }
@@ -93,7 +93,7 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
 
     @Override
     public void setCollectingPlayersPhaseCooldownMax(int value) {
-        collectingPlayersPhaseCooldownMax = Math.max(1, Math.min(180, value));
+        collectingPlayersPhaseCooldownMax = Math.clamp(value, 1, 180);
         OptionManager.get().save(this);
     }
 
@@ -104,7 +104,7 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
 
     @Override
     public void setEndPhaseCooldownMax(int value) {
-        endPhaseCooldownMax = Math.max(1, Math.min(60, value));
+        endPhaseCooldownMax = Math.clamp(value, 1, 60);
         OptionManager.get().save(this);
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractMOption extends ARegistrable implements MOption {
 
     @Override
     public void setPreStartPhaseCooldownMax(int value) {
-        this.preStartPhaseCooldownMax = Math.max(1, Math.min(60, value));
+        this.preStartPhaseCooldownMax = Math.clamp(value, 1, 60);
         OptionManager.get().save(this);
     }
 

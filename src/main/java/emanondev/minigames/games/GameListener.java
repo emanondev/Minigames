@@ -64,17 +64,20 @@ public class GameListener implements Listener {
         Player damager = null;
         boolean direct = false;
         if (event instanceof EntityDamageByEntityEvent evt) {
-            if (evt.getDamager() instanceof Player && game.isSpectator((Player) evt.getDamager())) {
-                event.setCancelled(true);
-                return;
+            switch (evt.getDamager()) {
+                case Player player when game.isSpectator(player) -> {
+                    event.setCancelled(true);
+                    return;
+                }
+                case Player player -> {
+                    damager = player;
+                    direct = true;
+                }
+                case Projectile projectile when projectile.getShooter() instanceof Player shooter -> damager = shooter;
+                case TNTPrimed tnt when tnt.getSource() instanceof Player terrorist -> damager = terrorist;
+                default -> {
+                }
             }
-            if (evt.getDamager() instanceof Player) {
-                damager = (Player) evt.getDamager();
-                direct = true;
-            } else if (evt.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter)
-                damager = shooter;
-            else if (evt.getDamager() instanceof TNTPrimed tnt && tnt.getSource() instanceof Player terrorist)
-                damager = terrorist;
         }
         if (damager != null) {
             if (targetIsPlayingPlayer)
@@ -88,13 +91,17 @@ public class GameListener implements Listener {
 
         if (targetIsPlayingPlayer && p.getHealth() <= event.getFinalDamage()) {
             if (damager == null && p.getLastDamageCause() instanceof EntityDamageByEntityEvent evt) {
-                if (evt.getDamager() instanceof Player) {
-                    damager = (Player) evt.getDamager();
-                    direct = true;
-                } else if (evt.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter)
-                    damager = shooter;
-                else if (evt.getDamager() instanceof TNTPrimed tnt && tnt.getSource() instanceof Player terrorist)
-                    damager = terrorist;
+                switch (evt.getDamager()) {
+                    case Player player -> {
+                        damager = player;
+                        direct = true;
+                    }
+                    case Projectile projectile when projectile.getShooter() instanceof Player shooter ->
+                            damager = shooter;
+                    case TNTPrimed tnt when tnt.getSource() instanceof Player terrorist -> damager = terrorist;
+                    default -> {
+                    }
+                }
             }
             event.setCancelled(true);
             game.onFakeGamerDeath(p, damager, direct);

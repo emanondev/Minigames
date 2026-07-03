@@ -110,7 +110,7 @@ public class GenericShopMenu extends MapGui {
                             "%coin_has%", String.valueOf(has),
                             "%canbuy_symbol%", has >= priceCoins ? "✓" : "✗",
                             "%canbuy_color%", has >= priceCoins ? ChatColor.GREEN.toString() : ChatColor.RED.toString()
-                    )).addEnchantment(Enchantment.DURABILITY, has >= priceCoins ? 1 : 0).build();
+                    )).addEnchantment(Enchantment.UNBREAKING, has >= priceCoins ? 1 : 0).build();
         }
 
         @Override

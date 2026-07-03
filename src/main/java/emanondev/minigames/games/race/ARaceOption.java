@@ -80,11 +80,11 @@ public class ARaceOption extends AbstractMOption {
                         setKit(kit);
                     return true;
                 },
-                (Kit kit) -> kit.getGuiSelectorItemRaw().addEnchantment(Enchantment.DURABILITY,
+                (Kit kit) -> kit.getGuiSelectorItemRaw().addEnchantment(Enchantment.UNBREAKING,
                         Objects.equals(kitId, kit.getId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", "free")).build(),
                 () -> KitManager.get().getAll().values()));
-        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.IRON_SWORD).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                 allowedPvp ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                 "minioption.gui.allow_pvp", "%value%", String.valueOf(allowedPvp))).build(),
                 (e) -> {
@@ -92,7 +92,7 @@ public class ARaceOption extends AbstractMOption {
                     return true;
                 }
         ));
-        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.BOW).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.BOW).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                 allowedPve ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                 "minioption.gui.allow_pve", "%value%", String.valueOf(allowedPve))).build(),
                 (e) -> {
@@ -100,7 +100,7 @@ public class ARaceOption extends AbstractMOption {
                     return true;
                 }
         ));
-        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.LEATHER_BOOTS).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.LEATHER_BOOTS).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                 allowedFallDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                 "minioption.gui.allow_fall_damage", "%value%", String.valueOf(allowedFallDamage))).build(),
                 (e) -> {
@@ -108,7 +108,7 @@ public class ARaceOption extends AbstractMOption {
                     return true;
                 }
         ));
-        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.LAVA_BUCKET).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+        gui.addButton(new FButton(gui, () -> new ItemBuilder(Material.LAVA_BUCKET).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                 allowedEnvironmentDamage ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                 "minioption.gui.allow_environment_damage", "%value%", String.valueOf(allowedEnvironmentDamage))).build(),
                 (e) -> {
@@ -155,7 +155,7 @@ public class ARaceOption extends AbstractMOption {
 
 
     public void setTeamMaxSize(int amount) {
-        teamMaxSize = Math.max(1, Math.min(32, amount));
+        teamMaxSize = Math.clamp(amount, 1, 32);
         OptionManager.get().save(ARaceOption.this);
     }
 

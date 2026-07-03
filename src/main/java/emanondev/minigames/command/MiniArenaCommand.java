@@ -33,7 +33,7 @@ public class MiniArenaCommand extends CoreCommand {
     private static final int RATEO = 5;
     private static final int RADIUS = 100;
     private final HashMap<UUID, SchemInfo> pasted = new HashMap<>();
-    private BukkitTask task;
+    private final BukkitTask task;
 
     /* //TODO filter list with type
      * list

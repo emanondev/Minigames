@@ -36,8 +36,6 @@ import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.bukkit.event.entity.EntityMountEvent;
-import org.bukkit.event.entity.EntityMountEvent;
 
 import java.io.File;
 import java.util.*;
@@ -128,9 +126,9 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         logTetraStar(ChatColor.DARK_RED, "D Registered Game &e" + id + "&f of type &e" + game.getMinigameType().getType()
                 + "&f at location &e" + game.getGameLocation().toString().replace(":", " ")
                 + (game.getArena() instanceof MSchemArena mArena ? " to " +
-                (game.getGameLocation().x + mArena.getSize().getBlockX()) + " "
-                + (game.getGameLocation().y + mArena.getSize().getBlockY()) + " " +
-                (game.getGameLocation().z + mArena.getSize().getBlockZ()) : ""));
+                                                                   (game.getGameLocation().x + mArena.getSize().getBlockX()) + " "
+                                                                   + (game.getGameLocation().y + mArena.getSize().getBlockY()) + " " +
+                                                                   (game.getGameLocation().z + mArena.getSize().getBlockZ()) : ""));
     }
 
     public void delete(String id) {
@@ -185,7 +183,7 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         if (world == null)
             world = Bukkit.getWorld(getGlobalSection().getString("defaultWorld", ""));
         if (world == null)
-            world = Bukkit.getWorlds().get(0);
+            world = Bukkit.getWorlds().getFirst();
         while (!isValid && counter < 500) {
             loc = new BlockLocation3D(world, 10000 + offset * counter, 0, 10000);
             isValid = isValidLocation(loc, arena, world);
@@ -196,10 +194,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         logTetraStar(ChatColor.DARK_RED, "D Generated Game Location at &e"
                 + loc.toString().replace(":", " "));
         return loc;
-    }
-
-    protected @NotNull YMLSection getGlobalSection() {
-        return Minigames.get().getConfig("minigamesConfig.yml").loadSection("global");
     }
 
     @SuppressWarnings("unchecked")
@@ -299,11 +293,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         return false;
     }
 
-    @EventHandler
-    private void event(PlayerQuitEvent event) {
-        quitGame(event.getPlayer());
-    }
-
     public void quitGame(Player player) {
         @SuppressWarnings("rawtypes") MGame game = getCurrentGame(player);
         if (game == null)
@@ -323,6 +312,20 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         logTetraStar(ChatColor.DARK_RED, "D user &e" + player.getName() + "&f quitted game &e" + game.getId());
     }
 
+    @Override
+    public void log(String s) {
+        Minigames.get().log("(GameManager) " + s);
+    }
+
+    protected @NotNull YMLSection getGlobalSection() {
+        return Minigames.get().getConfig("minigamesConfig.yml").loadSection("global");
+    }
+
+    @EventHandler
+    private void event(PlayerQuitEvent event) {
+        quitGame(event.getPlayer());
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     private void event(@NotNull BlockPlaceEvent event) {
         @SuppressWarnings("rawtypes") MGame game = getCurrentGame(event.getPlayer());
@@ -334,7 +337,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         }
         event.setCancelled(true); //outside game bounds or spectator
     }
-
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     private void event(@NotNull CraftItemEvent event) {
@@ -361,7 +363,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         }
         event.setCancelled(true); //outside game bounds or spectator
     }
-
 
     @EventHandler
     private void event(PlayerInteractEvent event) {
@@ -412,7 +413,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
         //it's a spectator
         game.onSpectatorMove(event);
     }
-
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     private void event(PlayerTeleportEvent event) {
@@ -610,11 +610,6 @@ public class GameManager extends Manager<MGame> implements Listener, ConsoleLogg
                 game.onGamerExhaustionEvent(event, player);
             else
                 event.setCancelled(true);
-    }
-
-    @Override
-    public void log(String s) {
-        Minigames.get().log("(GameManager) " + s);
     }
 
 }

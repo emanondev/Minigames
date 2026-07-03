@@ -1,6 +1,7 @@
 package emanondev.minigames;
 
 import emanondev.minigames.locations.LocationOffset3D;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -8,7 +9,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class C {
 
+    @Getter
     private static int gameMinimalSpaceDistancing = 272;
+    @Getter
     private static int startupGameInitializeDelayTicks = 80;
     private static LocationOffset3D respawnLocationCoordinates = null;
     private static String respawnLocationWorld = null;
@@ -20,14 +23,6 @@ public class C {
         String respawnLocationTmp = Minigames.get().getConfig().getString("respawnLocation.coordinates");
         respawnLocationWorld = Minigames.get().getConfig().getString("respawnLocation.world");
         respawnLocationCoordinates = respawnLocationTmp == null ? null : LocationOffset3D.fromString(respawnLocationTmp);
-    }
-
-    public static int getGameMinimalSpaceDistancing() {
-        return gameMinimalSpaceDistancing;
-    }
-
-    public static int getStartupGameInitializeDelayTicks() {
-        return startupGameInitializeDelayTicks;
     }
 
     public static @Nullable Location getRespawnLocation() {

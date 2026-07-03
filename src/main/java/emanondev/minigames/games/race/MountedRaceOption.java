@@ -8,6 +8,7 @@ import emanondev.core.gui.ResearchFButton;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.OptionManager;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -23,8 +24,10 @@ import java.util.*;
 public abstract class MountedRaceOption extends ARaceOption {
 
     private EntityType type;
+    @Getter
     private double baseSpeed;
     private Boat.Type boatType;
+    @Getter
     private double jumpStrenght;
     private Horse.Color horseColor;
     private Horse.Style horseStyle;
@@ -112,7 +115,7 @@ public abstract class MountedRaceOption extends ARaceOption {
                     gui.open(event.getWhoClicked());
                     return true;
                 },
-                (EntityType type) -> new ItemBuilder(getEntityTypeMaterial(type)).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                (EntityType type) -> new ItemBuilder(getEntityTypeMaterial(type)).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                         type == getType() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.entitytype_description", "%type%", type.name().toLowerCase(Locale.ENGLISH)
                 )).build(),
@@ -143,10 +146,6 @@ public abstract class MountedRaceOption extends ARaceOption {
             throw new IllegalStateException();
         this.type = type;
         OptionManager.get().save(this);
-    }
-
-    public double getBaseSpeed() {
-        return baseSpeed;
     }
 
     public void setBaseSpeed(double baseSpeed) {
@@ -183,10 +182,6 @@ public abstract class MountedRaceOption extends ARaceOption {
     public void setBoatType(@Nullable Boat.Type boatType) {
         this.boatType = boatType;
         OptionManager.get().save(this);
-    }
-
-    public double getJumpStrenght() {
-        return jumpStrenght;
     }
 
     public void setJumpStrenght(double jumpStrenght) {

@@ -74,7 +74,7 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         if (size != null)
             return size.clone();
         BlockVector3 blockV = getSchematic().getDimensions(); //TODO may read just size instead of all the file
-        size = new BlockVector(blockV.getBlockX(), blockV.getBlockY(), blockV.getBlockZ());
+        size = new BlockVector(blockV.x(), blockV.y(), blockV.z());
         return size;
     }
 
@@ -155,14 +155,14 @@ public abstract class AbstractMColorSchemArena extends ARegistrable implements M
         gui.addButton(new LongEditorFButton(gui, 1, 1, 100,
                 () -> (long) getMinDurationEstimation(),
                 (v) -> setMinDurationEstimation(v.intValue()),
-                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getMinDurationEstimation())))
+                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.clamp(getMinDurationEstimation(), 1, 101))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "miniarena.gui.min_duration_estimation", "%value%", String.valueOf(getMinDurationEstimation()))).build()));
 
         gui.addButton(new LongEditorFButton(gui, 1, 1, 100,
                 () -> (long) getMaxDurationEstimation(),
                 (v) -> setMaxDurationEstimation(v.intValue()),
-                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.max(1, Math.min(101, getMaxDurationEstimation())))
+                () -> Configurations.getCollectingPlayersPhaseCooldownMaxItem(gui.getTargetPlayer()).setAmount(Math.clamp(getMaxDurationEstimation(), 1, 101))
                         .setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                                 "miniarena.gui.max_duration_estimation", "%value%",
                                 String.valueOf(getMaxDurationEstimation()))).build()));

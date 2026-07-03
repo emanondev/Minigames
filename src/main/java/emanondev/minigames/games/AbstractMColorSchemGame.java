@@ -3,6 +3,7 @@ package emanondev.minigames.games;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.Minigames;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends MSchemArena & MColorableTeamArena, O extends MOption>
         extends AbstractMGame<T, A, O> implements MSchemGame<T, A, O> {
 
@@ -237,7 +239,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
         if (id == null) {
             if (isSquared) {
                 bordersId.put(player, 0);
-                player.setWorldBorder(borders.get(0));
+                player.setWorldBorder(borders.getFirst());
                 return;
             }
             int closest = getClosestBorder(player.getLocation().toVector());
@@ -299,7 +301,8 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
 
     @Override
     public boolean containsLocation(@NotNull Location loc) {
-        return Objects.equals(loc.getWorld(), this.getWorld()) && (boxCache == null ? getBoundingBox().contains(loc.toVector()) : boxCache.contains(loc.toVector()));
+        return Objects.equals(loc.getWorld(), this.getWorld())
+                && (boxCache == null ? getBoundingBox().contains(loc.toVector()) : boxCache.contains(loc.toVector()));
     }
 
     public void onGamerTeleport(@NotNull PlayerTeleportEvent event) {

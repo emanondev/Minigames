@@ -8,6 +8,7 @@ import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.games.AbstractMColorSchemArena;
 import emanondev.minigames.locations.LocationOffset3D;
+import lombok.Getter;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -25,11 +26,17 @@ public class RaceArena extends AbstractMColorSchemArena {
     private final List<LocationOffset3D> checkpointsRespawn = new ArrayList<>();
     private final BoundingBox finishArea;
     private final List<BoundingBox> fallAreas = new ArrayList<>();
+    @Getter
     private int rewardFirstExp;
+    @Getter
     private int rewardSecondExp;
+    @Getter
     private int rewardThirdExp;
+    @Getter
     private int rewardFirst;
+    @Getter
     private int rewardSecond;
+    @Getter
     private int rewardThird;
 
     public RaceArena(@NotNull Map<String, Object> map) {
@@ -133,17 +140,9 @@ public class RaceArena extends AbstractMColorSchemArena {
         return gui;
     }
 
-    public int getRewardFirst() {
-        return rewardFirst;
-    }
-
     public void setRewardFirst(int rewardFirst) {
         this.rewardFirst = Math.max(0, rewardFirst);
         ArenaManager.get().save(this);
-    }
-
-    public int getRewardSecond() {
-        return rewardSecond;
     }
 
     public void setRewardSecond(int rewardSecond) {
@@ -151,26 +150,9 @@ public class RaceArena extends AbstractMColorSchemArena {
         ArenaManager.get().save(this);
     }
 
-    public int getRewardThird() {
-        return rewardThird;
-    }
-
     public void setRewardThird(int rewardThird) {
         this.rewardThird = Math.max(0, rewardThird);
         ArenaManager.get().save(this);
-    }
-
-    public int getRewardFirstExp() {
-        return rewardFirstExp;
-
-    }
-
-    public int getRewardSecondExp() {
-        return rewardSecondExp;
-    }
-
-    public int getRewardThirdExp() {
-        return rewardThirdExp;
     }
 
     public void setRewardThirdExp(int rewardThirdExp) {

@@ -66,7 +66,7 @@ public class DeathMatchType extends MType<DeathMatchArena, DeathMatchOption> {
     }
 
     public ItemStack getKillRewardItem() { //TODO description
-        return new ItemBuilder(Material.MAGMA_CREAM).setGuiProperty().addEnchantment(Enchantment.DURABILITY, 1).build();
+        return new ItemBuilder(Material.MAGMA_CREAM).setGuiProperty().addEnchantment(Enchantment.UNBREAKING, 1).build();
     }
 
     public double getKillPoints() {

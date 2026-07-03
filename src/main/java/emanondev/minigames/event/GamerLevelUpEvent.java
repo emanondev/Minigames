@@ -1,6 +1,7 @@
 package emanondev.minigames.event;
 
 import emanondev.minigames.gamer.Gamer;
+import lombok.Getter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -10,7 +11,9 @@ import org.jetbrains.annotations.Range;
 public class GamerLevelUpEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private final int newLevel;
+    @Getter
     private final Gamer gamer;
+    @Getter
     private boolean cancelled = false;
 
     public GamerLevelUpEvent(Gamer gamer, @Range(from = 2, to = Integer.MAX_VALUE) int i) {
@@ -29,14 +32,6 @@ public class GamerLevelUpEvent extends Event implements Cancellable {
 
     public @Range(from = 2, to = Integer.MAX_VALUE) int getNewLevel() {
         return newLevel;
-    }
-
-    public Gamer getGamer() {
-        return gamer;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
     }
 
     @Override

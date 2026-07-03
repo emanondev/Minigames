@@ -72,7 +72,7 @@ public class DeathMatchOption extends AbstractMOption implements MOptionWithKits
                     setChestFillerId(filler.getId().equals(getChestFillerId()) ? null : filler.getId());
                     return true;
                 },
-                (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                         filler.getId().equals(getChestFillerId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.chestsfiller_description", filler.getPlaceholders()
                 )).build(),
@@ -91,7 +91,7 @@ public class DeathMatchOption extends AbstractMOption implements MOptionWithKits
                     setKillKewardFillerId(filler.getId().equals(getKillKewardFillerId()) ? null : filler.getId());
                     return true;
                 },
-                (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                (DropsFiller filler) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                         filler.getId().equals(getKillKewardFillerId()) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.killrewardfiller_description", filler.getPlaceholders()
                 )).build(),
@@ -105,7 +105,7 @@ public class DeathMatchOption extends AbstractMOption implements MOptionWithKits
                     toggleKit(kit);
                     return true;
                 },
-                (Kit kit) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                (Kit kit) -> new ItemBuilder(Material.PAPER).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                         hasKit(kit) ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.kit_description", "%id%", kit.getId(), "%price%", kit.getPrice() == 0 ? "free" : String.valueOf(kit.getPrice())
                 )).build(),
@@ -119,7 +119,7 @@ public class DeathMatchOption extends AbstractMOption implements MOptionWithKits
     }
 
     public void setTeamMaxPlayers(int value) {
-        this.perTeamMaxPlayers = Math.max(1, Math.min(32, value));
+        this.perTeamMaxPlayers = Math.clamp(value, 1, 32);
         OptionManager.get().save(this);
     }
 

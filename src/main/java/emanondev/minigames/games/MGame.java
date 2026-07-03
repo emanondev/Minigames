@@ -342,7 +342,7 @@ public interface MGame<T extends MTeam, A extends MArena, O extends MOption> ext
                         getMinigameType().getType() + ".gui.selector", getPlaceholders())
                 );
         if (!getGamers().isEmpty() && canAddGamer(player))
-            result.addEnchantment(Enchantment.DURABILITY, 1);
+            result.addEnchantment(Enchantment.UNBREAKING, 1);
         return result.build();
     }
 

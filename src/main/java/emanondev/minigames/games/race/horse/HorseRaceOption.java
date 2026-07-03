@@ -57,7 +57,7 @@ public class HorseRaceOption extends MountedRaceOption {
                     gui.open(event.getWhoClicked());
                     return true;
                 },
-                (Horse.Color color) -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                (Horse.Color color) -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                         color == getHorseColor() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.horse_color_description", "%color%", color.name().toLowerCase(Locale.ENGLISH)
                 )).build(),
@@ -72,7 +72,7 @@ public class HorseRaceOption extends MountedRaceOption {
                     gui.open(event.getWhoClicked());
                     return true;
                 },
-                (Horse.Style style) -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setGuiProperty().addEnchantment(Enchantment.DURABILITY,
+                (Horse.Style style) -> new ItemBuilder(Material.MOJANG_BANNER_PATTERN).setGuiProperty().addEnchantment(Enchantment.UNBREAKING,
                         style == getHorseStyle() ? 1 : 0).setDescription(new DMessage(Minigames.get(), gui.getTargetPlayer()).appendLang(
                         "minioption.gui.horse_style_description", "%style%", style.name().toLowerCase(Locale.ENGLISH)
                 )).build(),

@@ -114,8 +114,7 @@ public class FastJoinCommand extends CoreCommand {
         String param = args[0].substring(index + 1);
         String base = args[0].substring(0, index + 1);
         List<String> completes = this.complete(param, MinigameTypes.get().getTypes(), MType::getType, (m) -> true);
-        for (int i = 0; i < completes.size(); i++)
-            completes.set(i, base + completes.get(i));
+        completes.replaceAll(string -> base + string);
         return completes;
     }
 

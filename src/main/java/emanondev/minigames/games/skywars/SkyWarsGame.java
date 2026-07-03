@@ -211,13 +211,17 @@ public class SkyWarsGame extends AbstractMColorSchemGame<SkyWarsTeam, SkyWarsAre
                 Player damager = null;
                 boolean direct = false;
                 if (event.getPlayer().getLastDamageCause() instanceof EntityDamageByEntityEvent evt) {
-                    if (evt.getDamager() instanceof Player) {
-                        direct = true;
-                        damager = (Player) evt.getDamager();
-                    } else if (evt.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter)
-                        damager = shooter;
-                    else if (evt.getDamager() instanceof TNTPrimed tnt && tnt.getSource() instanceof Player terrorist)
-                        damager = terrorist;
+                    switch (evt.getDamager()) {
+                        case Player player -> {
+                            direct = true;
+                            damager = player;
+                        }
+                        case Projectile projectile when projectile.getShooter() instanceof Player shooter ->
+                                damager = shooter;
+                        case TNTPrimed tnt when tnt.getSource() instanceof Player terrorist -> damager = terrorist;
+                        default -> {
+                        }
+                    }
                 }
                 onFakeGamerDeath(event.getPlayer(), damager, direct);
                 if (isSpectator(event.getPlayer()))

@@ -1,6 +1,7 @@
 package emanondev.minigames.event;
 
 import emanondev.minigames.gamer.Gamer;
+import lombok.Getter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -9,8 +10,10 @@ import org.jetbrains.annotations.Range;
 
 public class GamerExperienceGainEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
+    @Getter
     private final Gamer gamer;
     private long xp;
+    @Getter
     private boolean cancelled = false;
 
     public GamerExperienceGainEvent(Gamer gamer, long xpGain) {
@@ -33,14 +36,6 @@ public class GamerExperienceGainEvent extends Event implements Cancellable {
 
     public void setExperienceGain(@Range(from = 0, to = Long.MAX_VALUE) long value) {
         this.xp = value;
-    }
-
-    public Gamer getGamer() {
-        return gamer;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
     }
 
     @Override

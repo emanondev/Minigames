@@ -2,6 +2,7 @@ package emanondev.minigames.event;
 
 import emanondev.minigames.games.race.ARaceGame;
 import emanondev.minigames.games.race.ARaceTeam;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Set;
 
+@Getter
 public class ARaceWinEvent<G extends ARaceGame> extends GameEvent<G> {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
@@ -19,7 +21,7 @@ public class ARaceWinEvent<G extends ARaceGame> extends GameEvent<G> {
         super(team.getGame());
         this.lineCutter = lineCutter;
         if (!winners.contains(lineCutter))
-            throw new IllegalArgumentException("winner doesn't contain linecutter");
+            throw new IllegalArgumentException("winner doesn't contain line cutter");
         this.winners = Collections.unmodifiableSet(winners);
     }
 
@@ -32,11 +34,4 @@ public class ARaceWinEvent<G extends ARaceGame> extends GameEvent<G> {
         return HANDLERS_LIST;
     }
 
-    public Player getLineCutter() {
-        return lineCutter;
-    }
-
-    public Set<Player> getWinners() {
-        return winners;
-    }
 }

@@ -3,6 +3,7 @@ package emanondev.minigames.games;
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import emanondev.core.CorePlugin;
 import lombok.Getter;
@@ -41,25 +42,27 @@ public abstract class SchematicArenaBuilder extends MArenaBuilder {
         return area.clone();
     }
 
-    protected void setArea(@NotNull Player player) throws IncompleteRegionException {
-        world = player.getWorld();
-        Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
-                .getSelection(BukkitAdapter.adapt(world));
-        area = new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                sel.getMaximumPoint().getZ());
-    }
-
     public BoundingBox getWorldEditSection(Player p) {
         try {
             Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
                     .getSelection(BukkitAdapter.adapt(p.getWorld()));
-            return new BoundingBox(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-                    sel.getMinimumPoint().getZ(), sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-                    sel.getMaximumPoint().getZ());
+            BlockVector3 min = sel.getMinimumPoint();
+            BlockVector3 max = sel.getMaximumPoint();
+            return new BoundingBox(min.x(), min.y(), min.z(),
+                    max.x(), max.y(), max.z());
         } catch (Exception e) {
             return null;
         }
+    }
+
+    protected void setArea(@NotNull Player player) throws IncompleteRegionException {
+        world = player.getWorld();
+        Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player))
+                .getSelection(BukkitAdapter.adapt(world));
+        BlockVector3 min = sel.getMinimumPoint();
+        BlockVector3 max = sel.getMaximumPoint();
+        area = new BoundingBox(min.x(), min.y(), min.z(),
+                max.x(), max.y(), max.z());
     }
 
 
