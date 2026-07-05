@@ -8,6 +8,7 @@ import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
+import emanondev.core.util.ParticleUtility;
 import emanondev.core.util.ReadUtility;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
@@ -16,6 +17,7 @@ import emanondev.minigames.Minigames;
 import emanondev.minigames.games.SchematicArenaBuilder;
 import emanondev.minigames.locations.BlockLocationOffset3D;
 import emanondev.minigames.locations.LocationOffset3D;
+import emanondev.minigames.util.ParticleHelper;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -93,11 +95,7 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
 
     @Override
     public @NotNull DMessage getRepeatedMessage() {
-        return switch (getPhase()) {
-
-            default ->
-                    new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.eggwars.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
-        };
+        return new DMessage(Minigames.get(), getBuilder()).appendLang("arenabuilder.eggwars.repeatmessage.phase" + getPhase(), "%alias%", getLabel());
     }
 
     @Override
@@ -568,60 +566,43 @@ public class EggWarsArenaBuilder extends SchematicArenaBuilder {
 
         if (timerTick % 2 == 0) { //every 15 game ticks
             if (getPhase() <= PHASE_SELECT_AREA)
-                this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
+                ParticleUtility.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
             else
-                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0, 0, 0, 1, 1, 1));
+                ParticleUtility.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0, 0, 0, 1, 1, 1));
             if (getPhase() <= PHASE_SELECT_AREA)
                 return;
 
             Vector min = getAreaMin();
             if (!getArea().equals(getWorldEditSection(p)))
-                spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
-            teamsSpawns.forEach((color, values) -> {
-                int index = 0;
-                for (LocationOffset3D v : values) {
-                    index++;
-                    spawnParticleLine(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y + 1.62, min.getZ() + v.z,
-                            v.getDirection().multiply(0.25), 3, new Particle.DustOptions(color.getColor(), 1F));
-                    spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
-                            0.4, timerTick % 4 == 0, new Particle.DustOptions(color.getColor(), 1F));
-                    if (timerTick % 4 == 0)
-                        for (int i = 0; i <= index; i++)
-                            spawnParticle(p, Particle.HEART, min.getX() + v.x, min.getY() +
-                                    v.y + 0.5 + (0.5 * (i)), min.getZ() + v.z);
-                }
-            });
+                ParticleUtility.spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
+            ParticleHelper.displayTeamsSpawns(p,teamsSpawns, min, timerTick);
+
             teamsRespawn.forEach((color, v) -> {
-                spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
+                ParticleUtility.spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
                         0.4, timerTick % 4 == 0, new Particle.DustOptions(color.getColor(), 1F));
                 if (timerTick % 4 == 0)
-                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + v.x, min.getY() +
+                    ParticleUtility.spawnParticle(p, Particle.SCULK_SOUL, min.getX() + v.x, min.getY() +
                             v.y + 0.5, min.getZ() + v.z);
             });
             teamsRespawn.forEach((color, v) -> {
-                spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
+                ParticleUtility.spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
                         0.4, timerTick % 4 == 0, new Particle.DustOptions(color.getColor(), 1F));
                 if (timerTick % 4 == 0)
-                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + v.x, min.getY() +
+                    ParticleUtility.spawnParticle(p, Particle.SCULK_SOUL, min.getX() + v.x, min.getY() +
                             v.y + 0.5, min.getZ() + v.z);
             });
-            noBuildAreas.forEach((area) -> spawnParticleBoxFaces(p, timerTick, Particle.FLAME, area, null));
-            villagers.forEach(v -> spawnParticleCircle(p, Particle.HAPPY_VILLAGER, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
+            ParticleHelper.displayNoBuildAreas(p, noBuildAreas,timerTick );
+            villagers.forEach(v -> ParticleUtility.spawnParticleCircle(p, Particle.HAPPY_VILLAGER, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
                     0.4, timerTick % 4 == 0));
             generators.forEach((type, values) -> {
                 for (BlockLocationOffset3D v : values.keySet()) {
-                    spawnParticleBoxEdges(p, Particle.DUST, new BoundingBox(min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
+                    ParticleUtility.spawnParticleBoxEdges(p, Particle.DUST, new BoundingBox(min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
                             min.getX() + v.x + 1, min.getY() + v.y + 1, min.getZ() + v.z + 1), new Particle.DustOptions(type.getColor(), 0.3F));
-                    spawnParticleCircle(p, Particle.DUST, min.getX() + v.x + 0.5, min.getY() + v.y + 0.1, min.getZ() + v.z + 0.5,
+                    ParticleUtility.spawnParticleCircle(p, Particle.DUST, min.getX() + v.x + 0.5, min.getY() + v.y + 0.1, min.getZ() + v.z + 0.5,
                             0.2, timerTick % 4 == 0, new Particle.DustOptions(type.getColor(), 0.1F));
                 }
             });
-            if (spectatorsOffset != null) {
-                spawnParticleCircle(p, Particle.WAX_ON, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y, min.getZ() + spectatorsOffset.z,
-                        0.4, timerTick % 4 == 0);
-                if (timerTick % 4 == 0)
-                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y + 1, min.getZ() + spectatorsOffset.z);
-            }
+            ParticleHelper.displaySpectatorHome(p, spectatorsOffset, min, timerTick);
         }
     }
 

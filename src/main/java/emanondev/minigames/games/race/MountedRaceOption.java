@@ -58,7 +58,7 @@ public abstract class MountedRaceOption extends ARaceOption {
             if (en instanceof Steerable steerable)
                 steerable.setSaddle(true);
             if (en instanceof LivingEntity living) {
-                living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(baseSpeed);
+                living.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(baseSpeed);
                 living.setCollidable(false);
             }
             if (en instanceof Mob mob)
@@ -175,8 +175,8 @@ public abstract class MountedRaceOption extends ARaceOption {
 
     private static @NotNull Material getEntityTypeMaterial(@NotNull EntityType type) {
         return switch (type) {
-            case BOAT -> Material.OAK_BOAT;
-            case CHEST_BOAT -> Material.OAK_CHEST_BOAT;
+            case OAK_BOAT -> Material.OAK_BOAT;
+            case OAK_CHEST_BOAT -> Material.OAK_CHEST_BOAT;
             case PIG -> Material.CARROT_ON_A_STICK;
             case STRIDER -> Material.WARPED_FUNGUS_ON_A_STICK;
             case MINECART -> Material.MINECART;

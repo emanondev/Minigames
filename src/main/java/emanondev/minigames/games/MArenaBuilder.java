@@ -1,36 +1,26 @@
 package emanondev.minigames.games;
 
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.Region;
 import emanondev.core.CorePlugin;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
-import emanondev.core.util.CompleteUtility;
 import emanondev.core.util.CorePluginLinked;
+import emanondev.core.utility.CompletionHelper;
 import emanondev.minigames.Minigames;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
 
-public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked {
+public abstract class MArenaBuilder implements CompletionHelper, CorePluginLinked {
 
-    private static final int RATEO = 5;
-    private static final int RADIUS = 100;
     private final UUID builder;
     private final BukkitTask timerRunnable;
     private final String id;
@@ -122,142 +112,4 @@ public abstract class MArenaBuilder implements CompleteUtility, CorePluginLinked
         return phase;
     }
 
-    protected void spawnParticle(Player p, Particle particle, double x, double y, double z) {
-        spawnParticle(p, particle, x, y, z, 1, null);
-    }
-
-    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, int count, Object data) {
-        p.spawnParticle(particle, x, y, z, count, 0, 0, 0, 0, data);
-    }
-
-    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, int count) {
-        spawnParticle(p, particle, x, y, z, count, null);
-    }
-
-    protected void spawnParticleCircle(Player p, Particle particle, double x, double y, double z, double radius, boolean rotateHalf) {
-        spawnParticleCircle(p, particle, x, y, z, radius, rotateHalf, null);
-    }
-
-    protected void spawnParticleCircle(Player p, Particle particle, double x, double y, double z, double radius, boolean rotateHalf, Object data) {
-        Location l = p.getLocation();
-        if (x > l.getBlockX() - RADIUS && x < l.getBlockX() + RADIUS && z > l.getBlockZ() - RADIUS && z < l.getBlockZ() + RADIUS)
-            for (int i = 0; i < 8; i++) {
-                double degree = ((rotateHalf ? 0 : 0.5) + i) * Math.PI / 4;
-                double xOffset = x + radius * Math.sin(degree);
-                double zOffset = z + radius * Math.cos(degree);
-                spawnParticle(p, particle, xOffset, y + 0.05, zOffset, 1, data);
-            }
-    }
-
-
-    protected void spawnParticleLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance) {
-        spawnParticleLine(p, particle, x, y, z, direction, maxDistance, null);
-    }
-
-    protected void spawnParticleLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance, Object data) {
-        markLine(p, particle, x, y, z, direction, maxDistance, data);
-    }
-
-    protected void spawnParticleBoxEdges(Player p, Particle particle, BoundingBox box) {
-        spawnParticleBoxEdges(p, particle, box, null);
-    }
-
-    protected void spawnParticleBoxEdges(Player p, Particle particle, BoundingBox box, Object data) {
-        markEdges(p, particle, box.getMin(), box.getMax().add(new Vector(-1, -1, -1)), data);
-    }
-
-    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box) {
-        spawnParticleBoxFaces(p, tick, particle, box, null);
-    }
-
-    protected void spawnParticleBoxFaces(Player p, int tick, Particle particle, BoundingBox box, Object data) {
-        markFaces(p, tick, particle, box.getMin(), box.getMax().add(new Vector(-1, -1, -1)), data);
-    }
-
-    protected void spawnParticle(Player p, Particle particle, double x, double y, double z, Object data) {
-        spawnParticle(p, particle, x, y, z, 0, data);
-    }
-
-    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle) {
-        return spawnParticleWorldEditRegionEdges(p, particle, null);
-    }
-
-    protected boolean spawnParticleWorldEditRegionEdges(Player p, Particle particle, Object data) {
-        try {
-            Region sel = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(p))
-                    .getSelection(BukkitAdapter.adapt(p.getWorld()));
-            BlockVector3 min = sel.getMinimumPoint();
-            BlockVector3 max = sel.getMaximumPoint();
-            markEdges(p, particle, new Vector(min.x(), min.y(), min.z()),
-                    new Vector(max.x(), max.y(), max.z()), data);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    private void markLine(Player p, Particle particle, double x, double y, double z, Vector direction, double maxDistance, Object data) {
-        int i = 0;
-        double xD = direction.getX();
-        double yD = direction.getY();
-        double zD = direction.getZ();
-        double dirDistance = xD * xD + yD * yD + zD * zD;
-        if (dirDistance == 0)
-            return;
-        while (i * (dirDistance) < maxDistance * maxDistance) {
-            spawnParticle(p, particle, x + xD * i, y + yD * i, z + zD * i, 1, data);
-            i++;
-        }
-    }
-
-    private void markEdges(Player p, Particle particle, Vector min, Vector max, Object data) {
-        Location l = p.getLocation();
-        int xMin = Math.max(l.getBlockX() - RADIUS, min.getBlockX()), xMax = Math.min(l.getBlockX() + RADIUS, max.getBlockX());
-        int zMin = Math.max(l.getBlockZ() - RADIUS, min.getBlockZ()), zMax = Math.min(l.getBlockZ() + RADIUS, max.getBlockZ());
-        for (int i = xMin; i <= xMax; i++) {
-            spawnParticle(p, particle, i, min.getY(), min.getZ(), 1, data);
-            spawnParticle(p, particle, i, max.getY() + 1, min.getZ(), 1, data);
-            spawnParticle(p, particle, i, min.getY(), max.getZ() + 1, 1, data);
-            spawnParticle(p, particle, i, max.getY() + 1, max.getZ() + 1, 1, data);
-        }
-        for (int i = min.getBlockY(); i <= max.getBlockY(); i++) {
-            spawnParticle(p, particle, min.getX(), i, min.getZ(), 1, data);
-            spawnParticle(p, particle, max.getX() + 1, i, min.getZ(), 1, data);
-            spawnParticle(p, particle, min.getX(), i, max.getZ() + 1, 1, data);
-            spawnParticle(p, particle, max.getX() + 1, i, max.getZ() + 1, 1, data);
-        }
-        for (int i = zMin; i <= zMax; i++) {
-            spawnParticle(p, particle, min.getX(), min.getY(), i, 1, data);
-            spawnParticle(p, particle, max.getX() + 1, min.getY(), i, 1, data);
-            spawnParticle(p, particle, min.getX(), max.getY() + 1, i, 1, data);
-            spawnParticle(p, particle, max.getX() + 1, max.getY() + 1, i, 1, data);
-        }
-    }
-
-    private void markFaces(Player p, int val, Particle particle, Vector min, Vector max, Object data) {
-        Location l = p.getLocation();
-        int xMin = Math.max(l.getBlockX() - RADIUS, min.getBlockX()), xMax = Math.min(l.getBlockX() + RADIUS, max.getBlockX());
-        int zMin = Math.max(l.getBlockZ() - RADIUS, min.getBlockZ()), zMax = Math.min(l.getBlockZ() + RADIUS, max.getBlockZ());
-        for (int x = xMin; x <= xMax; x++)
-            for (int z = zMin; z <= zMax; z++) {
-                if (Math.abs(x + min.getBlockY() + z) % RATEO == val % RATEO)
-                    spawnParticle(p, particle, x, min.getBlockY(), z, data);
-                if (Math.abs(x + max.getBlockY() + 1 + z) % RATEO == val % RATEO)
-                    spawnParticle(p, particle, x, max.getBlockY() + 1, z, data);
-            }
-        for (int x = xMin; x <= xMax; x++)
-            for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
-                if (Math.abs(x + y + min.getBlockZ()) % RATEO == val % RATEO)
-                    spawnParticle(p, particle, x, y, min.getBlockZ(), data);
-                if (Math.abs(x + y + max.getBlockZ() + 1) % RATEO == val % RATEO)
-                    spawnParticle(p, particle, x, y, max.getBlockZ() + 1, data);
-            }
-        for (int z = zMin; z <= zMax; z++)
-            for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
-                if (Math.abs(min.getBlockX() + y + z) % RATEO == val % RATEO)
-                    spawnParticle(p, particle, min.getBlockX(), y, z, data);
-                if (Math.abs(max.getBlockX() + 1 + y + z) % RATEO == val % RATEO)
-                    spawnParticle(p, particle, max.getBlockX() + 1, y, z, data);
-            }
-    }
 }

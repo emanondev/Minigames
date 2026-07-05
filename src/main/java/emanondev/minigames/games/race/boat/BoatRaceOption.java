@@ -60,7 +60,7 @@ public class BoatRaceOption extends MountedRaceOption {
 
     @Override
     protected @NotNull EntityType getDefaultType() {
-        return EntityType.BOAT;
+        return EntityType.OAK_BOAT;
     }
 
     @Override

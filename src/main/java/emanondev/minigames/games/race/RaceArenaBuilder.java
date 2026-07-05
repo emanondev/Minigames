@@ -8,12 +8,14 @@ import com.sk89q.worldedit.regions.Region;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
+import emanondev.core.util.ParticleUtility;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.UtilColor;
 import emanondev.minigames.games.SchematicArenaBuilder;
 import emanondev.minigames.locations.LocationOffset3D;
+import emanondev.minigames.util.ParticleHelper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
@@ -460,60 +462,24 @@ public class RaceArenaBuilder extends SchematicArenaBuilder {
         }
         if (timerTick % 2 == 0) { //every 15 game ticks
             if (getPhase() <= PHASE_SELECT_AREA)
-                this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
+                ParticleUtility.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
             else
-                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0, 0, 0, 1, 1, 1));
+                ParticleUtility.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0, 0, 0, 1, 1, 1));
             if (getPhase() <= PHASE_SELECT_AREA)
                 return;
             Vector min = getAreaMin();
             if (!getArea().equals(getWorldEditSection(p)))
-                spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
-            spawnLocations.forEach((k, v) -> spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
-                    0.4, timerTick % 4 == 0, new Particle.DustOptions(k.getColor(), 1F)));
-            if (spectatorsOffset != null) {
-                spawnParticleCircle(p, Particle.WAX_ON, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y, min.getZ() + spectatorsOffset.z,
-                        0.4, timerTick % 4 == 0);
-                if (timerTick % 4 == 0)
-                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y + 1, min.getZ() + spectatorsOffset.z);
-            }
-            for (int i = 0; i < checkPoints.size(); i++) {
-                spawnParticleBoxEdges(p, Particle.DUST, checkPoints.get(i), new Particle.DustOptions(getCheckpointColor(i), 1F));
-            }
-            for (int j = 0; j < checkPointsRespawn.size(); j++) {
-                spawnParticleCircle(p, Particle.DUST, min.getX() + checkPointsRespawn.get(j).x, min.getY() +
-                                checkPointsRespawn.get(j).y, min.getZ() + checkPointsRespawn.get(j).z, 0.4,
-                        timerTick % 4 == 0, new Particle.DustOptions(getCheckpointColor(j), 0.5F));
-                if (timerTick % 4 == 0)
-                    for (int i = 0; i <= j; i++)
-                        spawnParticle(p, Particle.HEART, min.getX() + checkPointsRespawn.get(j).x, min.getY() +
-                                checkPointsRespawn.get(j).y + 0.5 + (0.5 * (i)), min.getZ() + checkPointsRespawn.get(j).z);
-            }
-            if (endArea != null)
-                spawnParticleBoxEdges(p, Particle.DUST, endArea, new Particle.DustOptions(getCheckpointColor(checkPoints.size()), 2F));
-
-            fallAreas.forEach((fallArea) -> spawnParticleBoxFaces(p, timerTick, Particle.FLAME, fallArea, null));
+                ParticleUtility.spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
+            ParticleHelper.displayTeamHomes(p, spawnLocations, min, timerTick);
+            ParticleHelper.displaySpectatorHome(p, spectatorsOffset, min, timerTick);
+            ParticleHelper.displayCheckPoints(p, checkPoints, checkPointsRespawn, endArea, min, timerTick);
+            ParticleHelper.displayFallAreas(p, fallAreas, timerTick);
         }
     }
 
     @Override
     protected void onPhaseStart() {
         timerTick = 0;
-    }
-
-    private static Color getCheckpointColor(int i) {
-        return switch (i % 10) {
-            case 0 -> Color.fromBGR(Integer.decode("0xeb3434"));
-            case 1 -> Color.fromBGR(Integer.decode("0xeb9f34"));
-            case 2 -> Color.fromBGR(Integer.decode("0xebe234"));
-            case 3 -> Color.fromBGR(Integer.decode("0xb4eb34"));
-            case 4 -> Color.fromBGR(Integer.decode("0x34eb56"));
-            case 5 -> Color.fromBGR(Integer.decode("0x34aeeb"));
-            case 6 -> Color.fromBGR(Integer.decode("0x3440eb"));
-            case 7 -> Color.fromBGR(Integer.decode("0x8334eb"));
-            case 8 -> Color.fromBGR(Integer.decode("0xc934eb"));
-            case 9 -> Color.fromBGR(Integer.decode("0xeb348f"));
-            default -> throw new IllegalStateException("Unexpected value: " + i % 10);
-        };
     }
 }
 

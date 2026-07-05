@@ -4,12 +4,14 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import emanondev.core.UtilsString;
 import emanondev.core.message.DMessage;
 import emanondev.core.message.SimpleMessage;
+import emanondev.core.util.ParticleUtility;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.UtilColor;
 import emanondev.minigames.games.SchematicArenaBuilder;
 import emanondev.minigames.locations.LocationOffset3D;
+import emanondev.minigames.util.ParticleHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Particle;
@@ -241,22 +243,16 @@ public class SkyWarsArenaBuilder extends SchematicArenaBuilder {
 
         if (timerTick % 2 == 0) { //every 15 game ticks
             if (getPhase() <= PHASE_SELECT_AREA)
-                this.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
+                  ParticleUtility.spawnParticleWorldEditRegionEdges(p, Particle.COMPOSTER);
             else
-                this.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0, 0, 0, 1, 1, 1));
+                  ParticleUtility.spawnParticleBoxEdges(p, Particle.COMPOSTER, getArea().expand(0, 0, 0, 1, 1, 1));
             if (getPhase() <= PHASE_SELECT_AREA)
                 return;
             Vector min = getAreaMin();
             if (!getArea().equals(getWorldEditSection(p)))
-                spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
-            spawnLocations.forEach((k, v) -> spawnParticleCircle(p, Particle.DUST, min.getX() + v.x, min.getY() + v.y, min.getZ() + v.z,
-                    0.4, timerTick % 4 == 0, new Particle.DustOptions(k.getColor(), 1F)));
-            if (spectatorsOffset != null) {
-                spawnParticleCircle(p, Particle.WAX_ON, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y, min.getZ() + spectatorsOffset.z,
-                        0.4, timerTick % 4 == 0);
-                if (timerTick % 4 == 0)
-                    spawnParticle(p, Particle.SCULK_SOUL, min.getX() + spectatorsOffset.x, min.getY() + spectatorsOffset.y + 1, min.getZ() + spectatorsOffset.z);
-            }
+                  ParticleUtility.spawnParticleWorldEditRegionEdges(p, Particle.WAX_OFF);
+            ParticleHelper.displayTeamHomes(p,spawnLocations,min,timerTick);
+            ParticleHelper.displaySpectatorHome(p, spectatorsOffset, min, timerTick);
         }
     }
 

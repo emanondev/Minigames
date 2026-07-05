@@ -9,6 +9,7 @@ import emanondev.minigames.data.PlayerStat;
 import emanondev.minigames.games.AbstractMColorSchemGame;
 import emanondev.minigames.games.ColoredTeam;
 import emanondev.minigames.games.MTeam;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> extends AbstractMColorSchemGame<T, RaceArena, O> {
 
     private final HashMap<UUID, Integer> currentCheckpoint = new HashMap<>();
@@ -362,7 +364,7 @@ public abstract class ARaceGame<T extends ARaceTeam, O extends ARaceOption> exte
     protected void onGamerReachRaceFinishArea(Player player) {
         @Nullable T team = getTeam(player);
         if (team == null) {
-            new IllegalStateException().printStackTrace();
+            log.warn("warning",new IllegalStateException());
             return;
         }
         if (getPhase() == Phase.PLAYING) {

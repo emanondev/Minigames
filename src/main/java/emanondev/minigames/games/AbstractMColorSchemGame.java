@@ -242,7 +242,7 @@ public abstract class AbstractMColorSchemGame<T extends ColoredTeam, A extends M
             case PRE_START, PLAYING -> player.teleport(getArena().getSpawnOffset(getTeam(player).getColor())
                     .add(getGameLocation()));
             case END, COLLECTING_PLAYERS -> player.teleport(getArena().getSpectatorsOffset().add(getGameLocation()));
-            default -> new IllegalStateException().printStackTrace();
+            default -> log.warn("test",new IllegalStateException());
         }
         if (player.getFireTicks() > 0)
             player.setFireTicks(0);

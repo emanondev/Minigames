@@ -83,7 +83,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             this.joinGuiSlot = Math.max(0, (Integer) map.getOrDefault("join_gui_slot", 0));
             this.joinTypeGuiSlot = Math.max(0, (Integer) map.getOrDefault("join_type_gui_slot", 0));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("warning",e);
             loc = GameManager.get().generateLocation(arena, getWorld());
         }
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -816,7 +816,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             try {
                 new VaultEconomyHandler().addMoney(target, amount);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warn("unable to add money",e);
             }
             sendDMessage(target, "generic.obtain_points", "%amount%", UtilsString.formatOptional2Digit(amount));
         }
@@ -827,7 +827,7 @@ public abstract class AbstractMGame<T extends ColoredTeam, A extends MArena, O e
             try {
                 GamerManager.get().getGamer(target).addExperience(amount);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warn("unable to add game experience", e);
             }
             //sendDMessage(target, "generic.obtain_exp", "%amount%", UtilsString.formatOptional2Digit(amount));
         }

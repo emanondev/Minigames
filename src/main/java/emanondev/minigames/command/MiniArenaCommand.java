@@ -3,6 +3,7 @@ package emanondev.minigames.command;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
+import emanondev.core.util.ParticleUtility;
 import emanondev.core.util.WorldEditUtility;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
@@ -19,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +56,7 @@ public class MiniArenaCommand extends CoreCommand {
                         return;
                     if (!Objects.equals(p.getWorld(), pasted.get(uuid).world))
                         return;
-                    spawnParticleBoxFaces(p, tick, pasted.get(uuid).box);
+                    ParticleUtility.spawnParticleBoxFaces(p,tick, Particle.WAX_OFF, pasted.get(uuid).box);
                 }
             }
         }.runTaskTimer(getPlugin(), 20L, 20L);
@@ -93,42 +93,6 @@ public class MiniArenaCommand extends CoreCommand {
 
     public void reload() {
         //restart task?
-    }
-
-    //from MArenaBuilder START
-    private void spawnParticleBoxFaces(Player p, int tick, BoundingBox box) {
-        markFaces(p, tick, box.getMin(), box.getMax());
-    }
-
-    private void markFaces(Player p, int val, Vector min, Vector max) {
-        Location l = p.getLocation();
-        int xMin = Math.max(l.getBlockX() - RADIUS, min.getBlockX()), xMax = Math.min(l.getBlockX() + RADIUS, max.getBlockX() + 1);
-        int zMin = Math.max(l.getBlockZ() - RADIUS, min.getBlockZ()), zMax = Math.min(l.getBlockZ() + RADIUS, max.getBlockZ() + 1);
-        for (int x = xMin; x <= xMax; x++)
-            for (int z = zMin; z <= zMax; z++) {
-                if (Math.abs(x + min.getBlockY() + z) % RATEO == val % RATEO)
-                    spawnParticle(p, x, min.getBlockY(), z);
-                if (Math.abs(x + max.getBlockY() + 1 + z) % RATEO == val % RATEO)
-                    spawnParticle(p, x, max.getBlockY() + 1, z);
-            }
-        for (int x = xMin; x <= xMax; x++)
-            for (int y = min.getBlockY(); y <= max.getBlockY() + 1; y++) {
-                if (Math.abs(x + y + min.getBlockZ()) % RATEO == val % RATEO)
-                    spawnParticle(p, x, y, min.getBlockZ());
-                if (Math.abs(x + y + max.getBlockZ() + 1) % RATEO == val % RATEO)
-                    spawnParticle(p, x, y, max.getBlockZ() + 1);
-            }
-        for (int z = zMin; z <= zMax; z++)
-            for (int y = min.getBlockY(); y <= max.getBlockY() + 1; y++) {
-                if (Math.abs(min.getBlockX() + y + z) % RATEO == val % RATEO)
-                    spawnParticle(p, min.getBlockX(), y, z);
-                if (Math.abs(max.getBlockX() + 1 + y + z) % RATEO == val % RATEO)
-                    spawnParticle(p, max.getBlockX() + 1, y, z);
-            }
-    }
-
-    private void spawnParticle(Player p, double x, double y, double z) {
-        p.spawnParticle(Particle.WAX_OFF, x, y, z, 0, 0, 0, 0, 0, null);
     }
 
     private void help(CommandSender sender, String label, String[] args) {
@@ -282,26 +246,21 @@ public class MiniArenaCommand extends CoreCommand {
         arena.getEditorGui(player, null).open(player);
     }
 
-    private static class SchemInfo {
-        private final BoundingBox box;
-        private final String id;
-        private final UUID user;
-        private final World world;
+    private record SchemInfo(String id, BoundingBox box, UUID user, World world) {
+            private SchemInfo(@NotNull String id, @NotNull BoundingBox box, @NotNull UUID user, @NotNull World world) {
+                this.id = id;
+                this.box = box;
+                this.user = user;
+                this.world = world;
+            }
 
-        private SchemInfo(@NotNull String id, @NotNull BoundingBox box, @NotNull UUID user, @NotNull World world) {
-            this.id = id;
-            this.box = box;
-            this.user = user;
-            this.world = world;
+            public void show() {
+                Player player = Bukkit.getPlayer(user);
+                if (player == null)
+                    return;
+
+                //TODO spawn particles
+            }
+
         }
-
-        public void show() {
-            Player player = Bukkit.getPlayer(user);
-            if (player == null)
-                return;
-
-            //TODO spawn particles
-        }
-
-    }
 }
