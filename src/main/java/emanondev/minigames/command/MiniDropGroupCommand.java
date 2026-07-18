@@ -1,9 +1,9 @@
 package emanondev.minigames.command;
 
-import emanondev.core.UtilsInventory;
 import emanondev.core.UtilsString;
 import emanondev.core.command.CoreCommand;
 import emanondev.core.message.DMessage;
+import emanondev.core.utility.InventoryUtility;
 import emanondev.minigames.DropGroupManager;
 import emanondev.minigames.Minigames;
 import emanondev.minigames.Perms;
@@ -113,7 +113,7 @@ public class MiniDropGroupCommand extends CoreCommand {
             return;
         }
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (UtilsInventory.isAirOrNull(item)) {
+        if (InventoryUtility.isAirOrNull(item)) {
             sendDMessage(player, "minidropgroup.error.no_item_in_hand", "%alias%", label);
             return;
         }
@@ -157,7 +157,7 @@ public class MiniDropGroupCommand extends CoreCommand {
         }
         List<ItemStack> items = new ArrayList<>();
         for (ItemStack item : container.getInventory().getStorageContents())
-            if (!UtilsInventory.isAirOrNull(item))
+            if (!InventoryUtility.isAirOrNull(item))
                 items.add(item);
         if (items.isEmpty()) {
             sendDMessage(player, "minidropgroup.error.empty_container", "%alias%", label);
