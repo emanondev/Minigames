@@ -16,12 +16,12 @@ public class EggWarsArena extends AbstractMColorSchemArena {
     private final Map<DyeColor, List<LocationOffset3D>> spawnLocations = new EnumMap<>(DyeColor.class);
     private final Map<DyeColor, BlockLocationOffset3D> eggs = new EnumMap<>(DyeColor.class);
     private final Map<DyeColor, LocationOffset3D> respawnLocations = new EnumMap<>(DyeColor.class);
-    private final HashSet<LocationOffset3D> villagers = new HashSet<>();
-    private final HashMap<String, HashMap<BlockLocationOffset3D, Integer>> generatorsRaw = new HashMap<>();
-    private final HashMap<EggWarsGeneratorType, HashMap<BlockLocationOffset3D, Integer>> generators = new HashMap<>();
-    private final HashSet<BoundingBox> noBuildAreas = new HashSet<>();
-    private int teamsSize;
-    private LocationOffset3D spectatorsOffset;
+    private final Set<LocationOffset3D> villagers = new HashSet<>();
+    private final Map<String, Map<BlockLocationOffset3D, Integer>> generatorsRaw = new HashMap<>();
+    private final Map<EggWarsGeneratorType, Map<BlockLocationOffset3D, Integer>> generators = new HashMap<>();
+    private final Set<BoundingBox> noBuildAreas = new HashSet<>();
+    private final int teamsSize;
+    private final LocationOffset3D spectatorsOffset;
 
     /*
      * teams:
@@ -42,39 +42,37 @@ public class EggWarsArena extends AbstractMColorSchemArena {
      */
     public EggWarsArena(@NotNull Map<String, Object> map) {
         super(map);
-        Map<String, ?> teamMap = (Map<String, ?>) map.get("teams");
-        teamMap.forEach((k, v) -> spawnLocations.put(DyeColor.valueOf(k), LocationOffset3D.fromString((String) ((Map<String, ?>) v).get("spawnOffset"))));
-        if (spawnLocations.size() < 2)
-            throw new IllegalStateException("not enough teams");
+        Map<String, Object> teamsMap = (Map<String, Object>) map.get("teams");
+        for (String key : teamsMap.keySet()) {
+            DyeColor dyeColor = DyeColor.valueOf(key);
+            Map<String, Object> teamMap = (Map<String, Object>) map.get(key);
+            List<String> rawSpawnLocations = (List<String>) teamMap.get("spawn_loc");
 
-
-        LinkedHashMap<String, Map<String, Object>> teamsMap = new LinkedHashMap<>();
-        for (DyeColor color : teams) {
-            HashMap<String, Object> teamMap = new HashMap<>();
-            List<String> wrap = new ArrayList<>();
-            teamsSpawns.get(color).forEach(loc -> wrap.add(loc.toString()));
-            teamMap.put("spawn_loc", wrap);
-            teamMap.put("respawn_loc", teamsRespawn.get(color).toString());
-            teamMap.put("egg", teamsEgg.get(color).toString());
-            teamsMap.put(color.name(), teamMap);
+            spawnLocations.put(dyeColor, rawSpawnLocations.stream().map(LocationOffset3D::fromString).toList());
+            respawnLocations.put(dyeColor, LocationOffset3D.fromString((String) teamMap.get("respawn_loc")));
+            eggs.put(dyeColor, (BlockLocationOffset3D) teamMap.get("egg"));
         }
-        map.put("teams", teamsMap);
-        List<String> wrap = new ArrayList<>();
-        villagers.forEach(v -> wrap.add(v.toString()));
-        map.put("villagers", wrap);
-        HashMap<String, Map<String, Integer>> genMap = new HashMap<>();
-        for (EggWarsGeneratorType type : generators.keySet()) {
-            HashMap<String, Integer> subMap = new HashMap<>();
-            Map<BlockLocationOffset3D, Integer> generatorsOfType = generators.get(type);
-            generatorsOfType.forEach((k, v) -> subMap.put(k.toString(), v));
-            genMap.put(type.getType(), subMap);
-        }
-        map.put("generators", genMap);
-        noBuildAreas.forEach((box) -> box.shift(getArea().getMin().multiply(-1)));
-        map.put("no_build_areas", noBuildAreas);
-        map.put("team_size", teamsSize);
-        map.put("spectator_spawn_offset", spectatorsOffset.toString());
+        List<String> rawVillagers = (List<String>) teamsMap.get("villagers");
+        villagers.addAll(rawVillagers.stream().map(LocationOffset3D::fromString).toList());
 
+        Map<String, Object> rawGenerators = (Map<String, Object>) map.get("generators");
+        for (String rawType : rawGenerators.keySet()) {
+            Map<BlockLocationOffset3D, Integer> generatorTypeLocations = new HashMap<>();
+
+            Map<String, Integer> rawLocs = (Map<String, Integer>) rawGenerators.get(rawType);
+
+            rawLocs.forEach((key, value) -> generatorTypeLocations.put(BlockLocationOffset3D.fromString(key), value));
+            generatorsRaw.put(rawType, generatorTypeLocations);
+        }
+
+        List<BoundingBox> noBuildAreas = (List<BoundingBox>) map.get("no_build_areas");
+        if (noBuildAreas != null) {
+            this.noBuildAreas.addAll(noBuildAreas);
+        }
+
+        teamsSize = (Integer) map.get("team_size");
+
+        spectatorsOffset = LocationOffset3D.fromString((String) map.get("spectator_spawn_offset"));
     }
 
     @NotNull
@@ -100,6 +98,6 @@ public class EggWarsArena extends AbstractMColorSchemArena {
     public LocationOffset3D getSpawnOffset(@NotNull DyeColor color) {
         if (!spawnLocations.containsKey(color))
             throw new NullPointerException();
-        return spawnLocations.get(color);
+        return spawnLocations.get(color).getFirst(); //TODO randomize?
     }
 }

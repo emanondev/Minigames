@@ -1,7 +1,7 @@
 package emanondev.minigames.games.eggwars;
 
 import emanondev.core.ItemBuilder;
-import emanondev.core.UtilsInventory;
+import emanondev.core.utility.InventoryUtility;
 import emanondev.core.UtilsString;
 import emanondev.minigames.ArenaManager;
 import emanondev.minigames.Minigames;
@@ -116,7 +116,7 @@ public class EggWarsType extends MType<EggWarsArena, EggWarsOption> {
     }
 
     public @Nullable EggWarsGeneratorType getGenerator(ItemStack item) {
-        if (UtilsInventory.isAirOrNull(item))
+        if (InventoryUtility.isAirOrNull(item))
             return null;
         if (!item.hasItemMeta())
             return null;

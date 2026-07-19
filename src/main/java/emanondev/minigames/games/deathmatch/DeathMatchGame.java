@@ -1,7 +1,7 @@
 package emanondev.minigames.games.deathmatch;
 
 import emanondev.core.SoundInfo;
-import emanondev.core.UtilsInventory;
+import emanondev.core.utility.InventoryUtility;
 import emanondev.core.message.DMessage;
 import emanondev.minigames.MessageUtil;
 import emanondev.minigames.MinigameTypes;
@@ -142,7 +142,7 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
                 onFillChest(cHolder.getBlockInventory());
                 Location dropLoc = event.getBlock().getLocation().add(0.5, 0.5, 0.5);
                 for (ItemStack item : cHolder.getBlockInventory().getContents())
-                    if (!UtilsInventory.isAirOrNull(item))
+                    if (!InventoryUtility.isAirOrNull(item))
                         dropLoc.getWorld().dropItemNaturally(dropLoc, item);
 
             }
@@ -168,7 +168,7 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         if (filler == null)
             return;
         ItemStack item = event.getItem();
-        if (UtilsInventory.isAirOrNull(item))
+        if (InventoryUtility.isAirOrNull(item))
             return;
         if (!item.isSimilar(getMinigameType().getKillRewardItem()))
             return;
@@ -176,7 +176,8 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         new SoundInfo(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1, 1, true).play(event.getPlayer());
         item.setAmount(item.getAmount() - 1);
         event.getPlayer().getInventory().setItem(event.getHand(), item);
-        filler.getDrops().forEach((d) -> UtilsInventory.giveAmount(event.getPlayer(), d, d.getAmount(), UtilsInventory.ExcessManage.DROP_EXCESS));
+        filler.getDrops().forEach((d) -> InventoryUtility.giveAmount(event.getPlayer(), d, d.getAmount(),
+                InventoryUtility.ExcessMode.DROP_EXCESS));
     }
 
     @Override
@@ -249,7 +250,7 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
         craftAndCallGamerDeathEvent(player, killer);
         if (containsLocation(player))
             for (ItemStack item : player.getInventory().getContents())
-                if (!UtilsInventory.isAirOrNull(item))
+                if (!InventoryUtility.isAirOrNull(item))
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
         player.getInventory().clear();
         new SoundInfo(Sound.ENTITY_PLAYER_DEATH, 1, 1, false).play(player);
@@ -281,7 +282,7 @@ public class DeathMatchGame extends AbstractMColorSchemGame<DeathMatchTeam, Deat
             giveGameExp(killer, getMinigameType().getKillExp());
             if (getOption().getKillRewardFiller() != null) {
                 //TODO add sound
-                UtilsInventory.giveAmount(player, getMinigameType().getKillRewardItem(), 1, UtilsInventory.ExcessManage.DROP_EXCESS);
+                InventoryUtility.giveAmount(player, getMinigameType().getKillRewardItem(), 1, InventoryUtility.ExcessMode.DROP_EXCESS);
             }
 
             team = getTeam(killer);

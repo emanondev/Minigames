@@ -1,6 +1,6 @@
 package emanondev.minigames.games.eggwars;
 
-import emanondev.core.UtilsInventory;
+import emanondev.core.utility.InventoryUtility;
 import emanondev.core.gui.Gui;
 import emanondev.core.gui.GuiButton;
 import org.bukkit.Material;
@@ -40,7 +40,7 @@ public class ArmorShopMenu extends GenericShopMenu {
         @Override
         public @Nullable ItemStack getItem() {
             ItemStack item = getTargetPlayer().getInventory().getItem(slot);
-            if (UtilsInventory.isAirOrNull(item))
+            if (InventoryUtility.isAirOrNull(item))
                 return new ItemStack(Material.BARRIER);
             return item;
         }
